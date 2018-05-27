@@ -20,7 +20,7 @@ Ebenfalls besitzt das Spiel Achievements, die verschiedene Bereiche des Spiels a
 
 Das Spiel unterstützt das Speichern von Speicherständen. Diese werden jedoch aufgrund von Sicherheitseinstellungen nicht innerhalb des Browsers gespeichert, sondern werden in die Zwischenablage zum externen Abspeichern gelegt. Sie können ebenfalls über die Zwischenablage geladen werden.
 
-ACHTUNG! Bei neuladen des Tabs ist der Speicherstand verloren, deswegen immer speichern!
+ACHTUNG! Bei Neuladen des Tabs ist der Speicherstand verloren, deswegen immer speichern!
 
 ## Highscores
 
