@@ -10,7 +10,7 @@ Während der Runde gibt es auf dem Weg Geldscheine und Items, die aufgesammelt w
 ## Shop
 
 Das Spiel besitzt einen kleinen Shop, in dem neue Charaktere und Itemupgrades gekauft werden können. Die Charaktere haben zusätzliche Fähigkeiten, wie verbesserte Sprungkraft oder schnellere Bewegung. Bei den Items kann durch die Upgrades die Dauer verlängert werden.
-Falls die Items dadurch zu lange halten, können diese auch wieder gedowngraded werden, was jedoch ebenfalls Geld kostet. Die Währung in dem Spiel heißt Hype ![Hype](img/hype.png).
+Falls die Items dadurch zu lange halten, können diese auch wieder gedowngraded werden, was jedoch ebenfalls Geld kostet. Die Währung in dem Spiel heißt Hype ![Hype](readme_img/hype.png).
 
 ## Achievements
 
