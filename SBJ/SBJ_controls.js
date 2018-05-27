@@ -105,10 +105,6 @@
     this.keyEntries[this.selected].select(0, false);
 
     this.backToMenu = new Button((this.gD.canvas.width / 2) - 100, this.gD.canvas.height - 50, 200, 30, "15pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Main Menu", "rgba(0, 0, 0, .6)", 2);
-
-    if (localStorage.keyBindings) {
-      this.keyBindings = JSON.parse(localStorage.keyBindings);
-    }
   };
   this.vShift = function(shiftFactor) {
     for (var i = 0; i < this.keyEntryHeadlines.length; i++) {
