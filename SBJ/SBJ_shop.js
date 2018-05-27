@@ -1,0 +1,555 @@
+﻿function Shop(gD, menu) {
+  this.gD = gD;
+  this.menu = menu;
+  this.backgroundImage = new Image();
+  this.backgroundImage.src = "img/Titlescreen.png";
+  this.visible = false;
+  this.tabs = [];
+  this.buttons = [];
+  this.shopEntries = [];
+  this.level = new Array(this.gD.itemProb.length).fill(0);   //levels of the items
+  this.selected = 0;
+  this.active = 0;
+  this.cash = 0;
+  this.costFactors = [1.15, 1.55];                           //defines the multiplicators for the down- and upgrades of the items
+  this.init = function() {
+    this.title = new Text(this.gD.canvas.width / 2, 30, "32pt", "Showcard Gothic", "rgba(200, 200, 200, 1)", "center", "middle", "Shop", 3);
+
+    this.money = new ShopMoney(this.gD.canvas.width - 215, 0, 200, 30, "20pt", "Consolas", "rgba(220, 255, 220, 1)", "rgba(0, 0, 0, 1)", 2);
+
+    this.tabs.push(new ShopTab((this.gD.canvas.width / 2) - 300, 60, 300, 30, "15pt", "Showcard Gothic", "rgba(150, 180, 150, 1)", "Player", "rgba(0, 0, 0, .6)", 2));
+    this.tabs.push(new ShopTab(this.gD.canvas.width / 2, 60, 300, 30, "15pt", "Showcard Gothic", "rgba(200, 200, 0, 1)", "Items", "rgba(0, 0, 0, .6)", 2));
+    this.tabs[this.active].activate();
+
+    this.buttons.push(new Button((this.gD.canvas.width / 2) - 290, 245, 180, 20, "11pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Kaufen", "rgba(0, 0, 0, .6)", 2));
+    this.buttons.push(new Button((this.gD.canvas.width / 2) - 90, 245, 180, 20, "11pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Kaufen", "rgba(0, 0, 0, .6)", 2));
+    this.buttons.push(new Button((this.gD.canvas.width / 2) + 110, 245, 180, 20, "11pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Kaufen", "rgba(0, 0, 0, .6)", 2));
+    this.shopEntries.push(new ShopEntryPlayer((this.gD.canvas.width / 2) - 300, 90, 200, 200, "12pt", "Consolas", "rgba(150, 180, 150, 1)", 2, "Höhere Sprungkraft", 30000, 2));
+    this.shopEntries.push(new ShopEntryPlayer((this.gD.canvas.width / 2) - 100, 90, 200, 200, "12pt", "Consolas", "rgba(150, 180, 150, 1)", 3, "Schnellere Bewegung", 20000, 2));
+    this.shopEntries.push(new ShopEntryPlayer((this.gD.canvas.width / 2) + 100, 90, 200, 200, "12pt", "Consolas", "rgba(150, 180, 150, 1)", 4, "Dreifach Sprung", 100000, 2));
+
+    this.buttons.push(new Button((this.gD.canvas.width / 2) - 290, 200, 100, 20, "11pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Upgrade", "rgba(0, 0, 0, .6)", 2));
+    this.buttons.push(new Button((this.gD.canvas.width / 2) - 290, 245, 100, 20, "11pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Downgrade", "rgba(0, 0, 0, .6)", 2));
+    this.buttons.push(new Button((this.gD.canvas.width / 2) - 170, 200, 100, 20, "11pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Upgrade", "rgba(0, 0, 0, .6)", 2));
+    this.buttons.push(new Button((this.gD.canvas.width / 2) - 170, 245, 100, 20, "11pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Downgrade", "rgba(0, 0, 0, .6)", 2));
+    this.buttons.push(new Button((this.gD.canvas.width / 2) - 50, 200, 100, 20, "11pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Upgrade", "rgba(0, 0, 0, .6)", 2));
+    this.buttons.push(new Button((this.gD.canvas.width / 2) - 50, 245, 100, 20, "11pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Downgrade", "rgba(0, 0, 0, .6)", 2));
+    this.buttons.push(new Button((this.gD.canvas.width / 2) + 70, 200, 100, 20, "11pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Upgrade", "rgba(0, 0, 0, .6)", 2));
+    this.buttons.push(new Button((this.gD.canvas.width / 2) + 70, 245, 100, 20, "11pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Downgrade", "rgba(0, 0, 0, .6)", 2));
+    this.buttons.push(new Button((this.gD.canvas.width / 2) + 190, 200, 100, 20, "11pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Upgrade", "rgba(0, 0, 0, .6)", 2));
+    this.buttons.push(new Button((this.gD.canvas.width / 2) + 190, 245, 100, 20, "11pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Downgrade", "rgba(0, 0, 0, .6)", 2));
+    this.shopEntries.push(new ShopEntryItem((this.gD.canvas.width / 2) - 300, 90, 120, 200, "12pt", "Consolas", "rgba(200, 200, 0, 1)", 1, "+" + (this.gD.itemPerLvlDur[0] / 50).toFixed(2) + "s", 2));
+    this.shopEntries.push(new ShopEntryItem((this.gD.canvas.width / 2) - 180, 90, 120, 200, "12pt", "Consolas", "rgba(200, 200, 0, 1)", 2, "+" + (this.gD.itemPerLvlDur[1] / 50).toFixed(2) + "s", 2));
+    this.shopEntries.push(new ShopEntryItem((this.gD.canvas.width / 2) - 60, 90, 120, 200, "12pt", "Consolas", "rgba(200, 200, 0, 1)", 3, "+" + (this.gD.itemPerLvlDur[2] / 50).toFixed(2) + "s", 2));
+    this.shopEntries.push(new ShopEntryItem((this.gD.canvas.width / 2) + 60, 90, 120, 200, "12pt", "Consolas", "rgba(200, 200, 0, 1)", 4, "+" + (this.gD.itemPerLvlDur[3] / 50).toFixed(2) + "s", 2));
+    this.shopEntries.push(new ShopEntryItem((this.gD.canvas.width / 2) + 180, 90, 120, 200, "12pt", "Consolas", "rgba(200, 200, 0, 1)", 5, "+" + (this.gD.itemPerLvlDur[4] / 50).toFixed(2) + "s", 2));
+
+    this.buttons.push(new Button((this.gD.canvas.width / 2) - 100, this.gD.canvas.height - 50, 200, 30, "15pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Main Menu", "rgba(0, 0, 0, .6)", 2));
+    this.buttons[this.selected].select();
+  };
+  this.clear = function() {
+    this.gD.context.clearRect(0, 0, this.gD.canvas.width, this.gD.canvas.height);
+  };
+  this.show = function() {
+    this.visible = true;
+    drawShop(this);
+  };
+  this.stop = function() {
+    this.visible = false;
+  };
+}
+
+function ShopMoney(x, y, width, height, size, family, color, textcolor, bordersize) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.size = size;
+  this.family = family;
+  this.color = color;
+  this.text = "";
+  this.textcolor = textcolor;
+  this.bordersize = bordersize;
+  this.update = function(shop, gD) {
+    this.text = shop.cash.toString();
+
+    gD.context.fillStyle = this.color;
+    gD.context.fillRect(this.x, this.y, this.width, this.height);
+
+    gD.context.drawImage(gD.spritesheet, gD.spriteDict["Currency2"][0], gD.spriteDict["Currency2"][1], gD.spriteDict["Currency2"][2], gD.spriteDict["Currency2"][3],
+      this.x + this.width - gD.spriteDict["Currency2"][2] - 2, this.y + ((this.height - gD.spriteDict["Currency2"][3]) / 2), gD.spriteDict["Currency2"][2], gD.spriteDict["Currency2"][3]);
+
+    gD.context.textAlign = "end";
+    gD.context.textBaseline = "alphabetic";
+    gD.context.font = this.size + " " + this.family;
+    gD.context.fillStyle = this.textcolor;
+    gD.context.fillText(this.text, this.x + this.width - gD.spriteDict["Currency2"][2] - 4, this.y + ((this.height - gD.spriteDict["Currency2"][3]) / 2) + gD.spriteDict["Currency2"][3]);
+
+    gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
+    gD.context.lineWidth = this.bordersize;
+    gD.context.strokeRect(this.x, this.y, this.width, this.height);
+  };
+}
+
+function ShopTab(x, y, width, height, size, family, color, text, textcolor, bordersize) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.size = size;
+  this.family = family;
+  this.color = color;
+  this.text = text;
+  this.textcolor = textcolor;
+  this.bordersize = bordersize;
+  this.active = false;
+  this.selected = false;
+  this.activate = function() {
+    this.active = true;
+  };
+  this.deactivate = function() {
+    this.active = false;
+  };
+  this.select = function() {
+    this.selected = true;
+  };
+  this.deselect = function() {
+    this.selected = false;
+  };
+  this.update = function(gD) {
+    if (this.selected) {
+      gD.context.fillStyle = "rgba(180, 50, 50, 1)";
+    } else if (this.active) {
+      gD.context.fillStyle = this.color;
+    } else {
+      gD.context.fillStyle = "rgba(98, 98, 98, 1)";
+    }
+    gD.context.fillRect(this.x, this.y, this.width, this.height);
+    gD.context.textAlign = "center";
+    gD.context.textBaseline = "middle";
+    gD.context.font = this.size + " " + this.family;
+    gD.context.fillStyle = this.textcolor;
+    gD.context.fillText(this.text, this.x + (this.width / 2), this.y + (this.height / 2));
+    gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
+    gD.context.lineWidth = this.bordersize;
+    gD.context.strokeRect(this.x, this.y, this.width, this.height);
+  };
+}
+
+function ShopEntryPlayer(x, y, width, height, size, family, color, playerNr, desc, price, bordersize) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.size = size;
+  this.family = family;
+  this.color = color;
+  this.playerNr = playerNr;
+  this.desc = desc;
+  this.price = price;
+  this.bordersize = bordersize;
+  this.showcase = new EntryShowcase(this.x + (this.width / 2) - 30, this.y + 20, 60, 60, "Player" + this.playerNr + "B", this.bordersize);
+  this.cost = new EntryCost(this.x + 10, this.y + 175, 180, 15, "10pt", "Consolas", this.price, this.bordersize);
+  this.buy = function(shop) {
+    if (shop.cash > this.price && !shop.gD.playerUnlocked[this.playerNr - 2]) {
+      shop.cash -= this.price;
+      shop.gD.playerUnlocked[this.playerNr - 2] = true;
+    }
+    shop.gD.save.playerUnlocked = shop.gD.playerUnlocked;
+    shop.gD.save.cash = shop.cash;
+  };
+  this.update = function(shop, gD) {
+    gD.context.fillStyle = this.color;
+    gD.context.fillRect(this.x, this.y, this.width, this.height);
+    gD.context.textAlign = "center";
+    gD.context.textBaseline = "middle";
+    gD.context.font = this.size + " " + this.family;
+    gD.context.fillStyle = "rgba(0, 0, 0, 1)";
+    gD.context.fillText(this.desc, this.x + (this.width / 2), this.y + 100);
+    gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
+    gD.context.lineWidth = this.bordersize;
+    gD.context.strokeRect(this.x, this.y, this.width, this.height);
+
+    this.showcase.update(gD);
+    this.cost.update(gD);
+
+    if (shop.gD.playerUnlocked[this.playerNr - 2]) {
+      gD.context.translate(this.x + (this.width / 2), this.y + 50);
+      gD.context.rotate(-20 * Math.PI / 180);
+      gD.context.textAlign = "center";
+      gD.context.textBaseline = "middle";
+      gD.context.font = "20pt Stencil";
+      gD.context.fillStyle = "rgba(255, 0, 0, 1)";
+      gD.context.fillText("Gekauft!", 0, 0);
+      gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
+      gD.context.lineWidth = 1;
+      gD.context.strokeText("Gekauft!", 0, 0);
+      gD.context.rotate(20 * Math.PI / 180);
+      gD.context.translate(-(this.x + (this.width / 2)), -(this.y + 50));
+    }
+  };
+}
+
+function ShopEntryItem(x, y, width, height, size, family, color, itemNr, desc, bordersize) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.size = size;
+  this.family = family;
+  this.color = color;
+  this.itemNr = itemNr;
+  this.desc = desc;
+  this.bordersize = bordersize;
+  this.showcase = new EntryShowcase(this.x + (this.width / 2) - 30, this.y + 20, 60, 60, "Item" + this.itemNr + "B", this.bordersize);
+  this.costUpgrade = new EntryCost(this.x + 10, this.y + 130, 100, 15, "10pt", "Consolas", 0, this.bordersize);
+  this.costDowngrade = new EntryCost(this.x + 10, this.y + 175, 100, 15, "10pt", "Consolas", 0, this.bordersize);
+  this.upgrade = function(shop) {
+    if (shop.cash > Math.floor(shop.gD.itemStartValue[this.itemNr - 1] * Math.pow(shop.costFactors[1], shop.level[this.itemNr - 1])) && shop.level[this.itemNr - 1] < 10) {
+      shop.cash -= Math.floor(shop.gD.itemStartValue[this.itemNr - 1] * Math.pow(shop.costFactors[1], shop.level[this.itemNr - 1]));
+      shop.level[this.itemNr - 1]++;
+      if (!shop.menu.achievements.achievementList.achievements[23].finished) {
+        shop.menu.achievements.achievementValues[23]++;
+        shop.menu.achievements.achievementList.achievements[23].check(shop.menu.achievements);
+      }
+    }
+    var maxed = shop.level.reduce(function(a, b){b == 10 ? a++ : a; return a;}, 0);
+    if (!shop.menu.achievements.achievementList.achievements[24].finished && shop.menu.achievements.achievementValues[24] < maxed) {
+      shop.menu.achievements.achievementValues[24] = maxed;
+      shop.menu.achievements.achievementList.achievements[24].check(shop.menu.achievements);
+    }
+    if (!shop.menu.achievements.achievementList.achievements[25].finished && shop.menu.achievements.achievementValues[25] < maxed) {
+      shop.menu.achievements.achievementValues[25] = maxed;
+      shop.menu.achievements.achievementList.achievements[25].check(shop.menu.achievements);
+    }
+    shop.gD.save.level = shop.level;
+    shop.gD.save.cash = shop.cash;
+  };
+  this.downgrade = function(shop) {
+    if (shop.cash > Math.floor(shop.gD.itemStartValue[this.itemNr - 1] * Math.pow(shop.costFactors[0], shop.level[this.itemNr - 1])) && shop.level[this.itemNr - 1] > 0) {
+      shop.cash -= Math.floor(shop.gD.itemStartValue[this.itemNr - 1] * Math.pow(shop.costFactors[0], shop.level[this.itemNr - 1]));
+      shop.level[this.itemNr - 1]--;
+    }
+    shop.gD.save.level = shop.level;
+    shop.gD.save.cash = shop.cash;
+  };
+  this.update = function(shop, gD) {
+    gD.context.fillStyle = this.color;
+    gD.context.fillRect(this.x, this.y, this.width, this.height);
+    gD.context.textAlign = "center";
+    gD.context.textBaseline = "middle";
+    gD.context.font = this.size + " " + this.family;
+    gD.context.fillStyle = "rgba(0, 0, 0, 1)";
+    gD.context.fillText(this.desc, this.x + (this.width / 2), this.y + 90);
+    switch (shop.level[this.itemNr - 1]) {
+      case 0:
+        this.costUpgrade.value = Math.floor(gD.itemStartValue[this.itemNr - 1] * Math.pow(shop.costFactors[1], shop.level[this.itemNr - 1]));
+        this.costDowngrade.value = "---";
+        this.showcase.info = shop.level[this.itemNr - 1];
+        break;
+      case 10:
+        this.costUpgrade.value = "---";
+        this.costDowngrade.value = Math.floor(gD.itemStartValue[this.itemNr - 1] * Math.pow(shop.costFactors[0], shop.level[this.itemNr - 1]));
+        this.showcase.info = shop.level[this.itemNr - 1];
+        break;
+      default:
+        this.costUpgrade.value = Math.floor(gD.itemStartValue[this.itemNr - 1] * Math.pow(shop.costFactors[1], shop.level[this.itemNr - 1]));
+        this.costDowngrade.value = Math.floor(gD.itemStartValue[this.itemNr - 1] * Math.pow(shop.costFactors[0], shop.level[this.itemNr - 1]));
+        this.showcase.info = shop.level[this.itemNr - 1];
+    }
+
+    this.costUpgrade.update(gD);
+    this.costDowngrade.update(gD);
+    this.showcase.update(gD);
+
+    gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
+    gD.context.lineWidth = this.bordersize;
+    gD.context.strokeRect(this.x, this.y, this.width, this.height);
+  };
+}
+
+function EntryShowcase(x, y, width, height, name, bordersize) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.name = name;
+  this.bordersize = bordersize;
+  this.info = "";
+  this.update = function(gD) {
+    gD.context.fillStyle = "rgba(255, 255, 255, 1)";
+    gD.context.fillRect(this.x, this.y, this.width, this.height);
+    gD.context.drawImage(gD.spritesheet, gD.spriteDict[this.name][0], gD.spriteDict[this.name][1], gD.spriteDict[this.name][2], gD.spriteDict[this.name][3], 
+      this.x + ((this.width - gD.spriteDict[this.name][2]) / 2), this.y + ((this.height - gD.spriteDict[this.name][3]) / 2), gD.spriteDict[this.name][2], gD.spriteDict[this.name][3]);
+    gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
+    gD.context.lineWidth = this.bordersize;
+    gD.context.strokeRect(this.x, this.y, this.width, this.height);
+
+    gD.context.textAlign = "end";
+    gD.context.textBaseline = "alphabetic";
+    gD.context.font = "10pt Consolas";
+    gD.context.fillStyle = "rgba(0, 0, 0, 1)";
+    gD.context.fillText(this.info, this.x + this.width - 2, this.y + this.height - 2);
+  };
+}
+
+function EntryCost(x, y, width, height, size, family, value, bordersize) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.size = size;
+  this.family = family;
+  this.bordersize = bordersize;
+  this.value = value;
+  this.update = function(gD) {
+    gD.context.textAlign = "end";
+    gD.context.textBaseline = "alphabetic";
+    gD.context.font = this.size + " " + this.family;
+    gD.context.lineWidth = this.bordersize;
+    gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
+    gD.context.fillStyle = "rgba(220, 255, 220, 1)";
+    gD.context.fillRect(this.x, this.y, this.width, this.height);
+    gD.context.strokeRect(this.x, this.y, this.width, this.height);
+    gD.context.drawImage(gD.spritesheet, gD.spriteDict["Currency1"][0], gD.spriteDict["Currency1"][1], gD.spriteDict["Currency1"][2], gD.spriteDict["Currency1"][3], 
+      this.x + this.width - gD.spriteDict["Currency1"][2] - 2, this.y + ((this.height - gD.spriteDict["Currency1"][3]) / 2), gD.spriteDict["Currency1"][2], gD.spriteDict["Currency1"][3]);
+    gD.context.fillStyle = "rgba(0, 0, 0, 1)";
+    gD.context.fillText(this.value, this.x + this.width - gD.spriteDict["Currency1"][2] - 4, this.y + ((this.height - gD.spriteDict["Currency1"][3]) / 2) + gD.spriteDict["Currency1"][3]);
+  };
+}
+
+function shopControlDown(shop, key) {
+  if (shop.menu.controls.keyBindings["Shop1"][2].includes(key)) {                       //navigation down
+    if (shop.active == 0) {
+      switch (shop.selected) {
+        case -1:
+          shop.tabs[0].deselect();
+          shop.buttons[0].select();
+          shop.selected = 0;
+          break;
+        case (shop.buttons.length - 1):
+          shop.buttons[shop.selected].deselect();
+          shop.tabs[0].select();
+          shop.selected = -1;
+          break;
+        default:
+          shop.buttons[shop.selected].deselect();
+          shop.buttons[shop.buttons.length - 1].select();
+          shop.selected = shop.buttons.length - 1;
+      }
+    } else {
+      switch (shop.selected) {
+        case -2:
+          shop.tabs[1].deselect();
+          shop.buttons[3].select();
+          shop.selected = 3;
+          break;
+        case (shop.buttons.length - 1):
+          shop.buttons[shop.selected].deselect();
+          shop.tabs[1].select();
+          shop.selected = -2;
+          break;
+        case 3:
+        case 5:
+        case 7:
+        case 9:
+        case 11:
+          shop.buttons[shop.selected].deselect();
+          shop.buttons[shop.selected + 1].select();
+          shop.selected += 1;
+          break;
+        default:
+          shop.buttons[shop.selected].deselect();
+          shop.buttons[shop.buttons.length - 1].select();
+          shop.selected = shop.buttons.length - 1;
+      }
+    }
+  } else if (shop.menu.controls.keyBindings["Shop2"][2].includes(key)) {                //navigation up
+    if (shop.active == 0) {
+      switch (shop.selected) {
+        case -1:
+          shop.tabs[0].deselect();
+          shop.buttons[shop.buttons.length - 1].select();
+          shop.selected = shop.buttons.length - 1;
+          break;
+        case (shop.buttons.length - 1):
+          shop.buttons[shop.selected].deselect();
+          shop.buttons[0].select();
+          shop.selected = 0;
+          break;
+        default:
+          shop.buttons[shop.selected].deselect();
+          shop.tabs[0].select();
+          shop.selected = -1;
+      }
+    } else {
+      switch (shop.selected) {
+        case -2:
+          shop.tabs[1].deselect();
+          shop.buttons[shop.buttons.length - 1].select();
+          shop.selected = shop.buttons.length - 1;
+          break;
+        case (shop.buttons.length - 1):
+          shop.buttons[shop.selected].deselect();
+          shop.buttons[4].select();
+          shop.selected = 4;
+          break;
+        case 4:
+        case 6:
+        case 8:
+        case 10:
+        case 12:
+          shop.buttons[shop.selected].deselect();
+          shop.buttons[shop.selected - 1].select();
+          shop.selected -= 1;
+          break;
+        default:
+          shop.buttons[shop.selected].deselect();
+          shop.tabs[1].select();
+          shop.selected = -2;
+      }
+    }
+  } else if (shop.menu.controls.keyBindings["Shop3"][2].includes(key)) {                //navigation right
+    if (shop.active == 0) {
+      switch (shop.selected) {
+        case -1:
+          shop.tabs[0].deselect();
+          shop.tabs[0].deactivate();
+          shop.tabs[1].select();
+          shop.tabs[1].activate();
+          shop.active = 1;
+          shop.selected = -2;
+          break;
+        case (shop.buttons.length - 1):
+          break;
+        default:
+          shop.buttons[shop.selected].deselect();
+          shop.buttons[(shop.selected + 1) % 3].select();
+          shop.selected = (shop.selected + 1) % 3;
+      }
+    } else {
+      switch (shop.selected) {
+        case -2:
+          shop.tabs[1].deselect();
+          shop.tabs[1].deactivate();
+          shop.tabs[0].select();
+          shop.tabs[0].activate();
+          shop.active = 0;
+          shop.selected = -1;
+          break;
+        case (shop.buttons.length - 1):
+          break;
+        default:
+          shop.buttons[shop.selected].deselect();
+          shop.buttons[((shop.selected - 1) % 10) + 3].select();
+          shop.selected = ((shop.selected - 1) % 10) + 3;
+      }
+    }
+  } else if (shop.menu.controls.keyBindings["Shop4"][2].includes(key)) {                //navigation left
+    if (shop.active == 0) {
+      switch (shop.selected) {
+        case -1:
+          shop.tabs[0].deselect();
+          shop.tabs[0].deactivate();
+          shop.tabs[1].select();
+          shop.tabs[1].activate();
+          shop.active = 1;
+          shop.selected = -2;
+          break;
+        case (shop.buttons.length - 1):
+          break;
+        default:
+          shop.buttons[shop.selected].deselect();
+          shop.buttons[(shop.selected + 2) % 3].select();
+          shop.selected = (shop.selected + 2) % 3;
+      }
+    } else {
+      switch (shop.selected) {
+        case -2:
+          shop.tabs[1].deselect();
+          shop.tabs[1].deactivate();
+          shop.tabs[0].select();
+          shop.tabs[0].activate();
+          shop.active = 0;
+          shop.selected = -1;
+          break;
+        case (shop.buttons.length - 1):
+          break;
+        default:
+          shop.buttons[shop.selected].deselect();
+          shop.buttons[((shop.selected + 15) % 10) + 3].select();
+          shop.selected = ((shop.selected + 15) % 10) + 3;
+      }
+    }
+  }
+
+  if (shop.menu.controls.keyBindings["Shop5"][2].includes(key)) {                                    //confirm
+    if (shop.active == 0) {
+      switch (shop.selected) {
+        case -1:
+          break;
+        case (shop.buttons.length - 1):
+          shop.menu.show();
+          shop.stop();
+          break;
+        default:
+          shop.shopEntries[shop.selected].buy(shop);
+          drawShop(shop);
+      }
+    } else {
+      switch (shop.selected) {
+        case -2:
+          break;
+        case (shop.buttons.length - 1):
+          shop.menu.show();
+          shop.stop();
+          break;
+        default:
+          if (shop.selected % 2 == 1) {
+            shop.shopEntries[((shop.selected - 3) / 2) + 3].upgrade(shop);
+          } else {
+            shop.shopEntries[((shop.selected - 4) / 2) + 3].downgrade(shop);
+          }
+          drawShop(shop);
+      }
+    }
+  } else {
+    drawShop(shop);
+  }
+}
+
+function shopControlUp(shop, key) {
+
+}
+
+function drawShop(shop) {
+  shop.clear();
+
+  shop.gD.context.drawImage(shop.backgroundImage, 0, 0);
+
+  shop.title.update(shop.gD);
+  shop.money.update(shop, shop.gD);
+  for (var i = 0; i < shop.tabs.length; i++) {
+    shop.tabs[i].update(shop.gD);
+  }
+
+  switch (shop.active) {
+    case 0:
+      for (var i = 0; i < 3; i++) {
+        shop.shopEntries[i].update(shop, shop.gD);
+      }
+      for (var i = 0; i < 3; i++) {
+        shop.buttons[i].update(shop.gD);
+      }
+      break;
+    default:
+      for (var i = 3; i < shop.shopEntries.length; i++) {
+        shop.shopEntries[i].update(shop, shop.gD);
+      }
+      for (var i = 3; i < shop.buttons.length - 1; i++) {
+        shop.buttons[i].update(shop.gD);
+      }
+  }
+
+  shop.buttons[shop.buttons.length - 1].update(shop.gD);
+}

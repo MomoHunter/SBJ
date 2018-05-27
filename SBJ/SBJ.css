@@ -15,7 +15,7 @@ body {
   color: #99AAB5;
 }
 
-#startGame {
+#start {
   border: 1px solid rgba(145,165,180,.6);
   border-radius: 4px;
   color: rgba(145,165,180,.6);
@@ -28,25 +28,7 @@ body {
   cursor: pointer;
 }
 
-#toggleGame {
-  border: 1px solid rgba(145,165,180,.6);
-  border-radius: 4px;
-  color: rgba(145,165,180,.6);
-  display: none;
-  margin-bottom: 5px;
-  text-align: center;
-  width: 100px;
-  vertical-align: middle;
-  line-height: 25px;
-  cursor: pointer;
-}
-
-#startGame:hover {
-  color: black;
-  background-color: #99AAB5;
-}
-
-#toggleGame:hover {
+#start:hover {
   color: black;
   background-color: #99AAB5;
 }
