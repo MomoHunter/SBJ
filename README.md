@@ -32,7 +32,7 @@ Die Standardsteuerung liegt auf den WASD-Tasten und den Pfeil-Tasten, kann aber 
 
 ## Spielen
 
-Um das Spiel zu starten muss die HTML-Datei geöffnet und anschließend auf den "Start"-Knopf gedrückt werden. Danach ist die Steuerung ausschließlich über die Tastatur.
+Um das Spiel zu starten muss die HTML-Datei geöffnet und anschließend auf den "Start"-Knopf gedrückt werden.
 
 ## Support
 
