@@ -36,4 +36,4 @@ Um das Spiel zu starten muss die HTML-Datei geöffnet und anschließend auf den 
 
 ## Support
 
-Das Spiel sollte in allen modernen Browsern laufen.
+Das Spiel sollte in allen modernen Browsern laufen. Außer in Edge.
