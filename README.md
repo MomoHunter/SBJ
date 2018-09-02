@@ -4,7 +4,7 @@ Super Block Jump ist ein in Javascript geschriebenes Jump'n'Run-Spiel, welches d
 
 ## Spielprinzip
 
-Der Spieler ist ein Rechteck, welches von Plattform zu Plattform springt. Fällt er in die Lava, ist die Runde vorbei. Aus der Lava springen ab und zu kleine Feuerbälle, die bei Berührung auch die Runde beenden.
+Der Spieler ist ein Rechteck, welches von Plattform zu Plattform springt. Fällt er runter ist die Runde vorbei. Es gibt verschiedene Stages, mit unterschiedlichen Gegnern.
 Während der Runde gibt es auf dem Weg Geldscheine und Items, die aufgesammelt werden können. Die Geldscheine können im Shop gegen neue Charaktere oder Itemupgrades verwendet werden.
 
 ## Shop
