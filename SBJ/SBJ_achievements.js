@@ -10,37 +10,38 @@
     "A2" : ["Gold!? Ich bin reich!!!", "Sammle die erste Schatztruhe", 1],
     "A3" : ["Er kann fliegen", "Entdecke den Doppelsprung", 1],
     "A4" : ["$$$$", "Sammle den ersten 1000 Hype Schein", 1],
-    "A5" : ["Von allem etwas", "Benutze jedes Item einmal in einer Runde", 5],
+    "A5" : ["Von allem etwas", "Benutze jedes Item einmal in einer Runde", 6],
     "A6" : ["Matrix", "Benutze 5 Stoppuhren in einer Runde", 5],
     "A7" : ["Unverwundbar", "Benutze 5 Sterne in einer Runde", 5],
     "A8" : ["Federleicht", "Benutze 5 Federn in einer Runde", 5],
     "A9" : ["Lucky No5", "Benutze 5 Schatzkisten in einer Runde", 5],
     "A10" : ["Supermagnet", "Benutze 5 Magnete in einer Runde", 5],
-    "A11" : ["Infinite Power", "Benutze alle Items gleichzeitig", 5],
-    "A12" : ["Verlangsamung", "Verlangsame die Zeit für insgesamt eine Stunde oder 3.600 Sekunden", 3600],
-    "A13" : ["Outta Space", "Verlasse 100 Mal die Spielfläche", 100],
-    "A14" : ["Tagelöhner", "Sammle 100 Hype in einer Runde", 100],
-    "A15" : ["Ein neuer PC", "Sammle 2.000 Hype in einer Runde", 2000],
-    "A16" : ["It's over 9000!!", "Sammle 9.001 Hype in einer Runde", 9001],
-    "A17" : ["24K Magic", "Sammle 24.000 Hype in einer Runde", 24000],
-    "A18" : ["1000m Sprint", "Lege eine Distanz von 1.000m in einer Runde zurück", 1000],
-    "A19" : ["5Km Rennen", "Lege eine Distanz von 5.000m in einer Runde zurück", 5000],
-    "A20" : ["Ausdauerprofi", "Lege eine Distanz von 10.000m in einer Runde zurück", 10000],
-    "A21" : ["Geisterfahrer", "Lege insgesamt 5.000m in die falsche Richtung zurück", 5000],
-    "A22" : ["Flummi", "Springe insgesamt 100.000 Mal", 100000],
-    "A23" : ["In letzter Sekunde", "Setze einen Stern ein, kurz bevor du die Lava berührst", 1],
-    "A24" : ["Upgrade", "Level ein Item", 1],
-    "A25" : ["To the Max", "Level eine Sache auf das Maximum", 1],
-    "A26" : ["Maximize", "Level alles auf das Maximum", 5],
-    "A27" : ["YOU DIED", "Sterbe 1.000 Mal", 1000],
-    "A28" : ["Gutverdiener", "Sammle insgesamt 1.000.000 Hype", 1000000],
-    "A29" : ["Endlich reich", "Besitze 1.000.000 Hype", 1000000],
-    "A30" : ["I would walk 500 Miles", "Lege eine gesamte Distanz von 804.672m zurück", 804672],
-    "A31" : ["Glücksbringer", "Sammle das erste goldene Kleeblatt", 1],
-    "A32" : ["Wow, so viel Glück", "Sammle 25 goldene Kleeblätter", 25],
-    "A33" : ["50:50", "Sammle 50 goldene Kleeblätter", 50],
-    "A34" : ["Für immer Glück", "Sammle 100 goldene Kleeblätter", 100],
-    "A35" : ["Achievementhunter", "Sammle alle anderen Achievements", 34]
+    "A11" : ["Rocketboy", "Benutze 5 Raketen in einer Runde", 5],
+    "A12" : ["Infinite Power", "Benutze alle Items gleichzeitig", 6],
+    "A13" : ["Verlangsamung", "Verlangsame die Zeit für insgesamt eine Stunde oder 3.600 Sekunden", 3600],
+    "A14" : ["Outta Space", "Verlasse 100 Mal die Spielfläche", 100],
+    "A15" : ["Tagelöhner", "Sammle 100 Hype in einer Runde", 100],
+    "A16" : ["Ein neuer PC", "Sammle 2.000 Hype in einer Runde", 2000],
+    "A17" : ["It's over 9000!!", "Sammle 9.001 Hype in einer Runde", 9001],
+    "A18" : ["24K Magic", "Sammle 24.000 Hype in einer Runde", 24000],
+    "A19" : ["1000m Sprint", "Lege eine Distanz von 1.000m in einer Runde zurück", 1000],
+    "A20" : ["5Km Rennen", "Lege eine Distanz von 5.000m in einer Runde zurück", 5000],
+    "A21" : ["Ausdauerprofi", "Lege eine Distanz von 10.000m in einer Runde zurück", 10000],
+    "A22" : ["Geisterfahrer", "Lege insgesamt 5.000m in die falsche Richtung zurück", 5000],
+    "A23" : ["Flummi", "Springe insgesamt 100.000 Mal", 100000],
+    "A24" : ["In letzter Sekunde", "Setze einen Stern ein, kurz bevor du die Lava berührst", 1],
+    "A25" : ["Upgrade", "Level ein Item", 1],
+    "A26" : ["To the Max", "Level eine Sache auf das Maximum", 1],
+    "A27" : ["Maximize", "Level alles auf das Maximum", 5],
+    "A28" : ["YOU DIED", "Sterbe 1.000 Mal", 1000],
+    "A29" : ["Gutverdiener", "Sammle insgesamt 1.000.000 Hype", 1000000],
+    "A30" : ["Endlich reich", "Besitze 1.000.000 Hype", 1000000],
+    "A31" : ["I would walk 500 Miles", "Lege eine gesamte Distanz von 804.672m zurück", 804672],
+    "A32" : ["Glücksbringer", "Sammle das erste goldene Kleeblatt", 1],
+    "A33" : ["Wow, so viel Glück", "Sammle 25 goldene Kleeblätter", 25],
+    "A34" : ["50:50", "Sammle 50 goldene Kleeblätter", 50],
+    "A35" : ["Für immer Glück", "Sammle 100 goldene Kleeblätter", 100],
+    "A36" : ["Achievementhunter", "Sammle alle anderen Achievements", 35]
   };
   this.achievementValues = new Array(Object.keys(this.achievementDict).length).fill(0);
   this.init = function() {
@@ -83,11 +84,11 @@ function AchievementList(x, y, width, height, color, bordersize) {
       this.achievements.push(new Achievement(this.x + 30 + ((i % 5) * 50), this.y + 20 + (Math.floor(i / 5) * 50), 40, 40, i + 1, 2));
     }
   };
-  this.vShift = function(factor) {
+  this.vShift = function(shiftFactor) {
     for (var i = 0; i < this.achievements.length; i++) {
-      this.achievements[i].y -= factor * 50;
+      this.achievements[i].y -= shiftFactor * 50;
     }
-    this.shiftFactor += factor;
+    this.shiftFactor += shiftFactor;
   };
   this.update = function(gD) {
     gD.context.fillStyle = this.color;
@@ -127,10 +128,10 @@ function Achievement(x, y, width, height, achievementNr, bordersize) {
       achievements.achievementValues[this.achievementNr - 1] = achievements.achievementDict["A" + this.achievementNr][2];
     }
     var temp = achievements.achievementList.achievements.reduce(function(a, b){b.finished ? a++ : a; return a;}, 0);
-    if (!achievements.achievementList.achievements[34].finished && achievements.achievementValues[34] < temp) {
-      achievements.achievementValues[34] = temp;
-      achievements.achievementList.achievements[34].check(achievements);
-      if (achievements.achievementList.achievements[34].finished) {
+    if (!achievements.achievementList.achievements[35].finished && achievements.achievementValues[35] < temp) {
+      achievements.achievementValues[35] = temp;
+      achievements.achievementList.achievements[35].check(achievements);
+      if (achievements.achievementList.achievements[35].finished) {
         achievements.gD.playerUnlocked[5] = true;
         achievements.gD.save.playerUnlocked = achievements.gD.playerUnlocked;
       }
@@ -287,7 +288,7 @@ function achievementsControlDown(achievements, key) {
       achievements.achievementList.achievements[achievements.selected].deselect();
       achievements.achievementList.achievements[achievements.selected + 5].select(achievements);
       achievements.selected += 5;
-      if (achievements.selected >= (achievements.achievementList.shiftFactor * 5) + 15 && achievements.selected < achievements.achievementList.achievements.length - 1 - ((achievements.achievementList.achievements.length - 1) % 5)) {
+      if (achievements.achievementList.achievements[achievements.achievementList.achievements.length - 1].y > 230 && achievements.achievementList.achievements[achievements.selected].y > 180) {
         achievements.achievementList.vShift(1);
       }
     }
@@ -311,7 +312,7 @@ function achievementsControlDown(achievements, key) {
       achievements.achievementList.achievements[achievements.selected].deselect();
       achievements.achievementList.achievements[achievements.selected - 5].select(achievements);
       achievements.selected -= 5;
-      if (achievements.selected < (achievements.achievementList.shiftFactor * 5) + 5 && achievements.selected >= 5) {
+      if (achievements.achievementList.achievements[0].y < 80 && achievements.achievementList.achievements[achievements.selected].y < 130) {
         achievements.achievementList.vShift(-1);
       }
     }
@@ -344,6 +345,9 @@ function achievementsControlDown(achievements, key) {
       achievements.menu.show();
       achievements.stop();
     }
+  } else if (achievements.menu.controls.keyBindings["Achievements6"][2].includes(key)) {                             //abort
+    achievements.menu.show();
+    achievements.stop();
   } else {
     drawAchievements(achievements);
   }
@@ -351,6 +355,71 @@ function achievementsControlDown(achievements, key) {
 
 function achievementsControlUp(achievements, key) {
 
+}
+
+function achievementsMouseMove(achievements) {
+  for (var i = (achievements.achievementList.shiftFactor * 5); i < Math.min(20 + (achievements.achievementList.shiftFactor * 5), achievements.achievementList.achievements.length); i++) {
+    if (achievements.gD.mousePos.x >= achievements.achievementList.achievements[i].x && achievements.gD.mousePos.x <= achievements.achievementList.achievements[i].x + achievements.achievementList.achievements[i].width &&
+        achievements.gD.mousePos.y >= achievements.achievementList.achievements[i].y && achievements.gD.mousePos.y <= achievements.achievementList.achievements[i].y + achievements.achievementList.achievements[i].height) {
+      if (achievements.selected < 0) {
+        achievements.backToMenu.deselect();
+      } else {
+        achievements.achievementList.achievements[achievements.selected].deselect();
+      }
+      achievements.achievementList.achievements[i].select(achievements);
+      achievements.selected = i;
+      break;
+    }
+  }
+
+  if (achievements.gD.mousePos.x >= achievements.backToMenu.x && achievements.gD.mousePos.x <= achievements.backToMenu.x + achievements.backToMenu.width &&
+      achievements.gD.mousePos.y >= achievements.backToMenu.y && achievements.gD.mousePos.y <= achievements.backToMenu.y + achievements.backToMenu.height) {
+    if (achievements.selected < 0) {
+      achievements.backToMenu.deselect();
+    } else {
+      achievements.achievementList.achievements[achievements.selected].deselect();
+    }
+    achievements.backToMenu.select();
+    if (achievements.selected >= 0) {
+      achievements.selected = -((achievements.selected % 5) + 1);
+    }
+  }
+  drawAchievements(achievements);
+}
+
+function achievementsClick(achievements) {
+  if (achievements.selected < 0) {
+    if (achievements.gD.mousePos.x >= achievements.backToMenu.x && achievements.gD.mousePos.x <= achievements.backToMenu.x + achievements.backToMenu.width &&
+        achievements.gD.mousePos.y >= achievements.backToMenu.y && achievements.gD.mousePos.y <= achievements.backToMenu.y + achievements.backToMenu.height) {
+      achievements.menu.show();
+      achievements.stop();
+    }
+  }
+}
+
+function achievementsWheel(achievements, event) {
+  if (achievements.selected >= 0) {
+    if (event.deltaY > 0) {
+      if (achievements.selected + 5 < achievements.achievementList.achievements.length) {
+        achievements.achievementList.achievements[achievements.selected].deselect();
+        achievements.achievementList.achievements[achievements.selected + 5].select(achievements);
+        achievements.selected += 5;
+        if (achievements.achievementList.achievements[achievements.achievementList.achievements.length - 1].y > 230 && achievements.achievementList.achievements[achievements.selected].y > 180) {
+          achievements.achievementList.vShift(1);
+        }
+      }
+    } else {
+      if (achievements.selected - 5 >= 0) {
+        achievements.achievementList.achievements[achievements.selected].deselect();
+        achievements.achievementList.achievements[achievements.selected - 5].select(achievements);
+        achievements.selected -= 5;
+        if (achievements.achievementList.achievements[0].y < 80 && achievements.achievementList.achievements[achievements.selected].y < 130) {
+          achievements.achievementList.vShift(-1);
+        }
+      }
+    }
+    drawAchievements(achievements);
+  }
 }
 
 function drawAchievements(achievements) {

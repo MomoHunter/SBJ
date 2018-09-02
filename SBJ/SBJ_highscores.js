@@ -118,9 +118,9 @@ function Highscore(x, y, width, height, color, highscoreNr, bordersize) {
   this.highscoreNr = highscoreNr;
   this.bordersize = bordersize;
   this.fields = [];
-  this.fields.push(new HighscoreName(this.x + 50, this.y, this.width - 200, this.height, this.color, this.highscoreNr, this.bordersize));
-  this.fields.push(new HighscoreField(this.x + this.width - 200, this.y, 100, this.height, this.color, this.highscoreNr, 1, this.bordersize));
-  this.fields.push(new HighscoreField(this.x + this.width - 100, this.y, 100, this.height, this.color, this.highscoreNr, 2, this.bordersize));
+  this.fields.push(new HighscoreName(this.x + 50, this.y, this.width - 250, this.height, this.color, this.highscoreNr, this.bordersize));
+  this.fields.push(new HighscoreField(this.x + this.width - 200, this.y, 70, this.height, this.color, this.highscoreNr, 1, this.bordersize));
+  this.fields.push(new HighscoreField(this.x + this.width - 130, this.y, 130, this.height, this.color, this.highscoreNr, 2, this.bordersize));
   this.update = function(highscores, gD) {
     gD.context.fillStyle = this.color;
     gD.context.fillRect(this.x, this.y, 50, this.height);
@@ -288,22 +288,25 @@ function highscoresControlDown(highscores, event) {
         highscores.oldName = highscores.highscores[(highscores.selected + 1).toString()][0];
         drawHighscores(highscores);
       }
+    } else if (highscores.menu.controls.keyBindings["Highscores4"][2].includes(event.keyCode)) {
+      highscores.menu.show();
+      highscores.stop();
     } else {
       drawHighscores(highscores);
     }
   } else {
-    if (highscores.menu.controls.keyBindings["Highscores4"][2].includes(event.keyCode)) {                     //navigation right
+    if (highscores.menu.controls.keyBindings["Highscores5"][2].includes(event.keyCode)) {                     //navigation right
       highscores.highscoreList.highscores[highscores.selected].fields[0].moveCursor(highscores, 1);
-    } else if (highscores.menu.controls.keyBindings["Highscores5"][2].includes(event.keyCode)) {              //navigation left
+    } else if (highscores.menu.controls.keyBindings["Highscores6"][2].includes(event.keyCode)) {              //navigation left
       highscores.highscoreList.highscores[highscores.selected].fields[0].moveCursor(highscores, -1);
-    } else if (highscores.menu.controls.keyBindings["Highscores6"][2].includes(event.keyCode)) {              //delete character left
+    } else if (highscores.menu.controls.keyBindings["Highscores7"][2].includes(event.keyCode)) {              //delete character left
       highscores.highscoreList.highscores[highscores.selected].fields[0].deleteCharacter(highscores, -1);
-    } else if (highscores.menu.controls.keyBindings["Highscores7"][2].includes(event.keyCode)) {              //delete character right
+    } else if (highscores.menu.controls.keyBindings["Highscores8"][2].includes(event.keyCode)) {              //delete character right
       highscores.highscoreList.highscores[highscores.selected].fields[0].deleteCharacter(highscores, 1);
     } else if (highscores.menu.controls.keyBindings["Highscores3"][2].includes(event.keyCode)) {              //confirm
       highscores.editingMode = false;
       highscores.highscoreList.highscores[highscores.selected].fields[0].moveCursor(highscores, -highscores.highscoreList.highscores[highscores.selected].fields[0].cursorPosition);
-    } else if (highscores.menu.controls.keyBindings["Highscores8"][2].includes(event.keyCode)) {
+    } else if (highscores.menu.controls.keyBindings["Highscores9"][2].includes(event.keyCode)) {              //abort
       highscores.editingMode = false;
       highscores.highscoreList.highscores[highscores.selected].fields[0].moveCursor(highscores, -highscores.highscoreList.highscores[highscores.selected].fields[0].cursorPosition);
       highscores.highscores[(highscores.selected + 1).toString()][0] = highscores.oldName;
@@ -318,6 +321,86 @@ function highscoresControlUp(highscores, key) {
 
 }
 
+function highscoresMouseMove(highscores) {
+  if (!highscores.editingMode) {
+    for (var i = highscores.highscoreList.shiftFactor; i < Math.min(10 + highscores.highscoreList.shiftFactor, highscores.highscoreList.highscores.length); i++) {
+      if (highscores.gD.mousePos.x >= highscores.highscoreList.highscores[i].fields[0].x && highscores.gD.mousePos.x <= highscores.highscoreList.highscores[i].fields[0].x + highscores.highscoreList.highscores[i].fields[0].width &&
+          highscores.gD.mousePos.y >= highscores.highscoreList.highscores[i].fields[0].y && highscores.gD.mousePos.y <= highscores.highscoreList.highscores[i].fields[0].y + highscores.highscoreList.highscores[i].fields[0].height) {
+        if (highscores.selected == -1) {
+          highscores.backToMenu.deselect();
+        } else {
+          highscores.highscoreList.highscores[highscores.selected].fields[0].deselect();
+        }
+        highscores.highscoreList.highscores[i].fields[0].select();
+        highscores.selected = i;
+        break;
+      }
+    }
+    if (highscores.gD.mousePos.x >= highscores.backToMenu.x && highscores.gD.mousePos.x <= highscores.backToMenu.x + highscores.backToMenu.width &&
+        highscores.gD.mousePos.y >= highscores.backToMenu.y && highscores.gD.mousePos.y <= highscores.backToMenu.y + highscores.backToMenu.height) {
+      if (highscores.selected == -1) {
+        highscores.backToMenu.deselect();
+      } else {
+        highscores.highscoreList.highscores[highscores.selected].fields[0].deselect();
+      }
+      highscores.backToMenu.select();
+      highscores.selected = -1;
+    }
+    drawHighscores(highscores);
+  }
+}
+
+function highscoresClick(highscores) {
+  if (!highscores.editingMode) {
+    if (highscores.selected == -1) {
+      if (highscores.gD.mousePos.x >= highscores.backToMenu.x && highscores.gD.mousePos.x <= highscores.backToMenu.x + highscores.backToMenu.width &&
+          highscores.gD.mousePos.y >= highscores.backToMenu.y && highscores.gD.mousePos.y <= highscores.backToMenu.y + highscores.backToMenu.height) {
+        highscores.menu.show();
+        highscores.stop();
+      }
+    } else {
+      if (highscores.gD.mousePos.x >= highscores.highscoreList.highscores[highscores.selected].fields[0].x && highscores.gD.mousePos.x <= highscores.highscoreList.highscores[highscores.selected].fields[0].x + highscores.highscoreList.highscores[highscores.selected].fields[0].width &&
+          highscores.gD.mousePos.y >= highscores.highscoreList.highscores[highscores.selected].fields[0].y && highscores.gD.mousePos.y <= highscores.highscoreList.highscores[highscores.selected].fields[0].y + highscores.highscoreList.highscores[highscores.selected].fields[0].height) {
+        highscores.editingMode = true;
+        highscores.oldName = highscores.highscores[(highscores.selected + 1).toString()][0];
+        drawHighscores(highscores);
+      }
+    }
+  } else {
+    if (highscores.gD.mousePos.x < highscores.highscoreList.highscores[highscores.selected].fields[0].x || highscores.gD.mousePos.x > highscores.highscoreList.highscores[highscores.selected].fields[0].x + highscores.highscoreList.highscores[highscores.selected].fields[0].width ||
+        highscores.gD.mousePos.y < highscores.highscoreList.highscores[highscores.selected].fields[0].y || highscores.gD.mousePos.y > highscores.highscoreList.highscores[highscores.selected].fields[0].y + highscores.highscoreList.highscores[highscores.selected].fields[0].height) {
+      highscores.editingMode = false;
+      highscores.highscoreList.highscores[highscores.selected].fields[0].moveCursor(highscores, -highscores.highscoreList.highscores[highscores.selected].fields[0].cursorPosition);
+      drawHighscores(highscores);
+    }
+  }
+}
+
+function highscoresWheel(highscores, event) {
+  if (highscores.selected >= 0) {
+    if (event.deltaY > 0) {
+      if (highscores.selected + 1 < highscores.highscoreList.highscores.length) {
+        highscores.highscoreList.highscores[highscores.selected].fields[0].deselect();
+        highscores.highscoreList.highscores[highscores.selected + 1].fields[0].select();
+        if (highscores.highscoreList.highscores[highscores.highscoreList.highscores.length - 1].y > 260 && highscores.highscoreList.highscores[highscores.selected + 1].y > 220) {
+          highscores.highscoreList.vShift(1);
+        }
+        highscores.selected += 1;
+      }
+    } else {
+      if (highscores.selected - 1 >= 0) {
+        highscores.highscoreList.highscores[highscores.selected].fields[0].deselect();
+        highscores.highscoreList.highscores[highscores.selected - 1].fields[0].select();
+        if (highscores.highscoreList.highscores[0].y < 80 && highscores.highscoreList.highscores[highscores.selected - 1].y < 120) {
+          highscores.highscoreList.vShift(-1);
+        }
+        highscores.selected -= 1;
+      }
+    }
+    drawHighscores(highscores);
+  }
+}
+
 function drawHighscores(highscores) {
   highscores.clear();
 
@@ -328,4 +411,18 @@ function drawHighscores(highscores) {
   highscores.highscoreList.update(highscores, highscores.gD);
 
   highscores.backToMenu.update(highscores.gD);
+
+  if (highscores.highscoreList.highscores.length > 10) {
+    highscores.gD.context.lineWidth = 4;
+    highscores.gD.context.strokeStyle = "rgba(255, 255, 255, 1)";
+    highscores.gD.context.beginPath();
+    highscores.gD.context.moveTo(highscores.gD.canvas.width - 165, 60 + ((highscores.highscoreList.shiftFactor / highscores.highscoreList.highscores.length) * 220));
+    highscores.gD.context.lineTo(highscores.gD.canvas.width - 165, 60 + ((Math.min(10 + highscores.highscoreList.shiftFactor, highscores.highscoreList.highscores.length) / highscores.highscoreList.highscores.length) * 220));
+    highscores.gD.context.stroke();
+    highscores.gD.context.lineWidth = 1;
+    highscores.gD.context.beginPath();
+    highscores.gD.context.moveTo(highscores.gD.canvas.width - 165, 60);
+    highscores.gD.context.lineTo(highscores.gD.canvas.width - 165, 280);
+    highscores.gD.context.stroke();
+  }
 }

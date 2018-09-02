@@ -21,7 +21,7 @@ function Load(gD, menu) {
   };
   this.show = function() {
     this.visible = true;
-    this.text.text = "Kopiere den Speicherstand und dr" + String.fromCharCode(220) + "cke hier Strg + V!";
+    this.text.text = "Kopiere den Inhalt des Speicherstandes und dr" + String.fromCharCode(220) + "cke hier Strg + V!";
     drawLoad(this);
   };
   this.stop = function() {
@@ -36,6 +36,8 @@ function pasteFromClipboard(event, load) {
     if (load.gD.save.highscores) {
       load.menu.highscores.highscores = load.gD.save.highscores;
       load.menu.highscores.highscoreList.highscores = [];
+      load.menu.highscores.selected = -1;
+      load.menu.highscores.backToMenu.select();
     }
     if (load.gD.save.keyBindings) {
       load.menu.controls.keyBindings = load.gD.save.keyBindings;
@@ -54,6 +56,9 @@ function pasteFromClipboard(event, load) {
     }
     if (load.gD.save.playerUnlocked) {
       load.gD.playerUnlocked = load.gD.save.playerUnlocked;
+    }
+    if (load.gD.save.stagesUnlocked) {
+      load.gD.stagesUnlocked = load.gD.save.stagesUnlocked;
     }
     load.text.text = "Laden erfolgreich!";
     console.log("Laden erfolgreich!");
@@ -74,6 +79,22 @@ function loadControlDown(load, key) {
 }
 
 function loadControlUp(load, key) {
+
+}
+
+function loadMouseMove(load) {
+
+}
+
+function loadClick(load) {
+  if (load.gD.mousePos.x >= load.backToMenu.x && load.gD.mousePos.x <= load.backToMenu.x + load.backToMenu.width &&
+      load.gD.mousePos.y >= load.backToMenu.y && load.gD.mousePos.y <= load.backToMenu.y + load.backToMenu.height) {
+    load.menu.show();
+    load.stop();
+  }
+}
+
+function loadWheel(load, event) {
 
 }
 

@@ -6,7 +6,8 @@ function Menu(gD) {
   this.init = function() {
     this.title = new Text(this.gD.canvas.width / 2, 100, "40pt", "Showcard Gothic", "rgba(200, 200, 200, 1)", "center", "middle", "Super Block Jump", 3);
     this.pressButton = new Text(this.gD.canvas.width / 2, 280, "15pt", "Showcard Gothic", "rgba(200, 200, 200, 1)", "center", "middle", "Dr" + String.fromCharCode(220) + "cke eine beliebige Taste", 1.5);
-    this.version = new Text(this.gD.canvas.width - 5, this.gD.canvas.height - 5, "10pt", "Consolas", "rgba(255, 255, 255, 1)", "right", "alphabetic", "v2.3.5", 0);
+    this.version = new Text(this.gD.canvas.width - 5, this.gD.canvas.height - 5, "10pt", "Consolas", "rgba(255, 255, 255, 1)", "right", "alphabetic", "v2.6.5", 0);
+    this.muteButton = new MuteButton(this.gD.canvas.width - 40, 10, 30, 30, "rgba(255, 255, 255, 1)", 2);
 
     this.buttons = [];
     this.buttons.push(new Button((this.gD.canvas.width / 2) - 203, 150, 406, 30, "15pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Play", "rgba(0, 0, 0, .6)", 2));
@@ -39,6 +40,7 @@ function Menu(gD) {
     this.highscores.init();
     this.controls = new Controls(this.gD, this);
     this.controls.init();
+    this.gD.gameIsRunning = true;
   };
   this.clear = function() {
     this.gD.context.clearRect(0, 0, this.gD.canvas.width, this.gD.canvas.height);
@@ -49,6 +51,30 @@ function Menu(gD) {
   };
   this.stop = function() {
     this.visible = false;
+  };
+}
+
+function MuteButton(x, y, width, height, color, bordersize) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.color = color;
+  this.bordersize = bordersize;
+  this.update = function(gD) {
+    gD.context.fillStyle = this.color;
+    gD.context.fillRect(this.x, this.y, this.width, this.height);
+    gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
+    gD.context.lineWidth = this.bordersize;
+    gD.context.strokeRect(this.x, this.y, this.width, this.height);
+    gD.context.drawImage(gD.spritesheet, gD.spriteDict["Mute"][0], gD.spriteDict["Mute"][1], gD.spriteDict["Mute"][2], gD.spriteDict["Mute"][3],
+      this.x + ((this.width - gD.spriteDict["Mute"][2]) / 2), this.y + ((this.height - gD.spriteDict["Mute"][3]) / 2), gD.spriteDict["Mute"][2], gD.spriteDict["Mute"][2]);
+    if (gD.muted) {
+      gD.context.beginPath();
+      gD.context.moveTo(this.x, this.y + this.height);
+      gD.context.lineTo(this.x + this.width, this.y);
+      gD.context.stroke();
+    }
   };
 }
 
@@ -154,6 +180,69 @@ function menuControlUp(menu, key) {
 
 }
 
+function menuMouseMove(menu) {
+  for (var i = 0; i < menu.buttons.length; i++) {
+    if (menu.gD.mousePos.x >= menu.buttons[i].x && menu.gD.mousePos.x <= menu.buttons[i].x + menu.buttons[i].width &&
+        menu.gD.mousePos.y >= menu.buttons[i].y && menu.gD.mousePos.y <= menu.buttons[i].y + menu.buttons[i].height) {
+      menu.buttons[menu.selected].deselect();
+      menu.buttons[i].select();
+      menu.selected = i;
+      break;
+    }
+  }
+  drawMenu(menu);
+}
+
+function menuClick(menu) {
+  if (menu.pressed) {
+    if (menu.gD.mousePos.x >= menu.buttons[menu.selected].x && menu.gD.mousePos.x <= menu.buttons[menu.selected].x + menu.buttons[menu.selected].width &&
+        menu.gD.mousePos.y >= menu.buttons[menu.selected].y && menu.gD.mousePos.y <= menu.buttons[menu.selected].y + menu.buttons[menu.selected].height) {
+      switch (menu.selected) {
+        case 0:
+          menu.selectionScreen.show();
+          menu.stop();
+          break;
+        case 1:
+          menu.shop.show();
+          menu.stop();
+          break;
+        case 2:
+          menu.achievements.show();
+          menu.stop();
+          break;
+        case 3:
+          menu.save.show();
+          menu.stop();
+          break;
+        case 4:
+          menu.load.show();
+          menu.stop();
+          break;
+        case 5:
+          menu.highscores.show();
+          menu.stop();
+          break;
+        case 6:
+          menu.controls.show();
+          menu.stop();
+          break;
+        default:
+          menu.stop();
+          menu.clear();
+          document.getElementById("start").style.display = "inline-block";
+      }
+    } else if (menu.gD.mousePos.x >= menu.muteButton.x && menu.gD.mousePos.x <= menu.muteButton.x + menu.muteButton.width &&
+               menu.gD.mousePos.y >= menu.muteButton.y && menu.gD.mousePos.y <= menu.muteButton.y + menu.muteButton.height) {
+      menu.gD.muted = !menu.gD.muted;
+      drawMenu(menu);
+    }
+  }
+}
+
+function menuWheel(menu, event) {
+
+}
+
 function drawMenu(menu) {
   menu.clear();
 
@@ -168,5 +257,6 @@ function drawMenu(menu) {
     for (var i = 0; i < menu.buttons.length; i++) {
       menu.buttons[i].update(menu.gD);
     }
+    menu.muteButton.update(menu.gD);
   }
 }

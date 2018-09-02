@@ -10,10 +10,11 @@
     "Menu2" : ["Navigation hoch", ["W", "ArrowUp"], [87, 38]],
     "Menu3" : ["Navigation rechts", ["D", "ArrowRight"], [68, 39]],
     "Menu4" : ["Navigation links", ["A", "ArrowLeft"], [65, 37]],
-    "Menu5" : ["Bestätigen", ["Enter"], [13]],
+    "Menu5" : ["Bestätigen", ["Enter", "Space"], [13, 32]],
     "SelectionScreen1" : ["Navigation rechts", ["D", "ArrowRight"], [68, 39]],
     "SelectionScreen2" : ["Navigation links", ["A", "ArrowLeft"], [65, 37]],
-    "SelectionScreen3" : ["Bestätigen", ["Enter"], [13]],
+    "SelectionScreen3" : ["Bestätigen", ["Enter", "Space"], [13, 32]],
+    "SelectionScreen4" : ["Abbrechen", ["Escape"], [27]],
     "Game1" : ["Spiel pausieren", ["Escape"], [27]],
     "Game2" : ["Vorwärts bewegen", ["D", "ArrowRight"], [68, 39]],
     "Game3" : ["Rückwärts bewegen", ["A", "ArrowLeft"], [65, 37]],
@@ -24,35 +25,41 @@
     "Game8" : ["Feder benutzen", ["3"], [51]],
     "Game9" : ["Schatztruhe benutzen", ["4"], [52]],
     "Game10" : ["Magnet benutzen", ["5"], [53]],
+    "Game11" : ["Rakete benutzen", ["6"], [54]],
     "FinishModal1" : ["Navigation runter", ["S", "ArrowDown"], [83, 40]],
     "FinishModal2" : ["Navigation hoch", ["W", "ArrowUp"], [87, 38]],
-    "FinishModal3" : ["Bestätigen", ["Enter"], [13]],
+    "FinishModal3" : ["Bestätigen", ["Enter", "Space"], [13, 32]],
     "Shop1" : ["Navigation runter", ["S", "ArrowDown"], [83, 40]],
     "Shop2" : ["Navigation hoch", ["W", "ArrowUp"], [87, 38]],
     "Shop3" : ["Navigation rechts", ["D", "ArrowRight"], [68, 39]],
     "Shop4" : ["Navigation links", ["A", "ArrowLeft"], [65, 37]],
-    "Shop5" : ["Bestätigen", ["Enter"], [13]],
+    "Shop5" : ["Bestätigen", ["Enter", "Space"], [13, 32]],
+    "Shop6" : ["Abbrechen", ["Escape"], [27]],
     "Achievements1" : ["Navigation runter", ["S", "ArrowDown"], [83, 40]],
     "Achievements2" : ["Navigation hoch", ["W", "ArrowUp"], [87, 38]],
     "Achievements3" : ["Navigation rechts", ["D", "ArrowRight"], [68, 39]],
     "Achievements4" : ["Navigation links", ["A", "ArrowLeft"], [65, 37]],
-    "Achievements5" : ["Bestätigen", ["Enter"], [13]],
-    "Save1" : ["Bestätigen", ["Enter"], [13]],
-    "Load1" : ["Bestätigen", ["Enter"], [13]],
+    "Achievements5" : ["Bestätigen", ["Enter", "Space"], [13, 32]],
+    "Achievements6" : ["Abbrechen", ["Escape"], [27]],
+    "Save1" : ["Bestätigen", ["Enter", "Space"], [13, 32]],
+    "Load1" : ["Bestätigen", ["Enter", "Space"], [13, 32]],
     "Highscores1" : ["Navigation runter", ["S", "ArrowDown"], [83, 40]],
     "Highscores2" : ["Navigation hoch", ["W", "ArrowUp"], [87, 38]],
     "Highscores3" : ["Bestätigen", ["Enter"], [13]],
-    "Highscores4" : ["Navigation rechts", ["ArrowRight"], [39]],
-    "Highscores5" : ["Navigation links", ["ArrowLeft"], [37]],
-    "Highscores6" : ["Linkes Zeichen löschen", ["Backspace"], [8]],
-    "Highscores7" : ["Rechtes Zeichen löschen", ["Delete"], [46]],
-    "Highscores8" : ["Editieren abbrechen", ["Escape"], [27]],
+    "Highscores4" : ["Abbrechen", ["Escape"], [27]],
+    "Highscores5" : ["Navigation rechts", ["ArrowRight"], [39]],
+    "Highscores6" : ["Navigation links", ["ArrowLeft"], [37]],
+    "Highscores7" : ["Linkes Zeichen löschen", ["Backspace"], [8]],
+    "Highscores8" : ["Rechtes Zeichen löschen", ["Delete"], [46]],
+    "Highscores9" : ["Editieren abbrechen", ["Escape"], [27]],
     "Controls1" : ["Navigation runter", ["S", "ArrowDown"], [83, 40]],
     "Controls2" : ["Navigation hoch", ["W", "ArrowUp"], [87, 38]],
     "Controls3" : ["Navigation rechts", ["D", "ArrowRight"], [68, 39]],
     "Controls4" : ["Navigation links", ["A", "ArrowLeft"], [65, 37]],
     "Controls5" : ["Belegung löschen", ["Delete"], [46]],
-    "Controls6" : ["Bestätigen", ["Enter"], [13]]
+    "Controls6" : ["Bestätigen", ["Enter", "Space"], [13, 32]],
+    "Controls7" : ["Abbrechen", ["Escape"], [27]],
+    "Mute1" : ["Alles muten", ["M"], [77]]
   };
   this.keyEntryHeadlines = [];
   this.keyEntries = [];
@@ -66,11 +73,11 @@
       this.keyEntries.push(new ControlEntry((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(255, 255, 255, 1)", "Menu" + (i + 1), 2));
     }
     this.keyEntryHeadlines.push(new ControlEntryHeadline((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(50, 200, 80, 1)", "Spielerauswahl Bildschirm", 2));
-    for (var i = 0; i < 3; i++) {
+    for (var i = 0; i < 4; i++) {
       this.keyEntries.push(new ControlEntry((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(255, 255, 255, 1)", "SelectionScreen" + (i + 1), 2));
     }
     this.keyEntryHeadlines.push(new ControlEntryHeadline((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(50, 200, 80, 1)", "Spiel", 2));
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < 11; i++) {
       this.keyEntries.push(new ControlEntry((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(255, 255, 255, 1)", "Game" + (i + 1), 2));
     }
     this.keyEntryHeadlines.push(new ControlEntryHeadline((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(50, 200, 80, 1)", "Spielendanzeige", 2));
@@ -78,11 +85,11 @@
       this.keyEntries.push(new ControlEntry((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(255, 255, 255, 1)", "FinishModal" + (i + 1), 2));
     }
     this.keyEntryHeadlines.push(new ControlEntryHeadline((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(50, 200, 80, 1)", "Shop", 2));
-    for (var i = 0; i < 5; i++) {
+    for (var i = 0; i < 6; i++) {
       this.keyEntries.push(new ControlEntry((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(255, 255, 255, 1)", "Shop" + (i + 1), 2));
     }
     this.keyEntryHeadlines.push(new ControlEntryHeadline((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(50, 200, 80, 1)", "Achievements", 2));
-    for (var i = 0; i < 5; i++) {
+    for (var i = 0; i < 6; i++) {
       this.keyEntries.push(new ControlEntry((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(255, 255, 255, 1)", "Achievements" + (i + 1), 2));
     }
     this.keyEntryHeadlines.push(new ControlEntryHeadline((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(50, 200, 80, 1)", "Speichern", 2));
@@ -94,12 +101,16 @@
       this.keyEntries.push(new ControlEntry((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(255, 255, 255, 1)", "Load" + (i + 1), 2));
     }
     this.keyEntryHeadlines.push(new ControlEntryHeadline((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(50, 200, 80, 1)", "Highscores", 2));
-    for (var i = 0; i < 8; i++) {
+    for (var i = 0; i < 9; i++) {
       this.keyEntries.push(new ControlEntry((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(255, 255, 255, 1)", "Highscores" + (i + 1), 2));
     }
     this.keyEntryHeadlines.push(new ControlEntryHeadline((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(50, 200, 80, 1)", "Controls", 2));
-    for (var i = 0; i < 6; i++) {
+    for (var i = 0; i < 7; i++) {
       this.keyEntries.push(new ControlEntry((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(255, 255, 255, 1)", "Controls" + (i + 1), 2));
+    }
+    this.keyEntryHeadlines.push(new ControlEntryHeadline((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(50, 200, 80, 1)", "Mute", 2));
+    for (var i = 0; i < 1; i++) {
+      this.keyEntries.push(new ControlEntry((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(255, 255, 255, 1)", "Mute" + (i + 1), 2));
     }
 
     this.keyEntries[this.selected].select(0, false);
@@ -297,6 +308,9 @@ function controlsControlDown(controls, event) {
         controls.keyBindings[controls.keyEntries[controls.selected].name][1][controls.keyEntries[controls.selected].selected] = "...";
         drawControls(controls);
       }
+    } else if (controls.menu.controls.keyBindings["Controls7"][2].includes(event.keyCode)) {
+      controls.menu.show();
+      controls.stop();
     } else {
       drawControls(controls);
     }
@@ -310,6 +324,89 @@ function controlsControlDown(controls, event) {
 
 function controlsControlUp(controls, event) {
 
+}
+
+function controlsMouseMove(controls) {
+  if (!controls.newKeyMode) {
+    for (var i = 0; i < controls.keyEntries.length; i++) {
+      if (controls.keyEntries[i].y >= 60 && controls.keyEntries[i].y < 280) {
+        if (controls.gD.mousePos.x >= controls.keyEntries[i].keys[0].x && controls.gD.mousePos.x <= controls.keyEntries[i].keys[0].x + controls.keyEntries[i].keys[0].width &&
+            controls.gD.mousePos.y >= controls.keyEntries[i].keys[0].y && controls.gD.mousePos.y <= controls.keyEntries[i].keys[0].y + controls.keyEntries[i].keys[0].height) {
+          if (controls.selected < 0) {
+            controls.backToMenu.deselect();
+          } else {
+            controls.keyEntries[controls.selected].select(0, true);
+          }
+          controls.keyEntries[i].select(0, false);
+          controls.selected = i;
+          break;
+        } else if (controls.gD.mousePos.x >= controls.keyEntries[i].keys[1].x && controls.gD.mousePos.x <= controls.keyEntries[i].keys[1].x + controls.keyEntries[i].keys[1].width &&
+            controls.gD.mousePos.y >= controls.keyEntries[i].keys[1].y && controls.gD.mousePos.y <= controls.keyEntries[i].keys[1].y + controls.keyEntries[i].keys[1].height) {
+          if (controls.selected < 0) {
+            controls.backToMenu.deselect();
+          } else {
+            controls.keyEntries[controls.selected].select(0, true);
+          }
+          controls.keyEntries[i].select(1, false);
+          controls.selected = i;
+          break;
+        }
+      }
+    }
+    if (controls.gD.mousePos.x >= controls.backToMenu.x && controls.gD.mousePos.x <= controls.backToMenu.x + controls.backToMenu.width &&
+        controls.gD.mousePos.y >= controls.backToMenu.y && controls.gD.mousePos.y <= controls.backToMenu.y + controls.backToMenu.height) {
+      if (controls.selected < 0) {
+        controls.backToMenu.deselect();
+      } else {
+        controls.keyEntries[controls.selected].select(0, true);
+      }
+      controls.backToMenu.select();
+      controls.selected = -1;
+    }
+    drawControls(controls);
+  }
+}
+
+function controlsClick(controls) {
+  if (!controls.newKeyMode) {
+    if (controls.gD.mousePos.x >= controls.backToMenu.x && controls.gD.mousePos.x <= controls.backToMenu.x + controls.backToMenu.width &&
+        controls.gD.mousePos.y >= controls.backToMenu.y && controls.gD.mousePos.y <= controls.backToMenu.y + controls.backToMenu.height) {
+      controls.menu.show();
+      controls.stop();
+    } else if (controls.gD.mousePos.x >= controls.keyEntries[controls.selected].keys[controls.keyEntries[controls.selected].selected].x &&
+        controls.gD.mousePos.x <= controls.keyEntries[controls.selected].keys[controls.keyEntries[controls.selected].selected].x + controls.keyEntries[controls.selected].keys[controls.keyEntries[controls.selected].selected].width &&
+        controls.gD.mousePos.y >= controls.keyEntries[controls.selected].keys[controls.keyEntries[controls.selected].selected].y &&
+        controls.gD.mousePos.y <= controls.keyEntries[controls.selected].keys[controls.keyEntries[controls.selected].selected].y + controls.keyEntries[controls.selected].keys[controls.keyEntries[controls.selected].selected].height) {
+      controls.newKeyMode = true;
+      controls.keyBindings[controls.keyEntries[controls.selected].name][1][controls.keyEntries[controls.selected].selected] = "...";
+      drawControls(controls);
+    }
+  }
+}
+
+function controlsWheel(controls, event) {
+  if (controls.selected >= 0) {
+    if (event.deltaY > 0) {
+      if (controls.selected + 1 < controls.keyEntries.length) {
+        controls.keyEntries[controls.selected].select(0, true);
+        controls.keyEntries[controls.selected + 1].select(controls.keyEntries[controls.selected].selected, false);
+        if (controls.keyEntries[controls.keyEntries.length - 1].y != 260 && controls.keyEntries[controls.selected + 1].y > 220) {
+          controls.vShift((controls.keyEntries[controls.selected + 1].y - 220) / 20);
+        }
+        controls.selected += 1;
+      }
+    } else {
+      if (controls.selected - 1 >= 0) {
+        controls.keyEntries[controls.selected].select(0, true);
+        controls.keyEntries[controls.selected - 1].select(controls.keyEntries[controls.selected].selected, false);
+        if (controls.keyEntryHeadlines[0].y != 60 && controls.keyEntries[controls.selected - 1].y < 100) {
+          controls.vShift((controls.keyEntries[controls.selected - 1].y - 100) / 20);
+        }
+        controls.selected -= 1;
+      }
+    }
+    drawControls(controls);
+  }
 }
 
 function drawControls(controls) {

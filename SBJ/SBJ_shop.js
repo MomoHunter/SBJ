@@ -3,6 +3,10 @@
   this.menu = menu;
   this.backgroundImage = new Image();
   this.backgroundImage.src = "img/Titlescreen.png";
+  this.backgroundMusic = new Audio();
+  this.backgroundMusic.src = "music/shop.mp3";
+  this.backgroundMusic.loop = true;
+  this.backgroundMusic.volume = 0.2;
   this.visible = false;
   this.tabs = [];
   this.buttons = [];
@@ -12,6 +16,7 @@
   this.active = 0;
   this.cash = 0;
   this.costFactors = [1.15, 1.55];                           //defines the multiplicators for the down- and upgrades of the items
+  this.shiftFactor = 0;
   this.init = function() {
     this.title = new Text(this.gD.canvas.width / 2, 30, "32pt", "Showcard Gothic", "rgba(200, 200, 200, 1)", "center", "middle", "Shop", 3);
 
@@ -21,31 +26,33 @@
     this.tabs.push(new ShopTab(this.gD.canvas.width / 2, 60, 300, 30, "15pt", "Showcard Gothic", "rgba(200, 200, 0, 1)", "Items", "rgba(0, 0, 0, .6)", 2));
     this.tabs[this.active].activate();
 
-    this.buttons.push(new Button((this.gD.canvas.width / 2) - 290, 245, 180, 20, "11pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Kaufen", "rgba(0, 0, 0, .6)", 2));
-    this.buttons.push(new Button((this.gD.canvas.width / 2) - 90, 245, 180, 20, "11pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Kaufen", "rgba(0, 0, 0, .6)", 2));
-    this.buttons.push(new Button((this.gD.canvas.width / 2) + 110, 245, 180, 20, "11pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Kaufen", "rgba(0, 0, 0, .6)", 2));
-    this.shopEntries.push(new ShopEntryPlayer((this.gD.canvas.width / 2) - 300, 90, 200, 200, "12pt", "Consolas", "rgba(150, 180, 150, 1)", 2, "Höhere Sprungkraft", 30000, 2));
-    this.shopEntries.push(new ShopEntryPlayer((this.gD.canvas.width / 2) - 100, 90, 200, 200, "12pt", "Consolas", "rgba(150, 180, 150, 1)", 3, "Schnellere Bewegung", 20000, 2));
-    this.shopEntries.push(new ShopEntryPlayer((this.gD.canvas.width / 2) + 100, 90, 200, 200, "12pt", "Consolas", "rgba(150, 180, 150, 1)", 4, "Dreifach Sprung", 100000, 2));
+    for (var i = 0; i < 3; i++) {
+      this.buttons.push(new Button((this.gD.canvas.width / 2) - 290 + (i * 200), 245, 180, 20, "11pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Kaufen", "rgba(0, 0, 0, .6)", 2));
+    }
+    this.shopEntries.push(new ShopEntryPlayer((this.gD.canvas.width / 2) - 300, 90, 200, 200, "12pt", "Consolas", "rgba(150, 180, 150, 1)", 2, "Höhere Sprungkraft", 19999, 2));
+    this.shopEntries.push(new ShopEntryPlayer((this.gD.canvas.width / 2) - 100, 90, 200, 200, "12pt", "Consolas", "rgba(150, 180, 150, 1)", 3, "Schnellere Bewegung", 12999, 2));
+    this.shopEntries.push(new ShopEntryPlayer((this.gD.canvas.width / 2) + 100, 90, 200, 200, "12pt", "Consolas", "rgba(150, 180, 150, 1)", 4, "Dreifach Sprung", 59999, 2));
 
-    this.buttons.push(new Button((this.gD.canvas.width / 2) - 290, 200, 100, 20, "11pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Upgrade", "rgba(0, 0, 0, .6)", 2));
-    this.buttons.push(new Button((this.gD.canvas.width / 2) - 290, 245, 100, 20, "11pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Downgrade", "rgba(0, 0, 0, .6)", 2));
-    this.buttons.push(new Button((this.gD.canvas.width / 2) - 170, 200, 100, 20, "11pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Upgrade", "rgba(0, 0, 0, .6)", 2));
-    this.buttons.push(new Button((this.gD.canvas.width / 2) - 170, 245, 100, 20, "11pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Downgrade", "rgba(0, 0, 0, .6)", 2));
-    this.buttons.push(new Button((this.gD.canvas.width / 2) - 50, 200, 100, 20, "11pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Upgrade", "rgba(0, 0, 0, .6)", 2));
-    this.buttons.push(new Button((this.gD.canvas.width / 2) - 50, 245, 100, 20, "11pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Downgrade", "rgba(0, 0, 0, .6)", 2));
-    this.buttons.push(new Button((this.gD.canvas.width / 2) + 70, 200, 100, 20, "11pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Upgrade", "rgba(0, 0, 0, .6)", 2));
-    this.buttons.push(new Button((this.gD.canvas.width / 2) + 70, 245, 100, 20, "11pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Downgrade", "rgba(0, 0, 0, .6)", 2));
-    this.buttons.push(new Button((this.gD.canvas.width / 2) + 190, 200, 100, 20, "11pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Upgrade", "rgba(0, 0, 0, .6)", 2));
-    this.buttons.push(new Button((this.gD.canvas.width / 2) + 190, 245, 100, 20, "11pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Downgrade", "rgba(0, 0, 0, .6)", 2));
-    this.shopEntries.push(new ShopEntryItem((this.gD.canvas.width / 2) - 300, 90, 120, 200, "12pt", "Consolas", "rgba(200, 200, 0, 1)", 1, "+" + (this.gD.itemPerLvlDur[0] / 50).toFixed(2) + "s", 2));
-    this.shopEntries.push(new ShopEntryItem((this.gD.canvas.width / 2) - 180, 90, 120, 200, "12pt", "Consolas", "rgba(200, 200, 0, 1)", 2, "+" + (this.gD.itemPerLvlDur[1] / 50).toFixed(2) + "s", 2));
-    this.shopEntries.push(new ShopEntryItem((this.gD.canvas.width / 2) - 60, 90, 120, 200, "12pt", "Consolas", "rgba(200, 200, 0, 1)", 3, "+" + (this.gD.itemPerLvlDur[2] / 50).toFixed(2) + "s", 2));
-    this.shopEntries.push(new ShopEntryItem((this.gD.canvas.width / 2) + 60, 90, 120, 200, "12pt", "Consolas", "rgba(200, 200, 0, 1)", 4, "+" + (this.gD.itemPerLvlDur[3] / 50).toFixed(2) + "s", 2));
-    this.shopEntries.push(new ShopEntryItem((this.gD.canvas.width / 2) + 180, 90, 120, 200, "12pt", "Consolas", "rgba(200, 200, 0, 1)", 5, "+" + (this.gD.itemPerLvlDur[4] / 50).toFixed(2) + "s", 2));
+    for (var i = 0; i < this.gD.itemProb.length; i++) {
+      this.buttons.push(new Button((this.gD.canvas.width / 2) - 290 + (i * 120), 200, 100, 20, "11pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Upgrade", "rgba(0, 0, 0, .6)", 2));
+      this.buttons.push(new Button((this.gD.canvas.width / 2) - 290 + (i * 120), 245, 100, 20, "11pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Downgrade", "rgba(0, 0, 0, .6)", 2));
+    }
+    for (var i = 0; i < this.gD.itemProb.length; i++) {
+      this.shopEntries.push(new ShopEntryItem((this.gD.canvas.width / 2) - 300 + (i * 120), 90, 120, 200, "12pt", "Consolas", "rgba(200, 200, 0, 1)", i + 1, "+" + (this.gD.itemPerLvlDur[i] / 60).toFixed(2) + "s", 2));
+    }
 
-    this.buttons.push(new Button((this.gD.canvas.width / 2) - 100, this.gD.canvas.height - 50, 200, 30, "15pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Main Menu", "rgba(0, 0, 0, .6)", 2));
+    this.backToMenu = new Button((this.gD.canvas.width / 2) - 100, this.gD.canvas.height - 50, 200, 30, "15pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Main Menu", "rgba(0, 0, 0, .6)", 2);
     this.buttons[this.selected].select();
+  };
+  this.hShift = function(shiftFactor) {
+    for (var i = 3; i < this.shopEntries.length; i++) {
+      this.shopEntries[i].x -= shiftFactor * 120;
+      this.shopEntries[i].hShift(shiftFactor);
+    }
+    for (var i = 3; i < this.buttons.length; i++) {
+      this.buttons[i].x -= shiftFactor * 120;
+    }
+    this.shiftFactor += shiftFactor;
   };
   this.clear = function() {
     this.gD.context.clearRect(0, 0, this.gD.canvas.width, this.gD.canvas.height);
@@ -53,9 +60,13 @@
   this.show = function() {
     this.visible = true;
     drawShop(this);
+    this.backgroundMusic.load();
+    this.backgroundMusic.play();
+    this.backgroundMusic.muted = this.gD.muted;
   };
   this.stop = function() {
     this.visible = false;
+    this.backgroundMusic.pause();
   };
 }
 
@@ -204,23 +215,28 @@ function ShopEntryItem(x, y, width, height, size, family, color, itemNr, desc, b
   this.showcase = new EntryShowcase(this.x + (this.width / 2) - 30, this.y + 20, 60, 60, "Item" + this.itemNr + "B", this.bordersize);
   this.costUpgrade = new EntryCost(this.x + 10, this.y + 130, 100, 15, "10pt", "Consolas", 0, this.bordersize);
   this.costDowngrade = new EntryCost(this.x + 10, this.y + 175, 100, 15, "10pt", "Consolas", 0, this.bordersize);
+  this.hShift = function(shiftFactor) {
+    this.showcase.x -= shiftFactor * 120;
+    this.costUpgrade.x -= shiftFactor * 120;
+    this.costDowngrade.x -= shiftFactor * 120;
+  };
   this.upgrade = function(shop) {
     if (shop.cash > Math.floor(shop.gD.itemStartValue[this.itemNr - 1] * Math.pow(shop.costFactors[1], shop.level[this.itemNr - 1])) && shop.level[this.itemNr - 1] < 10) {
       shop.cash -= Math.floor(shop.gD.itemStartValue[this.itemNr - 1] * Math.pow(shop.costFactors[1], shop.level[this.itemNr - 1]));
       shop.level[this.itemNr - 1]++;
-      if (!shop.menu.achievements.achievementList.achievements[23].finished) {
-        shop.menu.achievements.achievementValues[23]++;
-        shop.menu.achievements.achievementList.achievements[23].check(shop.menu.achievements);
+      if (!shop.menu.achievements.achievementList.achievements[24].finished) {
+        shop.menu.achievements.achievementValues[24]++;
+        shop.menu.achievements.achievementList.achievements[24].check(shop.menu.achievements);
       }
     }
     var maxed = shop.level.reduce(function(a, b){b == 10 ? a++ : a; return a;}, 0);
-    if (!shop.menu.achievements.achievementList.achievements[24].finished && shop.menu.achievements.achievementValues[24] < maxed) {
-      shop.menu.achievements.achievementValues[24] = maxed;
-      shop.menu.achievements.achievementList.achievements[24].check(shop.menu.achievements);
-    }
     if (!shop.menu.achievements.achievementList.achievements[25].finished && shop.menu.achievements.achievementValues[25] < maxed) {
       shop.menu.achievements.achievementValues[25] = maxed;
       shop.menu.achievements.achievementList.achievements[25].check(shop.menu.achievements);
+    }
+    if (!shop.menu.achievements.achievementList.achievements[26].finished && shop.menu.achievements.achievementValues[26] < maxed) {
+      shop.menu.achievements.achievementValues[26] = maxed;
+      shop.menu.achievements.achievementList.achievements[26].check(shop.menu.achievements);
     }
     shop.gD.save.level = shop.level;
     shop.gD.save.cash = shop.cash;
@@ -321,92 +337,72 @@ function EntryCost(x, y, width, height, size, family, value, bordersize) {
 function shopControlDown(shop, key) {
   if (shop.menu.controls.keyBindings["Shop1"][2].includes(key)) {                       //navigation down
     if (shop.active == 0) {
-      switch (shop.selected) {
-        case -1:
-          shop.tabs[0].deselect();
-          shop.buttons[0].select();
-          shop.selected = 0;
-          break;
-        case (shop.buttons.length - 1):
-          shop.buttons[shop.selected].deselect();
-          shop.tabs[0].select();
-          shop.selected = -1;
-          break;
-        default:
-          shop.buttons[shop.selected].deselect();
-          shop.buttons[shop.buttons.length - 1].select();
-          shop.selected = shop.buttons.length - 1;
+      if (shop.selected == -1) {
+        shop.tabs[0].deselect();
+        shop.buttons[0].select();
+        shop.selected = 0;
+      } else if (shop.selected == shop.buttons.length) {
+        shop.backToMenu.deselect();
+        shop.tabs[0].select();
+        shop.selected = -1;
+      } else {
+        shop.buttons[shop.selected].deselect();
+        shop.backToMenu.select();
+        shop.selected = shop.buttons.length;
       }
     } else {
-      switch (shop.selected) {
-        case -2:
-          shop.tabs[1].deselect();
-          shop.buttons[3].select();
-          shop.selected = 3;
-          break;
-        case (shop.buttons.length - 1):
-          shop.buttons[shop.selected].deselect();
-          shop.tabs[1].select();
-          shop.selected = -2;
-          break;
-        case 3:
-        case 5:
-        case 7:
-        case 9:
-        case 11:
-          shop.buttons[shop.selected].deselect();
-          shop.buttons[shop.selected + 1].select();
-          shop.selected += 1;
-          break;
-        default:
-          shop.buttons[shop.selected].deselect();
-          shop.buttons[shop.buttons.length - 1].select();
-          shop.selected = shop.buttons.length - 1;
+      if (shop.selected == -2) {
+        shop.tabs[1].deselect();
+        shop.buttons[3].select();
+        shop.selected = 3;
+        shop.hShift(-shop.shiftFactor);
+      } else if (shop.selected == shop.buttons.length) {
+        shop.backToMenu.deselect();
+        shop.tabs[1].select();
+        shop.selected = -2;
+      } else if ((shop.selected - 3) % 2 == 0) {
+        shop.buttons[shop.selected].deselect();
+        shop.buttons[shop.selected + 1].select();
+        shop.selected += 1;
+      } else {
+        shop.buttons[shop.selected].deselect();
+        shop.backToMenu.select();
+        shop.selected = shop.buttons.length;
       }
     }
   } else if (shop.menu.controls.keyBindings["Shop2"][2].includes(key)) {                //navigation up
     if (shop.active == 0) {
-      switch (shop.selected) {
-        case -1:
-          shop.tabs[0].deselect();
-          shop.buttons[shop.buttons.length - 1].select();
-          shop.selected = shop.buttons.length - 1;
-          break;
-        case (shop.buttons.length - 1):
-          shop.buttons[shop.selected].deselect();
-          shop.buttons[0].select();
-          shop.selected = 0;
-          break;
-        default:
-          shop.buttons[shop.selected].deselect();
-          shop.tabs[0].select();
-          shop.selected = -1;
+      if (shop.selected == -1) {
+        shop.tabs[0].deselect();
+        shop.backToMenu.select();
+        shop.selected = shop.buttons.length;
+      } else if (shop.selected == shop.buttons.length) {
+        shop.backToMenu.deselect();
+        shop.buttons[0].select();
+        shop.selected = 0;
+      } else {
+        shop.buttons[shop.selected].deselect();
+        shop.tabs[0].select();
+        shop.selected = -1;
       }
     } else {
-      switch (shop.selected) {
-        case -2:
-          shop.tabs[1].deselect();
-          shop.buttons[shop.buttons.length - 1].select();
-          shop.selected = shop.buttons.length - 1;
-          break;
-        case (shop.buttons.length - 1):
-          shop.buttons[shop.selected].deselect();
-          shop.buttons[4].select();
-          shop.selected = 4;
-          break;
-        case 4:
-        case 6:
-        case 8:
-        case 10:
-        case 12:
-          shop.buttons[shop.selected].deselect();
-          shop.buttons[shop.selected - 1].select();
-          shop.selected -= 1;
-          break;
-        default:
-          shop.buttons[shop.selected].deselect();
-          shop.tabs[1].select();
-          shop.selected = -2;
+      if (shop.selected == -2) {
+        shop.tabs[1].deselect();
+        shop.backToMenu.select();
+        shop.selected = shop.buttons.length;
+      } else if (shop.selected == shop.buttons.length) {
+        shop.backToMenu.deselect();
+        shop.buttons[4].select();
+        shop.selected = 4;
+        shop.hShift(-shop.shiftFactor);
+      } else if ((shop.selected - 3) % 2 == 1) {
+        shop.buttons[shop.selected].deselect();
+        shop.buttons[shop.selected - 1].select();
+        shop.selected -= 1;
+      }  else {
+        shop.buttons[shop.selected].deselect();
+        shop.tabs[1].select();
+        shop.selected = -2;
       }
     }
   } else if (shop.menu.controls.keyBindings["Shop3"][2].includes(key)) {                //navigation right
@@ -420,7 +416,7 @@ function shopControlDown(shop, key) {
           shop.active = 1;
           shop.selected = -2;
           break;
-        case (shop.buttons.length - 1):
+        case shop.buttons.length:
           break;
         default:
           shop.buttons[shop.selected].deselect();
@@ -437,12 +433,17 @@ function shopControlDown(shop, key) {
           shop.active = 0;
           shop.selected = -1;
           break;
-        case (shop.buttons.length - 1):
+        case shop.buttons.length:
           break;
         default:
           shop.buttons[shop.selected].deselect();
-          shop.buttons[((shop.selected - 1) % 10) + 3].select();
-          shop.selected = ((shop.selected - 1) % 10) + 3;
+          shop.buttons[((shop.selected - 1) % (shop.buttons.length - 3)) + 3].select();
+          shop.selected = ((shop.selected - 1) % (shop.buttons.length - 3)) + 3;
+          if (shop.selected == 3 || shop.selected == 4) {
+            shop.hShift(-shop.shiftFactor);
+          } else if (shop.shopEntries[shop.shopEntries.length - 1].x >= (shop.gD.canvas.width / 2) + 300 && shop.buttons[shop.selected].x >= (shop.gD.canvas.width / 2) + 190) {
+            shop.hShift(1);
+          }
       }
     }
   } else if (shop.menu.controls.keyBindings["Shop4"][2].includes(key)) {                //navigation left
@@ -456,7 +457,7 @@ function shopControlDown(shop, key) {
           shop.active = 1;
           shop.selected = -2;
           break;
-        case (shop.buttons.length - 1):
+        case shop.buttons.length:
           break;
         default:
           shop.buttons[shop.selected].deselect();
@@ -473,12 +474,17 @@ function shopControlDown(shop, key) {
           shop.active = 0;
           shop.selected = -1;
           break;
-        case (shop.buttons.length - 1):
+        case shop.buttons.length:
           break;
         default:
           shop.buttons[shop.selected].deselect();
-          shop.buttons[((shop.selected + 15) % 10) + 3].select();
-          shop.selected = ((shop.selected + 15) % 10) + 3;
+          shop.buttons[((shop.selected + 7) % (shop.buttons.length - 3)) + 3].select();
+          shop.selected = ((shop.selected + 7) % (shop.buttons.length - 3)) + 3;
+          if (shop.selected == shop.buttons.length - 1 || shop.selected == shop.buttons.length - 2) {
+            shop.hShift(shop.shopEntries.length - 8);
+          } else if (shop.shopEntries[3].x < (shop.gD.canvas.width / 2) - 300 && shop.buttons[shop.selected].x < (shop.gD.canvas.width / 2) - 170) {
+            shop.hShift(-1);
+          }
       }
     }
   }
@@ -488,7 +494,7 @@ function shopControlDown(shop, key) {
       switch (shop.selected) {
         case -1:
           break;
-        case (shop.buttons.length - 1):
+        case shop.buttons.length:
           shop.menu.show();
           shop.stop();
           break;
@@ -500,7 +506,7 @@ function shopControlDown(shop, key) {
       switch (shop.selected) {
         case -2:
           break;
-        case (shop.buttons.length - 1):
+        case shop.buttons.length:
           shop.menu.show();
           shop.stop();
           break;
@@ -513,6 +519,9 @@ function shopControlDown(shop, key) {
           drawShop(shop);
       }
     }
+  } else if (shop.menu.controls.keyBindings["Shop6"][2].includes(key)) {
+    shop.menu.show();
+    shop.stop();
   } else {
     drawShop(shop);
   }
@@ -520,6 +529,134 @@ function shopControlDown(shop, key) {
 
 function shopControlUp(shop, key) {
 
+}
+
+function shopMouseMove(shop) {
+  for (var i = 0; i < shop.tabs.length; i++) {
+    if (shop.gD.mousePos.x >= shop.tabs[i].x && shop.gD.mousePos.x <= shop.tabs[i].x + shop.tabs[i].width &&
+        shop.gD.mousePos.y >= shop.tabs[i].y && shop.gD.mousePos.y <= shop.tabs[i].y + shop.tabs[i].height) {
+      if (shop.selected < 0) {
+        shop.tabs[shop.active].deselect();
+      } else if (shop.selected == shop.buttons.length) {
+        shop.backToMenu.deselect();
+      } else {
+        shop.buttons[shop.selected].deselect();
+      }
+      shop.tabs[shop.active].deactivate();
+      shop.tabs[i].select();
+      shop.tabs[i].activate();
+      shop.selected = -(i + 1);
+      shop.active = i;
+    }
+  }
+
+  switch (shop.active) {
+    case 0:
+      for (var i = 0; (i % shop.buttons.length) < 3; i++) {
+        if (shop.gD.mousePos.x >= shop.buttons[i % shop.buttons.length].x && shop.gD.mousePos.x <= shop.buttons[i % shop.buttons.length].x + shop.buttons[i % shop.buttons.length].width &&
+            shop.gD.mousePos.y >= shop.buttons[i % shop.buttons.length].y && shop.gD.mousePos.y <= shop.buttons[i % shop.buttons.length].y + shop.buttons[i % shop.buttons.length].height) {
+          switch (shop.selected) {
+            case -2:
+              shop.tabs[1].deselect();
+              break;
+            case -1:
+              shop.tabs[0].deselect();
+              break;
+            case shop.buttons.length:
+              shop.backToMenu.deselect();
+              break;
+            default:
+              shop.buttons[shop.selected].deselect();
+          }
+          shop.buttons[i].select();
+          shop.selected = i;
+        }
+      }
+      break;
+    case 1:
+      for (var i = 3; i < shop.buttons.length; i++) {
+        if (shop.gD.mousePos.x >= shop.buttons[i].x && shop.gD.mousePos.x <= shop.buttons[i].x + shop.buttons[i].width &&
+            shop.gD.mousePos.y >= shop.buttons[i].y && shop.gD.mousePos.y <= shop.buttons[i].y + shop.buttons[i].height) {
+          switch (shop.selected) {
+            case -2:
+              shop.tabs[1].deselect();
+              break;
+            case -1:
+              shop.tabs[0].deselect();
+              break;
+            case shop.buttons.length:
+              shop.backToMenu.deselect();
+              break;
+            default:
+              shop.buttons[shop.selected].deselect();
+          }
+          shop.buttons[i].select();
+          shop.selected = i;
+        }
+      }
+  }
+  if (shop.gD.mousePos.x >= shop.backToMenu.x && shop.gD.mousePos.x <= shop.backToMenu.x + shop.backToMenu.width &&
+      shop.gD.mousePos.y >= shop.backToMenu.y && shop.gD.mousePos.y <= shop.backToMenu.y + shop.backToMenu.height) {
+    if (shop.selected < 0) {
+      shop.tabs[shop.active].deselect();
+    } else if (shop.selected < shop.buttons.length) {
+      shop.buttons[shop.selected].deselect();
+    }
+    shop.backToMenu.select();
+    shop.selected = shop.buttons.length;
+  }
+  drawShop(shop);
+}
+
+function shopClick(shop) {
+  if (shop.selected == shop.buttons.length) {
+    if (shop.gD.mousePos.x >= shop.backToMenu.x && shop.gD.mousePos.x <= shop.backToMenu.x + shop.backToMenu.width &&
+        shop.gD.mousePos.y >= shop.backToMenu.y && shop.gD.mousePos.y <= shop.backToMenu.y + shop.backToMenu.height) {
+      shop.menu.show();
+      shop.stop();
+    }
+  } else if (shop.selected > 2) {
+    if (shop.gD.mousePos.x >= shop.buttons[shop.selected].x && shop.gD.mousePos.x <= shop.buttons[shop.selected].x + shop.buttons[shop.selected].width &&
+        shop.gD.mousePos.y >= shop.buttons[shop.selected].y && shop.gD.mousePos.y <= shop.buttons[shop.selected].y + shop.buttons[shop.selected].height) {
+      if ((shop.selected - 3) % 2 == 0) {
+        shop.shopEntries[((shop.selected - 3) / 2) + 3].upgrade(shop);
+      } else {
+        shop.shopEntries[((shop.selected - 4) / 2) + 3].downgrade(shop);
+      }
+      drawShop(shop);
+    }
+  } else if (shop.selected >= 0) {
+    if (shop.gD.mousePos.x >= shop.buttons[shop.selected].x && shop.gD.mousePos.x <= shop.buttons[shop.selected].x + shop.buttons[shop.selected].width &&
+        shop.gD.mousePos.y >= shop.buttons[shop.selected].y && shop.gD.mousePos.y <= shop.buttons[shop.selected].y + shop.buttons[shop.selected].height) {
+      shop.shopEntries[shop.selected].buy(shop);
+      drawShop(shop);
+    }
+  }
+}
+
+function shopWheel(shop, event) {
+  if (shop.active == 1 && shop.selected > 2) {
+    if (event.deltaY > 0) {
+      if (shop.selected + 2 < shop.buttons.length) {
+        shop.buttons[shop.selected].deselect();
+        shop.buttons[shop.selected + 2].select();
+        shop.selected = shop.selected + 2;
+        if (shop.shopEntries[shop.shopEntries.length - 1].x >= (shop.gD.canvas.width / 2) + 300 && shop.buttons[shop.selected].x >= (shop.gD.canvas.width / 2) + 190) {
+          shop.hShift(1);
+        }
+      }
+    } else {
+      if (shop.selected - 2 > 2) {
+        shop.buttons[shop.selected].deselect();
+        shop.buttons[shop.selected - 2].select();
+        shop.selected = shop.selected - 2;
+        if (shop.shopEntries[3].x < (shop.gD.canvas.width / 2) - 300 && shop.buttons[shop.selected].x < (shop.gD.canvas.width / 2) - 170) {
+          shop.hShift(-1);
+        }
+      }
+    }
+    drawShop(shop);
+  }
 }
 
 function drawShop(shop) {
@@ -543,13 +680,13 @@ function drawShop(shop) {
       }
       break;
     default:
-      for (var i = 3; i < shop.shopEntries.length; i++) {
+      for (var i = 3 + shop.shiftFactor; i < Math.min(8 + shop.shiftFactor, shop.shopEntries.length); i++) {
         shop.shopEntries[i].update(shop, shop.gD);
       }
-      for (var i = 3; i < shop.buttons.length - 1; i++) {
+      for (var i = 3 + (shop.shiftFactor * 2); i < Math.min(13 + (shop.shiftFactor * 2), shop.buttons.length); i++) {
         shop.buttons[i].update(shop.gD);
       }
   }
 
-  shop.buttons[shop.buttons.length - 1].update(shop.gD);
+  shop.backToMenu.update(shop.gD);
 }

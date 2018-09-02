@@ -14,7 +14,7 @@ function Save(gD, menu) {
 
     var save = this;
 
-    window.addEventListener('copy', function(event) { copyToClipboard(event, save); });
+    window.addEventListener('copy', function(event) { saveSavestate(event, save); });
   };
   this.clear = function() {
     this.gD.context.clearRect(0, 0, this.gD.canvas.width, this.gD.canvas.height);
@@ -30,11 +30,10 @@ function Save(gD, menu) {
   };
 }
 
-function copyToClipboard(event, save) {
+function saveSavestate(event, save) {
   try {
-    event.clipboardData.setData('text/plain', JSON.stringify(save.gD.save));
-    event.preventDefault();
-    save.text.text = "Speicherstand erfolgreich in die Zwischenablage kopiert!";
+    download(save.menu.version.text + new Date().toString().substr(0, 25) + ".txt", JSON.stringify(save.gD.save));
+    save.text.text = "Speicherstand erfolgreich erstellt!";
     console.log("Speichern erfolgreich!");
   } catch (err) {
     console.log(err.message);
@@ -42,6 +41,19 @@ function copyToClipboard(event, save) {
   if (save.visible) {
     drawSave(save);
   }
+}
+
+function download(filename, text) {
+  var element = document.createElement('a');
+  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+  element.setAttribute('download', filename);
+
+  element.style.display = 'none';
+  document.body.appendChild(element);
+
+  element.click();
+
+  document.body.removeChild(element);
 }
 
 function saveControlDown(save, key) {
@@ -52,6 +64,22 @@ function saveControlDown(save, key) {
 }
 
 function saveControlUp(save, key) {
+
+}
+
+function saveMouseMove(save) {
+
+}
+
+function saveClick(save) {
+  if (save.gD.mousePos.x >= save.backToMenu.x && save.gD.mousePos.x <= save.backToMenu.x + save.backToMenu.width &&
+      save.gD.mousePos.y >= save.backToMenu.y && save.gD.mousePos.y <= save.backToMenu.y + save.backToMenu.height) {
+    save.menu.show();
+    save.stop();
+  }
+}
+
+function saveWheel(save, event) {
 
 }
 
