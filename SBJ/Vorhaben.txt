@@ -1,0 +1,16 @@
+﻿Die Hintergrundbilder sollen sich zufällig beim aufrufen des Hauptmenüs festlegen und die verschiedenen Stages darstellen
+  Wenn ein Bild ausgewählt wurde, wird es so lange benutzt, bis man vom Spiel aus das Hauptmenü aufruft
+
+Mehr Achievementicons
+
+Multiplayer (an einer Tastatur) einbauen
+
+Achievements Steuerung nach oben optimieren
+
+"Neues Achievement geschafft"-Fenster
+
+Statistik einbauen
+
+{"achievementValues":[1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000],"cash":0,"highscores":{"1":["Sat May 26 2018 00:12:03","17m","0"]}}
+
+{"playerUnlocked":[true,true,true,true,true,true],"level":[10,10,0,10,10,10],"stagesUnlocked":[true,true,true,true,true]}

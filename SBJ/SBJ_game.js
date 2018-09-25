@@ -12,13 +12,13 @@ function Game(gD, menu) {
   this.stageNr = 0;
   this.stages = [];
   this.playerDict = {    //The data for the different playermodels with: jumps, jumpstrength, movementspeed right, movementspeed left
-    "1" : [2, -9, 3, -3],
-    "2" : [2, -13.5, 3, -3],
-    "3" : [2, -9, 6, -6],
-    "4" : [3, -9, 3, -3],
-    "5" : [2, -10.8, 4.5, -4.5],
-    "6" : [3, -10.8, 3, -3],
-    "7" : [3, -10.8, 4.5, -4.5]
+    "1" : [2, -9, 180, -180],
+    "2" : [2, -810, 180, -180],
+    "3" : [2, -540, 360, -360],
+    "4" : [3, -540, 180, -180],
+    "5" : [2, -648, 270, -270],
+    "6" : [3, -648, 180, -180],
+    "7" : [3, -648, 270, -270]
   };
   this.paused = false;
   this.visible = false;
@@ -54,7 +54,8 @@ function Game(gD, menu) {
 
     this.pauseModal = new GameModal(0, 0, this.gD.canvas.width, this.gD.canvas.height, "rgba(44, 47, 51, .6)");
     this.pauseModal.texts.push(new Text(this.gD.canvas.width / 2, this.gD.canvas.height / 2, "40pt", "Consolas", "rgba(200, 200, 200, 1)", "center", "middle", "Pause", 0));
-    this.pauseModal.buttons.push(new Button((this.gD.canvas.width / 2) - 100, this.gD.canvas.height / 2 + 30, 200, 30, "15pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Main Menu", "rgba(0, 0, 0, .6)", 2));
+    this.pauseModal.buttons.push(new Button((this.gD.canvas.width / 2) - 100, this.gD.canvas.height / 2 + 30, 200, 30, "15pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Continue", "rgba(0, 0, 0, .6)", 2));
+    this.pauseModal.buttons.push(new Button((this.gD.canvas.width / 2) - 100, this.gD.canvas.height / 2 + 65, 200, 30, "15pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Main Menu", "rgba(0, 0, 0, .6)", 2));
     this.pauseModal.init();
 
     this.finishModal = new GameModal(0, 0, this.gD.canvas.width, this.gD.canvas.height, "rgba(44, 47, 51, .6)");
@@ -80,6 +81,8 @@ function Game(gD, menu) {
 
     this.finished = false;
     this.paused = false;
+
+    this.startts = 0;
   };
   this.setStage = function(stageNr) {
     this.stageNr = stageNr;
@@ -91,11 +94,12 @@ function Game(gD, menu) {
     this.paused = true;
     cancelAnimationFrame(this.raf);
     this.backgroundMusic.pause();
+    this.pauseModal.update(this.gD);
   };
   this.continue = function() {
     this.paused = false;
     var game = this;
-    this.raf = requestAnimationFrame(function(){ updateGame(game); });
+    this.raf = requestAnimationFrame(function(timestamp){ updateGame(game, timestamp, true); });
     this.backgroundMusic.play();
   };
   this.finish = function() {
@@ -130,7 +134,7 @@ function Game(gD, menu) {
   this.show = function() {
     this.visible = true;
     var game = this;
-    this.raf = requestAnimationFrame(function(){ updateGame(game); });
+    this.raf = requestAnimationFrame(function(timestamp){ updateGame(game, timestamp, true); });
     this.backgroundMusic.load();
     this.backgroundMusic.play();
     this.backgroundMusic.muted = this.gD.muted;
@@ -185,7 +189,7 @@ function GamePlayer(x, y) {
     } else {
       if (!this.onFloor || (this.currentFloor != undefined && this.currentFloor.type == 2)) {
         this.velocity += this.gravity;
-        this.y += this.velocity;
+        this.y += game.timeDiff * this.velocity * 60;
         if (game.stageNr == 3 && this.y + this.height > game.gD.canvas.height / 2) {
           if (this.outsideWater) {
             this.velocity = 1;
@@ -530,11 +534,10 @@ function gameControlDown(game, key) {
     }
     if (game.menu.controls.keyBindings["Game1"][2].includes(key)) {                                  //pause game
       game.pause();
-      game.pauseModal.update(game.gD);
     } else if (game.menu.controls.keyBindings["Game2"][2].includes(key)) {              //move forward
-      game.player.speedX = game.playerDict[game.player.playerNr.toString()][2];
+      game.player.speedX = game.timeDiff * game.playerDict[game.player.playerNr.toString()][2];
     } else if (game.menu.controls.keyBindings["Game3"][2].includes(key)) {              //move backwards
-      game.player.speedX = game.playerDict[game.player.playerNr.toString()][3];
+      game.player.speedX = game.timeDiff * game.playerDict[game.player.playerNr.toString()][3];
     } else if (game.menu.controls.keyBindings["Game4"][2].includes(key) && game.player.onFloor) {       //down from platform
       game.player.onFloor = false;
       game.player.currentFloor = undefined;
@@ -572,9 +575,21 @@ function gameControlDown(game, key) {
       }
     }
   } else if (game.paused) {
-    if (game.menu.controls.keyBindings["FinishModal3"][2].includes(key)) {
-      game.stop();
-      game.menu.show();
+    if (game.menu.controls.keyBindings["FinishModal1"][2].includes(key) || game.menu.controls.keyBindings["FinishModal2"][2].includes(key)) {   //navigation up or down keys
+      game.pauseModal.buttons[game.pauseModal.selected].deselect();
+      game.pauseModal.buttons[(game.pauseModal.selected + 1) % 2].select();
+      game.pauseModal.selected = (game.pauseModal.selected + 1) % 2;
+      drawGame(game);
+    } else if (game.menu.controls.keyBindings["FinishModal3"][2].includes(key)) {                     //enter key
+      switch (game.pauseModal.selected) {
+        case 1:
+          game.stop();
+          game.menu.show();
+          break;
+        default:
+          game.continue();
+          break;
+      }
     } else if (game.menu.controls.keyBindings["Game1"][2].includes(key)) {                                  //pause game
       game.continue();
     }
@@ -618,7 +633,18 @@ function gameControlUp(game, key) {
 }
 
 function gameMouseMove(game) {
-  if (game.finished) {
+  if (game.paused) {
+    for (var i = 0; i < game.pauseModal.buttons.length; i++) {
+      if (game.gD.mousePos.x >= game.pauseModal.buttons[i].x && game.gD.mousePos.x <= game.pauseModal.buttons[i].x + game.pauseModal.buttons[i].width &&
+          game.gD.mousePos.y >= game.pauseModal.buttons[i].y && game.gD.mousePos.y <= game.pauseModal.buttons[i].y + game.pauseModal.buttons[i].height) {
+        game.pauseModal.buttons[game.pauseModal.selected].deselect();
+        game.pauseModal.buttons[i].select();
+        game.pauseModal.selected = i;
+        break;
+      }
+    }
+    drawGame(game);
+  } else if (game.finished) {
     for (var i = 0; i < game.finishModal.buttons.length; i++) {
       if (game.gD.mousePos.x >= game.finishModal.buttons[i].x && game.gD.mousePos.x <= game.finishModal.buttons[i].x + game.finishModal.buttons[i].width &&
           game.gD.mousePos.y >= game.finishModal.buttons[i].y && game.gD.mousePos.y <= game.finishModal.buttons[i].y + game.finishModal.buttons[i].height) {
@@ -636,8 +662,15 @@ function gameClick(game) {
   if (game.paused) {
     if (game.gD.mousePos.x >= game.pauseModal.buttons[game.pauseModal.selected].x && game.gD.mousePos.x <= game.pauseModal.buttons[game.pauseModal.selected].x + game.pauseModal.buttons[game.pauseModal.selected].width &&
         game.gD.mousePos.y >= game.pauseModal.buttons[game.pauseModal.selected].y && game.gD.mousePos.y <= game.pauseModal.buttons[game.pauseModal.selected].y + game.pauseModal.buttons[game.pauseModal.selected].height) {
-      game.stop();
-      game.menu.show();
+      switch (game.pauseModal.selected) {
+        case 1:
+          game.stop();
+          game.menu.show();
+          break;
+        default:
+          game.continue();
+          break;
+      }
     }
   } else if (game.finished) {
     if (game.gD.mousePos.x >= game.finishModal.buttons[game.finishModal.selected].x && game.gD.mousePos.x <= game.finishModal.buttons[game.finishModal.selected].x + game.finishModal.buttons[game.finishModal.selected].width &&
@@ -663,41 +696,47 @@ function gameWheel(game, event) {
 
 }
 
-function updateGame(game) {
-  if (!game.finished && !game.paused) {
-    game.raf = requestAnimationFrame(function(){ updateGame(game); });
+function updateGame(game, timestamp, resetTime) {
+  if (resetTime) {
+    game.startts = timestamp;
   }
+
+  if (!game.finished && !game.paused) {
+    game.raf = requestAnimationFrame(function(timestamp){ updateGame(game, timestamp, false); });
+  }
+
+  game.timeDiff = (timestamp - game.startts) / 1000; //relative time in seconds
 
   game.frameCounter += 1;
 
-  if (game.itemsActive[5]) {
-    game.moneySpawnCounter -= 5;
-    game.itemSpawnCounter -= 5;
+  if (game.itemsActive[5]) {                         //if rocket is active
+    game.moneySpawnCounter -= game.timeDiff * 300;
+    game.itemSpawnCounter -= game.timeDiff * 300;
     var max = game.gD.itemBaseDur[5] + (game.menu.shop.level[5] * game.gD.itemPerLvlDur[5]);
-    game.globalSpeed = Math.min(Math.pow((-game.itemTimer[5] + 5 + (max / 2)) / (max / 5), 4) - 40, Math.ceil(game.globalBaseSpeed - (game.distanceTravelled * 0.00015)));
+    game.globalSpeed = game.timeDiff * (Math.min(Math.pow((-game.itemTimer[5] + 5 + (max / 2)) / (max / 5), 4) - 40, Math.ceil(game.globalBaseSpeed - (game.distanceTravelled * 0.00015))) * 60);
     game.distanceTravelled += -game.globalSpeed;
-  } else if (game.itemsActive[0]) {
-    game.moneySpawnCounter -= 0.05;
-    game.itemSpawnCounter -= 0.05;
-    game.globalSpeed = -0.1;
+  } else if (game.itemsActive[0]) {                  //if stopwatch is active
+    game.moneySpawnCounter -= game.timeDiff * 3;
+    game.itemSpawnCounter -= game.timediff * 3;
+    game.globalSpeed = -(game.timeDiff * 6);
     game.distanceTravelled += -game.globalSpeed;
-  } else {
-    game.moneySpawnCounter -= Math.floor(1 + (game.distanceTravelled * 0.00005));  //after 1333m the counter is counted down by 2
-    game.itemSpawnCounter -= Math.floor(1 + (game.distanceTravelled * 0.00005));  //after 1333m the counter is counted down by 2
+  } else {                                           //else
+    game.moneySpawnCounter -= game.timeDiff * (Math.floor(1 + (game.distanceTravelled * 0.00005)) * 60);  //after 1333m the counter is counted down by 2
+    game.itemSpawnCounter -= game.timeDiff * (Math.floor(1 + (game.distanceTravelled * 0.00005)) * 60);  //after 1333m the counter is counted down by 2
     game.actualMoneyProb[2] = Math.min(game.distanceTravelled * 0.00022, 5);   //after 1500m it's nearly at 5
     game.actualMoneyProb[3] = Math.min(game.distanceTravelled * 0.000066, 2);   //after 2000m it's nearly at 20
-    game.globalSpeed = Math.ceil(game.globalBaseSpeed - (game.distanceTravelled * 0.00015));
+    game.globalSpeed = game.timeDiff * (Math.ceil(game.globalBaseSpeed - (game.distanceTravelled * 0.00015)) * 60);
     game.distanceTravelled += -game.globalSpeed;
   }
 
   if (game.stageNr == 5) {
-    game.player.gravity = 0.05;
+    game.player.gravity = game.timeDiff * 3;
   } else if (game.itemsActive[2]) {
-    game.player.gravity = 0.1;
+    game.player.gravity = game.timeDiff * 6;
   } else if (game.stageNr == 3 && game.player.y + game.player.height >= game.gD.canvas.height / 2) {
-    game.player.gravity = 0.1;
+    game.player.gravity = game.timeDiff * 6;
   } else {
-    game.player.gravity = 0.45;
+    game.player.gravity = game.timeDiff * 27;
   }
 
   if (game.itemsActive[3]) {
@@ -837,8 +876,9 @@ function updateGame(game) {
 
   for (var i = game.itemTimer.length - 1; i >= 0; i--) {
     if (game.itemTimer[i] > 0) {
-      game.itemTimer[i]--;
-      if (game.itemTimer[i] == 0) {
+      game.itemTimer[i] -= game.timeDiff * 60;
+      if (game.itemTimer[i] <= 0) {
+        game.itemTimer[i] = 0;
         game.itemsActive[i] = false;
         switch (i) {
           case 0:
@@ -873,6 +913,7 @@ function updateGame(game) {
   }
 
   drawGame(game);
+  game.startts = timestamp;
 }
 
 function drawGame(game) {
@@ -959,6 +1000,10 @@ function drawGame(game) {
       break;
     default:
       drawForegroundStage0(game, game.stages[game.stageNr]);
+  }
+
+  if (game.paused) {
+    game.pauseModal.update(game.gD);
   }
 
   if (game.finished) {

@@ -6,7 +6,7 @@ function Menu(gD) {
   this.init = function() {
     this.title = new Text(this.gD.canvas.width / 2, 100, "40pt", "Showcard Gothic", "rgba(200, 200, 200, 1)", "center", "middle", "Super Block Jump", 3);
     this.pressButton = new Text(this.gD.canvas.width / 2, 280, "15pt", "Showcard Gothic", "rgba(200, 200, 200, 1)", "center", "middle", "Dr" + String.fromCharCode(220) + "cke eine beliebige Taste", 1.5);
-    this.version = new Text(this.gD.canvas.width - 5, this.gD.canvas.height - 5, "10pt", "Consolas", "rgba(255, 255, 255, 1)", "right", "alphabetic", "v2.6.5", 0);
+    this.version = new Text(this.gD.canvas.width - 5, this.gD.canvas.height - 5, "10pt", "Consolas", "rgba(255, 255, 255, 1)", "right", "alphabetic", "v2.6.6", 0);
     this.muteButton = new MuteButton(this.gD.canvas.width - 40, 10, 30, 30, "rgba(255, 255, 255, 1)", 2);
 
     this.buttons = [];

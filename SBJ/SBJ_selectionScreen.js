@@ -8,20 +8,20 @@
   this.init = function() {
     this.title = new Text(this.gD.canvas.width / 2, 30, "32pt", "Showcard Gothic", "rgba(200, 200, 200, 1)", "center", "middle", "Select Your Character", 3);
     this.modal = new SelectionScreenModal(0, 0, this.gD.canvas.width, this.gD.canvas.height, "rgba(0, 0, 0, .5)");
-    this.modal.player.push(new SelectionScreenImage(this.gD.canvas.width / 2 - 135, this.gD.canvas.height - 45, 30, 30, "Player1", 1, ["Doppel Sprung"], 2));
-    this.modal.player.push(new SelectionScreenImage(this.gD.canvas.width / 2 - 95, this.gD.canvas.height - 45, 30, 30, "Player2", 2, ["Doppel Sprung", "1.5x höhere Sprungkraft"], 2));
-    this.modal.player.push(new SelectionScreenImage(this.gD.canvas.width / 2 - 55, this.gD.canvas.height - 45, 30, 30, "Player3", 3, ["Doppel Sprung", "2x schnellere Bewegung"], 2));
-    this.modal.player.push(new SelectionScreenImage(this.gD.canvas.width / 2 - 15, this.gD.canvas.height - 45, 30, 30, "Player4", 4, ["Dreifach Sprung"], 2));
-    this.modal.player.push(new SelectionScreenImage(this.gD.canvas.width / 2 + 25, this.gD.canvas.height - 45, 30, 30, "Player5", 5, ["Doppel Sprung", "1.5x schnellere Bewegung", "1.2x höhere Sprungkraft"], 2));
-    this.modal.player.push(new SelectionScreenImage(this.gD.canvas.width / 2 + 65, this.gD.canvas.height - 45, 30, 30, "Player6", 6, ["Dreifach Sprung", "1.2x höhere Sprungkraft"], 2));
-    this.modal.player.push(new SelectionScreenImage(this.gD.canvas.width / 2 + 105, this.gD.canvas.height - 45, 30, 30, "Player7", 7, ["Startet mit 10 von jedem Item", "Dreifach Sprung", "1.5x schnellere Bewegung", "1.2x höhere Sprungkraft"], 2));
+    this.modal.player.push(new SelectionScreenImage(this.gD.canvas.width / 2 - 135, this.gD.canvas.height - 45, 30, 30, "Player1", 1, [], ["Doppel Sprung"], 2));
+    this.modal.player.push(new SelectionScreenImage(this.gD.canvas.width / 2 - 95, this.gD.canvas.height - 45, 30, 30, "Player2", 2, ["Freischaltbar im Shop"], ["Doppel Sprung", "1.5x höhere Sprungkraft"], 2));
+    this.modal.player.push(new SelectionScreenImage(this.gD.canvas.width / 2 - 55, this.gD.canvas.height - 45, 30, 30, "Player3", 3, ["Freischaltbar im Shop"], ["Doppel Sprung", "2x schnellere Bewegung"], 2));
+    this.modal.player.push(new SelectionScreenImage(this.gD.canvas.width / 2 - 15, this.gD.canvas.height - 45, 30, 30, "Player4", 4, ["Freischaltbar im Shop"], ["Dreifach Sprung"], 2));
+    this.modal.player.push(new SelectionScreenImage(this.gD.canvas.width / 2 + 25, this.gD.canvas.height - 45, 30, 30, "Player5", 5, ["Freischaltbar durch Achievement 'Ein neuer PC'"], ["Doppel Sprung", "1.5x schnellere Bewegung", "1.2x höhere Sprungkraft"], 2));
+    this.modal.player.push(new SelectionScreenImage(this.gD.canvas.width / 2 + 65, this.gD.canvas.height - 45, 30, 30, "Player6", 6, ["Freischaltbar durch Achievement 'Ausdauerprofi'"], ["Dreifach Sprung", "1.2x höhere Sprungkraft"], 2));
+    this.modal.player.push(new SelectionScreenImage(this.gD.canvas.width / 2 + 105, this.gD.canvas.height - 45, 30, 30, "Player7", 7, ["Freischaltbar durch Achievement 'Achievementhunter'"], ["Startet mit 10 von jedem Item", "Dreifach Sprung", "1.5x schnellere Bewegung", "1.2x höhere Sprungkraft"], 2));
 
-    this.modal.stages.push(new SelectionScreenImage(this.gD.canvas.width / 2 - 205, this.gD.canvas.height - 45, 60, 30, "Stage0", 0, ["Standard", "Schwierigkeit: leicht"], 2));
-    this.modal.stages.push(new SelectionScreenImage(this.gD.canvas.width / 2 - 135, this.gD.canvas.height - 45, 60, 30, "Stage1", 1, ["Festung", "Schwierigkeit: mittel"], 2));
-    this.modal.stages.push(new SelectionScreenImage(this.gD.canvas.width / 2 - 65, this.gD.canvas.height - 45, 60, 30, "Stage2", 2, ["Luft", "Schwierigkeit: mittel"], 2));
-    this.modal.stages.push(new SelectionScreenImage(this.gD.canvas.width / 2 + 5, this.gD.canvas.height - 45, 60, 30, "Stage3", 3, ["Wasser", "Schwierigkeit: schwer"], 2));
-    this.modal.stages.push(new SelectionScreenImage(this.gD.canvas.width / 2 + 75, this.gD.canvas.height - 45, 60, 30, "Stage4", 4, ["Wald", "Schwierigkeit: mittel"], 2));
-    this.modal.stages.push(new SelectionScreenImage(this.gD.canvas.width / 2 + 145, this.gD.canvas.height - 45, 60, 30, "Stage5", 5, ["All", "Schwierigkeit: schwer"], 2));
+    this.modal.stages.push(new SelectionScreenImage(this.gD.canvas.width / 2 - 205, this.gD.canvas.height - 45, 60, 30, "Stage0", 0, [], ["Standard", "Schwierigkeit: leicht"], 2));
+    this.modal.stages.push(new SelectionScreenImage(this.gD.canvas.width / 2 - 135, this.gD.canvas.height - 45, 60, 30, "Stage1", 1, ["Freischaltbar durch 1000m in 'Standard'-Stage"], ["Festung", "Schwierigkeit: mittel"], 2));
+    this.modal.stages.push(new SelectionScreenImage(this.gD.canvas.width / 2 - 65, this.gD.canvas.height - 45, 60, 30, "Stage2", 2, ["Freischaltbar durch 1300m in 'Festung'-Stage"], ["Luft", "Schwierigkeit: mittel"], 2));
+    this.modal.stages.push(new SelectionScreenImage(this.gD.canvas.width / 2 + 5, this.gD.canvas.height - 45, 60, 30, "Stage3", 3, ["Freischaltbar durch 1600m in 'Luft'-Stage"], ["Wasser", "Schwierigkeit: schwer"], 2));
+    this.modal.stages.push(new SelectionScreenImage(this.gD.canvas.width / 2 + 75, this.gD.canvas.height - 45, 60, 30, "Stage4", 4, ["Freischaltbar durch 1900m in 'Wasser'-Stage"], ["Wald", "Schwierigkeit: mittel"], 2));
+    this.modal.stages.push(new SelectionScreenImage(this.gD.canvas.width / 2 + 145, this.gD.canvas.height - 45, 60, 30, "Stage5", 5, ["Freischaltbar durch 2200m in 'Wald'-Stage"], ["All", "Schwierigkeit: schwer"], 2));
 
     this.modal.init();
   };
@@ -65,12 +65,14 @@ function SelectionScreenModal(x, y, width, height, color) {
       case 1:
         this.showcase.imageName = this.player[this.playerSelected].name + "B";
         this.showcase.imageNr = this.player[this.playerSelected].nr;
-        this.showcase.desc = this.player[this.playerSelected].desc;
+        this.showcase.descOver = this.player[this.playerSelected].descOver;
+        this.showcase.descBelow = this.player[this.playerSelected].descBelow;
         break;
       case 2:
         this.showcase.imageName = this.stages[this.stageSelected].name + "B";
         this.showcase.imageNr = this.stages[this.stageSelected].nr;
-        this.showcase.desc = this.stages[this.stageSelected].desc;
+        this.showcase.descOver = this.stages[this.stageSelected].descOver;
+        this.showcase.descBelow = this.stages[this.stageSelected].descBelow;
         break;
       default:
     }
@@ -88,14 +90,15 @@ function SelectionScreenModal(x, y, width, height, color) {
   };
 }
 
-function SelectionScreenImage(x, y, width, height, name, nr, desc, bordersize) {
+function SelectionScreenImage(x, y, width, height, name, nr, descOver, descBelow, bordersize) {
   this.x = x;
   this.y = y;
   this.width = width;
   this.height = height;
   this.name = name;
   this.nr = nr;
-  this.desc = desc;
+  this.descOver = descOver;
+  this.descBelow = descBelow;
   this.bordersize = bordersize
   this.selected = false;
   this.select = function() {
@@ -122,7 +125,8 @@ function SelectionScreenShowcase(x, y, width, height) {
   this.height = height;
   this.imageName = "";
   this.imageNr = 1;         //is the number, that is inside the imageName
-  this.desc = "";
+  this.descOver = "";
+  this.descBelow = "";
   this.update = function(selectionScreen, gD) {
     gD.context.drawImage(gD.spritesheet, gD.spriteDict[this.imageName][0], gD.spriteDict[this.imageName][1], gD.spriteDict[this.imageName][2], gD.spriteDict[this.imageName][3],
       this.x + ((this.width - gD.spriteDict[this.imageName][2]) / 2), this.y + ((this.height - gD.spriteDict[this.imageName][3]) / 2), gD.spriteDict[this.imageName][2], gD.spriteDict[this.imageName][3]);
@@ -130,8 +134,11 @@ function SelectionScreenShowcase(x, y, width, height) {
     gD.context.textBaseline = "middle";
     gD.context.font = "13pt Consolas";
     gD.context.fillStyle = "rgba(255, 255, 255, 1)";
-    for (var i = 0; i < this.desc.length; i++) {
-      gD.context.fillText(this.desc[i], this.x + (this.width / 2), this.y + this.height + ((i + 1) * 20));
+    for (var i = 0; i < this.descOver.length; i++) {
+      gD.context.fillText(this.descOver[i], this.x + (this.width / 2), this.y - 40 + (i * 20));
+    }
+    for (var i = 0; i < this.descBelow.length; i++) {
+      gD.context.fillText(this.descBelow[i], this.x + (this.width / 2), this.y + this.height + ((i + 1) * 20));
     }
 
     if (selectionScreen.selectionMode == 1) {

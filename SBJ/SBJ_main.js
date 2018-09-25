@@ -310,7 +310,7 @@ function GlobalDict() {
   this.moneyProb = [5, 4, 1, 0.05];                 //relative probabilities
   this.floorProb = [5, 1, 0.8, 0.8];
   this.keys = [];
-  this.muted = false;
+  this.muted = true;
   this.playerUnlocked = new Array(6).fill(false);
   this.stagesUnlocked = new Array(5).fill(false);
   this.save = {};
