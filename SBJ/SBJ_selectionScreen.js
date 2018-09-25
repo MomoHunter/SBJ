@@ -99,7 +99,7 @@ function SelectionScreenImage(x, y, width, height, name, nr, descOver, descBelow
   this.nr = nr;
   this.descOver = descOver;
   this.descBelow = descBelow;
-  this.bordersize = bordersize
+  this.bordersize = bordersize;
   this.selected = false;
   this.select = function() {
     this.selected = true;
@@ -125,8 +125,8 @@ function SelectionScreenShowcase(x, y, width, height) {
   this.height = height;
   this.imageName = "";
   this.imageNr = 1;         //is the number, that is inside the imageName
-  this.descOver = "";
-  this.descBelow = "";
+  this.descOver = [""];
+  this.descBelow = [""];
   this.update = function(selectionScreen, gD) {
     gD.context.drawImage(gD.spritesheet, gD.spriteDict[this.imageName][0], gD.spriteDict[this.imageName][1], gD.spriteDict[this.imageName][2], gD.spriteDict[this.imageName][3],
       this.x + ((this.width - gD.spriteDict[this.imageName][2]) / 2), this.y + ((this.height - gD.spriteDict[this.imageName][3]) / 2), gD.spriteDict[this.imageName][2], gD.spriteDict[this.imageName][3]);
@@ -141,36 +141,23 @@ function SelectionScreenShowcase(x, y, width, height) {
       gD.context.fillText(this.descBelow[i], this.x + (this.width / 2), this.y + this.height + ((i + 1) * 20));
     }
 
-    if (selectionScreen.page == 1) {
-      if (this.imageNr > 1 && !gD.playerUnlocked[this.imageNr - 2]) {
-        gD.context.translate(this.x + (this.width / 2), this.y + (this.height / 2));
-        gD.context.rotate(-20 * Math.PI / 180);
-        gD.context.textAlign = "center";
-        gD.context.textBaseline = "middle";
-        gD.context.font = "20pt Stencil";
-        gD.context.fillStyle = "rgba(255, 0, 0, 1)";
-        gD.context.fillText("Gesperrt!", 0, 0);
-        gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
-        gD.context.lineWidth = 1;
-        gD.context.strokeText("Gesperrt!", 0, 0);
-        gD.context.rotate(20 * Math.PI / 180);
-        gD.context.translate(-(this.x + (this.width / 2)), -(this.y + (this.height / 2)));
-      }
-    } else if (selectionScreen.page == 2) {
-      if (this.imageNr > 0 && !gD.stagesUnlocked[this.imageNr - 1]) {
-        gD.context.translate(this.x + (this.width / 2), this.y + (this.height / 2));
-        gD.context.rotate(-20 * Math.PI / 180);
-        gD.context.textAlign = "center";
-        gD.context.textBaseline = "middle";
-        gD.context.font = "20pt Stencil";
-        gD.context.fillStyle = "rgba(255, 0, 0, 1)";
-        gD.context.fillText("Gesperrt!", 0, 0);
-        gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
-        gD.context.lineWidth = 1;
-        gD.context.strokeText("Gesperrt!", 0, 0);
-        gD.context.rotate(20 * Math.PI / 180);
-        gD.context.translate(-(this.x + (this.width / 2)), -(this.y + (this.height / 2)));
-      }
+    if (
+      (selectionScreen.page == 1 && this.imageNr > 1 && !gD.playerUnlocked[this.imageNr - 2])
+      ||
+      (selectionScreen.page == 2 && this.imageNr > 0 && !gD.stagesUnlocked[this.imageNr - 1])
+    ) {
+      gD.context.translate(this.x + (this.width / 2), this.y + (this.height / 2));
+      gD.context.rotate(-20 * Math.PI / 180);
+      gD.context.textAlign = "center";
+      gD.context.textBaseline = "middle";
+      gD.context.font = "20pt Stencil";
+      gD.context.fillStyle = "rgba(255, 0, 0, 1)";
+      gD.context.fillText("Gesperrt!", 0, 0);
+      gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
+      gD.context.lineWidth = 1;
+      gD.context.strokeText("Gesperrt!", 0, 0);
+      gD.context.rotate(20 * Math.PI / 180);
+      gD.context.translate(-(this.x + (this.width / 2)), -(this.y + (this.height / 2)));
     }
   };
 }

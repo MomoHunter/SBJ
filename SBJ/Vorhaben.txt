@@ -1,4 +1,10 @@
-﻿Die Hintergrundbilder sollen sich zufällig beim aufrufen des Hauptmenüs festlegen und die verschiedenen Stages darstellen
+﻿main: itemProb, itemBaseDur, itemPerLvlDur, itemStartValue, moneyProb, floorProb, playerUnlocked, stagesUnlocked
+ in dict ändern
+
+Floor-Types in enum ändern
+    enum: https://stackoverflow.com/a/5040502
+
+Die Hintergrundbilder sollen sich zufällig beim aufrufen des Hauptmenüs festlegen und die verschiedenen Stages darstellen
   Wenn ein Bild ausgewählt wurde, wird es so lange benutzt, bis man vom Spiel aus das Hauptmenü aufruft
 
 Mehr Achievementicons

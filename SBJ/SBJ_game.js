@@ -47,7 +47,7 @@ function Game(gD, menu) {
     this.itemsUsed = new Array(this.gD.itemProb.length).fill(0);
 
     this.moneyObjects = [];
-    this.actualMoneyProb = this.gD.moneyProb;
+    this.currentMoneyProb = this.gD.moneyProb;
 
     this.moneySpawnCounter = Math.floor(Math.random() * 200);
     this.itemSpawnCounter = Math.max(Math.floor(Math.random() * 1500), 500);
@@ -171,13 +171,15 @@ function GamePlayer(x, y) {
     }
   };
   this.update = function(game, gD) {
+    var spriteKey = "Player" + this.playerNr;
     if (game.itemsActive[5]) {
-      gD.context.drawImage(gD.spritesheet, gD.spriteDict["Item6"][0], gD.spriteDict["Item6"][1], gD.spriteDict["Item6"][2], gD.spriteDict["Item6"][3],
-        this.x, this.y, gD.spriteDict["Item6"][2], gD.spriteDict["Item6"][3]);
-    } else {
-      gD.context.drawImage(gD.spritesheet, gD.spriteDict["Player" + this.playerNr][0], gD.spriteDict["Player" + this.playerNr][1], gD.spriteDict["Player" + this.playerNr][2], gD.spriteDict["Player" + this.playerNr][3],
-        this.x, this.y, this.width, this.height);
+      spriteKey = "Item6";
     }
+    gD.context.drawImage(
+      gD.spritesheet,
+      gD.spriteDict[spriteKey][0], gD.spriteDict[spriteKey][1], gD.spriteDict[spriteKey][2], gD.spriteDict[spriteKey][3],
+      this.x, this.y, this.width, this.height
+    );
   };
   this.newPos = function(game, gD) {
     if (game.itemsActive[5]) {
@@ -190,16 +192,18 @@ function GamePlayer(x, y) {
       if (!this.onFloor || (this.currentFloor != undefined && this.currentFloor.type == 2)) {
         this.velocity += this.gravity;
         this.y += game.timeDiff * this.velocity * 60;
-        if (game.stageNr == 3 && this.y + this.height > game.gD.canvas.height / 2) {
-          if (this.outsideWater) {
-            this.velocity = 1;
+        if (game.stageNr == 3) {
+          if (this.y + this.height > game.gD.canvas.height / 2) {
+            if (this.outsideWater) {
+              this.velocity = 1;
+            }
+            this.outsideWater = false;
+          } else {
+            if (!this.outsideWater) {
+              this.velocity = game.playerDict[game.player.playerNr.toString()][1] / 1.8;
+            }
+            this.outsideWater = true;
           }
-          this.outsideWater = false;
-        } else if (game.stageNr == 3) {
-          if (!this.outsideWater) {
-            this.velocity = game.playerDict[game.player.playerNr.toString()][1] / 1.8;
-          }
-          this.outsideWater = true;
         }
       }
       this.x += this.speedX;
@@ -207,7 +211,7 @@ function GamePlayer(x, y) {
     }
     this.hitWalls(game, gD);
   };
-  this.hitWalls = function(game, gD) {                //checks, if the player touches a canvas wall, or the floor at gD.canvas.height - the deadZone from the current stage
+  this.hitWalls = function(game, gD) {  //checks, if the player touches a canvas wall, or the floor of the current stage
     if (this.y + this.height > gD.canvas.height - game.stages[game.stageNr].deadZoneGround) {
       if (game.itemsActive[1]) {
         this.y = gD.canvas.height - game.stages[game.stageNr].deadZoneGround - this.height;
@@ -233,8 +237,8 @@ function GamePlayer(x, y) {
           this.aboveFloor = true;
           this.currentFloor = game.floor[i];
         } else if (this.currentFloor != undefined && this.y + this.height > this.currentFloor.y - (this.currentFloor.thickness / 2) && this.aboveFloor && this.velocity > 0) {
-          if (!gD.keys[game.menu.controls.keyBindings["Game4"][2][0]] && !gD.keys[game.menu.controls.keyBindings["Game4"][2][0]]) {
-            if (this.currentFloor.type == 1 && !(gD.keys[game.menu.controls.keyBindings["Game4"][2][0]] || gD.keys[game.menu.controls.keyBindings["Game4"][2][1]])) {
+          if (!gD.keys[game.menu.controls.keyBindings["Game4"][2][0]] && !gD.keys[game.menu.controls.keyBindings["Game4"][2][1]]) {
+            if (this.currentFloor.type == 1) {
               this.velocity = -this.velocity * 0.9;
             } else if (this.currentFloor.type == 2) {
               this.currentFloor.isFalling = true;
@@ -263,14 +267,12 @@ function GamePlayer(x, y) {
     }
   };
   this.collect = function(object) {                   //checks if an object is touched by the player
-    var collected = true;
-    if ((this.y + this.height < object.y) ||
-        (this.y > object.y + object.height) ||
-        (this.x + this.width < object.x) ||
-        (this.x > object.x + object.width)) {
-      collected = false;
-    }
-    return collected;
+    return !(
+      (this.y + this.height < object.y) ||
+      (this.y > object.y + object.height) ||
+      (this.x + this.width < object.x) ||
+      (this.x > object.x + object.width)
+    );
   };
 }
 
@@ -385,7 +387,7 @@ function GameObject(x, y, width, height, name, value) {
     if (game.itemsActive[4]) {
       var distX = (game.player.x + (game.player.width / 2)) - (this.x + (this.width / 2));
       var distY = (game.player.y + (game.player.height / 2)) - (this.y + (this.height / 2));
-      var distanceToPlayer = Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2))
+      var distanceToPlayer = Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2));
       if (distanceToPlayer < 80) {
         this.x += 10 * distX / distanceToPlayer;
         this.y += 10 * distY / distanceToPlayer;
@@ -460,23 +462,36 @@ function addFloor(game, gD) {
           y = game.floor[game.floor.length - 1].y - maxY;
         }
       }
-      game.floor.push(new GameFloor(gD.canvas.width + 50 + (Math.random() * maxDist), Math.floor(y) + 0.5, Math.max(Math.floor((Math.random() * maxWidth) / widthStep) * widthStep, minWidth), i, 5));
+      game.floor.push(new GameFloor(
+        gD.canvas.width + 50 + (Math.random() * maxDist),
+        Math.floor(y) + 0.5,
+        Math.max(Math.floor((Math.random() * maxWidth) / widthStep) * widthStep, minWidth),
+        i,
+        5
+      ));
       break;
     }
   }
 }
 
 function addMoney(game, gD) {
-  var sum = game.actualMoneyProb.reduce(function(a, b){return a + b;}, 0);
+  var sum = game.currentMoneyProb.reduce(function(a, b){return a + b;}, 0);
   var random = Math.random();
   var limit = 0;
-  for(var i = 0; i < game.actualMoneyProb.length; i++) {
-    limit += game.actualMoneyProb[i];
+  for(var i = 0; i < game.currentMoneyProb.length; i++) {
+    limit += game.currentMoneyProb[i];
     if (random * sum <= limit) {
       if (60 + (random * (gD.canvas.height - 110)) <= game.floor[game.floor.length - 1].y + 4 && 60 + (random * (gD.canvas.height - 110)) + 17 >= game.floor[game.floor.length - 1].y - 4) {
         random -= (gD.spriteDict["Money" + (i + 1)][3] + 5) / (gD.canvas.height - 110);
       }
-      game.moneyObjects.push(new GameObject(gD.canvas.width + 20, 60 + (random * (gD.canvas.height - 110)), gD.spriteDict["Money" + (i + 1)][2], gD.spriteDict["Money" + (i + 1)][3], "Money" + (i + 1), Math.pow(10, i)));
+      game.moneyObjects.push(new GameObject(
+        gD.canvas.width + 20,
+        60 + (random * (gD.canvas.height - 110)),
+        gD.spriteDict["Money" + (i + 1)][2],
+        gD.spriteDict["Money" + (i + 1)][3],
+        "Money" + (i + 1),
+        Math.pow(10, i)
+      ));
       break;
     }
   }
@@ -494,7 +509,14 @@ function addItem(game, gD) {
       if (50 + (random * (gD.canvas.height - 140)) <= game.floor[game.floor.length - 1].y + 4 && 50 + (random * (gD.canvas.height - 140)) + gD.spriteDict["Item" + (i + 1)][3] >= game.floor[game.floor.length - 1].y - 4) {
         random -= (gD.spriteDict["Item" + (i + 1)][3] + 5) / (gD.canvas.height - 140);
       }
-      game.itemObjects.push(new GameObject(gD.canvas.width + 20, 50 + (random * (gD.canvas.height - 140)), gD.spriteDict["Item" + (i + 1)][2], gD.spriteDict["Item" + (i + 1)][3], "Item" + (i + 1), i));
+      game.itemObjects.push(new GameObject(
+        gD.canvas.width + 20,
+        50 + (random * (gD.canvas.height - 140)),
+        gD.spriteDict["Item" + (i + 1)][2],
+        gD.spriteDict["Item" + (i + 1)][3],
+        "Item" + (i + 1),
+        i
+      ));
       break;
     }
   }
@@ -717,14 +739,14 @@ function updateGame(game, timestamp, resetTime) {
     game.distanceTravelled += -game.globalSpeed;
   } else if (game.itemsActive[0]) {                  //if stopwatch is active
     game.moneySpawnCounter -= game.timeDiff * 3;
-    game.itemSpawnCounter -= game.timediff * 3;
+    game.itemSpawnCounter -= game.timeDiff * 3;
     game.globalSpeed = -(game.timeDiff * 6);
     game.distanceTravelled += -game.globalSpeed;
   } else {                                           //else
     game.moneySpawnCounter -= game.timeDiff * (Math.floor(1 + (game.distanceTravelled * 0.00005)) * 60);  //after 1333m the counter is counted down by 2
     game.itemSpawnCounter -= game.timeDiff * (Math.floor(1 + (game.distanceTravelled * 0.00005)) * 60);  //after 1333m the counter is counted down by 2
-    game.actualMoneyProb[2] = Math.min(game.distanceTravelled * 0.00022, 5);   //after 1500m it's nearly at 5
-    game.actualMoneyProb[3] = Math.min(game.distanceTravelled * 0.000066, 2);   //after 2000m it's nearly at 20
+    game.currentMoneyProb[2] = Math.min(game.distanceTravelled * 0.00022, 5);   //after 1500m it's nearly at 5
+    game.currentMoneyProb[3] = Math.min(game.distanceTravelled * 0.000066, 2);   //after 2000m it's nearly at 20
     game.globalSpeed = game.timeDiff * (Math.ceil(game.globalBaseSpeed - (game.distanceTravelled * 0.00015)) * 60);
     game.distanceTravelled += -game.globalSpeed;
   }
