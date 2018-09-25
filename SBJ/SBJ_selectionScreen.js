@@ -4,7 +4,7 @@
   this.backgroundImage = new Image();
   this.backgroundImage.src = "img/Titlescreen.png";
   this.visible = false;
-  this.selectionMode = 1;
+  this.page = 1;
   this.init = function() {
     this.title = new Text(this.gD.canvas.width / 2, 30, "32pt", "Showcard Gothic", "rgba(200, 200, 200, 1)", "center", "middle", "Select Your Character", 3);
     this.modal = new SelectionScreenModal(0, 0, this.gD.canvas.width, this.gD.canvas.height, "rgba(0, 0, 0, .5)");
@@ -30,7 +30,7 @@
   };
   this.show = function() {
     this.visible = true;
-    this.selectionMode = 1;
+    this.page = 1;
     drawSelectionScreen(this);
   };
   this.stop = function() {
@@ -61,7 +61,7 @@ function SelectionScreenModal(x, y, width, height, color) {
     gD.context.fillStyle = this.color;
     gD.context.fillRect(this.x, this.y, this.width, this.height);
 
-    switch (selectionScreen.selectionMode) {
+    switch (selectionScreen.page) {
       case 1:
         this.showcase.imageName = this.player[this.playerSelected].name + "B";
         this.showcase.imageNr = this.player[this.playerSelected].nr;
@@ -78,11 +78,11 @@ function SelectionScreenModal(x, y, width, height, color) {
     }
 
     this.showcase.update(selectionScreen, gD);
-    if (selectionScreen.selectionMode == 1) {
+    if (selectionScreen.page == 1) {
       for (var i = 0; i < this.player.length; i++) {
         this.player[i].update(gD);
       }
-    } else if (selectionScreen.selectionMode == 2) {
+    } else if (selectionScreen.page == 2) {
       for (var i = 0; i < this.stages.length; i++) {
         this.stages[i].update(gD);
       }
@@ -141,7 +141,7 @@ function SelectionScreenShowcase(x, y, width, height) {
       gD.context.fillText(this.descBelow[i], this.x + (this.width / 2), this.y + this.height + ((i + 1) * 20));
     }
 
-    if (selectionScreen.selectionMode == 1) {
+    if (selectionScreen.page == 1) {
       if (this.imageNr > 1 && !gD.playerUnlocked[this.imageNr - 2]) {
         gD.context.translate(this.x + (this.width / 2), this.y + (this.height / 2));
         gD.context.rotate(-20 * Math.PI / 180);
@@ -156,7 +156,7 @@ function SelectionScreenShowcase(x, y, width, height) {
         gD.context.rotate(20 * Math.PI / 180);
         gD.context.translate(-(this.x + (this.width / 2)), -(this.y + (this.height / 2)));
       }
-    } else if (selectionScreen.selectionMode == 2) {
+    } else if (selectionScreen.page == 2) {
       if (this.imageNr > 0 && !gD.stagesUnlocked[this.imageNr - 1]) {
         gD.context.translate(this.x + (this.width / 2), this.y + (this.height / 2));
         gD.context.rotate(-20 * Math.PI / 180);
@@ -176,7 +176,7 @@ function SelectionScreenShowcase(x, y, width, height) {
 }
 
 function selectionScreenControlDown(selectionScreen, key) {
-  if (selectionScreen.selectionMode == 1) {
+  if (selectionScreen.page == 1) {
     if (selectionScreen.menu.controls.keyBindings["SelectionScreen1"][2].includes(key)) {
       selectionScreen.modal.player[selectionScreen.modal.playerSelected].deselect();
       selectionScreen.modal.player[(selectionScreen.modal.playerSelected + 1) % selectionScreen.modal.player.length].select();
@@ -189,9 +189,9 @@ function selectionScreenControlDown(selectionScreen, key) {
 
     if (selectionScreen.menu.controls.keyBindings["SelectionScreen3"][2].includes(key)) {
       if (selectionScreen.modal.playerSelected == 0) {
-        selectionScreen.selectionMode++;
+        selectionScreen.page++;
       } else if (selectionScreen.gD.playerUnlocked[selectionScreen.modal.playerSelected - 1]) {
-        selectionScreen.selectionMode++;
+        selectionScreen.page++;
       }
       drawSelectionScreen(selectionScreen);
     } else if (selectionScreen.menu.controls.keyBindings["SelectionScreen4"][2].includes(key)) {
@@ -200,7 +200,7 @@ function selectionScreenControlDown(selectionScreen, key) {
     } else {
       drawSelectionScreen(selectionScreen);
     }
-  } else if (selectionScreen.selectionMode == 2) {
+  } else if (selectionScreen.page == 2) {
     if (selectionScreen.menu.controls.keyBindings["SelectionScreen1"][2].includes(key)) {
       selectionScreen.modal.stages[selectionScreen.modal.stageSelected].deselect();
       selectionScreen.modal.stages[(selectionScreen.modal.stageSelected + 1) % selectionScreen.modal.stages.length].select();
@@ -237,7 +237,7 @@ function selectionScreenControlUp(selectionScreen, key) {
 }
 
 function selectionScreenMouseMove(selectionScreen) {
-  if (selectionScreen.selectionMode == 1) {
+  if (selectionScreen.page == 1) {
     for (var i = 0; i < selectionScreen.modal.player.length; i++) {
       if (selectionScreen.gD.mousePos.x >= selectionScreen.modal.player[i].x && selectionScreen.gD.mousePos.x <= selectionScreen.modal.player[i].x + selectionScreen.modal.player[i].width &&
           selectionScreen.gD.mousePos.y >= selectionScreen.modal.player[i].y && selectionScreen.gD.mousePos.y <= selectionScreen.modal.player[i].y + selectionScreen.modal.player[i].height) {
@@ -247,7 +247,7 @@ function selectionScreenMouseMove(selectionScreen) {
         break;
       }
     }
-  } else if (selectionScreen.selectionMode == 2) {
+  } else if (selectionScreen.page == 2) {
     for (var i = 0; i < selectionScreen.modal.stages.length; i++) {
       if (selectionScreen.gD.mousePos.x >= selectionScreen.modal.stages[i].x && selectionScreen.gD.mousePos.x <= selectionScreen.modal.stages[i].x + selectionScreen.modal.stages[i].width &&
           selectionScreen.gD.mousePos.y >= selectionScreen.modal.stages[i].y && selectionScreen.gD.mousePos.y <= selectionScreen.modal.stages[i].y + selectionScreen.modal.stages[i].height) {
@@ -262,17 +262,17 @@ function selectionScreenMouseMove(selectionScreen) {
 }
 
 function selectionScreenClick(selectionScreen) {
-  if (selectionScreen.selectionMode == 1) {
+  if (selectionScreen.page == 1) {
     if (selectionScreen.gD.mousePos.x >= selectionScreen.modal.player[selectionScreen.modal.playerSelected].x && selectionScreen.gD.mousePos.x <= selectionScreen.modal.player[selectionScreen.modal.playerSelected].x + selectionScreen.modal.player[selectionScreen.modal.playerSelected].width &&
         selectionScreen.gD.mousePos.y >= selectionScreen.modal.player[selectionScreen.modal.playerSelected].y && selectionScreen.gD.mousePos.y <= selectionScreen.modal.player[selectionScreen.modal.playerSelected].y + selectionScreen.modal.player[selectionScreen.modal.playerSelected].height) {
       if (selectionScreen.modal.playerSelected == 0) {
-        selectionScreen.selectionMode++;
+        selectionScreen.page++;
       } else if (selectionScreen.gD.playerUnlocked[selectionScreen.modal.playerSelected - 1]) {
-        selectionScreen.selectionMode++;
+        selectionScreen.page++;
       }
     }
     drawSelectionScreen(selectionScreen);
-  } else if (selectionScreen.selectionMode == 2) {
+  } else if (selectionScreen.page == 2) {
     if (selectionScreen.gD.mousePos.x >= selectionScreen.modal.stages[selectionScreen.modal.stageSelected].x && selectionScreen.gD.mousePos.x <= selectionScreen.modal.stages[selectionScreen.modal.stageSelected].x + selectionScreen.modal.stages[selectionScreen.modal.stageSelected].width &&
         selectionScreen.gD.mousePos.y >= selectionScreen.modal.stages[selectionScreen.modal.stageSelected].y && selectionScreen.gD.mousePos.y <= selectionScreen.modal.stages[selectionScreen.modal.stageSelected].y + selectionScreen.modal.stages[selectionScreen.modal.stageSelected].height) {
       if (selectionScreen.modal.stageSelected == 0) {
