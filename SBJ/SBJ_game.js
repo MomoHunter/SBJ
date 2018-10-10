@@ -11,14 +11,15 @@ function Game(gD, menu) {
   this.inventoryTexts = [];
   this.stageNr = 0;
   this.stages = [];
+  this.refreshrate = 1000 / 60;
   this.playerDict = {    //The data for the different playermodels with: jumps, jumpstrength, movementspeed right, movementspeed left
-    "1" : [2, -9, 180, -180],
-    "2" : [2, -810, 180, -180],
-    "3" : [2, -540, 360, -360],
-    "4" : [3, -540, 180, -180],
-    "5" : [2, -648, 270, -270],
-    "6" : [3, -648, 180, -180],
-    "7" : [3, -648, 270, -270]
+    "1" : [2, -9, 3, -3],
+    "2" : [2, -13.5, 3, -3],
+    "3" : [2, -9, 6, -6],
+    "4" : [3, -9, 3, -3],
+    "5" : [2, -10.8, 4.5, -4.5],
+    "6" : [3, -10.8, 3, -3],
+    "7" : [3, -10.8, 4.5, -4.5]
   };
   this.paused = false;
   this.visible = false;
@@ -83,6 +84,7 @@ function Game(gD, menu) {
     this.paused = false;
 
     this.startts = 0;
+    this.lag = 0;
   };
   this.setStage = function(stageNr) {
     this.stageNr = stageNr;
@@ -191,7 +193,7 @@ function GamePlayer(x, y) {
     } else {
       if (!this.onFloor || (this.currentFloor != undefined && this.currentFloor.type == 2)) {
         this.velocity += this.gravity;
-        this.y += game.timeDiff * this.velocity * 60;
+        this.y += this.velocity;
         if (game.stageNr == 3) {
           if (this.y + this.height > game.gD.canvas.height / 2) {
             if (this.outsideWater) {
@@ -282,7 +284,7 @@ function GameFloor(x, y, width, type, thickness) {
   this.width = width;
   this.type = type;
   this.thickness = thickness;
-  this.gravity = 0.5;
+  this.gravity = 0.2;
   this.velocity = 0;
   this.isFalling = false;
   this.thorns = [];
@@ -557,9 +559,9 @@ function gameControlDown(game, key) {
     if (game.menu.controls.keyBindings["Game1"][2].includes(key)) {                                  //pause game
       game.pause();
     } else if (game.menu.controls.keyBindings["Game2"][2].includes(key)) {              //move forward
-      game.player.speedX = game.timeDiff * game.playerDict[game.player.playerNr.toString()][2];
+      game.player.speedX = game.playerDict[game.player.playerNr.toString()][2];
     } else if (game.menu.controls.keyBindings["Game3"][2].includes(key)) {              //move backwards
-      game.player.speedX = game.timeDiff * game.playerDict[game.player.playerNr.toString()][3];
+      game.player.speedX = game.playerDict[game.player.playerNr.toString()][3];
     } else if (game.menu.controls.keyBindings["Game4"][2].includes(key) && game.player.onFloor) {       //down from platform
       game.player.onFloor = false;
       game.player.currentFloor = undefined;
@@ -727,210 +729,219 @@ function updateGame(game, timestamp, resetTime) {
     game.raf = requestAnimationFrame(function(timestamp){ updateGame(game, timestamp, false); });
   }
 
-  game.timeDiff = (timestamp - game.startts) / 1000; //relative time in seconds
+  game.timeDiff = timestamp - game.startts; //relative time in seconds
+  game.lag += game.timeDiff;
+  
+  while (game.lag > game.refreshrate) {
 
-  game.frameCounter += 1;
-
-  if (game.itemsActive[5]) {                         //if rocket is active
-    game.moneySpawnCounter -= game.timeDiff * 300;
-    game.itemSpawnCounter -= game.timeDiff * 300;
-    var max = game.gD.itemBaseDur[5] + (game.menu.shop.level[5] * game.gD.itemPerLvlDur[5]);
-    game.globalSpeed = game.timeDiff * (Math.min(Math.pow((-game.itemTimer[5] + 5 + (max / 2)) / (max / 5), 4) - 40, Math.ceil(game.globalBaseSpeed - (game.distanceTravelled * 0.00015))) * 60);
-    game.distanceTravelled += -game.globalSpeed;
-  } else if (game.itemsActive[0]) {                  //if stopwatch is active
-    game.moneySpawnCounter -= game.timeDiff * 3;
-    game.itemSpawnCounter -= game.timeDiff * 3;
-    game.globalSpeed = -(game.timeDiff * 6);
-    game.distanceTravelled += -game.globalSpeed;
-  } else {                                           //else
-    game.moneySpawnCounter -= game.timeDiff * (Math.floor(1 + (game.distanceTravelled * 0.00005)) * 60);  //after 1333m the counter is counted down by 2
-    game.itemSpawnCounter -= game.timeDiff * (Math.floor(1 + (game.distanceTravelled * 0.00005)) * 60);  //after 1333m the counter is counted down by 2
-    game.currentMoneyProb[2] = Math.min(game.distanceTravelled * 0.00022, 5);   //after 1500m it's nearly at 5
-    game.currentMoneyProb[3] = Math.min(game.distanceTravelled * 0.000066, 2);   //after 2000m it's nearly at 20
-    game.globalSpeed = game.timeDiff * (Math.ceil(game.globalBaseSpeed - (game.distanceTravelled * 0.00015)) * 60);
-    game.distanceTravelled += -game.globalSpeed;
-  }
-
-  if (game.stageNr == 5) {
-    game.player.gravity = game.timeDiff * 3;
-  } else if (game.itemsActive[2]) {
-    game.player.gravity = game.timeDiff * 6;
-  } else if (game.stageNr == 3 && game.player.y + game.player.height >= game.gD.canvas.height / 2) {
-    game.player.gravity = game.timeDiff * 6;
-  } else {
-    game.player.gravity = game.timeDiff * 27;
-  }
-
-  if (game.itemsActive[3]) {
-    game.moneySpawnCounter = 0;
-  }
-
-  switch (game.stageNr) {
-    case 1:
-      updateStage1(game, game.stages[game.stageNr]);
-      break;
-    case 2:
-      updateStage2(game, game.stages[game.stageNr]);
-      break;
-    case 3:
-      updateStage3(game, game.stages[game.stageNr]);
-      break;
-    case 4:
-      updateStage4(game, game.stages[game.stageNr]);
-      break;
-    case 5:
-      updateStage5(game, game.stages[game.stageNr]);
-      break;
-    default:
-      updateStage0(game, game.stages[game.stageNr]);
-  }
-
-  for (var i = 18; i < 21; i++) {
-    if (!game.menu.achievements.achievementList.achievements[i].finished && game.menu.achievements.achievementValues[i] < Math.floor(game.distanceTravelled / 15)) {
-      game.menu.achievements.achievementValues[i] = Math.floor(game.distanceTravelled / 15);
-      game.menu.achievements.achievementList.achievements[i].check(game.menu.achievements);
-      if (i == 19 && game.menu.achievements.achievementList.achievements[i].finished) {
-        game.gD.playerUnlocked[4] = true;
-        game.gD.save.playerUnlocked = game.gD.playerUnlocked;
-      }
+    game.frameCounter += 1;
+  
+    if (game.itemsActive[5]) {                         //if rocket is active
+      game.moneySpawnCounter -= 5;
+      game.itemSpawnCounter -= 5;
+      var max = game.gD.itemBaseDur[5] + (game.menu.shop.level[5] * game.gD.itemPerLvlDur[5]);
+      game.globalSpeed = Math.min(Math.pow((-game.itemTimer[5] + 5 + (max / 2)) / (max / 5), 4) - 40, Math.ceil(game.globalBaseSpeed - (game. distanceTravelled * 0.00015)));
+      game.distanceTravelled += -game.globalSpeed;
+    } else if (game.itemsActive[0]) {                  //if stopwatch is active
+      game.moneySpawnCounter -= 0.05;
+      game.itemSpawnCounter -= 0.05;
+      game.globalSpeed = -0.1;
+      game.distanceTravelled += -game.globalSpeed;
+    } else {                                           //else
+      game.moneySpawnCounter -= Math.floor(1 + (game.distanceTravelled * 0.00005));  //after 1333m the counter is counted down by 2
+      game.itemSpawnCounter -= Math.floor(1 + (game.distanceTravelled * 0.00005));  //after 1333m the counter is counted down by 2
+      game.currentMoneyProb[2] = Math.min(game.distanceTravelled * 0.00022, 5);   //after 1500m it's nearly at 5
+      game.currentMoneyProb[3] = Math.min(game.distanceTravelled * 0.000066, 2);   //after 2000m it's nearly at 20
+      game.globalSpeed = Math.ceil(game.globalBaseSpeed - (game.distanceTravelled * 0.00015));
+      game.distanceTravelled += -game.globalSpeed;
     }
-  }
-
-  if (game.floor[game.floor.length - 1].x + game.floor[game.floor.length - 1].width < game.gD.canvas.width) {
-    addFloor(game, game.gD);
-  }
-  if (game.floor[0].x + game.floor[0].width < 0) {
-    game.floor.shift();
-  }
-
-  if (game.moneySpawnCounter <= 0) {
-    addMoney(game, game.gD);
-  }
-  if (game.moneyObjects[0] != undefined && game.moneyObjects[0].x + game.moneyObjects[0].width < 0) {
-    game.moneyObjects.shift();
-  }
-
-  if (game.itemSpawnCounter <= 0) {
-    addItem(game, game.gD);
-  }
-  if (game.itemObjects[0] != undefined && game.itemObjects[0].x + game.itemObjects[0].width < 0) {
-    game.itemObjects.shift();
-  }
-
-  if (game.player.speedX < 0) {
-    game.player.distanceBackwards += Math.abs(game.player.speedX);
-  }
-
-  game.player.newPos(game, game.gD);
-
-  for (var i = 0; i < game.floor.length; i++) {
-    game.floor[i].newPos(game);
-    if (game.floor[i].type == 3) {
-      for (var j = 0; j < game.floor[i].thorns.length; j++) {
-        if (game.player.collect(game.floor[i].thorns[j]) && !game.itemsActive[1] && !game.itemsActive[5]) {
-          game.finish();
+  
+    if (game.stageNr == 5) {
+      game.player.gravity = 0.05;
+    } else if (game.itemsActive[2]) {
+      game.player.gravity = 0.1;
+    } else if (game.stageNr == 3 && game.player.y + game.player.height >= game.gD.canvas.height / 2) {
+      game.player.gravity = 0.1;
+    } else {
+      game.player.gravity = 0.45;
+    }
+  
+    if (game.itemsActive[3]) {
+      game.moneySpawnCounter = 0;
+    }
+  
+    switch (game.stageNr) {
+      case 1:
+        updateStage1(game, game.stages[game.stageNr]);
+        break;
+      case 2:
+        updateStage2(game, game.stages[game.stageNr]);
+        break;
+      case 3:
+        updateStage3(game, game.stages[game.stageNr]);
+        break;
+      case 4:
+        updateStage4(game, game.stages[game.stageNr]);
+        break;
+      case 5:
+        updateStage5(game, game.stages[game.stageNr]);
+        break;
+      default:
+        updateStage0(game, game.stages[game.stageNr]);
+    }
+  
+    for (var i = 18; i < 21; i++) {
+      if (!game.menu.achievements.achievementList.achievements[i].finished && game.menu.achievements.achievementValues[i] < Math.floor(game.  distanceTravelled / 15)) {
+        game.menu.achievements.achievementValues[i] = Math.floor(game.distanceTravelled / 15);
+        game.menu.achievements.achievementList.achievements[i].check(game.menu.achievements);
+        if (i == 19 && game.menu.achievements.achievementList.achievements[i].finished) {
+          game.gD.playerUnlocked[4] = true;
+          game.gD.save.playerUnlocked = game.gD.playerUnlocked;
         }
       }
     }
-  }
-
-  for (var i = 0; i < game.moneyObjects.length; i++) {
-    game.moneyObjects[i].newPos(game);
-    if (game.player.collect(game.moneyObjects[i])) {
-      game.cash += game.moneyObjects[i].value;
-      if (!game.menu.achievements.achievementList.achievements[3].finished && game.moneyObjects[i].value == 1000) {
-        game.menu.achievements.achievementValues[3]++;
-        game.menu.achievements.achievementList.achievements[3].check(game.menu.achievements);
-      }
-      game.moneyObjects.splice(i, 1);
-      i--;
-      if (!game.menu.achievements.achievementList.achievements[0].finished) {
-        game.menu.achievements.achievementValues[0]++;
-        game.menu.achievements.achievementList.achievements[0].check(game.menu.achievements);
-      }
+  
+    if (game.floor[game.floor.length - 1].x + game.floor[game.floor.length - 1].width < game.gD.canvas.width) {
+      addFloor(game, game.gD);
     }
-  }
-
-  for (var i = 14; i < 18; i++) {
-    if (!game.menu.achievements.achievementList.achievements[i].finished && game.menu.achievements.achievementValues[i] < game.cash) {
-      game.menu.achievements.achievementValues[i] = game.cash;
-      game.menu.achievements.achievementList.achievements[i].check(game.menu.achievements);
-      if (i == 16 && game.menu.achievements.achievementList.achievements[i].finished) {
-        game.gD.playerUnlocked[3] = true;
-        game.gD.save.playerUnlocked = game.gD.playerUnlocked;
-      }
+    if (game.floor[0].x + game.floor[0].width < 0) {
+      game.floor.shift();
     }
-  }
-
-  for (var i = 0; i < game.itemObjects.length; i++) {
-    game.itemObjects[i].newPos(game);
-    if (game.player.collect(game.itemObjects[i])) {
-      game.inventory[game.itemObjects[i].value]++;
-      if (!game.menu.achievements.achievementList.achievements[1].finished && game.itemObjects[i].value == 3) {
-        game.menu.achievements.achievementValues[1]++;
-        game.menu.achievements.achievementList.achievements[1].check(game.menu.achievements);
-      }
-      game.itemObjects.splice(i, 1);
-      i--;
+  
+    if (game.moneySpawnCounter <= 0) {
+      addMoney(game, game.gD);
     }
-  }
-
-  if (game.goldenShamrock) {
-    game.goldenShamrock.newPos(game);
-    if (game.player.collect(game.goldenShamrock)) {
-      game.goldenShamrock = false;
-      for(var i = 31; i < 35; i++) {
-        if (!game.menu.achievements.achievementList.achievements[i].finished) {
-          game.menu.achievements.achievementValues[i]++;
-          game.menu.achievements.achievementList.achievements[i].check(game.menu.achievements);
-          if (i == 34 && game.menu.achievements.achievementList.achievements[i].finished) {
-            game.menu.shop.cash += 1000000;
-            game.gD.save.cash = game.menu.shop.cash;
+    if (game.moneyObjects[0] != undefined && game.moneyObjects[0].x + game.moneyObjects[0].width < 0) {
+      game.moneyObjects.shift();
+    }
+  
+    if (game.itemSpawnCounter <= 0) {
+      addItem(game, game.gD);
+    }
+    if (game.itemObjects[0] != undefined && game.itemObjects[0].x + game.itemObjects[0].width < 0) {
+      game.itemObjects.shift();
+    }
+  
+    if (game.player.speedX < 0) {
+      game.player.distanceBackwards += Math.abs(game.player.speedX);
+    }
+  
+    game.player.newPos(game, game.gD);
+  
+    for (var i = 0; i < game.floor.length; i++) {
+      game.floor[i].newPos(game);
+      if (game.floor[i].type == 3) {
+        for (var j = 0; j < game.floor[i].thorns.length; j++) {
+          if (game.player.collect(game.floor[i].thorns[j]) && !game.itemsActive[1] && !game.itemsActive[5]) {
+            game.finish();
           }
         }
       }
     }
-  }
-
-  game.cashLabel.text = "Hype: " + Math.floor(game.cash);
-
-  game.distanceLabel.text = "Distance: " + Math.floor(game.distanceTravelled / 15) + "m";
-
-  for (var i = game.itemTimer.length - 1; i >= 0; i--) {
-    if (game.itemTimer[i] > 0) {
-      game.itemTimer[i] -= game.timeDiff * 60;
-      if (game.itemTimer[i] <= 0) {
-        game.itemTimer[i] = 0;
-        game.itemsActive[i] = false;
-        switch (i) {
-          case 0:
-            if (!game.menu.achievements.achievementList.achievements[12].finished) {
-              game.menu.achievements.achievementValues[12] += (game.gD.itemBaseDur[i] + (game.menu.shop.level[i] * game.gD.itemPerLvlDur[i])) / 50;
-              game.menu.achievements.achievementList.achievements[12].check(game.menu.achievements);
-            }
-            break;
-          case 1:
-            if (game.player.y == game.gD.canvas.height - game.stages[game.stageNr].deadZoneGround - game.player.height) {
-              game.player.onFloor = false;
-            }
-            break;
-          default:
-            break;
+  
+    for (var i = 0; i < game.moneyObjects.length; i++) {
+      game.moneyObjects[i].newPos(game);
+      if (game.player.collect(game.moneyObjects[i])) {
+        game.cash += game.moneyObjects[i].value;
+        if (!game.menu.achievements.achievementList.achievements[3].finished && game.moneyObjects[i].value == 1000) {
+          game.menu.achievements.achievementValues[3]++;
+          game.menu.achievements.achievementList.achievements[3].check(game.menu.achievements);
+        }
+        game.moneyObjects.splice(i, 1);
+        i--;
+        if (!game.menu.achievements.achievementList.achievements[0].finished) {
+          game.menu.achievements.achievementValues[0]++;
+          game.menu.achievements.achievementList.achievements[0].check(game.menu.achievements);
         }
       }
     }
-  }
-
-  if (game.finished) {
-    game.finishModal.texts[1].text = "Cash: " + Math.floor(game.cash);
-    game.finishModal.texts[2].text = "Distanz: " + Math.floor(game.distanceTravelled / 15) + "m";
-    game.finishModal.texts[3].text = "Distanzbonus: +" + Math.max(Math.floor(((game.distanceTravelled / 15) - 500) * Math.min(1, game.distanceTravelled / ((4000 / (game.stages[game.stageNr].difficulty / 10)) * 15))), 0);
-  }
-
-  for (var i = 0; i < game.gD.stagesUnlocked.length; i++) {
-    if (game.stageNr == i && game.distanceTravelled > 15000 + (i * 4500)) {
-      game.gD.stagesUnlocked[i] = true;
-      game.gD.save.stagesUnlocked = game.gD.stagesUnlocked;
+  
+    for (var i = 14; i < 18; i++) {
+      if (!game.menu.achievements.achievementList.achievements[i].finished && game.menu.achievements.achievementValues[i] < game.cash) {
+        game.menu.achievements.achievementValues[i] = game.cash;
+        game.menu.achievements.achievementList.achievements[i].check(game.menu.achievements);
+        if (i == 16 && game.menu.achievements.achievementList.achievements[i].finished) {
+          game.gD.playerUnlocked[3] = true;
+          game.gD.save.playerUnlocked = game.gD.playerUnlocked;
+        }
+      }
+    }
+  
+    for (var i = 0; i < game.itemObjects.length; i++) {
+      game.itemObjects[i].newPos(game);
+      if (game.player.collect(game.itemObjects[i])) {
+        game.inventory[game.itemObjects[i].value]++;
+        if (!game.menu.achievements.achievementList.achievements[1].finished && game.itemObjects[i].value == 3) {
+          game.menu.achievements.achievementValues[1]++;
+          game.menu.achievements.achievementList.achievements[1].check(game.menu.achievements);
+        }
+        game.itemObjects.splice(i, 1);
+        i--;
+      }
+    }
+  
+    if (game.goldenShamrock) {
+      game.goldenShamrock.newPos(game);
+      if (game.player.collect(game.goldenShamrock)) {
+        game.goldenShamrock = false;
+        for(var i = 31; i < 35; i++) {
+          if (!game.menu.achievements.achievementList.achievements[i].finished) {
+            game.menu.achievements.achievementValues[i]++;
+            game.menu.achievements.achievementList.achievements[i].check(game.menu.achievements);
+            if (i == 34 && game.menu.achievements.achievementList.achievements[i].finished) {
+              game.menu.shop.cash += 1000000;
+              game.gD.save.cash = game.menu.shop.cash;
+            }
+          }
+        }
+      }
+    }
+  
+    game.cashLabel.text = "Hype: " + Math.floor(game.cash);
+  
+    game.distanceLabel.text = "Distance: " + Math.floor(game.distanceTravelled / 15) + "m";
+  
+    for (var i = game.itemTimer.length - 1; i >= 0; i--) {
+      if (game.itemTimer[i] > 0) {
+        game.itemTimer[i]--;
+        if (game.itemTimer[i] == 0) {
+          game.itemsActive[i] = false;
+          switch (i) {
+            case 0:
+              if (!game.menu.achievements.achievementList.achievements[12].finished) {
+                game.menu.achievements.achievementValues[12] += (game.gD.itemBaseDur[i] + (game.menu.shop.level[i] * game.gD.itemPerLvlDur[i])) / 50;
+                game.menu.achievements.achievementList.achievements[12].check(game.menu.achievements);
+              }
+              break;
+            case 1:
+              if (game.player.y == game.gD.canvas.height - game.stages[game.stageNr].deadZoneGround - game.player.height) {
+                game.player.onFloor = false;
+              }
+              break;
+            default:
+              break;
+          }
+        }
+      }
+    }
+  
+    if (game.finished) {
+      game.finishModal.texts[1].text = "Cash: " + Math.floor(game.cash);
+      game.finishModal.texts[2].text = "Distanz: " + Math.floor(game.distanceTravelled / 15) + "m";
+      game.finishModal.texts[3].text = "Distanzbonus: +" + Math.max(Math.floor(((game.distanceTravelled / 15) - 500) * Math.min(1, game.distanceTravelled /  ((4000 / (game.stages[game.stageNr].difficulty / 10)) * 15))), 0);
+    }
+  
+    for (var i = 0; i < game.gD.stagesUnlocked.length; i++) {
+      if (game.stageNr == i && game.distanceTravelled > 15000 + (i * 4500)) {
+        game.gD.stagesUnlocked[i] = true;
+        game.gD.save.stagesUnlocked = game.gD.stagesUnlocked;
+      }
+    }
+  
+    if (game.lag > game.refreshrate * 5) {
+      game.lag %= game.refreshrate;
+    } else {
+      game.lag -= game.refreshrate;
     }
   }
 
