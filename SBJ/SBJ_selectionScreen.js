@@ -57,7 +57,7 @@ function SelectionScreenModal(x, y, width, height, color) {
       this.stages[this.stageSelected].select();
     }
   };
-  this.update = function(selectionScreen, gD) {
+  this.draw = function(selectionScreen, gD) {
     gD.context.fillStyle = this.color;
     gD.context.fillRect(this.x, this.y, this.width, this.height);
 
@@ -77,14 +77,14 @@ function SelectionScreenModal(x, y, width, height, color) {
       default:
     }
 
-    this.showcase.update(selectionScreen, gD);
+    this.showcase.draw(selectionScreen, gD);
     if (selectionScreen.page == 1) {
       for (var i = 0; i < this.player.length; i++) {
-        this.player[i].update(gD);
+        this.player[i].draw(gD);
       }
     } else if (selectionScreen.page == 2) {
       for (var i = 0; i < this.stages.length; i++) {
-        this.stages[i].update(gD);
+        this.stages[i].draw(gD);
       }
     }
   };
@@ -107,7 +107,7 @@ function SelectionScreenImage(x, y, width, height, name, nr, descOver, descBelow
   this.deselect = function() {
     this.selected = false;
   };
-  this.update = function(gD) {
+  this.draw = function(gD) {
     if (this.selected) {
       gD.context.strokeStyle = "rgba(180, 50, 50, 1)";
       gD.context.lineWidth = this.bordersize;
@@ -127,7 +127,7 @@ function SelectionScreenShowcase(x, y, width, height) {
   this.imageNr = 1;         //is the number, that is inside the imageName
   this.descOver = [""];
   this.descBelow = [""];
-  this.update = function(selectionScreen, gD) {
+  this.draw = function(selectionScreen, gD) {
     gD.context.drawImage(gD.spritesheet, gD.spriteDict[this.imageName][0], gD.spriteDict[this.imageName][1], gD.spriteDict[this.imageName][2], gD.spriteDict[this.imageName][3],
       this.x + ((this.width - gD.spriteDict[this.imageName][2]) / 2), this.y + ((this.height - gD.spriteDict[this.imageName][3]) / 2), gD.spriteDict[this.imageName][2], gD.spriteDict[this.imageName][3]);
     gD.context.textAlign = "center";
@@ -285,7 +285,7 @@ function drawSelectionScreen(selectionScreen) {
   selectionScreen.clear();
 
   selectionScreen.gD.context.drawImage(selectionScreen.backgroundImage, 0, 0);
-  selectionScreen.modal.update(selectionScreen, selectionScreen.gD);
+  selectionScreen.modal.draw(selectionScreen, selectionScreen.gD);
 
-  selectionScreen.title.update(selectionScreen.gD);
+  selectionScreen.title.draw(selectionScreen.gD);
 }

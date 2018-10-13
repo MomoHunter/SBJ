@@ -81,7 +81,7 @@ function MuteButton(x, y, width, height, color, bordersize) {
   this.height = height;
   this.color = color;
   this.bordersize = bordersize;
-  this.update = function(gD) {
+  this.draw = function(gD) {
     gD.context.fillStyle = this.color;
     gD.context.fillRect(this.x, this.y, this.width, this.height);
     gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
@@ -216,17 +216,17 @@ function drawMenu(menu) {
 
   menu.gD.context.drawImage(menu.backgroundImage, 0, 0);
 
-  menu.title.update(menu.gD);
-  menu.version.update(menu.gD);
+  menu.title.draw(menu.gD);
+  menu.version.draw(menu.gD);
 
   if (!menu.pressed) {
-    menu.pressButton.update(menu.gD);
+    menu.pressButton.draw(menu.gD);
   } else {
     menu.buttons.map(function(row) {
       row.map(function(button) {
-        button.update(menu.gD);
+        button.draw(menu.gD);
       });
     });
-    menu.muteButton.update(menu.gD);
+    menu.muteButton.draw(menu.gD);
   }
 }

@@ -19,7 +19,7 @@ function Stage2Plane(x, y, width, height, planeNr) {
   this.width = width;
   this.height = height;
   this.planeNr = planeNr;
-  this.update = function(gD) {
+  this.draw = function(gD) {
     gD.context.drawImage(gD.spritesheet, gD.spriteDict["Plane" + this.planeNr][0], gD.spriteDict["Plane" + this.planeNr][1], gD.spriteDict["Plane" + this.planeNr][2], gD.spriteDict["Plane" + this.planeNr][3],
       this.x, this.y, gD.spriteDict["Plane" + this.planeNr][2], gD.spriteDict["Plane" + this.planeNr][3]);
   };
@@ -33,7 +33,7 @@ function Stage2Rocket(x, y, width, height) {
   this.y = y;
   this.width = width;
   this.height = height;
-  this.update = function(gD) {
+  this.draw = function(gD) {
     gD.context.drawImage(gD.spritesheet, gD.spriteDict["Rocket"][0], gD.spriteDict["Rocket"][1], gD.spriteDict["Rocket"][2], gD.spriteDict["Rocket"][3],
       this.x, this.y, gD.spriteDict["Rocket"][2], gD.spriteDict["Rocket"][3])
   };
@@ -101,14 +101,14 @@ function drawBackgroundStage2(game, stage) {
   game.gD.context.drawImage(stage.air, 0, 0, (game.distanceTravelled * 0.4) % stage.air.width, stage.air.height, 
     stage.air.width - ((game.distanceTravelled * 0.4) % stage.air.width), 0, (game.distanceTravelled * 0.4) % stage.air.width, stage.air.height);
 
-  game.player.update(game, game.gD);
+  game.player.draw(game, game.gD);
 
   for (var i = 0; i < stage.planeObjects.length; i++) {
-    stage.planeObjects[i].update(game.gD);
+    stage.planeObjects[i].draw(game.gD);
   }
 
   for (var i = 0; i < stage.rocketObjects.length; i++) {
-    stage.rocketObjects[i].update(game.gD);
+    stage.rocketObjects[i].draw(game.gD);
   }
 }
 

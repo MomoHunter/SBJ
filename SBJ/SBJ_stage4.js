@@ -19,7 +19,7 @@ function Stage4Apple(x, y, width, height, untilDrop) {
   this.untilDrop = untilDrop;
   this.velocity = 0;
   this.gravity = 0.2;
-  this.update = function(gD) {
+  this.draw = function(gD) {
     gD.context.drawImage(gD.spritesheet, gD.spriteDict["Apple"][0], gD.spriteDict["Apple"][1], gD.spriteDict["Apple"][2], gD.spriteDict["Apple"][3],
       this.x, this.y, gD.spriteDict["Apple"][2], gD.spriteDict["Apple"][3]);
   };
@@ -68,10 +68,10 @@ function drawBackgroundStage4(game, stage) {
   game.gD.context.drawImage(stage.forest, 0, 0, game.distanceTravelled % stage.forest.width, stage.forest.height, 
     stage.forest.width - (game.distanceTravelled % stage.forest.width), 0, game.distanceTravelled % stage.forest.width, stage.forest.height);
 
-  game.player.update(game, game.gD);
+  game.player.draw(game, game.gD);
 
   for (var i = 0; i < stage.appleObjects.length; i++) {
-    stage.appleObjects[i].update(game.gD);
+    stage.appleObjects[i].draw(game.gD);
   }
 }
 

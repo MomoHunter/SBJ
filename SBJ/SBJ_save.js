@@ -88,9 +88,9 @@ function drawSave(save) {
 
   save.gD.context.drawImage(save.backgroundImage, 0, 0);
 
-  save.title.update(save.gD);
+  save.title.draw(save.gD);
 
-  save.text.update(save.gD);
+  save.text.draw(save.gD);
 
-  save.backToMenu.update(save.gD);
+  save.backToMenu.draw(save.gD);
 }

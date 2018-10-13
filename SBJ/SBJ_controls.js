@@ -149,7 +149,7 @@ function ControlEntryHeadline(x, y, width, height, color, text, bordersize) {
   this.color = color;
   this.text = text;
   this.bordersize = bordersize;
-  this.update = function(gD) {
+  this.draw = function(gD) {
     gD.context.fillStyle = this.color;
     gD.context.fillRect(this.x, this.y, this.width, this.height);
     gD.context.textAlign = "center";
@@ -192,7 +192,7 @@ function ControlEntry(x, y, width, height, color, name, bordersize) {
     }
     controls.keyBindings[this.name][2][this.selected] = event.keyCode;
   };
-  this.update = function(controls, gD) {
+  this.draw = function(controls, gD) {
     gD.context.fillStyle = this.color;
     gD.context.fillRect(this.x, this.y, this.width - 200, this.height);
     gD.context.textAlign = "start";
@@ -204,7 +204,7 @@ function ControlEntry(x, y, width, height, color, name, bordersize) {
     gD.context.lineWidth = this.bordersize;
     gD.context.strokeRect(this.x, this.y, this.width, this.height);
     for (var i = 0; i < this.keys.length; i++) {
-      this.keys[i].update(controls, gD);
+      this.keys[i].draw(controls, gD);
     }
   };
 }
@@ -225,7 +225,7 @@ function ControlKey(x, y, width, height, color, name, keyNr, bordersize) {
   this.deselect = function() {
     this.selected = false;
   };
-  this.update = function(controls, gD) {
+  this.draw = function(controls, gD) {
     if (this.selected) {
       gD.context.fillStyle = "rgba(180, 50, 50, 1)";
     } else {
@@ -414,21 +414,21 @@ function drawControls(controls) {
 
   controls.gD.context.drawImage(controls.backgroundImage, 0, 0);
 
-  controls.title.update(controls.gD);
+  controls.title.draw(controls.gD);
 
   for (var i = 0; i < controls.keyEntryHeadlines.length; i++) {
     if (controls.keyEntryHeadlines[i].y >= 60 && controls.keyEntryHeadlines[i].y < 280) {
-      controls.keyEntryHeadlines[i].update(controls.gD);
+      controls.keyEntryHeadlines[i].draw(controls.gD);
     }
   }
 
   for (var i = 0; i < controls.keyEntries.length; i++) {
     if (controls.keyEntries[i].y >= 60 && controls.keyEntries[i].y < 280) {
-      controls.keyEntries[i].update(controls, controls.gD);
+      controls.keyEntries[i].draw(controls, controls.gD);
     }
   }
 
-  controls.backToMenu.update(controls.gD);
+  controls.backToMenu.draw(controls.gD);
 
   controls.gD.context.lineWidth = 4;
   controls.gD.context.strokeStyle = "rgba(255, 255, 255, 1)";

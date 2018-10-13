@@ -81,7 +81,7 @@ function ShopMoney(x, y, width, height, size, family, color, textcolor, bordersi
   this.text = "";
   this.textcolor = textcolor;
   this.bordersize = bordersize;
-  this.update = function(shop, gD) {
+  this.draw = function(shop, gD) {
     this.text = shop.cash.toString();
 
     gD.context.fillStyle = this.color;
@@ -127,7 +127,7 @@ function ShopTab(x, y, width, height, size, family, color, text, textcolor, bord
   this.deselect = function() {
     this.selected = false;
   };
-  this.update = function(gD) {
+  this.draw = function(gD) {
     if (this.selected) {
       gD.context.fillStyle = "rgba(180, 50, 50, 1)";
     } else if (this.active) {
@@ -169,7 +169,7 @@ function ShopEntryPlayer(x, y, width, height, size, family, color, playerNr, des
     shop.gD.save.playerUnlocked = shop.gD.playerUnlocked;
     shop.gD.save.cash = shop.cash;
   };
-  this.update = function(shop, gD) {
+  this.draw = function(shop, gD) {
     gD.context.fillStyle = this.color;
     gD.context.fillRect(this.x, this.y, this.width, this.height);
     gD.context.textAlign = "center";
@@ -181,8 +181,8 @@ function ShopEntryPlayer(x, y, width, height, size, family, color, playerNr, des
     gD.context.lineWidth = this.bordersize;
     gD.context.strokeRect(this.x, this.y, this.width, this.height);
 
-    this.showcase.update(gD);
-    this.cost.update(gD);
+    this.showcase.draw(gD);
+    this.cost.draw(gD);
 
     if (shop.gD.playerUnlocked[this.playerNr - 2]) {
       gD.context.translate(this.x + (this.width / 2), this.y + 50);
@@ -249,7 +249,7 @@ function ShopEntryItem(x, y, width, height, size, family, color, itemNr, desc, b
     shop.gD.save.level = shop.level;
     shop.gD.save.cash = shop.cash;
   };
-  this.update = function(shop, gD) {
+  this.draw = function(shop, gD) {
     gD.context.fillStyle = this.color;
     gD.context.fillRect(this.x, this.y, this.width, this.height);
     gD.context.textAlign = "center";
@@ -274,9 +274,9 @@ function ShopEntryItem(x, y, width, height, size, family, color, itemNr, desc, b
         this.showcase.info = shop.level[this.itemNr - 1];
     }
 
-    this.costUpgrade.update(gD);
-    this.costDowngrade.update(gD);
-    this.showcase.update(gD);
+    this.costUpgrade.draw(gD);
+    this.costDowngrade.draw(gD);
+    this.showcase.draw(gD);
 
     gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
     gD.context.lineWidth = this.bordersize;
@@ -292,7 +292,7 @@ function EntryShowcase(x, y, width, height, name, bordersize) {
   this.name = name;
   this.bordersize = bordersize;
   this.info = "";
-  this.update = function(gD) {
+  this.draw = function(gD) {
     gD.context.fillStyle = "rgba(255, 255, 255, 1)";
     gD.context.fillRect(this.x, this.y, this.width, this.height);
     gD.context.drawImage(gD.spritesheet, gD.spriteDict[this.name][0], gD.spriteDict[this.name][1], gD.spriteDict[this.name][2], gD.spriteDict[this.name][3], 
@@ -318,7 +318,7 @@ function EntryCost(x, y, width, height, size, family, value, bordersize) {
   this.family = family;
   this.bordersize = bordersize;
   this.value = value;
-  this.update = function(gD) {
+  this.draw = function(gD) {
     gD.context.textAlign = "end";
     gD.context.textBaseline = "alphabetic";
     gD.context.font = this.size + " " + this.family;
@@ -664,29 +664,29 @@ function drawShop(shop) {
 
   shop.gD.context.drawImage(shop.backgroundImage, 0, 0);
 
-  shop.title.update(shop.gD);
-  shop.money.update(shop, shop.gD);
+  shop.title.draw(shop.gD);
+  shop.money.draw(shop, shop.gD);
   for (var i = 0; i < shop.tabs.length; i++) {
-    shop.tabs[i].update(shop.gD);
+    shop.tabs[i].draw(shop.gD);
   }
 
   switch (shop.active) {
     case 0:
       for (var i = 0; i < 3; i++) {
-        shop.shopEntries[i].update(shop, shop.gD);
+        shop.shopEntries[i].draw(shop, shop.gD);
       }
       for (var i = 0; i < 3; i++) {
-        shop.buttons[i].update(shop.gD);
+        shop.buttons[i].draw(shop.gD);
       }
       break;
     default:
       for (var i = 3 + shop.shiftFactor; i < Math.min(8 + shop.shiftFactor, shop.shopEntries.length); i++) {
-        shop.shopEntries[i].update(shop, shop.gD);
+        shop.shopEntries[i].draw(shop, shop.gD);
       }
       for (var i = 3 + (shop.shiftFactor * 2); i < Math.min(13 + (shop.shiftFactor * 2), shop.buttons.length); i++) {
-        shop.buttons[i].update(shop.gD);
+        shop.buttons[i].draw(shop.gD);
       }
   }
 
-  shop.backToMenu.update(shop.gD);
+  shop.backToMenu.draw(shop.gD);
 }

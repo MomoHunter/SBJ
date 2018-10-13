@@ -8,7 +8,7 @@ function Text(x, y, size, family, color, textAlign, textBaseline, text, bordersi
   this.textBaseline = textBaseline;
   this.text = text;
   this.bordersize = bordersize;
-  this.update = function(gD) {
+  this.draw = function(gD) {
     gD.context.textAlign = this.textAlign;
     gD.context.textBaseline = this.textBaseline;
     gD.context.font = this.size + " " + this.family;
@@ -40,7 +40,7 @@ function Button(x, y, width, height, size, family, color, text, textcolor, borde
   this.deselect = function() {
     this.selected = false;
   };
-  this.update = function(gD) {
+  this.draw = function(gD) {
     if (this.selected) {
       gD.context.fillStyle = "rgba(180, 50, 50, 1)";
     } else {

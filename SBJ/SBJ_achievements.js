@@ -90,14 +90,14 @@ function AchievementList(x, y, width, height, color, bordersize) {
     }
     this.shiftFactor += shiftFactor;
   };
-  this.update = function(gD) {
+  this.draw = function(gD) {
     gD.context.fillStyle = this.color;
     gD.context.fillRect(this.x, this.y, this.width, this.height);
     gD.strokeStyle = "rgba(0, 0, 0, 1)";
     gD.context.lineWidth = this.bordersize;
     gD.context.strokeRect(this.x, this.y, this.width, this.height);
     for (var i = (this.shiftFactor * 5); i < Math.min(20 + (this.shiftFactor * 5), this.achievements.length); i++) {
-      this.achievements[i].update(gD);
+      this.achievements[i].draw(gD);
     }
     gD.context.lineWidth = 4;
     gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
@@ -151,7 +151,7 @@ function Achievement(x, y, width, height, achievementNr, bordersize) {
   this.deselect = function() {
     this.selected = false;
   };
-  this.update = function(gD) {
+  this.draw = function(gD) {
     gD.context.fillStyle = "rgba(255, 255, 255, 1)";
     gD.context.fillRect(this.x, this.y, this.width, this.height);
     if (this.finished) {
@@ -189,15 +189,15 @@ function AchievementDescription(x, y, width, height, size, family, color, textco
     this.showcase.name = name;
     this.showcase.finished = finished;
   };
-  this.update = function(gD) {
+  this.draw = function(gD) {
     gD.context.fillStyle = this.color;
     gD.context.fillRect(this.x, this.y, this.width, this.height);
     gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
     gD.context.lineWidth = this.bordersize;
     gD.context.strokeRect(this.x, this.y, this.width, this.height);
 
-    this.showcase.update(gD);
-    this.progressBar.update(gD);
+    this.showcase.draw(gD);
+    this.progressBar.draw(gD);
 
     gD.context.textAlign = "start";
     gD.context.textBaseline = "hanging";
@@ -230,7 +230,7 @@ function DescriptionShowcase(x, y, width, height, bordersize) {
   this.height = height;
   this.name = name;
   this.bordersize = bordersize;
-  this.update = function(gD) {
+  this.draw = function(gD) {
     gD.context.fillStyle = "rgba(255, 255, 255, 1)";
     gD.context.fillRect(this.x, this.y, this.width, this.height);
     if (this.finished) {
@@ -251,7 +251,7 @@ function DescriptionProgressBar(x, y, width, height, size, family, bordersize) {
   this.size = size;
   this.family = family;
   this.bordersize = bordersize;
-  this.update = function(gD) {
+  this.draw = function(gD) {
     gD.context.fillStyle = "rgba(180, 180, 180, 1)";
     gD.context.fillRect(this.x, this.y, this.width, this.height);
     gD.context.fillStyle = "rgba(0, 255, 0, 1)";
@@ -427,9 +427,9 @@ function drawAchievements(achievements) {
 
   achievements.gD.context.drawImage(achievements.backgroundImage, 0, 0);
 
-  achievements.title.update(achievements.gD);
-  achievements.achievementList.update(achievements.gD);
-  achievements.description.update(achievements.gD);
+  achievements.title.draw(achievements.gD);
+  achievements.achievementList.draw(achievements.gD);
+  achievements.description.draw(achievements.gD);
 
-  achievements.backToMenu.update(achievements.gD);
+  achievements.backToMenu.draw(achievements.gD);
 }

@@ -11,7 +11,7 @@ function Game(gD, menu) {
   this.inventoryTexts = [];
   this.stageNr = 0;
   this.stages = [];
-  this.refreshrate = 1000 / 60;
+  this.refreshrate = 1000 / 10;
   this.playerDict = {    //The data for the different playermodels with: jumps, jumpstrength, movementspeed right, movementspeed left
     "1" : [2, -9, 3, -3],
     "2" : [2, -13.5, 3, -3],
@@ -32,6 +32,8 @@ function Game(gD, menu) {
     this.cashLabel = new Text(this.gD.canvas.width - 5, 22, "14pt", "Consolas", "rgba(255, 255, 255, 1)", "end", "alphabetic", "Hype: 0", 0);
 
     this.distanceLabel = new Text(this.gD.canvas.width - 135, 22, "14pt", "Consolas", "rgba(255, 255, 255, 1)", "end", "alphabetic", "Distance: 0", 0);
+
+    this.fpsLabel = new Text(0, this.gD.canvas.height - 5, "10pt", "Consolas", "rgba(255, 255, 255, 1)", "start", "alphabetic", "Fps: 0", 0);
 
     this.goldenShamrock = new GameObject(Math.max(Math.random() * 40000, 30000), 200, this.gD.spriteDict["GoldenShamrock"][2], this.gD.spriteDict["GoldenShamrock"][3], "GoldenShamrock", 1);
 
@@ -96,7 +98,7 @@ function Game(gD, menu) {
     this.paused = true;
     cancelAnimationFrame(this.raf);
     this.backgroundMusic.pause();
-    this.pauseModal.update(this.gD);
+    this.pauseModal.draw(this.gD);
   };
   this.continue = function() {
     this.paused = false;
@@ -172,7 +174,7 @@ function GamePlayer(x, y) {
       game.inventory.fill(10);
     }
   };
-  this.update = function(game, gD) {
+  this.draw = function(game, gD, ghostFactor) {
     var spriteKey = "Player" + this.playerNr;
     if (game.itemsActive[5]) {
       spriteKey = "Item6";
@@ -180,7 +182,7 @@ function GamePlayer(x, y) {
     gD.context.drawImage(
       gD.spritesheet,
       gD.spriteDict[spriteKey][0], gD.spriteDict[spriteKey][1], gD.spriteDict[spriteKey][2], gD.spriteDict[spriteKey][3],
-      this.x, this.y, this.width, this.height
+      this.x + (this.speedX * ghostFactor), this.y + (this.velocity * ghostFactor), this.width, this.height
     );
   };
   this.newPos = function(game, gD) {
@@ -292,10 +294,10 @@ function GameFloor(x, y, width, type, thickness) {
     this.thorns.push(new GameThorns(this.x, this.y - 10 - (this.thickness / 2), 50, 10, "rgba(51, 102, 255, 1)"));
     this.thorns.push(new GameThorns(this.x + this.width - 50, this.y - 10 - (this.thickness / 2), 50, 10, "rgba(51, 102, 255, 1)"));
   }
-  this.update = function(game, gD) {
+  this.draw = function(game, gD, ghostFactor) {
     gD.context.beginPath();
-    gD.context.moveTo(this.x, this.y);
-    gD.context.lineTo(this.x + this.width, this.y);
+    gD.context.moveTo(this.x + (game.globalSpeed * ghostFactor), this.y + (this.velocity * ghostFactor));
+    gD.context.lineTo(this.x + this.width + (game.globalSpeed * ghostFactor), this.y + (this.velocity * ghostFactor));
     switch (this.type) {
       case 0:
         gD.context.strokeStyle = game.stages[game.stageNr].floorColor;
@@ -315,7 +317,7 @@ function GameFloor(x, y, width, type, thickness) {
     gD.context.lineWidth = thickness;
     gD.context.stroke();
     for (var i = 0; i < this.thorns.length; i++) {
-      this.thorns[i].update(gD);
+      this.thorns[i].draw(game, gD, ghostFactor);
     }
   };
   this.newPos = function(game) {
@@ -336,14 +338,14 @@ function GameThorns(x, y, width, height, color) {
   this.width = width;
   this.height = height;
   this.color = color;
-  this.update = function(gD) {
+  this.draw = function(game, gD, ghostFactor) {
     gD.context.beginPath();
-    gD.context.moveTo(this.x, this.y + this.height);
+    gD.context.moveTo(this.x + (game.globalSpeed * ghostFactor), this.y + this.height);
     for (var i = 1; i <= Math.floor(this.width / 10); i++) {
-      gD.context.lineTo(this.x + (i * 10) - 5, this.y);
-      gD.context.lineTo(this.x + (i * 10), this.y + this.height);
+      gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + (i * 10) - 5, this.y);
+      gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + (i * 10), this.y + this.height);
     }
-    gD.context.lineTo(this.x, this.y + this.height);
+    gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor), this.y + this.height);
     gD.context.fillStyle = this.color;
     gD.context.fill();
   };
@@ -361,7 +363,7 @@ function GameInventoryText(x, y, width, height, size, family, textcolor, itemNr)
   this.family = family;
   this.textcolor = textcolor;
   this.itemNr = itemNr;
-  this.update = function(game, gD) {
+  this.draw = function(game, gD) {
     gD.context.drawImage(gD.spritesheet, gD.spriteDict["Item" + this.itemNr][0], gD.spriteDict["Item" + this.itemNr][1], gD.spriteDict["Item" + this.itemNr][2], gD.spriteDict["Item" + this.itemNr][3],
       this.x + 2, this.y + Math.floor((this.height - gD.spriteDict["Item" + this.itemNr][3]) / 2), gD.spriteDict["Item" + this.itemNr][2], gD.spriteDict["Item" + this.itemNr][3]);
     gD.context.textAlign = "start";
@@ -379,9 +381,9 @@ function GameObject(x, y, width, height, name, value) {
   this.height = height;
   this.name = name;
   this.value = value;
-  this.update = function(gD) {
+  this.draw = function(game, gD, ghostFactor) {
     gD.context.drawImage(gD.spritesheet, gD.spriteDict[this.name][0], gD.spriteDict[this.name][1], gD.spriteDict[this.name][2], gD.spriteDict[this.name][3],
-      this.x, this.y, gD.spriteDict[this.name][2], gD.spriteDict[this.name][3]);
+      this.x + (game.globalSpeed * ghostFactor), this.y, gD.spriteDict[this.name][2], gD.spriteDict[this.name][3]);
   };
   this.newPos = function(game) {
     this.x += game.globalSpeed;
@@ -410,15 +412,15 @@ function GameModal(x, y, width, height, color) {
   this.init = function() {
     this.buttons[this.selected].select();
   };
-  this.update = function(gD) {
+  this.draw = function(gD) {
     gD.context.fillStyle = this.color;
     gD.context.fillRect(this.x, this.y, this.width, this.height);
     for (var i = 0; i < this.texts.length; i++) {
-      this.texts[i].update(gD);
+      this.texts[i].draw(gD);
     }
     gD.context.filter = "none";
     for (var i = 0; i < this.buttons.length; i++) {
-      this.buttons[i].update(gD);
+      this.buttons[i].draw(gD);
     }
   };
 }
@@ -603,7 +605,7 @@ function gameControlDown(game, key) {
       game.pauseModal.buttons[game.pauseModal.selected].deselect();
       game.pauseModal.buttons[(game.pauseModal.selected + 1) % 2].select();
       game.pauseModal.selected = (game.pauseModal.selected + 1) % 2;
-      drawGame(game);
+      drawGame(game, 0);
     } else if (game.menu.controls.keyBindings["FinishModal3"][2].includes(key)) {                     //enter key
       switch (game.pauseModal.selected) {
         case 1:
@@ -636,7 +638,7 @@ function gameControlDown(game, key) {
       game.finishModal.buttons[game.finishModal.selected].deselect();
       game.finishModal.buttons[(game.finishModal.selected + 1) % 2].select();
       game.finishModal.selected = (game.finishModal.selected + 1) % 2;
-      drawGame(game);
+      drawGame(game, 0);
     }
   }
 }
@@ -667,7 +669,7 @@ function gameMouseMove(game) {
         break;
       }
     }
-    drawGame(game);
+    drawGame(game, 0);
   } else if (game.finished) {
     for (var i = 0; i < game.finishModal.buttons.length; i++) {
       if (game.gD.mousePos.x >= game.finishModal.buttons[i].x && game.gD.mousePos.x <= game.finishModal.buttons[i].x + game.finishModal.buttons[i].width &&
@@ -678,7 +680,7 @@ function gameMouseMove(game) {
         break;
       }
     }
-    drawGame(game);
+    drawGame(game, 0);
   }
 }
 
@@ -900,6 +902,8 @@ function updateGame(game, timestamp, resetTime) {
     game.cashLabel.text = "Hype: " + Math.floor(game.cash);
   
     game.distanceLabel.text = "Distance: " + Math.floor(game.distanceTravelled / 15) + "m";
+
+    game.fpsLabel.text = "Fps: " + Math.floor(1000 / game.timeDiff);
   
     for (var i = game.itemTimer.length - 1; i >= 0; i--) {
       if (game.itemTimer[i] > 0) {
@@ -945,31 +949,31 @@ function updateGame(game, timestamp, resetTime) {
     }
   }
 
-  drawGame(game);
+  drawGame(game, game.lag / game.refreshrate);
   game.startts = timestamp;
 }
 
-function drawGame(game) {
+function drawGame(game, ghostFactor) {
   game.clear();
 
   switch (game.stageNr) {
     case 1:
-      drawBackgroundStage1(game, game.stages[game.stageNr]);
+      drawBackgroundStage1(game, game.stages[game.stageNr], ghostFactor);
       break;
     case 2:
-      drawBackgroundStage2(game, game.stages[game.stageNr]);
+      drawBackgroundStage2(game, game.stages[game.stageNr], ghostFactor);
       break;
     case 3:
-      drawBackgroundStage3(game, game.stages[game.stageNr]);
+      drawBackgroundStage3(game, game.stages[game.stageNr], ghostFactor);
       break;
     case 4:
-      drawBackgroundStage4(game, game.stages[game.stageNr]);
+      drawBackgroundStage4(game, game.stages[game.stageNr], ghostFactor);
       break;
     case 5:
-      drawBackgroundStage5(game, game.stages[game.stageNr]);
+      drawBackgroundStage5(game, game.stages[game.stageNr], ghostFactor);
       break;
     default:
-      drawBackgroundStage0(game, game.stages[game.stageNr]);
+      drawBackgroundStage0(game, game.stages[game.stageNr], ghostFactor);
   }
 
   if (game.player.y + game.player.height < 0) {
@@ -985,19 +989,19 @@ function drawGame(game) {
   }
 
   for (var i = 0; i < game.floor.length; i++) {
-    game.floor[i].update(game, game.gD);
+    game.floor[i].draw(game, game.gD, ghostFactor);
   }
 
   for (var i = 0; i < game.moneyObjects.length; i++) {
-    game.moneyObjects[i].update(game.gD);
+    game.moneyObjects[i].draw(game, game.gD, ghostFactor);
   }
 
   for (var i = 0; i < game.itemObjects.length; i++) {
-    game.itemObjects[i].update(game.gD);
+    game.itemObjects[i].draw(game, game.gD, ghostFactor);
   }
 
   for (var i = 0; i < game.inventoryTexts.length; i++) {
-    game.inventoryTexts[i].update(game, game.gD);
+    game.inventoryTexts[i].draw(game, game.gD);
   }
 
   for (var i = 0; i < game.itemTimer.length; i++) {
@@ -1008,39 +1012,41 @@ function drawGame(game) {
   }
 
   if (game.goldenShamrock) {
-    game.goldenShamrock.update(game.gD);
+    game.goldenShamrock.draw(game, game.gD, ghostFactor);
   }
 
-  game.cashLabel.update(game.gD);
+  game.cashLabel.draw(game.gD);
 
-  game.distanceLabel.update(game.gD);
+  game.distanceLabel.draw(game.gD);
+
+  game.fpsLabel.draw(game.gD);
 
   switch (game.stageNr) {
     case 1:
-      drawForegroundStage1(game, game.stages[game.stageNr]);
+      drawForegroundStage1(game, game.stages[game.stageNr], ghostFactor);
       break;
     case 2:
-      drawForegroundStage2(game, game.stages[game.stageNr]);
+      drawForegroundStage2(game, game.stages[game.stageNr], ghostFactor);
       break;
     case 3:
-      drawForegroundStage3(game, game.stages[game.stageNr]);
+      drawForegroundStage3(game, game.stages[game.stageNr], ghostFactor);
       break;
     case 4:
-      drawForegroundStage4(game, game.stages[game.stageNr]);
+      drawForegroundStage4(game, game.stages[game.stageNr], ghostFactor);
       break;
     case 5:
-      drawForegroundStage5(game, game.stages[game.stageNr]);
+      drawForegroundStage5(game, game.stages[game.stageNr], ghostFactor);
       break;
     default:
-      drawForegroundStage0(game, game.stages[game.stageNr]);
+      drawForegroundStage0(game, game.stages[game.stageNr], ghostFactor);
   }
 
   if (game.paused) {
-    game.pauseModal.update(game.gD);
+    game.pauseModal.draw(game.gD);
   }
 
   if (game.finished) {
     game.gD.context.filter = "drop-shadow(0px 0px 5px red)";
-    game.finishModal.update(game.gD);
+    game.finishModal.draw(game.gD);
   }
 }

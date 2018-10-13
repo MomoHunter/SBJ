@@ -12,10 +12,10 @@ function updateStage0(game, stage) {
 
 }
 
-function drawBackgroundStage0(game, stage) {
-  game.player.update(game, game.gD);
+function drawBackgroundStage0(game, stage, ghostFactor) {
+  game.player.draw(game, game.gD, ghostFactor);
 }
 
-function drawForegroundStage0(game, stage) {
+function drawForegroundStage0(game, stage, ghostFactor) {
 
 }

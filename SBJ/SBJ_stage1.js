@@ -22,9 +22,9 @@ function Stage1Fireball(x, y, width, height) {
   this.velocity = 0;
   this.jumpCounter = 0;
   this.outsideCanvas = false;
-  this.update = function(gD) {
+  this.draw = function(game, gD, ghostFactor) {
     gD.context.drawImage(gD.spritesheet, gD.spriteDict["Fireball"][0], gD.spriteDict["Fireball"][1], gD.spriteDict["Fireball"][2], gD.spriteDict["Fireball"][3],
-      this.x, this.y, gD.spriteDict["Fireball"][2], gD.spriteDict["Fireball"][3]);
+      this.x + (game.globalSpeed * ghostFactor), this.y + (this.velocity * ghostFactor), gD.spriteDict["Fireball"][2], gD.spriteDict["Fireball"][3]);
   };
   this.newPos = function(game, gD) {
     if (this.y > gD.canvas.height && !this.outsideCanvas) {
@@ -77,19 +77,19 @@ function updateStage1(game, stage) {
   }
 }
 
-function drawBackgroundStage1(game, stage) {
-  game.gD.context.drawImage(stage.wall, game.distanceTravelled % stage.wall.width, 0, stage.wall.width - (game.distanceTravelled % stage.wall.width), stage.wall.height, 
-    0, 0, stage.wall.width - (game.distanceTravelled % stage.wall.width), stage.wall.height);
-  game.gD.context.drawImage(stage.wall, 0, 0, game.distanceTravelled % stage.wall.width, stage.wall.height, 
-    stage.wall.width - (game.distanceTravelled % stage.wall.width), 0, game.distanceTravelled % stage.wall.width, stage.wall.height);
+function drawBackgroundStage1(game, stage, ghostFactor) {
+  game.gD.context.drawImage(stage.wall, (game.distanceTravelled + (game.globalSpeed * ghostFactor)) % stage.wall.width, 0, stage.wall.width - ((game.distanceTravelled + (game.globalSpeed * ghostFactor)) % stage.wall.width), stage.wall.height, 
+    0, 0, stage.wall.width - ((game.distanceTravelled + (game.globalSpeed * ghostFactor)) % stage.wall.width), stage.wall.height);
+  game.gD.context.drawImage(stage.wall, 0, 0, (game.distanceTravelled + (game.globalSpeed * ghostFactor)) % stage.wall.width, stage.wall.height, 
+    stage.wall.width - ((game.distanceTravelled + (game.globalSpeed * ghostFactor)) % stage.wall.width), 0, (game.distanceTravelled + (game.globalSpeed * ghostFactor)) % stage.wall.width, stage.wall.height);
 
   game.gD.context.fillStyle = "rgba(0, 0, 0, 1)";
   game.gD.context.fillRect(0, game.gD.canvas.height - 20, game.gD.canvas.width, 20);
 
-  game.player.update(game, game.gD);
+  game.player.draw(game, game.gD, ghostFactor);
 
   for (var i = 0; i < stage.fireballObjects.length; i++) {
-    stage.fireballObjects[i].update(game.gD);
+    stage.fireballObjects[i].draw(game, game.gD, ghostFactor);
   }
 
   for (var i = 0; i < game.gD.canvas.width / 100; i++) {
@@ -98,6 +98,6 @@ function drawBackgroundStage1(game, stage) {
   }
 }
 
-function drawForegroundStage1(game, stage) {
+function drawForegroundStage1(game, stage, ghostFactor) {
 
 }

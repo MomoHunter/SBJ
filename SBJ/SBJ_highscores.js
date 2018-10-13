@@ -83,7 +83,7 @@ function HighscoreList(x, y, width, height, color, bordersize) {
     }
     this.shiftFactor += shiftFactor;
   };
-  this.update = function(highscores, gD) {
+  this.draw = function(highscores, gD) {
     for (var i = this.highscores.length; i < Math.min(Object.keys(highscores.highscores).length, 100); i++) {
       if (i == 0) {
         this.highscores.push(new Highscore(this.x, this.y + this.height + (i * this.height), this.width, this.height, this.color, (i + 1), this.bordersize));
@@ -103,7 +103,7 @@ function HighscoreList(x, y, width, height, color, bordersize) {
     gD.context.strokeRect(this.x, this.y, this.width, this.height);
     for (var i = 0; i < this.highscores.length; i++) {
       if (this.highscores[i].y >= 80 && this.highscores[i].y < 280) {
-        this.highscores[i].update(highscores, gD);
+        this.highscores[i].draw(highscores, gD);
       }
     }
   };
@@ -121,7 +121,7 @@ function Highscore(x, y, width, height, color, highscoreNr, bordersize) {
   this.fields.push(new HighscoreName(this.x + 50, this.y, this.width - 250, this.height, this.color, this.highscoreNr, this.bordersize));
   this.fields.push(new HighscoreField(this.x + this.width - 200, this.y, 70, this.height, this.color, this.highscoreNr, 1, this.bordersize));
   this.fields.push(new HighscoreField(this.x + this.width - 130, this.y, 130, this.height, this.color, this.highscoreNr, 2, this.bordersize));
-  this.update = function(highscores, gD) {
+  this.draw = function(highscores, gD) {
     gD.context.fillStyle = this.color;
     gD.context.fillRect(this.x, this.y, 50, this.height);
     gD.context.textAlign = "end";
@@ -134,7 +134,7 @@ function Highscore(x, y, width, height, color, highscoreNr, bordersize) {
     gD.context.strokeRect(this.x, this.y, 50, this.height);
 
     for (var i = 0; i < this.fields.length; i++) {
-      this.fields[i].update(highscores, gD);
+      this.fields[i].draw(highscores, gD);
     }
   };
 }
@@ -178,7 +178,7 @@ function HighscoreName(x, y, width, height, color, highscoreNr, bordersize) {
     }
     highscores.highscores[this.highscoreNr.toString()][0] = name;
   };
-  this.update = function(highscores, gD) {
+  this.draw = function(highscores, gD) {
     if (highscores.editingMode && highscores.selected + 1 == this.highscoreNr) {
       gD.context.fillStyle = "rgba(230, 100, 100, 1)";
     } else if (this.selected) {
@@ -216,7 +216,7 @@ function HighscoreField(x, y, width, height, color, highscoreNr, indexNr, border
   this.indexNr = indexNr;
   this.bordersize = bordersize;
   this.selected = false;
-  this.update = function(highscores, gD) {
+  this.draw = function(highscores, gD) {
     if (this.selected) {
       gD.context.fillStyle = "rgba(180, 50, 50, 1)";
     } else {
@@ -406,11 +406,11 @@ function drawHighscores(highscores) {
 
   highscores.gD.context.drawImage(highscores.backgroundImage, 0, 0);
 
-  highscores.title.update(highscores.gD);
+  highscores.title.draw(highscores.gD);
 
-  highscores.highscoreList.update(highscores, highscores.gD);
+  highscores.highscoreList.draw(highscores, highscores.gD);
 
-  highscores.backToMenu.update(highscores.gD);
+  highscores.backToMenu.draw(highscores.gD);
 
   if (highscores.highscoreList.highscores.length > 10) {
     highscores.gD.context.lineWidth = 4;

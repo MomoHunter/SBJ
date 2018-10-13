@@ -103,9 +103,9 @@ function drawLoad(load) {
 
   load.gD.context.drawImage(load.backgroundImage, 0, 0);
 
-  load.title.update(load.gD);
+  load.title.draw(load.gD);
 
-  load.text.update(load.gD);
+  load.text.draw(load.gD);
 
-  load.backToMenu.update(load.gD);
+  load.backToMenu.draw(load.gD);
 }

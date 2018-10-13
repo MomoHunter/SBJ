@@ -19,7 +19,7 @@ function Stage3Bird(x, y, width, height, direction) {
   this.width = width;
   this.height = height;
   this.direction = direction;
-  this.update = function(gD) {
+  this.draw = function(gD) {
     gD.context.drawImage(gD.spritesheet, gD.spriteDict["Bird1"][0], gD.spriteDict["Bird1"][1], gD.spriteDict["Bird1"][2], gD.spriteDict["Bird1"][3],
       this.x, this.y, gD.spriteDict["Bird1"][2], gD.spriteDict["Bird1"][3]);
   };
@@ -35,7 +35,7 @@ function Stage3Fish(x, y, width, height) {
   this.height = height;
   this.distanceTravelled = 0;
   this.radians = 0;
-  this.update = function(gD) {
+  this.draw = function(gD) {
     gD.context.translate(this.x + (this.width / 2), this.y + (this.height / 2));
     gD.context.rotate(this.radians);
     gD.context.drawImage(gD.spritesheet, gD.spriteDict["Fish"][0], gD.spriteDict["Fish"][1], gD.spriteDict["Fish"][2], gD.spriteDict["Fish"][3],
@@ -61,7 +61,7 @@ function Stage3JumpingFish(x, y, width, height) {
   this.distanceTravelled = 0;
   this.radians = 0;
   this.mode = 1;
-  this.update = function(gD) {
+  this.draw = function(gD) {
     gD.context.translate(this.x + (this.width / 2), this.y + (this.height / 2));
     gD.context.rotate(this.radians);
     gD.context.drawImage(gD.spritesheet, gD.spriteDict["Fish"][0], gD.spriteDict["Fish"][1], gD.spriteDict["Fish"][2], gD.spriteDict["Fish"][3],
@@ -180,16 +180,16 @@ function drawBackgroundStage3(game, stage) {
   game.gD.context.fillStyle = "rgba(157, 219, 242, 1)";
   game.gD.context.fillRect(0, 0, game.gD.canvas.width, game.gD.canvas.height);
 
-  game.player.update(game, game.gD);
+  game.player.draw(game, game.gD);
 
   for (var i = 0; i < stage.birdObjects.length; i++) {
-    stage.birdObjects[i].update(game.gD);
+    stage.birdObjects[i].draw(game.gD);
   }
   for (var i = 0; i < stage.fishObjects.length; i++) {
-    stage.fishObjects[i].update(game.gD);
+    stage.fishObjects[i].draw(game.gD);
   }
   for (var i = 0; i < stage.jumpingFishObjects.length; i++) {
-    stage.jumpingFishObjects[i].update(game.gD);
+    stage.jumpingFishObjects[i].draw(game.gD);
   }
 }
 
