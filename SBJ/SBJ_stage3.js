@@ -1,6 +1,10 @@
 function Stage3(game) {
   this.game = game;
   this.deadZoneGround = 0;
+  this.ocean = new Image();
+  this.ocean.src = "img/stage3Ocean.png"
+  this.foregroundWaves = new Image();
+  this.foregroundWaves.src = "img/stage3Waves.png";
   this.floorColor = "rgba(239, 217, 165, 1)";
   this.difficulty = 60;
   this.init = function() {
@@ -299,8 +303,10 @@ function updateStage3(game, stage) {
 }
 
 function drawBackgroundStage3(game, stage, ghostFactor) {
-  game.gD.context.fillStyle = "rgba(157, 219, 242, 1)";
-  game.gD.context.fillRect(0, 0, game.gD.canvas.width, game.gD.canvas.height);
+  game.gD.context.drawImage(stage.ocean, ((game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.ocean.width), 0, stage.ocean.width - ((game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.ocean.width), stage.ocean.height, 
+    0, 0, stage.ocean.width - ((game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.ocean.width), stage.ocean.height);
+  game.gD.context.drawImage(stage.ocean, 0, 0, (game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.ocean.width, stage.ocean.height, 
+    stage.ocean.width - ((game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.ocean.width), 0, (game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.ocean.width, stage.ocean.height);
 
   for (var i = 0; i < stage.bubbleSpotObjects.length; i++) {
     stage.bubbleSpotObjects[i].draw(game, game.gD, ghostFactor);
@@ -319,7 +325,9 @@ function drawBackgroundStage3(game, stage, ghostFactor) {
   }
 }
 
-function drawForegroundStage3(game, stage) {
-  game.gD.context.fillStyle = "rgba(34, 34, 178, .4)";
-  game.gD.context.fillRect(0, game.gD.canvas.height / 2, game.gD.canvas.width, game.gD.canvas.height / 2);
+function drawForegroundStage3(game, stage, ghostFactor) {
+  game.gD.context.drawImage(stage.foregroundWaves, ((game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.foregroundWaves.width), 0, stage.foregroundWaves.width - ((game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.foregroundWaves.width), stage.foregroundWaves.height, 
+    0, game.gD.canvas.height - stage.foregroundWaves.height, stage.foregroundWaves.width - ((game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.foregroundWaves.width), stage.foregroundWaves.height);
+  game.gD.context.drawImage(stage.foregroundWaves, 0, 0, (game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.foregroundWaves.width, stage.foregroundWaves.height, 
+    stage.foregroundWaves.width - ((game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.foregroundWaves.width),  game.gD.canvas.height - stage.foregroundWaves.height, (game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.foregroundWaves.width, stage.foregroundWaves.height);
 }

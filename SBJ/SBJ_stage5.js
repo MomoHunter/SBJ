@@ -24,13 +24,36 @@ function Stage5Asteroid(x, y, width, height, direction, rotationDirection, image
   this.rotationDirection = rotationDirection;
   this.rotation = 0;
   this.imageNr = imageNr;
-  this.draw = function(gD) {
-    gD.context.translate(this.x + (this.width / 2), this.y + (this.height / 2));
-    gD.context.rotate(this.rotation);
+  this.draw = function(game, gD, ghostFactor) {
+    var movementX = 0;
+    var movementY = 0;
+    var rotation = this.rotation;
+    switch (this.direction) {
+      case 0:
+        movementX = -2 * game.globalSpeed;
+        movementY = -game.globalSpeed;
+        break;
+      case 1:
+        movementY = -game.globalSpeed;
+        break;
+      case 2:
+        movementX = 2 * game.globalSpeed;
+        movementY = -game.globalSpeed;
+        break;
+      default:
+    }
+
+    if (this.rotationDirection > 0) {
+      rotation += (Math.PI / 60) * ghostFactor;
+    } else {
+      rotation -= (Math.PI / 60) * ghostFactor;
+    }
+    gD.context.translate(this.x + (movementX * ghostFactor) + (this.width / 2), this.y + (movementY * ghostFactor) + (this.height / 2));
+    gD.context.rotate(rotation);
     gD.context.drawImage(gD.spritesheet, gD.spriteDict["Asteroid" + this.imageNr][0], gD.spriteDict["Asteroid" + this.imageNr][1], gD.spriteDict["Asteroid" + this.imageNr][2], gD.spriteDict["Asteroid" + this.imageNr][3],
       -(this.width / 2), -(this.height / 2), gD.spriteDict["Asteroid" + this.imageNr][2], gD.spriteDict["Asteroid" + this.imageNr][3]);
-    gD.context.rotate(-this.rotation);
-    gD.context.translate(-(this.x + (this.width / 2)), -(this.y + (this.height / 2)));
+    gD.context.rotate(-rotation);
+    gD.context.translate(-(this.x + (movementX * ghostFactor) + (this.width / 2)), -(this.y + (movementY * ghostFactor) + (this.height / 2)));
   };
   this.newPos = function(game) {
     switch (this.direction) {
@@ -59,8 +82,8 @@ function Stage5Asteroid(x, y, width, height, direction, rotationDirection, image
 function Stage5BackgroundAsteroids(x, y) {
   this.x = x;
   this.y = y;
-  this.draw = function(stage, gD) {
-    gD.context.drawImage(stage.backgroundAsteroids, this.x, this.y);
+  this.draw = function(stage, gD, ghostFactor) {
+    gD.context.drawImage(stage.backgroundAsteroids, this.x + (stage.game.globalSpeed * ghostFactor), this.y);
   };
   this.newPos = function(game) {
     this.x += game.globalSpeed;
@@ -72,16 +95,16 @@ function addAsteroid(stage, gD) {
   for (var i = 0; i < 8; i++) {
     switch (direction) {
       case 0:
-        stage.asteroidObjects.push(new Stage5Asteroid(Math.floor(Math.random() * -((gD.canvas.width / 4) - 20)) - 20, -((i + 1) * 20), gD.spriteDict["Asteroid1"][2], gD.spriteDict["Asteroid1"][3], direction, Math.floor(Math.random() * 2), Math.floor(Math.random() * 1.4) + 1));
+        stage.asteroidObjects.push(new Stage5Asteroid(Math.floor(Math.random() * -((gD.canvas.width / 4) - 20)) - 20, -((i + 1) * 20), gD.spriteDict["Asteroid1"][2], gD.spriteDict["Asteroid1"][3], direction, Math.floor(Math.random() * 2), Math.floor(Math.random() * 2.999) + 1));
         break;
       case 1:
-        stage.asteroidObjects.push(new Stage5Asteroid(Math.floor(Math.random() * ((gD.canvas.width / 2) - 20)) + (gD.canvas.width / 4), -((i + 1) * 20), gD.spriteDict["Asteroid1"][2], gD.spriteDict["Asteroid1"][3], direction, Math.floor(Math.random() * 2), Math.floor(Math.random() * 1.4) + 1));
+        stage.asteroidObjects.push(new Stage5Asteroid(Math.floor(Math.random() * ((gD.canvas.width / 2) - 20)) + (gD.canvas.width / 4), -((i + 1) * 20), gD.spriteDict["Asteroid1"][2], gD.spriteDict["Asteroid1"][3], direction, Math.floor(Math.random() * 2), Math.floor(Math.random() * 2.999) + 1));
         break;
       case 2:
-        stage.asteroidObjects.push(new Stage5Asteroid(Math.floor(Math.random() * ((gD.canvas.width / 4) - 20)) + gD.canvas.width, -((i + 1) * 20), gD.spriteDict["Asteroid1"][2], gD.spriteDict["Asteroid1"][3], direction, Math.floor(Math.random() * 2), Math.floor(Math.random() * 1.4) + 1));
+        stage.asteroidObjects.push(new Stage5Asteroid(Math.floor(Math.random() * ((gD.canvas.width / 4) - 20)) + gD.canvas.width, -((i + 1) * 20), gD.spriteDict["Asteroid1"][2], gD.spriteDict["Asteroid1"][3], direction, Math.floor(Math.random() * 2), Math.floor(Math.random() * 2.999) + 1));
         break;
       default:
-        stage.asteroidObjects.push(new Stage5Asteroid(Math.floor(Math.random() * ((gD.canvas.width / 4) - 20)) + (gD.canvas.width / 4), -((i + 1) * 20), gD.spriteDict["Asteroid1"][2], gD.spriteDict["Asteroid1"][3], direction, Math.floor(Math.random() * 2), Math.floor(Math.random() * 1.4) + 1));
+        stage.asteroidObjects.push(new Stage5Asteroid(Math.floor(Math.random() * ((gD.canvas.width / 4) - 20)) + (gD.canvas.width / 4), -((i + 1) * 20), gD.spriteDict["Asteroid1"][2], gD.spriteDict["Asteroid1"][3], direction, Math.floor(Math.random() * 2), Math.floor(Math.random() * 2.999) + 1));
     }
   }
   stage.asteroidSpawnCounter = Math.max(Math.random() * (1000 - (stage.game.distanceTravelled - 0.005)), 600);
@@ -131,22 +154,22 @@ function updateStage5(game, stage) {
 }
 
 function drawBackgroundStage5(game, stage, ghostFactor) {
-  game.gD.context.drawImage(stage.universe, game.distanceTravelled % stage.universe.width, 0, stage.universe.width - (game.distanceTravelled % stage.universe.width), stage.universe.height, 
-    0, 0, stage.universe.width - (game.distanceTravelled % stage.universe.width), stage.universe.height);
-  game.gD.context.drawImage(stage.universe, 0, 0, game.distanceTravelled % stage.universe.width, stage.universe.height, 
-    stage.universe.width - (game.distanceTravelled % stage.universe.width), 0, game.distanceTravelled % stage.universe.width, stage.universe.height);
+  game.gD.context.drawImage(stage.universe, (game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.universe.width, 0, stage.universe.width - ((game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.universe.width), stage.universe.height, 
+    0, 0, stage.universe.width - ((game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.universe.width), stage.universe.height);
+  game.gD.context.drawImage(stage.universe, 0, 0, (game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.universe.width, stage.universe.height, 
+    stage.universe.width - ((game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.universe.width), 0, (game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.universe.width, stage.universe.height);
 
   for (var i = 0; i < stage.backgroundAsteroidsObjects.length; i++) {
-    stage.backgroundAsteroidsObjects[i].draw(stage, game.gD);
+    stage.backgroundAsteroidsObjects[i].draw(stage, game.gD, ghostFactor);
   }
 
   game.player.draw(game, game.gD, ghostFactor);
 
   for (var i = 0; i < stage.asteroidObjects.length; i++) {
-    stage.asteroidObjects[i].draw(game.gD);
+    stage.asteroidObjects[i].draw(game, game.gD, ghostFactor);
   }
 }
 
-function drawForegroundStage5(game, stage) {
+function drawForegroundStage5(game, stage, ghostFactor) {
 
 }

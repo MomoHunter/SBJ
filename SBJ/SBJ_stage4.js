@@ -19,9 +19,9 @@ function Stage4Apple(x, y, width, height, untilDrop) {
   this.untilDrop = untilDrop;
   this.velocity = 0;
   this.gravity = 0.2;
-  this.draw = function(gD) {
+  this.draw = function(game, gD, ghostFactor) {
     gD.context.drawImage(gD.spritesheet, gD.spriteDict["Apple"][0], gD.spriteDict["Apple"][1], gD.spriteDict["Apple"][2], gD.spriteDict["Apple"][3],
-      this.x, this.y, gD.spriteDict["Apple"][2], gD.spriteDict["Apple"][3]);
+      this.x + (game.globalSpeed * ghostFactor), this.y + (this.velocity * ghostFactor), gD.spriteDict["Apple"][2], gD.spriteDict["Apple"][3]);
   };
   this.newPos = function(game) {
     this.x += game.globalSpeed;
@@ -62,19 +62,19 @@ function updateStage4(game, stage) {
   }
 }
 
-function drawBackgroundStage4(game, stage) {
-  game.gD.context.drawImage(stage.forest, game.distanceTravelled % stage.forest.width, 0, stage.forest.width - (game.distanceTravelled % stage.forest.width), stage.forest.height, 
-    0, 0, stage.forest.width - (game.distanceTravelled % stage.forest.width), stage.forest.height);
-  game.gD.context.drawImage(stage.forest, 0, 0, game.distanceTravelled % stage.forest.width, stage.forest.height, 
-    stage.forest.width - (game.distanceTravelled % stage.forest.width), 0, game.distanceTravelled % stage.forest.width, stage.forest.height);
+function drawBackgroundStage4(game, stage, ghostFactor) {
+  game.gD.context.drawImage(stage.forest, (game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.forest.width, 0, stage.forest.width - ((game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.forest.width), stage.forest.height, 
+    0, 0, stage.forest.width - ((game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.forest.width), stage.forest.height);
+  game.gD.context.drawImage(stage.forest, 0, 0, (game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.forest.width, stage.forest.height, 
+    stage.forest.width - ((game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.forest.width), 0, (game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.forest.width, stage.forest.height);
 
-  game.player.draw(game, game.gD);
+  game.player.draw(game, game.gD, ghostFactor);
 
   for (var i = 0; i < stage.appleObjects.length; i++) {
-    stage.appleObjects[i].draw(game.gD);
+    stage.appleObjects[i].draw(game, game.gD, ghostFactor);
   }
 }
 
-function drawForegroundStage4(game, stage) {
+function drawForegroundStage4(game, stage, ghostFactor) {
 
 }
