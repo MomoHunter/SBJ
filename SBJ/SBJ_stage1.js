@@ -78,10 +78,10 @@ function updateStage1(game, stage) {
 }
 
 function drawBackgroundStage1(game, stage, ghostFactor) {
-  game.gD.context.drawImage(stage.wall, (game.distanceTravelled + (game.globalSpeed * ghostFactor)) % stage.wall.width, 0, stage.wall.width - ((game.distanceTravelled + (game.globalSpeed * ghostFactor)) % stage.wall.width), stage.wall.height, 
-    0, 0, stage.wall.width - ((game.distanceTravelled + (game.globalSpeed * ghostFactor)) % stage.wall.width), stage.wall.height);
-  game.gD.context.drawImage(stage.wall, 0, 0, (game.distanceTravelled + (game.globalSpeed * ghostFactor)) % stage.wall.width, stage.wall.height, 
-    stage.wall.width - ((game.distanceTravelled + (game.globalSpeed * ghostFactor)) % stage.wall.width), 0, (game.distanceTravelled + (game.globalSpeed * ghostFactor)) % stage.wall.width, stage.wall.height);
+  game.gD.context.drawImage(stage.wall, ((game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.wall.width), 0, stage.wall.width - ((game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.wall.width), stage.wall.height, 
+    0, 0, stage.wall.width - ((game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.wall.width), stage.wall.height);
+  game.gD.context.drawImage(stage.wall, 0, 0, (game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.wall.width, stage.wall.height, 
+    stage.wall.width - ((game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.wall.width), 0, (game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.wall.width, stage.wall.height);
 
   game.gD.context.fillStyle = "rgba(0, 0, 0, 1)";
   game.gD.context.fillRect(0, game.gD.canvas.height - 20, game.gD.canvas.width, 20);

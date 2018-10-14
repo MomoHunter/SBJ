@@ -11,7 +11,7 @@ function Game(gD, menu) {
   this.inventoryTexts = [];
   this.stageNr = 0;
   this.stages = [];
-  this.refreshrate = 1000 / 10;
+  this.refreshrate = 1000 / 60;
   this.playerDict = {    //The data for the different playermodels with: jumps, jumpstrength, movementspeed right, movementspeed left
     "1" : [2, -9, 3, -3],
     "2" : [2, -13.5, 3, -3],

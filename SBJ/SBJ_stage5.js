@@ -130,7 +130,7 @@ function updateStage5(game, stage) {
   }
 }
 
-function drawBackgroundStage5(game, stage) {
+function drawBackgroundStage5(game, stage, ghostFactor) {
   game.gD.context.drawImage(stage.universe, game.distanceTravelled % stage.universe.width, 0, stage.universe.width - (game.distanceTravelled % stage.universe.width), stage.universe.height, 
     0, 0, stage.universe.width - (game.distanceTravelled % stage.universe.width), stage.universe.height);
   game.gD.context.drawImage(stage.universe, 0, 0, game.distanceTravelled % stage.universe.width, stage.universe.height, 
@@ -140,7 +140,7 @@ function drawBackgroundStage5(game, stage) {
     stage.backgroundAsteroidsObjects[i].draw(stage, game.gD);
   }
 
-  game.player.draw(game, game.gD);
+  game.player.draw(game, game.gD, ghostFactor);
 
   for (var i = 0; i < stage.asteroidObjects.length; i++) {
     stage.asteroidObjects[i].draw(game.gD);
