@@ -233,25 +233,26 @@ function GamePlayer(x, y) {
       this.x = gD.canvas.width - this.width;
     }
   };
-  this.touchFloor = function(game, gD) {              //checks, if the player touches a floor and sets it on it and if the player is not on it anymore, it sets onFloor to false
+  this.touchFloor = function(game, gD) {
     for (var i = 0; i < game.floor.length; i++) {
-      if ((this.x > game.floor[i].x && this.x < game.floor[i].x + game.floor[i].width) ||
-          (this.x + this.width > game.floor[i].x && this.x + this.width < game.floor[i].x + game.floor[i].width)) {
-        if (this.y + this.height < game.floor[i].y - (game.floor[i].thickness / 2)) {
-          this.aboveFloor = true;
-          this.currentFloor = game.floor[i];
-        } else if (this.currentFloor != undefined && this.y + this.height > this.currentFloor.y - (this.currentFloor.thickness / 2) && this.aboveFloor && this.velocity > 0) {
+      var floor = game.floor[i];
+      if ((this.x > floor.x && this.x < floor.x + floor.width) ||
+          (this.x + this.width > floor.x && this.x + this.width < floor.x + floor.width)) {
+        if (this.currentFloor != undefined && this.y + this.height > this.currentFloor.y - (this.currentFloor.thickness / 2) && this.velocity > 0 && this.aboveFloor) {
           if (!gD.keys[game.menu.controls.keyBindings["Game4"][2][0]] && !gD.keys[game.menu.controls.keyBindings["Game4"][2][1]]) {
-            if (this.currentFloor.type == 1) {
-              this.velocity = -this.velocity * 0.9;
-            } else if (this.currentFloor.type == 2) {
-              this.currentFloor.isFalling = true;
-              this.onFloor = true;
-              this.velocity = 0;
-            } else {
-              this.velocity = 0;
-              this.onFloor = true;
-              this.aboveFloor = false;
+            switch (this.currentFloor.type) {
+              case 1:
+                this.velocity = -this.velocity * 0.9;
+                break;
+              case 2:
+                this.currentFloor.isFalling = true;
+                this.onFloor = true;
+                this.velocity = 0;
+                break;
+              default:
+                this.aboveFloor = false;
+                this.onFloor = true;
+                this.velocity = 0;
             }
             this.y = this.currentFloor.y - (this.currentFloor.thickness / 2) - this.height;
             this.secondJump = 1;
@@ -259,10 +260,15 @@ function GamePlayer(x, y) {
             this.currentFloor = undefined;
           }
         }
-        break;
+        if (this.y + this.height < floor.y - (floor.thickness / 2)) {
+          this.aboveFloor = true;
+          if (this.currentFloor == undefined || floor.y - this.y < this.currentFloor.y - this.y) {
+            this.currentFloor = floor;
+          }
+        }
       }
       if (i + 1 == game.floor.length && this.currentFloor != undefined &&
-          (this.x + this.width < this.currentFloor.x || this.x > this.currentFloor.x + this.currentFloor.width) &&
+          (this.x > this.currentFloor.x + this.currentFloor.width || this.x + this.width < this.currentFloor.x) &&
           !(this.y == gD.canvas.height - game.stages[game.stageNr].deadZoneGround - this.height)) {
         this.aboveFloor = false;
         this.onFloor = false;
@@ -286,7 +292,7 @@ function GameFloor(x, y, width, type, thickness) {
   this.width = width;
   this.type = type;
   this.thickness = thickness;
-  this.gravity = 0.2;
+  this.gravity = 0.5;
   this.velocity = 0;
   this.isFalling = false;
   this.thorns = [];
@@ -949,7 +955,7 @@ function updateGame(game, timestamp, resetTime) {
     }
   }
 
-  drawGame(game, game.lag / game.refreshrate);
+  drawGame(game, 0);//game.lag / game.refreshrate);
   game.startts = timestamp;
 }
 
