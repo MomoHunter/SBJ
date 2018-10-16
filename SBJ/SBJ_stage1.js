@@ -1,9 +1,7 @@
 function Stage1(game) {
   this.game = game;
-  this.lava = new Image();
-  this.lava.src = "img/stage1Lava.png";
-  this.wall = new Image();
-  this.wall.src = "img/stage1Wall.png";
+  this.wall = new Background(0, 1000, 350, "img/stage1Wall.png");
+  this.lava = new AnimatedBackground(game.gD.canvas.height - 25, 1000, 100, "img/stage1Lava.png", 4, 18);
   this.deadZoneGround = 20;     //how many pixels from the bottom upwards is the deadzone
   this.floorColor = "rgba(155, 155, 155, 1)";
   this.difficulty = 20;
@@ -78,26 +76,15 @@ function updateStage1(game, stage) {
 }
 
 function drawBackgroundStage1(game, stage, ghostFactor) {
-  game.gD.context.drawImage(stage.wall, ((game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.wall.width), 0, stage.wall.width - ((game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.wall.width), stage.wall.height, 
-    0, 0, stage.wall.width - ((game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.wall.width), stage.wall.height);
-  game.gD.context.drawImage(stage.wall, 0, 0, (game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.wall.width, stage.wall.height, 
-    stage.wall.width - ((game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.wall.width), 0, (game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.wall.width, stage.wall.height);
-
-  game.gD.context.fillStyle = "rgba(0, 0, 0, 1)";
-  game.gD.context.fillRect(0, game.gD.canvas.height - 20, game.gD.canvas.width, 20);
+  stage.wall.draw(game, game.gD, ghostFactor);
 
   game.player.draw(game, game.gD, ghostFactor);
 
   for (var i = 0; i < stage.fireballObjects.length; i++) {
     stage.fireballObjects[i].draw(game, game.gD, ghostFactor);
   }
-
-  for (var i = 0; i < game.gD.canvas.width / 100; i++) {
-    game.gD.context.drawImage(stage.lava, 100 * Math.floor(((game.frameCounter / 10) + (Math.floor(i * 1.7) * 10)) % 40 / 10),
-      40 * Math.floor((game.frameCounter / 10) % 10), 100, 20, i * 100, game.gD.canvas.height - 20, 100, 20);
-  }
 }
 
 function drawForegroundStage1(game, stage, ghostFactor) {
-
+  stage.lava.draw(game, game.gD, ghostFactor);
 }

@@ -57,3 +57,31 @@ function Button(x, y, width, height, size, family, color, text, textcolor, borde
     gD.context.strokeRect(this.x, this.y, this.width, this.height);
   };
 }
+
+function Background(y, width, height, img) {
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.img = new Image();
+  this.img.src = img;
+  this.draw = function(game, gD, ghostFactor) {
+    var temp = (game.distanceTravelled - (game.globalSpeed * ghostFactor)) % this.width;
+    gD.context.drawImage(this.img, temp, 0, this.width - temp, this.height, 0, this.y, this.width - temp, this.height);
+    gD.context.drawImage(this.img, 0, 0, temp, this.height, this.width - temp, this.y, temp, this.height);
+  };
+}
+
+function AnimatedBackground(y, width, height, img, cycles, speed) {
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.img = new Image();
+  this.img.src = img;
+  this.cycles = cycles;
+  this.speed = speed;
+  this.draw = function(game, gD, ghostFactor) {
+    var temp = (game.distanceTravelled - (game.globalSpeed * ghostFactor)) % this.width;
+    gD.context.drawImage(this.img, temp, Math.floor(game.frameCounter / this.speed) % cycles * (this.height / cycles), this.width - temp, (this.height / cycles), 0, this.y, this.width - temp, (this.height / cycles));
+    gD.context.drawImage(this.img, 0, Math.floor(game.frameCounter / this.speed) % cycles * (this.height / cycles), temp, (this.height / cycles), this.width - temp, this.y, temp, (this.height / cycles));
+  };
+}
