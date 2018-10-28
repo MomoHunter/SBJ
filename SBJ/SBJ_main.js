@@ -312,12 +312,26 @@ function GlobalDict() {
     "Currency4" : [341, 124, 28, 36],
     "Mute" : [387, 138, 24, 22]
   };
-  this.itemProb = [5, 1, 3, 0.3, 1.5, 1];                   //relative probabilities
-  this.itemBaseDur = [120, 240, 360, 12, 240, 100];           //in frames
-  this.itemPerLvlDur = [60, 120, 90, 6, 180, 75];            //time plus per level up
-  this.itemStartValue = [1000, 3999, 2100, 5000, 4550, 5555];  //costs for level 1
-  this.moneyProb = [5, 4, 1, 0.05];                 //relative probabilities
-  this.floorProb = [5, 1, 0.8, 0.8];
+  this.items = {                     //probability for spawning, durability, durability per level, costs for level 1
+    "stopwatch": [5, 120, 60, 800],
+    "star": [1, 240, 120, 2999],
+    "feather": [3, 360, 90, 1800],
+    "treasure": [0.3, 12, 6, 4300],
+    "magnet": [1.5, 240, 180, 3999],
+    "rocket": [1, 100, 75, 4955]
+  };
+  this.money = {                     //probability, value
+    "1": [5, 1],
+    "10": [4, 10],
+    "100": [1, 100],
+    "1000": [0.05, 1000]
+  };
+  this.floors = {                    //probability
+    "standard": [5],
+    "jump": [1],
+    "fall": [0.8],
+    "spikes": [0.8]
+  };
   this.keys = [];
   this.muted = true;
   this.playerUnlocked = new Array(6).fill(false);

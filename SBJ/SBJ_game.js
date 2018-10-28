@@ -360,23 +360,88 @@ function GameThorns(x, y, width, height, color) {
   };
 }
 
-function GameInventoryText(x, y, width, height, size, family, textcolor, itemNr) {
+function GameInventory() {
+  this.items = [];
+  this.texts = [];
+  this.init = function() {
+
+  };
+  this.draw = function(game, gD, ghostFactor) {
+    for (var i = 0; i < this.texts.length; i++) {
+      this.texts.draw(game, gD, ghostFactor);
+    }
+  };
+}
+
+function GameInventoryItem(x, y, width, height, size, family, itemNr, maxDurability) {
   this.x = x;
   this.y = y;
   this.width = width;
   this.height = height;
   this.size = size;
   this.family = family;
-  this.textcolor = textcolor;
   this.itemNr = itemNr;
-  this.draw = function(game, gD) {
-    gD.context.drawImage(gD.spritesheet, gD.spriteDict["Item" + this.itemNr][0], gD.spriteDict["Item" + this.itemNr][1], gD.spriteDict["Item" + this.itemNr][2], gD.spriteDict["Item" + this.itemNr][3],
-      this.x + 2, this.y + Math.floor((this.height - gD.spriteDict["Item" + this.itemNr][3]) / 2), gD.spriteDict["Item" + this.itemNr][2], gD.spriteDict["Item" + this.itemNr][3]);
-    gD.context.textAlign = "start";
-    gD.context.textBaseline = "middle";
+  this.maxDurability = maxDurability;
+  this.backgroundcolor = "rgba(255, 255, 255, 0.4)";
+  this.activationcolor = "rgba(0, 255, 0, 0.4)";
+  this.textAlign = "end";
+  this.textBaseline = "middle";
+  this.textcolor = "rgba(0, 0, 0, 1)";
+  this.bordercolor = "rgba(0, 0, 0, 1)";
+  this.bordersize = 2;
+  this.durability = 0;
+  this.quantity = 0;
+  this.used = 0;
+  this.active = false;
+  this.activate = function() {
+    if (!this.active) {
+      this.active = true;
+      this.durability = this.maxDurability;
+      this.quantity--;
+      this.used++;
+    }
+  };
+  this.update = function(game) {
+    if (this.active) {
+      if (this.durability > 0) {
+        this.durability--;
+      } else {
+        this.active = false;
+        switch (this.itemNr) {
+          case 0:
+            if (!game.menu.achievements.achievementList.achievements[12].finished) {
+              game.menu.achievements.achievementValues[12] += (game.gD.itemBaseDur[i] + (game.menu.shop.level[i] * game.gD.itemPerLvlDur[i])) / 50;
+              game.menu.achievements.achievementList.achievements[12].check(game.menu.achievements);
+            }
+            break;
+          case 1:
+            if (game.player.y == game.gD.canvas.height - game.stages[game.stageNr].deadZoneGround - game.player.height) {
+              game.player.onFloor = false;
+            }
+            break;
+          default:
+            break;
+        }
+      }
+    }
+  };
+  this.draw = function(game, gD, ghostFactor) {
+    var itemRef = gD.spriteDict["Item" + this.itemNr];
+
+    gD.context.fillStyle = this.backgroundcolor;
+    gD.context.fillRect(this.x, this.y, this.width, this.height);
+    gD.context.fillStyle = this.activationcolor;
+    gD.context.fillRect(this.x + 1, this.y + 1, this.duration * ((this.width - 2) / this.maxDuration), this.height - 2);
+    gD.context.drawImage(gD.spritesheet, itemRef[0], itemRef[1], itemRef[2], itemRef[3],
+      this.x + 2, this.y + Math.floor((this.height / itemRef[3]) / 2), itemRef[2], itemRef[3]);
+    gD.context.textAlign = this.textAlign;
+    gD.context.textBaseline = this.textBaseline;
     gD.context.font = this.size + " " + this.family;
     gD.context.fillStyle = this.textcolor;
-    gD.context.fillText(game.inventory[this.itemNr - 1].toString(), this.x + 7 + gD.spriteDict["Item" + this.itemNr][2], this.y + (this.height / 2));
+    gD.context.fillText(this.quantity.toString(), this.x + this.width - 3, this.y + (this.height / 2));
+    gD.context.lineWidth = this.bordersize;
+    gD.context.strokeStyle = this.bordercolor;
+    gD.context.strokeRect(this.x, this.y, this.width, this.height);
   };
 }
 
@@ -955,7 +1020,7 @@ function updateGame(game, timestamp, resetTime) {
     }
   }
 
-  drawGame(game, 0);//game.lag / game.refreshrate);
+  drawGame(game, game.lag / game.refreshrate);
   game.startts = timestamp;
 }
 
@@ -1025,8 +1090,6 @@ function drawGame(game, ghostFactor) {
 
   game.distanceLabel.draw(game.gD);
 
-  game.fpsLabel.draw(game.gD);
-
   switch (game.stageNr) {
     case 1:
       drawForegroundStage1(game, game.stages[game.stageNr], ghostFactor);
@@ -1046,6 +1109,8 @@ function drawGame(game, ghostFactor) {
     default:
       drawForegroundStage0(game, game.stages[game.stageNr], ghostFactor);
   }
+
+  game.fpsLabel.draw(game.gD);
 
   if (game.paused) {
     game.pauseModal.draw(game.gD);
