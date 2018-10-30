@@ -169,32 +169,32 @@ function GlobalDict() {
   this.spritesheet.src = "img/Spritesheet.png";
   this.spriteDict = {                         //The numbers specify the x-pos, y-pos, width and height of the object
     "Pointer" : [1, 1, 10, 6],                //The B suffix marks a two times bigger version
-    "Player1" : [12, 1, 20, 20],
-    "Player2" : [33, 1, 14, 26],
-    "Player3" : [48, 1, 14, 14],
-    "Player4" : [63, 1, 24, 14],
-    "Player5" : [88, 1, 20, 20],
-    "Player6" : [109, 1, 25, 23],
-    "Player7" : [135, 1, 24, 23],
-    "Player1B" : [1, 28, 40, 40],
-    "Player2B" : [42, 28, 28, 52],
-    "Player3B" : [71, 28, 28, 28],
-    "Player4B" : [100, 28, 48, 28],
-    "Player5B" : [149, 28, 40, 40],
-    "Player6B" : [190, 28, 50, 46],
-    "Player7B" : [241, 28, 48, 46],
-    "Item1" : [1, 81, 15, 19],
-    "Item2" : [17, 81, 18, 19],
-    "Item3" : [36, 81, 16, 16],
-    "Item4" : [53, 81, 20, 13],
-    "Item5" : [74, 81, 17, 20],
-    "Item6" : [92, 81, 20, 18],
-    "Item1B" : [1, 102, 30, 38],
-    "Item2B" : [32, 102, 36, 38],
-    "Item3B" : [69, 102, 32, 32],
-    "Item4B" : [102, 102, 40, 26],
-    "Item5B" : [143, 102, 32, 40],
-    "Item6B" : [176, 102, 40, 36],
+    "Player_Standard" : [12, 1, 20, 20],
+    "Player_Longjohn" : [33, 1, 14, 26],
+    "Player_Speedy" : [48, 1, 14, 14],
+    "Player_Magician" : [63, 1, 24, 14],
+    "Player_Strooper" : [88, 1, 20, 20],
+    "Player_Disgusty" : [109, 1, 25, 23],
+    "Player_Afroman" : [135, 1, 24, 23],
+    "Player_Standard_B" : [1, 28, 40, 40],
+    "Player_Longjohn_B" : [42, 28, 28, 52],
+    "Player_Speedy_B" : [71, 28, 28, 28],
+    "Player_Magician_B" : [100, 28, 48, 28],
+    "Player_Strooper_B" : [149, 28, 40, 40],
+    "Player_Disgusty_B" : [190, 28, 50, 46],
+    "Player_Afroman_B" : [241, 28, 48, 46],
+    "Item_stopwatch" : [1, 81, 15, 19],
+    "Item_star" : [17, 81, 18, 19],
+    "Item_feather" : [36, 81, 16, 16],
+    "Item_treasure" : [53, 81, 20, 13],
+    "Item_magnet" : [74, 81, 17, 20],
+    "Item_rocket" : [92, 81, 20, 18],
+    "Item_stopwatch_B" : [1, 102, 30, 38],
+    "Item_star_B" : [32, 102, 36, 38],
+    "Item_feather_B" : [69, 102, 32, 32],
+    "Item_treasure_B" : [102, 102, 40, 26],
+    "Item_magnet_B" : [143, 102, 32, 40],
+    "Item_rocket_B" : [176, 102, 40, 36],
     "Money1" : [1, 141, 30, 18],
     "Money2" : [32, 141, 30, 18],
     "Money3" : [63, 141, 30, 18],
@@ -312,19 +312,28 @@ function GlobalDict() {
     "Currency4" : [341, 124, 28, 36],
     "Mute" : [387, 138, 24, 22]
   };
+  this.player = {                    //The data for the different playermodels with: jumps, jumpstrength, movementspeed right, movementspeed left, weight
+    "Player_Standard" : [2, -9, 3, -3, 45],
+    "Player_Longjohn" : [2, -13.5, 3, -3, 42],
+    "Player_Speedy" : [2, -9, 6, -6, 38],
+    "Player_Magician" : [3, -9, 3, -3, 43],
+    "Player_Strooper" : [2, -10.8, 4.5, -4.5, 45],
+    "Player_Disgusty" : [3, -10.8, 3, -3, 52],
+    "Player_Afroman" : [3, -10.8, 4.5, -4.5, 46]
+  };
   this.items = {                     //probability for spawning, durability, durability per level, costs for level 1
-    "stopwatch": [5, 120, 60, 800],
-    "star": [1, 240, 120, 2999],
-    "feather": [3, 360, 90, 1800],
-    "treasure": [0.3, 12, 6, 4300],
-    "magnet": [1.5, 240, 180, 3999],
-    "rocket": [1, 100, 75, 4955]
+    "Item_stopwatch": [5, 120, 60, 800],
+    "Item_star": [1, 240, 120, 2999],
+    "Item_feather": [3, 360, 90, 1800],
+    "Item_treasure": [0.3, 12, 6, 4300],
+    "Item_magnet": [1.5, 240, 180, 3999],
+    "Item_rocket": [1, 100, 75, 4955]
   };
   this.money = {                     //probability, value
-    "1": [5, 1],
-    "10": [4, 10],
-    "100": [1, 100],
-    "1000": [0.05, 1000]
+    "Money_1": [5, 1],
+    "Money_10": [4, 10],
+    "Money_100": [1, 100],
+    "Money_1000": [0.05, 1000]
   };
   this.floors = {                    //probability
     "standard": [5],

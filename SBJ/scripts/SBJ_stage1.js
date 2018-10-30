@@ -3,8 +3,9 @@ function Stage1(game) {
   this.wall = new Background(0, 1000, 350, "img/stage1Wall.png");
   this.lava = new AnimatedBackground(game.gD.canvas.height - 25, 1000, 100, "img/stage1Lava.png", 4, 18);
   this.deadZoneGround = 20;     //how many pixels from the bottom upwards is the deadzone
-  this.floorColor = "rgba(155, 155, 155, 1)";
+  this.floorColor = "rgba(205, 205, 205, 1)";
   this.difficulty = 20;
+  this.gravity = 0.45;
   this.init = function() {
     this.fireballObjects = [];
     this.fireballSpawnCounter = Math.max(Math.floor(Math.random() * 600), 300);
@@ -16,7 +17,7 @@ function Stage1Fireball(x, y, width, height) {
   this.y = y;
   this.width = width;
   this.height = height;
-  this.gravity = 0.4;
+  this.gravity = 0.2;
   this.velocity = 0;
   this.jumpCounter = 0;
   this.outsideCanvas = false;
@@ -33,7 +34,7 @@ function Stage1Fireball(x, y, width, height) {
       this.jumpCounter--;
       if (this.jumpCounter == 0) {
         this.outsideCanvas = false;
-        this.velocity = -13;
+        this.velocity = -10;
         this.velocity += this.gravity;
         this.y += this.velocity;
       }

@@ -3,6 +3,7 @@ function Stage0(game) {
   this.deadZoneGround = 0;
   this.floorColor = "rgba(155, 155, 155, 1)";
   this.difficulty = 5;
+  this.gravity = 20.25;
   this.init = function() {
 
   };

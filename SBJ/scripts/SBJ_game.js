@@ -150,6 +150,107 @@ function Game(gD, menu) {
   };
 }
 
+function NewGamePlayer(x, y, playerName) {
+  this.x = x;
+  this.y = y;
+  this.playerName = playerName;
+  this.width = 0;
+  this.height = 0;
+  this.speed = 0;
+  this.weight = 0;                                      //stage.gravity / this.weight = normal gravity
+  this.velocity = 0;
+  this.jumps = 0;
+  this.jumping = false;
+  this.onFloor = false;
+  this.aboveFloor = false;
+  this.outsideWater = false;
+  this.outsideCanvas = false;
+  this.distanceBackwards = 0;
+  this.playerName = "";
+  this.currentFloor = undefined;
+  this.inventory = new GameInventory();
+  this.setPlayer = function(playerName, game, gD) {
+    this.playerName = playerName;
+    this.width = gD.spriteDict[this.playerName][2];
+    this.height = gD.spriteDict[this.playerName][3];
+    this.weight = gD.player[this.playerName][4];
+    this.inventory.init(game, gD);
+    if (this.playerName == "Player_Afroman") {
+      this.inventory.fill(10);
+    }
+  };
+  this.moveForward = function(gD) {
+    this.speed = gD.player[this.playerName][2];
+  };
+  this.moveBackward = function(gD) {
+    this.speed = gD.player[this.playerName][3];
+  };
+  this.stopMoving = function() {
+    this.speed = 0;
+  };
+  this.downFromPlatform = function() {
+    this.onFloor = false;
+    this.currentFloor = undefined;
+    this.jumps = 1;
+  };
+  this.jump = function(game, gD) {
+    if (!this.jumping && this.jumps < gD.player[this.playerName][0]) {
+      if (game.stage == "Stage_All") {
+        this.velocity = gD.player[this.playerName][1] / 2.9;
+        this.jumping = true;
+      } else if (game.stage == "Stage_Water" && this.y + this.height >= game.gD.canvas.height / 2) {
+        this.velocity = gD.player[this.playerName][1] / 3;
+      } else {
+        this.velocity = gD.player[this.playerName][1];
+        this.jumping = true;
+      }
+      this.onFloor = false;
+    }
+  };
+  this.jumpStop = function() {
+    this.jumping = false;
+    this.jumps++;
+  };
+  this.draw = function(game, gD, ghostFactor) {
+    var spriteRef = gD.spriteDict[this.playerName];
+    if (this.inventory.items["Item_rocket"].active) {
+      spriteRef = gD.spriteDict["Item_rocket"];
+    }
+    gD.context.drawImage(gD.spritesheet, spriteRef[0], spriteRef[1], spriteRef[2], spriteRef[3],
+      this.x + (this.speed * ghostFactor), this.y + (this.velocity * ghostFactor), this.width, this.height);
+  };
+  this.newPos = function(game, gD) {
+    if (this.inventory.items["Item_rocket"].active) {
+      this.x += this.speed;
+      this.y -= (this.y - 50) / 40;
+      this.onFloor = false;
+      this.velocity = 0;
+      this.jumps = 1;
+    } else {
+      if (!this.onFloor || (this.currentFloor != undefined && this.currentFloor.type == 2)) {
+        this.velocity += game.stages[game.stage].gravity / this.weight;
+        this.y += this.velocity;
+        if (game.stage == "Stage_Water") {
+          if (this.y + this.height > game.gD.canvas.height / 2) {
+            if (this.outsideWater) {
+              this.velocity = 1;
+            }
+            this.outsideWater = false;
+          } else {
+            if (!this.outsideWater) {
+              this.velocity = game.player[this.playerName][1] / 1.8;
+            }
+            this.outsideWater = true;
+          }
+        }
+      }
+      this.x += this.speed;
+      this.touchFloor(game, gD);
+    }
+    this.hitWalls(game, gD);
+  };
+}
+
 function GamePlayer(x, y) {
   this.x = x;
   this.y = y;
@@ -361,26 +462,34 @@ function GameThorns(x, y, width, height, color) {
 }
 
 function GameInventory() {
-  this.items = [];
-  this.texts = [];
-  this.init = function() {
-
+  this.items = {};
+  this.init = function(game, gD) {
+    var counter = 0;
+    for (var i in gD.items) {
+      this.items[i] = new GameInventoryItem(60 * counter, 0, 60, 30, "14pt", "Consolas", i, gD.items[i][1] + (gD.items[i][2] * game.shop.level[counter]));
+      counter++;
+    }
+  };
+  this.fill = function(quantity) {
+    for (var i in this.items) {
+      this.items[i].quantity = quantity;
+    }
   };
   this.draw = function(game, gD, ghostFactor) {
-    for (var i = 0; i < this.texts.length; i++) {
-      this.texts.draw(game, gD, ghostFactor);
+    for (var i in this.items) {
+      this.items[i].draw(game, gD, ghostFactor);
     }
   };
 }
 
-function GameInventoryItem(x, y, width, height, size, family, itemNr, maxDurability) {
+function GameInventoryItem(x, y, width, height, size, family, itemName, maxDurability) {
   this.x = x;
   this.y = y;
   this.width = width;
   this.height = height;
   this.size = size;
   this.family = family;
-  this.itemNr = itemNr;
+  this.itemName = itemName;
   this.maxDurability = maxDurability;
   this.backgroundcolor = "rgba(255, 255, 255, 0.4)";
   this.activationcolor = "rgba(0, 255, 0, 0.4)";
@@ -426,7 +535,7 @@ function GameInventoryItem(x, y, width, height, size, family, itemNr, maxDurabil
     }
   };
   this.draw = function(game, gD, ghostFactor) {
-    var itemRef = gD.spriteDict["Item" + this.itemNr];
+    var itemRef = gD.spriteDict[this.itemName];
 
     gD.context.fillStyle = this.backgroundcolor;
     gD.context.fillRect(this.x, this.y, this.width, this.height);
@@ -442,6 +551,26 @@ function GameInventoryItem(x, y, width, height, size, family, itemNr, maxDurabil
     gD.context.lineWidth = this.bordersize;
     gD.context.strokeStyle = this.bordercolor;
     gD.context.strokeRect(this.x, this.y, this.width, this.height);
+  };
+}
+
+function GameInventoryText(x, y, width, height, size, family, textcolor, itemNr) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.size = size;
+  this.family = family;
+  this.textcolor = textcolor;
+  this.itemNr = itemNr;
+  this.draw = function(game, gD) {
+    gD.context.drawImage(gD.spritesheet, gD.spriteDict["Item" + this.itemNr][0], gD.spriteDict["Item" + this.itemNr][1], gD.spriteDict["Item" + this.itemNr][2], gD.spriteDict["Item" + this.itemNr][3],
+      this.x + 2, this.y + Math.floor((this.height - gD.spriteDict["Item" + this.itemNr][3]) / 2), gD.spriteDict["Item" + this.itemNr][2], gD.spriteDict["Item" + this.itemNr][3]);
+    gD.context.textAlign = "start";
+    gD.context.textBaseline = "middle";
+    gD.context.font = this.size + " " + this.family;
+    gD.context.fillStyle = this.textcolor;
+    gD.context.fillText(game.inventory[this.itemNr - 1].toString(), this.x + 7 + gD.spriteDict["Item" + this.itemNr][2], this.y + (this.height / 2));
   };
 }
 
@@ -1020,7 +1149,7 @@ function updateGame(game, timestamp, resetTime) {
     }
   }
 
-  drawGame(game, game.lag / game.refreshrate);
+  drawGame(game, 0);//game.lag / game.refreshrate);
   game.startts = timestamp;
 }
 
