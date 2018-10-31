@@ -322,12 +322,12 @@ function GlobalDict() {
     "Player_Afroman" : [3, -10.8, 4.5, -4.5, 46]
   };
   this.items = {                     //probability for spawning, durability, durability per level, costs for level 1
-    "Item_stopwatch": [5, 120, 60, 800],
-    "Item_star": [1, 240, 120, 2999],
-    "Item_feather": [3, 360, 90, 1800],
-    "Item_treasure": [0.3, 12, 6, 4300],
-    "Item_magnet": [1.5, 240, 180, 3999],
-    "Item_rocket": [1, 100, 75, 4955]
+    "Item_Stopwatch": [5, 120, 60, 800],
+    "Item_Star": [1, 240, 120, 2999],
+    "Item_Feather": [3, 360, 90, 1800],
+    "Item_Treasure": [0.3, 12, 6, 4300],
+    "Item_Magnet": [1.5, 240, 180, 3999],
+    "Item_Rocket": [1, 100, 75, 4955]
   };
   this.money = {                     //probability, value
     "Money_1": [5, 1],
@@ -336,10 +336,10 @@ function GlobalDict() {
     "Money_1000": [0.05, 1000]
   };
   this.floors = {                    //probability
-    "standard": [5],
-    "jump": [1],
-    "fall": [0.8],
-    "spikes": [0.8]
+    "Floor_Standard": [5],
+    "Floor_Jump": [1],
+    "Floor_Fall": [0.8],
+    "Floor_Spikes": [0.8]
   };
   this.keys = [];
   this.muted = true;

@@ -8,24 +8,11 @@ function Game(gD, menu) {
   this.endMusic = new Audio("music/gameover.mp3");
   this.endMusic.preload = "auto";
   this.endMusic.volume = 0.22;
-  this.inventoryTexts = [];
-  this.stageNr = 0;
   this.stages = [];
   this.refreshrate = 1000 / 60;
-  this.playerDict = {    //The data for the different playermodels with: jumps, jumpstrength, movementspeed right, movementspeed left
-    "1" : [2, -9, 3, -3],
-    "2" : [2, -13.5, 3, -3],
-    "3" : [2, -9, 6, -6],
-    "4" : [3, -9, 3, -3],
-    "5" : [2, -10.8, 4.5, -4.5],
-    "6" : [3, -10.8, 3, -3],
-    "7" : [3, -10.8, 4.5, -4.5]
-  };
   this.paused = false;
   this.visible = false;
-  this.init = function() {
-    this.player = new GamePlayer(20, this.gD.canvas.height - 90);
-    this.floor = [new GameFloor(0, this.gD.canvas.height - 50.5, this.gD.canvas.width + 100, 0, 5)];
+  this.init = function() {                                            //to initiate the object at the beginning
     for (var i = 0; i < this.gD.itemProb.length; i++) {
       this.inventoryTexts.push(new GameInventoryText(5 + (i * 60), 0, 60, 30, "14pt", "Consolas", "rgba(255, 255, 255, 1)", i + 1));
     }
@@ -87,6 +74,20 @@ function Game(gD, menu) {
 
     this.startts = 0;
     this.lag = 0;
+  };
+  this.start = function() {                                          //To initiate the next round
+    this.player = [];
+    this.stage = "";
+    this.floor = [new GameFloor(0, this.gD.canvas.height - 50.5, this.gD.canvas.width + 100, 0, 5)];
+  };
+  this.addPlayer = function(playerName, game, gD) {
+    var player = new GamePlayer((this.player.length + 1) * 20, 260, gD.spriteDict[playerName][2],
+      gD.spriteDict[playerName][3], gD.player.[playerName][4], playerName);
+    player.inventory.init(game, gD);
+    if (playerName == "Player_Afroman") {
+      player.inventory.fill(10);
+    }
+    this.player.push(player);
   };
   this.setStage = function(stageNr) {
     this.stageNr = stageNr;
@@ -150,14 +151,14 @@ function Game(gD, menu) {
   };
 }
 
-function NewGamePlayer(x, y, playerName) {
+function GamePlayer(x, y, width, height, weight, playerName) {
   this.x = x;
   this.y = y;
+  this.width = width;
+  this.height = height;
+  this.weight = weight;                                      //stage.gravity / this.weight = normal gravity
   this.playerName = playerName;
-  this.width = 0;
-  this.height = 0;
   this.speed = 0;
-  this.weight = 0;                                      //stage.gravity / this.weight = normal gravity
   this.velocity = 0;
   this.jumps = 0;
   this.jumping = false;
@@ -166,19 +167,9 @@ function NewGamePlayer(x, y, playerName) {
   this.outsideWater = false;
   this.outsideCanvas = false;
   this.distanceBackwards = 0;
-  this.playerName = "";
   this.currentFloor = undefined;
   this.inventory = new GameInventory();
-  this.setPlayer = function(playerName, game, gD) {
-    this.playerName = playerName;
-    this.width = gD.spriteDict[this.playerName][2];
-    this.height = gD.spriteDict[this.playerName][3];
-    this.weight = gD.player[this.playerName][4];
-    this.inventory.init(game, gD);
-    if (this.playerName == "Player_Afroman") {
-      this.inventory.fill(10);
-    }
-  };
+  this.cashVault = new GameCashVault(900, 0, 100, 30, "14pt", "Consolas");
   this.moveForward = function(gD) {
     this.speed = gD.player[this.playerName][2];
   };
@@ -213,14 +204,16 @@ function NewGamePlayer(x, y, playerName) {
   };
   this.draw = function(game, gD, ghostFactor) {
     var spriteRef = gD.spriteDict[this.playerName];
-    if (this.inventory.items["Item_rocket"].active) {
-      spriteRef = gD.spriteDict["Item_rocket"];
+    if (this.inventory.items["Item_Rocket"].active) {
+      spriteRef = gD.spriteDict["Item_Rocket"];
     }
     gD.context.drawImage(gD.spritesheet, spriteRef[0], spriteRef[1], spriteRef[2], spriteRef[3],
       this.x + (this.speed * ghostFactor), this.y + (this.velocity * ghostFactor), this.width, this.height);
+    this.inventory.draw(game, gD, ghostFactor);
+    this.cashVault.draw(game, gD, ghostFactor);
   };
   this.newPos = function(game, gD) {
-    if (this.inventory.items["Item_rocket"].active) {
+    if (this.inventory.items["Item_Rocket"].active) {
       this.x += this.speed;
       this.y -= (this.y - 50) / 40;
       this.onFloor = false;
@@ -249,80 +242,13 @@ function NewGamePlayer(x, y, playerName) {
     }
     this.hitWalls(game, gD);
   };
-}
-
-function GamePlayer(x, y) {
-  this.x = x;
-  this.y = y;
-  this.width = 0;
-  this.height = 0;
-  this.speedX = 0;
-  this.gravity = 0.45;
-  this.velocity = 0;
-  this.secondJump = 0;                                //second jump status save
-  this.onFloor = false;
-  this.aboveFloor = false;                            //if the player is above a floor
-  this.outsideWater = false;                          //in stage 3 is water
-  this.outsideCanvas = false;                         //shows, if the player is fully outside the canvas, is for an achievement
-  this.distanceBackwards = 0;                         //saves the distance travelled backwards for an achievement
-  this.playerNr = 1;
-  this.currentFloor = undefined;
-  this.setPlayer = function(playerNr, game, gD) {               //sets the Player model
-    this.playerNr = playerNr;
-    this.width = gD.spriteDict["Player" + this.playerNr][2];
-    this.height = gD.spriteDict["Player" + this.playerNr][3];
-    if (playerNr == 7) {
-      game.inventory.fill(10);
-    }
-  };
-  this.draw = function(game, gD, ghostFactor) {
-    var spriteKey = "Player" + this.playerNr;
-    if (game.itemsActive[5]) {
-      spriteKey = "Item6";
-    }
-    gD.context.drawImage(
-      gD.spritesheet,
-      gD.spriteDict[spriteKey][0], gD.spriteDict[spriteKey][1], gD.spriteDict[spriteKey][2], gD.spriteDict[spriteKey][3],
-      this.x + (this.speedX * ghostFactor), this.y + (this.velocity * ghostFactor), this.width, this.height
-    );
-  };
-  this.newPos = function(game, gD) {
-    if (game.itemsActive[5]) {
-      this.x += this.speedX;
-      this.y -= (this.y - 50) / 40;
-      this.onFloor = false;
-      this.velocity = 0;
-      this.secondJump = 1;
-    } else {
-      if (!this.onFloor || (this.currentFloor != undefined && this.currentFloor.type == 2)) {
-        this.velocity += this.gravity;
-        this.y += this.velocity;
-        if (game.stageNr == 3) {
-          if (this.y + this.height > game.gD.canvas.height / 2) {
-            if (this.outsideWater) {
-              this.velocity = 1;
-            }
-            this.outsideWater = false;
-          } else {
-            if (!this.outsideWater) {
-              this.velocity = game.playerDict[game.player.playerNr.toString()][1] / 1.8;
-            }
-            this.outsideWater = true;
-          }
-        }
-      }
-      this.x += this.speedX;
-      this.touchFloor(game, gD);
-    }
-    this.hitWalls(game, gD);
-  };
   this.hitWalls = function(game, gD) {  //checks, if the player touches a canvas wall, or the floor of the current stage
-    if (this.y + this.height > gD.canvas.height - game.stages[game.stageNr].deadZoneGround) {
-      if (game.itemsActive[1]) {
-        this.y = gD.canvas.height - game.stages[game.stageNr].deadZoneGround - this.height;
+    if (this.y + this.height > gD.canvas.height - game.stages[game.stage].deadZoneGround) {
+      if (this.inventory.items["Item_Star"].active) {
+        this.y = gD.canvas.height - game.stages[game.stage].deadZoneGround - this.height;
         this.velocity = 0;
         this.onFloor = true;
-        this.secondJump = 1;
+        this.jumps = 1;
       } else {
         game.finish();
       }
@@ -356,7 +282,7 @@ function GamePlayer(x, y) {
                 this.velocity = 0;
             }
             this.y = this.currentFloor.y - (this.currentFloor.thickness / 2) - this.height;
-            this.secondJump = 1;
+            this.jumps = 1;
           } else {
             this.currentFloor = undefined;
           }
@@ -370,30 +296,43 @@ function GamePlayer(x, y) {
       }
       if (i + 1 == game.floor.length && this.currentFloor != undefined &&
           (this.x > this.currentFloor.x + this.currentFloor.width || this.x + this.width < this.currentFloor.x) &&
-          !(this.y == gD.canvas.height - game.stages[game.stageNr].deadZoneGround - this.height)) {
+          !(this.y == gD.canvas.height - game.stages[game.stage].deadZoneGround - this.height)) {
         this.aboveFloor = false;
         this.onFloor = false;
         this.currentFloor = undefined;
       }
     }
   };
-  this.collect = function(object) {                   //checks if an object is touched by the player
-    return !(
-      (this.y + this.height < object.y) ||
-      (this.y > object.y + object.height) ||
-      (this.x + this.width < object.x) ||
-      (this.x > object.x + object.width)
-    );
+  this.collect = function(game, object) {                   //checks if an object is touched by the player
+    if (!(this.y + this.height < object.y) ||
+        (this.y > object.y + object.height) ||
+        (this.x + this.width < object.x) ||
+        (this.x > object.x + object.width)) {
+      switch (object.name.split("_")[0]) {
+        case "Item":
+          this.inventory.items[object.name].amount++;
+          break;
+        case "Money":
+          this.cashVault.money[object.name]++;
+          break;
+        case "Enemy":
+          game.finish();
+          break;
+        default:
+      }
+      return true;
+    }
+    return false;
   };
 }
 
-function GameFloor(x, y, width, type, thickness) {
+function GameFloor(x, y, width, name, weight) {
   this.x = x;
   this.y = y;
   this.width = width;
-  this.type = type;
-  this.thickness = thickness;
-  this.gravity = 0.5;
+  this.name = name;
+  this.weight = weight;
+  this.thickness = 5;
   this.velocity = 0;
   this.isFalling = false;
   this.thorns = [];
@@ -465,19 +404,19 @@ function GameInventory() {
   this.items = {};
   this.init = function(game, gD) {
     var counter = 0;
-    for (var i in gD.items) {
-      this.items[i] = new GameInventoryItem(60 * counter, 0, 60, 30, "14pt", "Consolas", i, gD.items[i][1] + (gD.items[i][2] * game.shop.level[counter]));
+    for (var str in gD.items) {
+      this.items[str] = new GameInventoryItem(60 * counter, 0, 60, 30, "14pt", "Consolas", str, gD.items[str][1] + (gD.items[str][2] * game.shop.level[counter]));
       counter++;
     }
   };
-  this.fill = function(quantity) {
-    for (var i in this.items) {
-      this.items[i].quantity = quantity;
+  this.fill = function(amount) {
+    for (var str in this.items) {
+      this.items[str].amount = amount;
     }
   };
   this.draw = function(game, gD, ghostFactor) {
-    for (var i in this.items) {
-      this.items[i].draw(game, gD, ghostFactor);
+    for (var str in this.items) {
+      this.items[str].draw(game, gD, ghostFactor);
     }
   };
 }
@@ -499,14 +438,14 @@ function GameInventoryItem(x, y, width, height, size, family, itemName, maxDurab
   this.bordercolor = "rgba(0, 0, 0, 1)";
   this.bordersize = 2;
   this.durability = 0;
-  this.quantity = 0;
+  this.amount = 0;
   this.used = 0;
   this.active = false;
   this.activate = function() {
-    if (!this.active) {
+    if (!this.active && this.amount > 0) {
       this.active = true;
       this.durability = this.maxDurability;
-      this.quantity--;
+      this.amount--;
       this.used++;
     }
   };
@@ -547,30 +486,47 @@ function GameInventoryItem(x, y, width, height, size, family, itemName, maxDurab
     gD.context.textBaseline = this.textBaseline;
     gD.context.font = this.size + " " + this.family;
     gD.context.fillStyle = this.textcolor;
-    gD.context.fillText(this.quantity.toString(), this.x + this.width - 3, this.y + (this.height / 2));
+    gD.context.fillText(this.amount.toString(), this.x + this.width - 3, this.y + (this.height / 2));
     gD.context.lineWidth = this.bordersize;
     gD.context.strokeStyle = this.bordercolor;
     gD.context.strokeRect(this.x, this.y, this.width, this.height);
   };
 }
 
-function GameInventoryText(x, y, width, height, size, family, textcolor, itemNr) {
+function GameCashVault(x, y, width, height, size, family) {
+  this.money = {};
   this.x = x;
   this.y = y;
   this.width = width;
   this.height = height;
   this.size = size;
   this.family = family;
-  this.textcolor = textcolor;
-  this.itemNr = itemNr;
+  this.backgroundcolor = "rgba(255, 255, 255, 0.4)";
+  this.textcolor = "rgba(0, 0, 0, 1)";
+  this.bordercolor = "rgba(0, 0, 0, 1)";
+  this.bordersize = 2;
+  this.init = function(game, gD) {
+    for (var str in gD.money) {
+      this.money[str] = 0;
+    }
+  };
   this.draw = function(game, gD) {
-    gD.context.drawImage(gD.spritesheet, gD.spriteDict["Item" + this.itemNr][0], gD.spriteDict["Item" + this.itemNr][1], gD.spriteDict["Item" + this.itemNr][2], gD.spriteDict["Item" + this.itemNr][3],
-      this.x + 2, this.y + Math.floor((this.height - gD.spriteDict["Item" + this.itemNr][3]) / 2), gD.spriteDict["Item" + this.itemNr][2], gD.spriteDict["Item" + this.itemNr][3]);
+    var cash = 0;
+    for (var str in this.money) {
+      cash += this.money[str] * parseInt(str.split("_")[1]);
+    }
+    gD.context.fillStyle = this.backgroundcolor;
+    gD.fillRect(this.x, this.y, this.width, this.height);
     gD.context.textAlign = "start";
     gD.context.textBaseline = "middle";
     gD.context.font = this.size + " " + this.family;
     gD.context.fillStyle = this.textcolor;
-    gD.context.fillText(game.inventory[this.itemNr - 1].toString(), this.x + 7 + gD.spriteDict["Item" + this.itemNr][2], this.y + (this.height / 2));
+    gD.context.fillText("Cash:", this.x + 3, this.y + (this.height / 2));
+    gD.context.textAlign = "end";
+    gD.context.fillText(cash, this.x + this.width - 3, this.y + (this.height / 2));
+    gD.context.lineWidth = this.bordersize;
+    gD.context.strokeStyle = this.bordercolor;
+    gD.context.strokeRect(this.x, this.y, this.width, this.height);
   };
 }
 
