@@ -221,8 +221,8 @@ function GamePlayer(x, y, width, height, weight, playerName) {
       this.jumps = 1;
     } else {
       if (!this.onFloor || (this.currentFloor != undefined && this.currentFloor.type == 2)) {
-        this.velocity += game.stages[game.stage].gravity / this.weight;
         this.y += this.velocity;
+        this.velocity += game.stages[game.stage].gravity / this.weight;
         if (game.stage == "Stage_Water") {
           if (this.y + this.height > game.gD.canvas.height / 2) {
             if (this.outsideWater) {
@@ -335,67 +335,88 @@ function GameFloor(x, y, width, name, weight) {
   this.thickness = 5;
   this.velocity = 0;
   this.isFalling = false;
-  this.thorns = [];
-  if (this.type == 3) {
-    this.thorns.push(new GameThorns(this.x, this.y - 10 - (this.thickness / 2), 50, 10, "rgba(51, 102, 255, 1)"));
-    this.thorns.push(new GameThorns(this.x + this.width - 50, this.y - 10 - (this.thickness / 2), 50, 10, "rgba(51, 102, 255, 1)"));
-  }
+  this.objects = [];
+  this.addObject = function(object) {
+    this.objects.push(object);
+  };
   this.draw = function(game, gD, ghostFactor) {
     gD.context.beginPath();
-    gD.context.moveTo(this.x + (game.globalSpeed * ghostFactor), this.y + (this.velocity * ghostFactor));
-    gD.context.lineTo(this.x + this.width + (game.globalSpeed * ghostFactor), this.y + (this.velocity * ghostFactor));
-    switch (this.type) {
-      case 0:
-        gD.context.strokeStyle = game.stages[game.stageNr].floorColor;
-        break;
-      case 1:
-        gD.context.strokeStyle = "rgba(255, 102, 102, 1)";
-        break;
-      case 2:
-        gD.context.strokeStyle = "rgba(0, 179, 89, 1)";
-        break;
-      case 3:
-        gD.context.strokeStyle = "rgba(51, 102, 255, 1)";
-        break;
-      default:
-        gD.context.strokeStyle = "rgba(155, 155, 155, 1)";
+    gD.context.moveTo(this.x + (game.globalSpeed * ghostFactor), this.y * (this.velocity * ghostFactor));
+    gD.context.lineTo(this.x + this.width + (game.globalSpeed * ghostFactor), this.y * (this.velocity * ghostFactor));
+
+    if (gD.floors[this.name][1] == "stagecolor") {
+      gD.context.strokeStyle = game.stages[game.stage].floorColor;
+    } else {
+      gD.context.strokeStyle = gD.floors[this.name][1];
     }
-    gD.context.lineWidth = thickness;
+    gD.context.lineWidth = this.thickness;
     gD.context.stroke();
-    for (var i = 0; i < this.thorns.length; i++) {
-      this.thorns[i].draw(game, gD, ghostFactor);
+
+    for (var i = 0; i < this.objects.length; i++) {
+      this.objects[i].draw(game, gD, ghostFactor);
     }
   };
-  this.newPos = function(game) {
+  this.newPos = function(game, gD) {
     this.x += game.globalSpeed;
-    if (this.isFalling && this.y < game.gD.canvas.height + 10) {
-      this.velocity += this.gravity;
-      this.y += this.velocity;
+    this.y += this.velocity;
+    if (this.isFalling) {
+      this.velocity += game.stages[game.stage].gravity / this.weight;
+    } else if (!this.isFalling && this.name == "Floor_Moving") {
+      this.velocity -= game.stages[game.stage].gravity / this.weight;
     }
-    for (var i = 0; i < this.thorns.length; i++) {
-      this.thorns[i].newPos(game);
+    if (this.name == "Floor_Moving" && (this.velocity > 9 || this.velocity < -9)) {
+      this.isFalling = !this.isFalling;
+    }
+    for (var i = 0; i < this.objects.length; i++) {
+      this.objects[i].newPos(game, gD);
     }
   };
 }
 
-function GameThorns(x, y, width, height, color) {
+function GameThorns(x, y, width, height, color, alignment) {
   this.x = x;
   this.y = y;
   this.width = width;
   this.height = height;
   this.color = color;
+  this.alignment = alignment;
   this.draw = function(game, gD, ghostFactor) {
-    gD.context.beginPath();
-    gD.context.moveTo(this.x + (game.globalSpeed * ghostFactor), this.y + this.height);
-    for (var i = 1; i <= Math.floor(this.width / 10); i++) {
-      gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + (i * 10) - 5, this.y);
-      gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + (i * 10), this.y + this.height);
+    if (this.alignment == "left") {
+      gD.context.beginPath();
+      gD.context.moveTo(this.x + (game.globalSpeed * ghostFactor), this.y + (this.height / 2));
+      gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + 5, this.y + (this.height / 2) - 2.5);
+      for (var i = 1; i <= 5; i++) {
+        gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + (i * 10), this.y);
+        gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + (i * 10) + 5, this.y + (this.height / 2) - 2.5);
+      }
+      gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + this.width, this.y + (this.height / 2) + 2.5);
+      for (var i = 5; i >= 1; i--) {
+        gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + (i * 10), this.y + this.height);
+        gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + (i * 10) + 5, this.y + (this.height / 2) + 2.5);
+      }
+      gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor), this.y + (this.height / 2));
+      gD.context.fillStyle = this.color;
+      gD.context.fill();
     }
-    gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor), this.y + this.height);
-    gD.context.fillStyle = this.color;
-    gD.context.fill();
+    if (this.alignment == "right") {
+      gD.context.beginPath();
+      gD.context.moveTo(this.x + (game.globalSpeed * ghostFactor) + this.width, this.y + (this.height / 2));
+      gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + this.width - 5, this.y + (this.height / 2) - 2.5);
+      for (var i = 1; i <= 5; i++) {
+        gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + this.width - (i * 10), this.y);
+        gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + this.width - (i * 10) + 5, this.y + (this.height / 2) - 2.5);
+      }
+      gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor), this.y + (this.height / 2) + 2.5);
+      for (var i = 5; i >= 1; i--) {
+        gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + this.width - (i * 10), this.y + this.height);
+        gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + this.width - (i * 10) + 5, this.y + (this.height / 2) + 2.5);
+      }
+      gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + this.width, this.y + (this.height / 2));
+      gD.context.fillStyle = this.color;
+      gD.context.fill();
+    }
   };
-  this.newPos = function(game) {
+  this.newPos =function(game) {
     this.x += game.globalSpeed;
   };
 }

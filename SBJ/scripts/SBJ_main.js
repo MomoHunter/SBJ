@@ -336,10 +336,11 @@ function GlobalDict() {
     "Money_1000": [0.05, 1000]
   };
   this.floors = {                    //probability
-    "Floor_Standard": [5],
-    "Floor_Jump": [1],
-    "Floor_Fall": [0.8],
-    "Floor_Spikes": [0.8]
+    "Floor_Standard": [5, "stagecolor"],
+    "Floor_Jump": [1, "rgba(229, 149, 149, 1)"],
+    "Floor_Fall": [0.8, "rgba(126, 186, 115, 1)"],
+    "Floor_Spikes": [0.8, "rgba(173, 6, 6, 1)"],
+    "Floor_Moving": [0.1, "stagecolor"]
   };
   this.keys = [];
   this.muted = true;
