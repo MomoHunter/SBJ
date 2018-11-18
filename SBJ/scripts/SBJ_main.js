@@ -200,7 +200,7 @@ function GlobalDict() {
     "Money3" : [63, 141, 30, 18],
     "Money4" : [94, 141, 30, 18],
     "Shamrock" : [247, 140, 15, 19],
-    "GoldenShamrock" : [125, 141, 15, 19],
+    "Item_GoldenShamrock_0" : [125, 141, 15, 19],
     "Fireball" : [146, 146, 12, 12],
     "Plane1" : [222, 120, 32, 19],
     "Plane2" : [255, 120, 32, 19],
@@ -343,16 +343,14 @@ function GlobalDict() {
     "Floor_Moving": [0.1, "stagecolor"]
   };
   this.stages = {                    //unlocked
-    "Stage_Standard": [true],
-    "Stage_Fortress": [true],
-    "Stage_Air": [false],
-    "Stage_Water": [false],
-    "Stage_Forest": [false],
-    "Stage_Universe": [false]
+    "Stage_Standard": [Stage0, true],
+    "Stage_Fortress": [Stage1, true],
+    "Stage_Air": [Stage2, false],
+    "Stage_Water": [Stage3, false],
+    "Stage_Forest": [Stage4, false],
+    "Stage_Universe": [Stage5, false]
   };
   this.keys = [];
   this.muted = true;
-  this.playerUnlocked = new Array(6).fill(false);
-  this.stagesUnlocked = new Array(5).fill(false);
   this.save = {};
 }

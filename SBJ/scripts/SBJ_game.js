@@ -8,66 +8,42 @@ function Game(gD, menu) {
   this.endMusic = new Audio("music/gameover.mp3");
   this.endMusic.preload = "auto";
   this.endMusic.volume = 0.22;
-  this.stages = [];
+  this.stage = null;
+  this.distanceLabel = new GameLabel(this.gD.canvas.width - 135, 22, "14pt", "Consolas", "rgba(0, 0, 0, 1)", true);
+  this.fpsLabel = new GameLabel(0, this.gD.canvas.height - 5, "10pt", "Consolas", "rgba(255, 255, 255, 1)", false);
   this.refreshrate = 1000 / 60;
   this.paused = false;
   this.visible = false;
-  this.init = function() {                                            //to initiate the object at the beginning
-    for (var i = 0; i < this.gD.itemProb.length; i++) {
-      this.inventoryTexts.push(new GameInventoryText(5 + (i * 60), 0, 60, 30, "14pt", "Consolas", "rgba(255, 255, 255, 1)", i + 1));
-    }
-    this.cashLabel = new Text(this.gD.canvas.width - 5, 22, "14pt", "Consolas", "rgba(255, 255, 255, 1)", "end", "alphabetic", "Hype: 0", 0);
+  /**
+   * to initiate the object at the beginning
+   */
+  this.init = function() {
+    this.objects = [];
+    this.objects.push(new GameObject(randomBetween(30000, 40000), randomBetween(50, 300),
+      this.gD.spriteDict["Item_GoldenShamrock_0"][2], this.gD.spriteDict["Item_GoldenShamrock_0"][3],
+      "Item_GoldenShamrock", 1);
 
-    this.distanceLabel = new Text(this.gD.canvas.width - 135, 22, "14pt", "Consolas", "rgba(255, 255, 255, 1)", "end", "alphabetic", "Distance: 0", 0);
+    this.floorObjects = [new GameFloor(0, this.gD.canvas.height - 50.5, this.gD.canvas.width + 100, "Floor_Standard")];
 
-    this.fpsLabel = new Text(0, this.gD.canvas.height - 5, "10pt", "Consolas", "rgba(255, 255, 255, 1)", "start", "alphabetic", "Fps: 0", 0);
-
-    this.goldenShamrock = new GameObject(Math.max(Math.random() * 40000, 30000), 200, this.gD.spriteDict["GoldenShamrock"][2], this.gD.spriteDict["GoldenShamrock"][3], "GoldenShamrock", 1);
-
-    this.cash = 0;
     this.frameCounter = 0;
     this.distanceTravelled = 0;
-    this.globalBaseSpeed = -2;
-    this.globalSpeed = this.globalBaseSpeed;
-    this.inventory = new Array(this.gD.itemProb.length).fill(0);
+    this.distanceSinceLvlUp = 0;          //saves distance since last speedlvl up
+    this.globalSpeed = -2;
 
-    this.itemObjects = [];
-    this.itemsActive = new Array(this.gD.itemProb.length).fill(false);
-    this.itemTimer = new Array(this.gD.itemProb.length).fill(0);
-    this.itemsUsed = new Array(this.gD.itemProb.length).fill(0);
+    this.currentMoneyProb = {};
+    Object.keys(this.gD.money).map(function(key) {
+      this.currentMoneyProb[key] = this.gD.money[key][0];
+    });
 
-    this.moneyObjects = [];
-    this.currentMoneyProb = this.gD.moneyProb;
+    this.lastItemObject = null;
+    this.lastMoneyObject = null;
 
-    this.moneySpawnCounter = Math.floor(Math.random() * 200);
-    this.itemSpawnCounter = Math.max(Math.floor(Math.random() * 1500), 500);
+    this.pauseModal = new GamePauseModal();
+    this.finishModal = new GameFinishModal();
 
-    this.pauseModal = new GameModal(0, 0, this.gD.canvas.width, this.gD.canvas.height, "rgba(44, 47, 51, .6)");
-    this.pauseModal.texts.push(new Text(this.gD.canvas.width / 2, this.gD.canvas.height / 2, "40pt", "Consolas", "rgba(200, 200, 200, 1)", "center", "middle", "Pause", 0));
-    this.pauseModal.buttons.push(new Button((this.gD.canvas.width / 2) - 100, this.gD.canvas.height / 2 + 30, 200, 30, "15pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Continue", "rgba(0, 0, 0, .6)", 2));
-    this.pauseModal.buttons.push(new Button((this.gD.canvas.width / 2) - 100, this.gD.canvas.height / 2 + 65, 200, 30, "15pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Main Menu", "rgba(0, 0, 0, .6)", 2));
-    this.pauseModal.init();
-
-    this.finishModal = new GameModal(0, 0, this.gD.canvas.width, this.gD.canvas.height, "rgba(44, 47, 51, .6)");
-    this.finishModal.texts.push(new Text(this.gD.canvas.width / 2, this.gD.canvas.height / 2 - 60, "30pt", "Consolas", "rgba(200, 200, 200, 1)", "center", "middle", "YOU DIED", 0));
-    this.finishModal.texts.push(new Text(this.gD.canvas.width / 2, this.gD.canvas.height / 2 - 30, "15pt", "Consolas", "rgba(200, 200, 200, 1)", "center", "middle", "", 0));
-    this.finishModal.texts.push(new Text(this.gD.canvas.width / 2, this.gD.canvas.height / 2 - 10, "15pt", "Consolas", "rgba(200, 200, 200, 1)", "center", "middle", "", 0));
-    this.finishModal.texts.push(new Text(this.gD.canvas.width / 2, this.gD.canvas.height / 2 + 10, "15pt", "Consolas", "rgba(200, 200, 200, 1)", "center", "middle", "", 0));
-    this.finishModal.buttons.push(new Button((this.gD.canvas.width / 2) - 100, this.gD.canvas.height / 2 + 35, 200, 30, "15pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Play Again", "rgba(0, 0, 0, .6)", 2));
-    this.finishModal.buttons.push(new Button((this.gD.canvas.width / 2) - 100, this.gD.canvas.height / 2 + 70, 200, 30, "15pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Main Menu", "rgba(0, 0, 0, .6)", 2));
-    this.finishModal.init();
-
-    this.stages.push(new Stage0(this));
-    this.stages.push(new Stage1(this));
-    this.stages[1].init();
-    this.stages.push(new Stage2(this));
-    this.stages[2].init();
-    this.stages.push(new Stage3(this));
-    this.stages[3].init();
-    this.stages.push(new Stage4(this));
-    this.stages[4].init();
-    this.stages.push(new Stage5(this));
-    this.stages[5].init();
+    if (this.stage !== null) {
+      this.stage.init();
+    }
 
     this.finished = false;
     this.paused = false;
@@ -75,47 +51,80 @@ function Game(gD, menu) {
     this.startts = 0;
     this.lag = 0;
   };
-  this.start = function() {                                          //To initiate the next round
-    this.player = [];
-    this.stage = "";
-    this.floor = [new GameFloor(0, this.gD.canvas.height - 50.5, this.gD.canvas.width + 100, 0, 5)];
+  /**
+   * sets the stage
+   * @param {string} stageName name of the stage
+   */
+  this.setStage = function(stageName) {
+    var stageClass = this.gD.stages[stageName][0];
+    this.stage = new stageClass(this);
+    this.stage.init();
   };
-  this.addPlayer = function(playerName, game, gD) {
-    var player = new GamePlayer((this.player.length + 1) * 20, 260, gD.spriteDict[playerName][2],
-      gD.spriteDict[playerName][3], gD.player.[playerName][4], playerName);
-    player.init(game, gD);
-    if (playerName == "Player_Afroman") {
-      player.inventory.fill(10);
-    }
+  /**
+   * sets the player
+   * @param {string} playerName name of the playermodel
+   */
+  this.addPlayer = function(playerName) {
+    var player = new GamePlayer((this.player.length + 1) * 20, 260, this.gD.spriteDict[playerName][2],
+      this.gD.spriteDict[playerName][3], this.gD.player[playerName][4], playerName);
+    player.init(this, this.gD);
     this.player.push(player);
   };
-  this.setStage = function(stage) {
-    this.stage = stage;
-  };
+  /**
+   * clears the canvas
+   */
   this.clear = function() {
     this.gD.context.clearRect(0, 0, this.gD.canvas.width, this.gD.canvas.height);
   };
+  /**
+   * pauses the game and shows the pause modal
+   */
   this.pause = function() {
     this.paused = true;
     cancelAnimationFrame(this.raf);
     this.backgroundMusic.pause();
     this.pauseModal.draw(this.gD);
   };
+  /**
+   * continues the game from the pause state
+   */
   this.continue = function() {
     this.paused = false;
     var game = this;
     this.raf = requestAnimationFrame(function(timestamp){ updateGame(game, timestamp, true); });
     this.backgroundMusic.play();
   };
+  /**
+   * terminates the game
+   */
   this.finish = function() {
+    var cash = 0;
+    var bonus = 0;
+    var distanceInMeter = this.distanceTravelled / 15;
+    var minDistInMeterForMaxHype = 4000 / this.stage.difficulty * 10;
+    var date = new Date();
+
     this.finished = true;
     cancelAnimationFrame(this.raf);
     this.backgroundMusic.pause();
     this.endMusic.load();
     this.endMusic.play();
     this.endMusic.muted = this.gD.muted;
-    this.menu.shop.cash += this.cash + Math.max(Math.floor(((this.distanceTravelled / 15) - 500) * Math.min(1, this.distanceTravelled / ((4000 / (this.stages[this.stageNr].difficulty / 10)) * 15))), 0);
-    
+
+    for (var i = 0; i < this.player.length; i++) {
+      cash += this.player[i].cashVault.getTotalCash();
+    }
+
+    if (distanceInMeter > 500) {
+      if (distanceInMeter < minDistInMeterForMaxHype) {
+        bonus += (distanceInMeter - 500) * distanceInMeter / minDistInMeterForMaxHype;
+      } else {
+        bonus += distanceInMeter - 500;
+      }
+    }
+      
+    this.menu.shop.cash += cash + bonus;
+
     if (!this.menu.achievements.achievementList.achievements[27].finished) {
       this.menu.achievements.achievementValues[27]++;
       this.menu.achievements.achievementList.achievements[27].check(this.menu.achievements);
@@ -132,22 +141,34 @@ function Game(gD, menu) {
       this.menu.achievements.achievementValues[30] += Math.floor(this.distanceTravelled / 15);
       this.menu.achievements.achievementList.achievements[30].check(this.menu.achievements);
     }
-    this.menu.highscores.newHighscore([new Date().toString().substr(0, 24), Math.floor(this.distanceTravelled / 15) + "m", this.cash.toString() + "(+" + Math.max(Math.floor(((this.distanceTravelled / 15) - 500) * Math.min(1, this.distanceTravelled / ((4000 / (this.stages[this.stageNr].difficulty / 10)) * 15))), 0) + ")"]);
+
+    this.menu.highscores.newHighscore([
+      date.toLocaleString('de-DE', {weekday:'short'}) + " " + date.toLocaleString('de-DE'),
+      distanceInMeter,
+      this.cash.toString() + "(+" + bonus.toString() + ")"
+      ]);
     this.gD.save.cash = this.menu.shop.cash;
     this.gD.save.highscores = this.menu.highscores.highscores;
   };
+  /**
+   * shows the game and starts it
+   */
   this.show = function() {
     this.visible = true;
+    this.init();
     var game = this;
     this.raf = requestAnimationFrame(function(timestamp){ updateGame(game, timestamp, true); });
     this.backgroundMusic.load();
     this.backgroundMusic.play();
     this.backgroundMusic.muted = this.gD.muted;
   };
+  /**
+   * hides the game
+   */
   this.stop = function() {
     this.visible = false;
     this.endMusic.pause();
-    this.init();
+    this.stage = null;
   };
 }
 
@@ -173,6 +194,9 @@ function GamePlayer(x, y, width, height, weight, playerName) {
     this.cashVault = new GameCashVault(900, game.player.length * 30, 100, 30, "14pt", "Consolas");
     this.inventory.init(game, gD);
     this.cashVault.init(game, gD);
+    if (this.playerName == "Player_Afroman") {
+      this.inventory.fill(10);
+    }
   };
   this.moveForward = function(gD) {
     this.speed = gD.player[this.playerName][2];
@@ -440,11 +464,15 @@ function GameCashVault(x, y, width, height, size, family) {
       this.money[str] = 0;
     }
   };
+  /**
+   * @return {number} returns the total cash
+   */
+  this.getTotalCash = function() {
+    return Object.keys(this.money).reduce(function(accumulator, key) {
+      return accumulator + this.money[key] * parseInt(key.split('_')[1]);
+    });
+  };
   this.draw = function(game, gD) {
-    var cash = 0;
-    for (var str in this.money) {
-      cash += this.money[str] * parseInt(str.split("_")[1]);
-    }
     gD.context.fillStyle = this.backgroundcolor;
     gD.fillRect(this.x, this.y, this.width, this.height);
     gD.context.textAlign = "start";
@@ -453,19 +481,22 @@ function GameCashVault(x, y, width, height, size, family) {
     gD.context.fillStyle = this.textcolor;
     gD.context.fillText("Cash:", this.x + 3, this.y + (this.height / 2));
     gD.context.textAlign = "end";
-    gD.context.fillText(cash, this.x + this.width - 3, this.y + (this.height / 2));
+    gD.context.fillText(this.getTotalCash(), this.x + this.width - 3, this.y + (this.height / 2));
     gD.context.lineWidth = this.bordersize;
     gD.context.strokeStyle = this.bordercolor;
     gD.context.strokeRect(this.x, this.y, this.width, this.height);
   };
 }
 
-function GameFloor(x, y, width, name, weight) {
+
+
+
+function GameFloor(x, y, width, name) {
   this.x = x;
   this.y = y;
   this.width = width;
   this.name = name;
-  this.weight = weight;
+  this.weight = 4;//(300 - 50) / (maxW - minW) * (width - 50) + minW;
   this.thickness = 5;
   this.velocity = 0;
   this.isFalling = false;
@@ -498,7 +529,7 @@ function GameFloor(x, y, width, name, weight) {
     } else if (!this.isFalling && this.name == "Floor_Moving") {
       this.velocity -= game.stages[game.stage].gravity / this.weight;
     }
-    if (this.name == "Floor_Moving" && (this.velocity > 9 || this.velocity < -9)) {
+    if (this.name == "Floor_Moving" && (this.velocity > 3 || this.velocity < -3)) {
       this.isFalling = !this.isFalling;
     }
     for (var i = 0; i < this.objects.length; i++) {
@@ -584,6 +615,8 @@ function GameObject(x, y, width, height, name, cycles) {
     }
   };
 }
+
+
 
 function GameModal(x, y, width, height, color) {
   this.x = x;

@@ -85,3 +85,45 @@ function AnimatedBackground(y, width, height, img, cycles, speed) {
     gD.context.drawImage(this.img, 0, Math.floor(game.frameCounter / this.speed) % cycles * (this.height / cycles), temp, (this.height / cycles), this.width - temp, this.y, temp, (this.height / cycles));
   };
 }
+
+/**
+ * @param  {number} n1 smaller number
+ * @param  {number} n2 bigger number
+ * @return {number} random number between n1 and n2
+ */
+function randomBetween(n1, n2) {
+  return (Math.random() * (n2 - n1)) + n1;
+}
+
+/**
+ * @param  {object} object the object that should be copied
+ * @return {object} the copied object
+ */
+function copy(object) {
+  var copy;
+
+  // Handle the 3 simple types, and null or undefined
+  if (null == obj || "object" != typeof obj) {
+    return obj;
+  }
+
+  // Handle Array
+  if (obj instanceof Array) {
+    copy = [];
+    for (var i = 0; i < obj.length; i++) {
+      copy[i] = clone(obj[i]);
+    }
+    return copy;
+  }
+
+  // Handle Object
+  if (obj instanceof Object) {
+    copy = {};
+    for (var attr in obj) {
+      if (obj.hasOwnProperty(attr)) {
+        copy[attr] = clone(obj[attr]);
+      }
+    }
+    return copy;
+  }
+}
