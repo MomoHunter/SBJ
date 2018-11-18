@@ -312,14 +312,14 @@ function GlobalDict() {
     "Currency4" : [341, 124, 28, 36],
     "Mute" : [387, 138, 24, 22]
   };
-  this.player = {                    //The data for the different playermodels with: jumps, jumpstrength, movementspeed right, movementspeed left, weight
-    "Player_Standard" : [2, -9, 3, -3, 45],
-    "Player_Longjohn" : [2, -13.5, 3, -3, 42],
-    "Player_Speedy" : [2, -9, 6, -6, 38],
-    "Player_Magician" : [3, -9, 3, -3, 43],
-    "Player_Strooper" : [2, -10.8, 4.5, -4.5, 45],
-    "Player_Disgusty" : [3, -10.8, 3, -3, 52],
-    "Player_Afroman" : [3, -10.8, 4.5, -4.5, 46]
+  this.player = {                    //The data for the different playermodels with: jumps, jumpstrength, movementspeed right, movementspeed left, weight, unlocked
+    "Player_Standard" : [2, -9, 3, -3, 45, true],
+    "Player_Longjohn" : [2, -13.5, 3, -3, 42, false],
+    "Player_Speedy" : [2, -9, 6, -6, 38, false],
+    "Player_Magician" : [3, -9, 3, -3, 43, false],
+    "Player_Strooper" : [2, -10.8, 4.5, -4.5, 45, false],
+    "Player_Disgusty" : [3, -10.8, 3, -3, 52, false],
+    "Player_Afroman" : [3, -10.8, 4.5, -4.5, 46, false]
   };
   this.items = {                     //probability for spawning, durability, durability per level, costs for level 1
     "Item_Stopwatch": [5, 120, 60, 800],
@@ -341,6 +341,14 @@ function GlobalDict() {
     "Floor_Fall": [0.8, "rgba(126, 186, 115, 1)"],
     "Floor_Spikes": [0.8, "rgba(173, 6, 6, 1)"],
     "Floor_Moving": [0.1, "stagecolor"]
+  };
+  this.stages = {                    //unlocked
+    "Stage_Standard": [true],
+    "Stage_Fortress": [true],
+    "Stage_Air": [false],
+    "Stage_Water": [false],
+    "Stage_Forest": [false],
+    "Stage_Universe": [false]
   };
   this.keys = [];
   this.muted = true;
