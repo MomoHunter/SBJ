@@ -83,14 +83,14 @@ function Game(gD, menu) {
   this.addPlayer = function(playerName, game, gD) {
     var player = new GamePlayer((this.player.length + 1) * 20, 260, gD.spriteDict[playerName][2],
       gD.spriteDict[playerName][3], gD.player.[playerName][4], playerName);
-    player.inventory.init(game, gD);
+    player.init(game, gD);
     if (playerName == "Player_Afroman") {
       player.inventory.fill(10);
     }
     this.player.push(player);
   };
-  this.setStage = function(stageNr) {
-    this.stageNr = stageNr;
+  this.setStage = function(stage) {
+    this.stage = stage;
   };
   this.clear = function() {
     this.gD.context.clearRect(0, 0, this.gD.canvas.width, this.gD.canvas.height);
@@ -168,8 +168,12 @@ function GamePlayer(x, y, width, height, weight, playerName) {
   this.outsideCanvas = false;
   this.distanceBackwards = 0;
   this.currentFloor = undefined;
-  this.inventory = new GameInventory();
-  this.cashVault = new GameCashVault(900, 0, 100, 30, "14pt", "Consolas");
+  this.init = function(game, gD) {
+    this.inventory = new GameInventory();
+    this.cashVault = new GameCashVault(900, game.player.length * 30, 100, 30, "14pt", "Consolas");
+    this.inventory.init(game, gD);
+    this.cashVault.init(game, gD);
+  };
   this.moveForward = function(gD) {
     this.speed = gD.player[this.playerName][2];
   };
@@ -186,7 +190,7 @@ function GamePlayer(x, y, width, height, weight, playerName) {
   };
   this.jump = function(game, gD) {
     if (!this.jumping && this.jumps < gD.player[this.playerName][0]) {
-      if (game.stage == "Stage_All") {
+      if (game.stage == "Stage_Universe") {
         this.velocity = gD.player[this.playerName][1] / 2.9;
         this.jumping = true;
       } else if (game.stage == "Stage_Water" && this.y + this.height >= game.gD.canvas.height / 2) {
@@ -326,101 +330,6 @@ function GamePlayer(x, y, width, height, weight, playerName) {
   };
 }
 
-function GameFloor(x, y, width, name, weight) {
-  this.x = x;
-  this.y = y;
-  this.width = width;
-  this.name = name;
-  this.weight = weight;
-  this.thickness = 5;
-  this.velocity = 0;
-  this.isFalling = false;
-  this.objects = [];
-  this.addObject = function(object) {
-    this.objects.push(object);
-  };
-  this.draw = function(game, gD, ghostFactor) {
-    gD.context.beginPath();
-    gD.context.moveTo(this.x + (game.globalSpeed * ghostFactor), this.y * (this.velocity * ghostFactor));
-    gD.context.lineTo(this.x + this.width + (game.globalSpeed * ghostFactor), this.y * (this.velocity * ghostFactor));
-
-    if (gD.floors[this.name][1] == "stagecolor") {
-      gD.context.strokeStyle = game.stages[game.stage].floorColor;
-    } else {
-      gD.context.strokeStyle = gD.floors[this.name][1];
-    }
-    gD.context.lineWidth = this.thickness;
-    gD.context.stroke();
-
-    for (var i = 0; i < this.objects.length; i++) {
-      this.objects[i].draw(game, gD, ghostFactor);
-    }
-  };
-  this.newPos = function(game, gD) {
-    this.x += game.globalSpeed;
-    this.y += this.velocity;
-    if (this.isFalling) {
-      this.velocity += game.stages[game.stage].gravity / this.weight;
-    } else if (!this.isFalling && this.name == "Floor_Moving") {
-      this.velocity -= game.stages[game.stage].gravity / this.weight;
-    }
-    if (this.name == "Floor_Moving" && (this.velocity > 9 || this.velocity < -9)) {
-      this.isFalling = !this.isFalling;
-    }
-    for (var i = 0; i < this.objects.length; i++) {
-      this.objects[i].newPos(game, gD);
-    }
-  };
-}
-
-function GameThorns(x, y, width, height, color, alignment) {
-  this.x = x;
-  this.y = y;
-  this.width = width;
-  this.height = height;
-  this.color = color;
-  this.alignment = alignment;
-  this.draw = function(game, gD, ghostFactor) {
-    if (this.alignment == "left") {
-      gD.context.beginPath();
-      gD.context.moveTo(this.x + (game.globalSpeed * ghostFactor), this.y + (this.height / 2));
-      gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + 5, this.y + (this.height / 2) - 2.5);
-      for (var i = 1; i <= 5; i++) {
-        gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + (i * 10), this.y);
-        gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + (i * 10) + 5, this.y + (this.height / 2) - 2.5);
-      }
-      gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + this.width, this.y + (this.height / 2) + 2.5);
-      for (var i = 5; i >= 1; i--) {
-        gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + (i * 10), this.y + this.height);
-        gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + (i * 10) + 5, this.y + (this.height / 2) + 2.5);
-      }
-      gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor), this.y + (this.height / 2));
-      gD.context.fillStyle = this.color;
-      gD.context.fill();
-    }
-    if (this.alignment == "right") {
-      gD.context.beginPath();
-      gD.context.moveTo(this.x + (game.globalSpeed * ghostFactor) + this.width, this.y + (this.height / 2));
-      gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + this.width - 5, this.y + (this.height / 2) - 2.5);
-      for (var i = 1; i <= 5; i++) {
-        gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + this.width - (i * 10), this.y);
-        gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + this.width - (i * 10) + 5, this.y + (this.height / 2) - 2.5);
-      }
-      gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor), this.y + (this.height / 2) + 2.5);
-      for (var i = 5; i >= 1; i--) {
-        gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + this.width - (i * 10), this.y + this.height);
-        gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + this.width - (i * 10) + 5, this.y + (this.height / 2) + 2.5);
-      }
-      gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + this.width, this.y + (this.height / 2));
-      gD.context.fillStyle = this.color;
-      gD.context.fill();
-    }
-  };
-  this.newPos =function(game) {
-    this.x += game.globalSpeed;
-  };
-}
-
 function GameInventory() {
   this.items = {};
   this.init = function(game, gD) {
@@ -551,29 +460,143 @@ function GameCashVault(x, y, width, height, size, family) {
   };
 }
 
-function GameObject(x, y, width, height, name, value) {
+function GameFloor(x, y, width, name, weight) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.name = name;
+  this.weight = weight;
+  this.thickness = 5;
+  this.velocity = 0;
+  this.isFalling = false;
+  this.objects = [];
+  this.addObject = function(object) {
+    this.objects.push(object);
+  };
+  this.draw = function(game, gD, ghostFactor) {
+    gD.context.beginPath();
+    gD.context.moveTo(this.x + (game.globalSpeed * ghostFactor), this.y * (this.velocity * ghostFactor));
+    gD.context.lineTo(this.x + this.width + (game.globalSpeed * ghostFactor), this.y * (this.velocity * ghostFactor));
+
+    if (gD.floors[this.name][1] == "stagecolor") {
+      gD.context.strokeStyle = game.stages[game.stage].floorColor;
+    } else {
+      gD.context.strokeStyle = gD.floors[this.name][1];
+    }
+    gD.context.lineWidth = this.thickness;
+    gD.context.stroke();
+
+    for (var i = 0; i < this.objects.length; i++) {
+      this.objects[i].draw(game, gD, ghostFactor);
+    }
+  };
+  this.newPos = function(game, gD) {
+    this.x += game.globalSpeed;
+    this.y += this.velocity;
+    if (this.isFalling) {
+      this.velocity += game.stages[game.stage].gravity / this.weight;
+    } else if (!this.isFalling && this.name == "Floor_Moving") {
+      this.velocity -= game.stages[game.stage].gravity / this.weight;
+    }
+    if (this.name == "Floor_Moving" && (this.velocity > 9 || this.velocity < -9)) {
+      this.isFalling = !this.isFalling;
+    }
+    for (var i = 0; i < this.objects.length; i++) {
+      this.objects[i].newPos(game, gD);
+    }
+  };
+}
+
+function GameThorns(x, y, width, height, color, alignment) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.color = color;
+  this.alignment = alignment;
+  this.draw = function(game, gD, ghostFactor) {
+    if (this.alignment == "left") {
+      gD.context.beginPath();
+      gD.context.moveTo(this.x + (game.globalSpeed * ghostFactor), this.y + (this.height / 2));
+      gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + 5, this.y + (this.height / 2) - 2.5);
+      for (var i = 1; i <= 5; i++) {
+        gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + (i * 10), this.y);
+        gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + (i * 10) + 5, this.y + (this.height / 2) - 2.5);
+      }
+      gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + this.width, this.y + (this.height / 2) + 2.5);
+      for (var i = 5; i >= 1; i--) {
+        gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + (i * 10), this.y + this.height);
+        gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + (i * 10) + 5, this.y + (this.height / 2) + 2.5);
+      }
+      gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor), this.y + (this.height / 2));
+      gD.context.fillStyle = this.color;
+      gD.context.fill();
+    }
+    if (this.alignment == "right") {
+      gD.context.beginPath();
+      gD.context.moveTo(this.x + (game.globalSpeed * ghostFactor) + this.width, this.y + (this.height / 2));
+      gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + this.width - 5, this.y + (this.height / 2) - 2.5);
+      for (var i = 1; i <= 5; i++) {
+        gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + this.width - (i * 10), this.y);
+        gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + this.width - (i * 10) + 5, this.y + (this.height / 2) - 2.5);
+      }
+      gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor), this.y + (this.height / 2) + 2.5);
+      for (var i = 5; i >= 1; i--) {
+        gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + this.width - (i * 10), this.y + this.height);
+        gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + this.width - (i * 10) + 5, this.y + (this.height / 2) + 2.5);
+      }
+      gD.context.lineTo(this.x + (game.globalSpeed * ghostFactor) + this.width, this.y + (this.height / 2));
+      gD.context.fillStyle = this.color;
+      gD.context.fill();
+    }
+  };
+  this.newPos =function(game) {
+    this.x += game.globalSpeed;
+  };
+}
+
+function GameObject(x, y, width, height, name, cycles) {
   this.x = x;
   this.y = y;
   this.width = width;
   this.height = height;
   this.name = name;
-  this.value = value;
+  this.cycles = cycles;
   this.draw = function(game, gD, ghostFactor) {
-    gD.context.drawImage(gD.spritesheet, gD.spriteDict[this.name][0], gD.spriteDict[this.name][1], gD.spriteDict[this.name][2], gD.spriteDict[this.name][3],
-      this.x + (game.globalSpeed * ghostFactor), this.y, gD.spriteDict[this.name][2], gD.spriteDict[this.name][3]);
+    var spriteRef = gD.spriteDict[this.name + "_" + ((game.frameCounter / 8) % this.cycles)];
+
+    gD.context.drawImage(gD.spritesheet, spriteRef[0], spriteRef[1], spriteRef[2], spriteRef[3],
+      this.x + (game.globalSpeed * ghostFactor), this.y, spriteRef[2], spriteRef[3]);
   };
   this.newPos = function(game) {
     this.x += game.globalSpeed;
 
-    if (game.itemsActive[4]) {
-      var distX = (game.player.x + (game.player.width / 2)) - (this.x + (this.width / 2));
-      var distY = (game.player.y + (game.player.height / 2)) - (this.y + (this.height / 2));
-      var distanceToPlayer = Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2));
-      if (distanceToPlayer < 80) {
-        this.x += 10 * distX / distanceToPlayer;
-        this.y += 10 * distY / distanceToPlayer;
+    for (var i = 0; i < game.player.length; i++) {
+      if (game.player[i].inventory.items["Item_Magnet"].active) {
+        var distX = (game.player[i].x + (game.player[i].width / 2)) - (this.x + (this.width / 2));
+        var distY = (game.player[i].y + (game.player[i].height / 2)) - (this.y + (this.height / 2));
+        var distanceToPlayer = Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2));
+        if (distanceToPlayer < 150) {
+          this.x += (distX * Math.pow(20, 3)) / Math.pow(distanceToPlayer, 3);
+          this.y += (distY * Math.pow(20, 3)) / Math.pow(distanceToPlayer, 3);
+        }
       }
     }
+  };
+}
+
+function GameModal(x, y, width, height, color) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.color = color;
+  this.selected = 0;
+  this.init = function(game, gD) {
+    this.title = new Text(this.gD.canvas.width / 2, this.gD.canvas.height / 2 - 60, "30pt", "Consolas", "rgba(200, 200, 200, 1)", "center", "middle", "YOU DIED", 0);
+  };
+  this.draw = function(game, gD) {
+    this.title.draw(gD);
   };
 }
 
