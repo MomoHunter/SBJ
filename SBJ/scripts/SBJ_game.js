@@ -28,7 +28,7 @@ function Game(gD, menu) {
     this.frameCounter = 0;
     this.distanceTravelled = 0;
     this.distanceSinceLvlUp = 0;          //saves distance since last speedlvl up
-    this.globalSpeed = -2;
+    this.globalSpeed = 2;
 
     this.currentMoneyProb = {};
     Object.keys(this.gD.money).map(function(key) {
@@ -69,6 +69,13 @@ function Game(gD, menu) {
       this.gD.spriteDict[playerName][3], this.gD.player[playerName][4], playerName);
     player.init(this, this.gD);
     this.player.push(player);
+  };
+  /**
+   * levels the speed
+   */
+  this.speedLvlUp = function() {
+    this.distanceSinceLvlUp = 0;
+    this.globalSpeed++;
   };
   /**
    * clears the canvas
@@ -177,7 +184,7 @@ function GamePlayer(x, y, width, height, weight, playerName) {
   this.y = y;
   this.width = width;
   this.height = height;
-  this.weight = weight;                                      //stage.gravity / this.weight = normal gravity
+  this.weight = weight;                                      //this.weight / stage.gravity = normal gravity
   this.playerName = playerName;
   this.speed = 0;
   this.velocity = 0;
@@ -198,14 +205,14 @@ function GamePlayer(x, y, width, height, weight, playerName) {
       this.inventory.fill(10);
     }
   };
-  this.moveForward = function(gD) {
-    this.speed = gD.player[this.playerName][2];
+  this.moveForward = function(game, gD) {
+    this.speed = gD.player[this.playerName][2] + game.globalSpeed;
   };
-  this.moveBackward = function(gD) {
-    this.speed = gD.player[this.playerName][3];
+  this.moveBackward = function(game, gD) {
+    this.speed = gD.player[this.playerName][3] + game.globalSpeed;
   };
   this.stopMoving = function() {
-    this.speed = 0;
+    this.speed = game.globalSpeed;
   };
   this.downFromPlatform = function() {
     this.onFloor = false;
@@ -236,13 +243,13 @@ function GamePlayer(x, y, width, height, weight, playerName) {
       spriteRef = gD.spriteDict["Item_Rocket"];
     }
     gD.context.drawImage(gD.spritesheet, spriteRef[0], spriteRef[1], spriteRef[2], spriteRef[3],
-      this.x + (this.speed * ghostFactor), this.y + (this.velocity * ghostFactor), this.width, this.height);
+      (this.x - game.distanceTravelled) + (this.speed * ghostFactor), this.y + (this.velocity * ghostFactor), this.width, this.height);
     this.inventory.draw(game, gD, ghostFactor);
     this.cashVault.draw(game, gD, ghostFactor);
   };
   this.newPos = function(game, gD) {
     if (this.inventory.items["Item_Rocket"].active) {
-      this.x += this.speed;
+      this.x += this.speed;Math.min(Math.pow((-game.itemTimer[5] + 5 + (max / 2)) / (max / 5), 4) - 40, Math.ceil(game.globalBaseSpeed - (game. distanceTravelled * 0.00015))); //-((-x + 5 + (max/2)) / (max/5))^4+40 max is the max durability of the item
       this.y -= (this.y - 50) / 40;
       this.onFloor = false;
       this.velocity = 0;
@@ -250,7 +257,7 @@ function GamePlayer(x, y, width, height, weight, playerName) {
     } else {
       if (!this.onFloor || (this.currentFloor != undefined && this.currentFloor.type == 2)) {
         this.y += this.velocity;
-        this.velocity += game.stages[game.stage].gravity / this.weight;
+        this.velocity += this.weight / game.stage.gravity;
         if (game.stage == "Stage_Water") {
           if (this.y + this.height > game.gD.canvas.height / 2) {
             if (this.outsideWater) {
