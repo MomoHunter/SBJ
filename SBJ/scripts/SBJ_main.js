@@ -1,20 +1,43 @@
 ﻿function main() {
   var globalDict = new GlobalDict();
   var menu = new Menu(globalDict);
-  var alreadyStarted = false;
-  document.getElementById("start").onclick = function(){
-    menu.init();
-    menu.show();
-    if (!alreadyStarted) {
-      window.addEventListener('keydown', function (e) { keydown(e, globalDict, menu); });
-      window.addEventListener('keyup', function (e) { keyup(e, globalDict, menu); });
-      window.addEventListener('mousemove', function (e) { mousemove(e, globalDict, menu); });
-      window.addEventListener('click', function (e) { click(e, globalDict, menu); });
-      window.addEventListener('wheel', function (e) { wheel(e, globalDict, menu); });
-      alreadyStarted = true;
-    }
-    document.getElementById("start").style.display = "none";
+  window.addEventListener('keydown', function (event) { keydownEvent(event, globalDict); });
+  window.addEventListener('keyup', function (event) { keyupEvent(event, globalDict); });
+  window.addEventListener('mousemove', function (event) { mousemoveEvent(event, globalDict); });
+  window.addEventListener('click', function (event) { clickEvent(event, globalDict); });
+  window.addEventListener('wheel', function (event) { wheelEvent(event, globalDict); });
+  menu.init();
+  menu.show();
+}
+
+function gameloop(menu) {
+  
+}
+
+function keydownEvent(event, gD) {
+  gD.keys[event.code] = true;
+}
+
+function keyupEvent(event, gD) {
+  gD.keys[event.code] = false;
+}
+
+function mousemoveEvent(event, gD) {
+  gD.mousePos = {
+    "x" : (event.clientX - gD.canvas.offsetLeft),
+    "y" : (event.clientY - gD.canvas.offsetTop)
   };
+}
+
+function clickEvent(event, gD) {
+  gD.clicks.push({
+    "x" : (event.clientX - gD.canvas.offsetLeft),
+    "y" : (event.clientY - gD.canvas.offsetTop)
+  });
+}
+
+function wheelEvent(event, gD) {
+  gD.wheelMovement.push(event.deltaY);
 }
 
 function keydown(event, gD, menu) {
@@ -165,6 +188,13 @@ function GlobalDict() {
   this.canvas = document.getElementById("gamearea");
   this.context = this.canvas.getContext("2d");
   this.gameIsRunning = false;                 //is needed to prevent errors of the event listeners
+  this.raf = null;
+  this.keys = {};
+  this.mousePos = {};
+  this.clicks = [];
+  this.wheelMovement = []
+  this.muted = true;
+  this.save = {};
   this.spritesheet = new Image();
   this.spritesheet.src = "img/Spritesheet.png";
   this.spriteDict = {                         //The numbers specify the x-pos, y-pos, width and height of the object
@@ -350,7 +380,4 @@ function GlobalDict() {
     "Stage_Forest": [Stage4, false],
     "Stage_Universe": [Stage5, false]
   };
-  this.keys = [];
-  this.muted = true;
-  this.save = {};
 }
