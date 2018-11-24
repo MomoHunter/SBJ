@@ -1,71 +1,71 @@
 ﻿function Controls(gD, menu) {
   this.gD = gD;
   this.menu = menu;
-  this.backgroundImage = new Image();
-  this.backgroundImage.src = "img/Titlescreen.png";
-  this.visible = false;
-  this.newKeyMode = false;
-  this.keyBindings = {   //Definition, key, code
-    "Menu_NavDown" : ["Navigation runter", ["S", "ArrowDown"], ["KeyS", "ArrowDown"]],
-    "Menu_NavUp" : ["Navigation hoch", ["W", "ArrowUp"], ["KeyW", "ArrowUp"]],
-    "Menu_NavRight" : ["Navigation rechts", ["D", "ArrowRight"], ["KeyD", "ArrowRight"]],
-    "Menu_NavLeft" : ["Navigation links", ["A", "ArrowLeft"], ["KeyA", "ArrowLeft"]],
-    "Menu_Confirm" : ["Bestätigen", ["Enter", "Space"], ["Enter", "Space"]],
-    "SelectionScreen1" : ["Navigation rechts", ["D", "ArrowRight"], [68, 39]],
-    "SelectionScreen2" : ["Navigation links", ["A", "ArrowLeft"], [65, 37]],
-    "SelectionScreen3" : ["Bestätigen", ["Enter", "Space"], [13, 32]],
-    "SelectionScreen4" : ["Abbrechen", ["Escape"], [27]],
-    "Game1" : ["Spiel pausieren", ["Escape"], [27]],
-    "Game2" : ["Vorwärts bewegen", ["D", "ArrowRight"], [68, 39]],
-    "Game3" : ["Rückwärts bewegen", ["A", "ArrowLeft"], [65, 37]],
-    "Game4" : ["Von der Plattform runterspringen", ["S", "ArrowDown"], [83, 40]],
-    "Game5" : ["Springen", ["Space"], [32]],
-    "Game6" : ["Stoppuhr benutzen", ["1"], [49]],
-    "Game7" : ["Stern benutzen", ["2"], [50]],
-    "Game8" : ["Feder benutzen", ["3"], [51]],
-    "Game9" : ["Schatztruhe benutzen", ["4"], [52]],
-    "Game10" : ["Magnet benutzen", ["5"], [53]],
-    "Game11" : ["Rakete benutzen", ["6"], [54]],
-    "FinishModal1" : ["Navigation runter", ["S", "ArrowDown"], [83, 40]],
-    "FinishModal2" : ["Navigation hoch", ["W", "ArrowUp"], [87, 38]],
-    "FinishModal3" : ["Bestätigen", ["Enter", "Space"], [13, 32]],
-    "Shop1" : ["Navigation runter", ["S", "ArrowDown"], [83, 40]],
-    "Shop2" : ["Navigation hoch", ["W", "ArrowUp"], [87, 38]],
-    "Shop3" : ["Navigation rechts", ["D", "ArrowRight"], [68, 39]],
-    "Shop4" : ["Navigation links", ["A", "ArrowLeft"], [65, 37]],
-    "Shop5" : ["Bestätigen", ["Enter", "Space"], [13, 32]],
-    "Shop6" : ["Abbrechen", ["Escape"], [27]],
-    "Achievements1" : ["Navigation runter", ["S", "ArrowDown"], [83, 40]],
-    "Achievements2" : ["Navigation hoch", ["W", "ArrowUp"], [87, 38]],
-    "Achievements3" : ["Navigation rechts", ["D", "ArrowRight"], [68, 39]],
-    "Achievements4" : ["Navigation links", ["A", "ArrowLeft"], [65, 37]],
-    "Achievements5" : ["Bestätigen", ["Enter", "Space"], [13, 32]],
-    "Achievements6" : ["Abbrechen", ["Escape"], [27]],
-    "Save1" : ["Bestätigen", ["Enter", "Space"], [13, 32]],
-    "Load1" : ["Bestätigen", ["Enter", "Space"], [13, 32]],
-    "Highscores1" : ["Navigation runter", ["S", "ArrowDown"], [83, 40]],
-    "Highscores2" : ["Navigation hoch", ["W", "ArrowUp"], [87, 38]],
-    "Highscores3" : ["Bestätigen", ["Enter"], [13]],
-    "Highscores4" : ["Abbrechen", ["Escape"], [27]],
-    "Highscores5" : ["Navigation rechts", ["ArrowRight"], [39]],
-    "Highscores6" : ["Navigation links", ["ArrowLeft"], [37]],
-    "Highscores7" : ["Linkes Zeichen löschen", ["Backspace"], [8]],
-    "Highscores8" : ["Rechtes Zeichen löschen", ["Delete"], [46]],
-    "Highscores9" : ["Editieren abbrechen", ["Escape"], [27]],
-    "Controls1" : ["Navigation runter", ["S", "ArrowDown"], [83, 40]],
-    "Controls2" : ["Navigation hoch", ["W", "ArrowUp"], [87, 38]],
-    "Controls3" : ["Navigation rechts", ["D", "ArrowRight"], [68, 39]],
-    "Controls4" : ["Navigation links", ["A", "ArrowLeft"], [65, 37]],
-    "Controls5" : ["Belegung löschen", ["Delete"], [46]],
-    "Controls6" : ["Bestätigen", ["Enter", "Space"], [13, 32]],
-    "Controls7" : ["Abbrechen", ["Escape"], [27]],
-    "Mute1" : ["Alles muten", ["M"], [77]]
-  };
-  this.keyEntryHeadlines = [];
-  this.keyEntries = [];
-  this.selected = 0;
-  this.shiftFactor = 0;
   this.init = function() {
+    this.newKeyMode = false;
+    this.keyBindings = new Map([   //Definition, key, code
+      ["Menu_NavDown", ["Navigation runter", ["S", "ArrowDown"], ["KeyS", "ArrowDown"]]],
+      ["Menu_NavUp", ["Navigation hoch", ["W", "ArrowUp"], ["KeyW", "ArrowUp"]]],
+      ["Menu_NavRight", ["Navigation rechts", ["D", "ArrowRight"], ["KeyD", "ArrowRight"]]],
+      ["Menu_NavLeft", ["Navigation links", ["A", "ArrowLeft"], ["KeyA", "ArrowLeft"]]],
+      ["Menu_Confirm", ["Bestätigen", ["Enter", "Space"], ["Enter", "Space"]]],
+      ["SelectionScreen_NavRight", ["Navigation rechts", ["D", "ArrowRight"], ["KeyD", "ArrowRight"]]],
+      ["SelectionScreen_NavLeft", ["Navigation links", ["A", "ArrowLeft"], ["KeyA", "ArrowLeft"]]],
+      ["SelectionScreen_Confirm", ["Bestätigen", ["Enter", "Space"], ["Enter", "Space"]]],
+      ["SelectionScreen_Abort", ["Abbrechen", ["Escape"], ["Escape"]]],
+      ["Game_Pause", ["Spiel pausieren", ["Escape"], ["Escape"]]],
+      ["Game_MoveRight", ["Vorwärts bewegen", ["D", "ArrowRight"], ["KeyD", "ArrowRight"]]],
+      ["Game_MoveLeft", ["Rückwärts bewegen", ["A", "ArrowLeft"], ["KeyA", "ArrowLeft"]]],
+      ["Game_JumpFromPlatform", ["Von der Plattform runterspringen", ["S", "ArrowDown"], ["KeyS", "ArrowDown"]]],
+      ["Game_Jump", ["Springen", ["Space"], ["Space"]]],
+      ["Game_ItemStopwatch", ["Stoppuhr benutzen", ["1"], ["Digit1"]]],
+      ["Game_ItemStar", ["Stern benutzen", ["2"], ["Digit2"]]],
+      ["Game_ItemFeather", ["Feder benutzen", ["3"], ["Digit3"]]],
+      ["Game_ItemTreasure", ["Schatztruhe benutzen", ["4"], ["Digit4"]]],
+      ["Game_ItemMagnet", ["Magnet benutzen", ["5"], ["Digit5"]]],
+      ["Game_ItemRocket", ["Rakete benutzen", ["6"], ["Digit6"]]],
+      ["FinishModal_NavDown", ["Navigation runter", ["S", "ArrowDown"], ["KeyS", "ArrowDown"]]],
+      ["FinishModal_NavUp", ["Navigation hoch", ["W", "ArrowUp"], ["KeyW", "ArrowUp"]]],
+      ["FinishModal_Confirm", ["Bestätigen", ["Enter", "Space"], ["Enter", "Space"]]],
+      ["Shop_NavDown", ["Navigation runter", ["S", "ArrowDown"], ["KeyS", "ArrowDown"]]],
+      ["Shop_NavUp", ["Navigation hoch", ["W", "ArrowUp"], ["KeyW", "ArrowUp"]]],
+      ["Shop_NavRight", ["Navigation rechts", ["D", "ArrowRight"], ["KeyD", "ArrowRight"]]],
+      ["Shop_NavLeft", ["Navigation links", ["A", "ArrowLeft"], ["KeyA", "ArrowLeft"]]],
+      ["Shop_Confirm", ["Bestätigen", ["Enter", "Space"], ["Enter", "Space"]]],
+      ["Shop_Abort", ["Abbrechen", ["Escape"], ["Escape"]]],
+      ["Achievements_NavDown", ["Navigation runter", ["S", "ArrowDown"], ["KeyS", "ArrowDown"]]],
+      ["Achievements_NavUp", ["Navigation hoch", ["W", "ArrowUp"], ["KeyW", "ArrowUp"]]],
+      ["Achievements_NavRight", ["Navigation rechts", ["D", "ArrowRight"], ["KeyD", "ArrowRight"]]],
+      ["Achievements_NavLeft", ["Navigation links", ["A", "ArrowLeft"], ["KeyA", "ArrowLeft"]]],
+      ["Achievements_Confirm", ["Bestätigen", ["Enter", "Space"], ["Enter", "Space"]]],
+      ["Achievements_Abort", ["Abbrechen", ["Escape"], ["Escape"]]],
+      ["Save_Confirm", ["Bestätigen", ["Enter", "Space"], ["Enter", "Space"]]],
+      ["Load_Confirm", ["Bestätigen", ["Enter", "Space"], ["Enter", "Space"]]],
+      ["Highscores_NavDown", ["Navigation runter", ["S", "ArrowDown"], ["KeyS", "ArrowDown"]]],
+      ["Highscores_NavUp", ["Navigation hoch", ["W", "ArrowUp"], ["KeyW", "ArrowUp"]]],
+      ["Highscores_Confirm", ["Bestätigen", ["Enter"], ["Enter"]]],
+      ["Highscores_Abort", ["Abbrechen", ["Escape"], ["Escape"]]],
+      ["Highscores_NavRight", ["Navigation rechts", ["ArrowRight"], ["ArrowRight"]]],
+      ["Highscores_NavLeft", ["Navigation links", ["ArrowLeft"], ["ArrowLeft"]]],
+      ["Highscores_DeleteLeft", ["Linkes Zeichen löschen", ["Backspace"], ["Backspace"]]],
+      ["Highscores_DeleteRight", ["Rechtes Zeichen löschen", ["Delete"], ["Delete"]]],
+      ["Highscores_AbortEdit", ["Editieren abbrechen", ["Escape"], ["Escape"]]],
+      ["Controls_NavDown", ["Navigation runter", ["S", "ArrowDown"], ["KeyS", "ArrowDown"]]],
+      ["Controls_NavUp", ["Navigation hoch", ["W", "ArrowUp"], ["KeyW", "ArrowUp"]]],
+      ["Controls_NavRight", ["Navigation rechts", ["D", "ArrowRight"], ["KeyD", "ArrowRight"]]],
+      ["Controls_NavLeft", ["Navigation links", ["A", "ArrowLeft"], ["KeyA", "ArrowLeft"]]],
+      ["Controls_DeleteKey", ["Belegung löschen", ["Delete"], ["Delete"]]],
+      ["Controls_Confirm", ["Bestätigen", ["Enter", "Space"], ["Enter", "Space"]]],
+      ["Controls_Abort", ["Abbrechen", ["Escape"], ["Escape"]]],
+      ["Mute_All", ["Alles muten", ["M"], ["KeyM"]]]
+    ];
+
+    this.
+
+    this.keyEntryHeadlines = [];
+    this.keyEntries = [];
+    this.selected = 0;
+    this.shiftFactor = 0;
     this.title = new Text(this.gD.canvas.width / 2, 30, "32pt", "Showcard Gothic", "rgba(200, 200, 200, 1)", "center", "middle", "Controls", 3);
 
     this.keyEntryHeadlines.push(new ControlEntryHeadline((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(50, 200, 80, 1)", "Menü", 2));
@@ -128,16 +128,6 @@
       }
     }
     this.shiftFactor += shiftFactor;
-  };
-  this.clear = function() {
-    this.gD.context.clearRect(0, 0, this.gD.canvas.width, this.gD.canvas.height);
-  };
-  this.show = function() {
-    this.visible = true;
-    drawControls(this);
-  };
-  this.stop = function() {
-    this.visible = false;
   };
 }
 

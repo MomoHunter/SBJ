@@ -181,4 +181,6 @@
 "Deco_Bubble_1": [845, 16, 5, 5],
 "Deco_Bubble_2": [845, 22, 3, 3],
 "Icon_Mute": [857, 1, 24, 22],
-"Icon_Statistics": [857, 32, 26, 20]
+"Icon_Statistics": [857, 32, 26, 20],
+"Icon_KeyShort": [888, 1, 10, 11],
+"Icon_KeyLong": [888, 13, 25, 11]

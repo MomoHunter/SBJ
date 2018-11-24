@@ -256,23 +256,3 @@ function callSelectedLink(menu, gD) {
     gD.currentPage = link;
   }
 }
-
-function drawMenu(menu) {
-  menu.clear();
-
-  menu.gD.context.drawImage(menu.backgroundImage, 0, 0);
-
-  menu.title.draw(menu.gD);
-  menu.version.draw(menu.gD);
-
-  if (!menu.pressed) {
-    menu.pressButton.draw(menu.gD);
-  } else {
-    menu.buttons.map(function(row) {
-      row.map(function(button) {
-        button.draw(menu.gD);
-      });
-    });
-    menu.muteButton.draw(menu.gD);
-  }
-}
