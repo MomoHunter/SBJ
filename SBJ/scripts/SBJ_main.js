@@ -1,32 +1,33 @@
 ﻿function main() {
   var globalDict = new GlobalDict();
   var menu = new Menu(globalDict);
-  window.addEventListener('keydown', function (event) { keydownEvent(event, globalDict); });
-  window.addEventListener('keyup', function (event) { keyupEvent(event, globalDict); });
-  window.addEventListener('mousemove', function (event) { mousemoveEvent(event, globalDict); });
-  window.addEventListener('click', function (event) { clickEvent(event, globalDict); });
-  window.addEventListener('wheel', function (event) { wheelEvent(event, globalDict); });
+  window.addEventListener('keydown', event => keydownEvent(event, globalDict));
+  window.addEventListener('keyup', event => keyupEvent(event, globalDict));
+  window.addEventListener('mousemove', event => mousemoveEvent(event, globalDict));
+  window.addEventListener('click', event => clickEvent(event, globalDict));
+  window.addEventListener('wheel', event => wheelEvent(event, globalDict));
   menu.init();
   globalDict.currentPage = menu;
-  globalDict.raf = requestAnimationFrame(function(timestamp){ gameloop(globalDict, timestamp); })
-
+  globalDict.raf = requestAnimationFrame(timestamp => gameloop(globalDict, timestamp));
 }
 
 function gameloop(gD, timestamp) {
   if (gD.currentPage !== null) {
-  	gD.raf = requestAnimationFrame(function(timestamp){ gameloop(gD, timestamp); });
+  	gD.raf = requestAnimationFrame(timestamp => gameloop(gD, timestamp));
 
     gD.timeDiff = timestamp - gD.startTs; //time difference since last frame
     gD.lag += gD.timeDiff;                //total lag
   
     while (gD.lag > gD.refreshrate) {
-      gD.currentPage.keydownEvent();
-      gD.currentPage.keyupEvent();
-      gD.currentPage.mousemoveEvent();
-      gD.currentPage.clickEvent();
-      gD.currentPage.wheelEvent();
-
+      gD.currentPage.updateKeyPresses();
+      gD.currentPage.updateMouseMoves();
+      gD.currentPage.updateClicks();
+      gD.currentPage.updateWheelMoves();
       gD.currentPage.update();
+
+      gD.newKeys = [];
+      gD.clicks = [];
+      gD.wheelMovements = [];
     
       if (gD.lag > gD.refreshrate * 5) {
         gD.lag %= gD.refreshrate;
@@ -43,6 +44,7 @@ function gameloop(gD, timestamp) {
 
 function keydownEvent(event, gD) {
   gD.keys[event.code] = true;
+  gD.newKeys.push(event.code);
   console.log(event.code);
 }
 
@@ -73,6 +75,7 @@ function GlobalDict() {
   this.canvas = document.getElementById("gamearea");
   this.context = this.canvas.getContext("2d");
   this.keys = {};
+  this.newKeys = [];
   this.mousePos = {"x": 0, "y": 0};
   this.clicks = [];
   this.wheelMovements = [];

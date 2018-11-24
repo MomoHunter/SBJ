@@ -100,30 +100,30 @@ function randomBetween(n1, n2) {
  * @return {object} the copied object
  */
 function copy(object) {
-  var copy;
+  var result;
 
   // Handle the 3 simple types, and null or undefined
-  if (null == obj || "object" != typeof obj) {
-    return obj;
+  if (null == object || "object" != typeof object) {
+    return object;
   }
 
   // Handle Array
-  if (obj instanceof Array) {
-    copy = [];
-    for (var i = 0; i < obj.length; i++) {
-      copy[i] = clone(obj[i]);
+  if (object instanceof Array) {
+    result = [];
+    for (var i = 0; i < object.length; i++) {
+      result[i] = copy(obj[i]);
     }
-    return copy;
+    return result;
   }
 
   // Handle Object
-  if (obj instanceof Object) {
-    copy = {};
-    for (var attr in obj) {
-      if (obj.hasOwnProperty(attr)) {
-        copy[attr] = clone(obj[attr]);
+  if (object instanceof Object) {
+    result = {};
+    for (var attr in object) {
+      if (object.hasOwnProperty(attr)) {
+        result[attr] = copy(object[attr]);
       }
     }
-    return copy;
+    return result;
   }
 }

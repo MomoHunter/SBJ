@@ -31,10 +31,9 @@ function Menu(gD) {
 
     this.buttonStartTop = 150;
     this.buttonHeight = 30;
-    this.buttonSingleWidth = 200;
+    this.buttonFullWidth = 400;
     this.buttonPadding = 6;
-    this.buttonStartLeft = (this.gD.canvas.width / 2) - this.buttonSingleWidth - this.buttonPadding / 2;
-    this.buttonDoubleWidth = this.buttonSingleWidth * 2 + this.buttonPadding;
+    this.buttonStartLeft = (this.gD.canvas.width / 2) - (this.buttonFullWidth / 2);
 
     this.buttonDefinitions = [
       [ { text: "Play", link: this.selectionScreen } ],
@@ -44,9 +43,9 @@ function Menu(gD) {
       [ { text: "Exit", link: null } ]
     ];
 
-    this.buttons = this.buttonDefinitions.map(function(rowButtons, rowIndex) {
-      var buttonWidth = rowButtons.length === 1 ? this.buttonDoubleWidth : this.buttonSingleWidth;
-      return rowButtons.map(function(button, columnIndex) {
+    this.buttons = this.buttonDefinitions.map((rowButtons, rowIndex) => {
+      var buttonWidth = (this.buttonFullWidth - (rowButtons.length - 1) * this.buttonPadding) / rowButtons.length;
+      return rowButtons.map((button, columnIndex) => {
         return new Button(
           this.buttonStartLeft + (buttonWidth + this.buttonPadding) * columnIndex,
           this.buttonStartTop + (this.buttonHeight + this.buttonPadding) * rowIndex,
@@ -60,28 +59,30 @@ function Menu(gD) {
 
     updateSelection(this, 0, 0);
 
-    this.pressed = false;        // if a key was pressed at start
+    this.closedTitlescreen = false;        // if a key was pressed at start to close the tile-screen
   };
   /**
    * checks if a button is pressed
    */
-  this.keydownEvent = function() {
-    if (!this.pressed) {
-      for (var key in this.gD.keys) {
-        if (this.gD.keys[key]) {
-          this.pressed = true;
-        }
+  this.updateKeyPresses = function() {
+    if (!this.closedTitlescreen) {
+      if (this.gD.newKeys.length > 0) {
+        this.closedTitlescreen = true;
       }
-    } else {
-      var keyB = this.controls.keyBindings;
-      var rowIndex = this.selectedRowIndex;
-      var columnIndex = this.selectedColumnIndex;
-      if (this.gD.keys[keyB["Menu_NavDown"][2][0]] || this.gD.keys[keyB["Menu_NavDown"][2][1]]) {            // navigation down
+      return
+    }
+
+    var keyB = this.controls.keyBindings;
+    var rowIndex = this.selectedRowIndex;
+    var columnIndex = this.selectedColumnIndex;
+
+    this.gD.newKeys.map(key => {
+      if (keyB["Menu_NavDown"][2].includes(key)) {
         rowIndex = (rowIndex + 1) % this.buttonDefinitions.length;
         if (this.buttonDefinitions[rowIndex].length === 1) {
           columnIndex = 0;
         }
-      } else if (this.gD.keys[keyB["Menu_NavUp"][2][0]] || this.gD.keys[keyB["Menu_NavUp"][2][1]]) {     // navigation up
+      } else if (keyB["Menu_NavUp"][2].includes(key)) {
         rowIndex -= 1;
         if (rowIndex < 0) {
           rowIndex = this.buttonDefinitions.length - 1;
@@ -89,34 +90,29 @@ function Menu(gD) {
         if (this.buttonDefinitions[rowIndex].length === 1) {
           columnIndex = 0;
         }
-      } else if (this.gD.keys[keyB["Menu_NavRight"][2][0]] || this.gD.keys[keyB["Menu_NavRight"][2][1]]) {     // navigation right
+      } else if (keyB["Menu_NavRight"][2].includes(key)) {
         columnIndex = (columnIndex + 1) % this.buttonDefinitions[rowIndex].length;
-      } else if (this.gD.keys[keyB["Menu_NavLeft"][2][0]] || this.gD.keys[keyB["Menu_NavLeft"][2][1]]) {     // navigation left
+      } else if (keyB["Menu_NavLeft"][2].includes(key)) {
         columnIndex -= 1;
         if (columnIndex < 0) {
           columnIndex = this.buttonDefinitions[rowIndex].length - 1;
         }
       }
+
       updateSelection(this, rowIndex, columnIndex);
 
-      if (this.gD.keys[keyB["Menu_Confirm"][2][0]] || this.gD.keys[keyB["Menu_Confirm"][2][1]]) {      // confirm
+      if (keyB["Menu_Confirm"][2].includes(key)) {
         callSelectedLink(this, this.gD);
       }
-    }
-  };
-  /**
-   * checks if a button was lifted
-   */
-  this.keyupEvent = function() {
-    /* unused */
+    });
   };
   /**
    * checks if the mouse was moved
    */
-  this.mousemoveEvent = function() {
+  this.updateMouseMoves = function() {
     var menu = this;
-    this.buttons.map(function (buttonRow, rowIndex) {
-      buttonRow.map(function(button, columnIndex) {
+    this.buttons.map((buttonRow, rowIndex) => {
+      buttonRow.map((button, columnIndex) => {
         if (menu.gD.mousePos.x >= button.x && menu.gD.mousePos.x <= button.x + button.width &&
             menu.gD.mousePos.y >= button.y && menu.gD.mousePos.y <= button.y + button.height) {
           updateSelection(menu, rowIndex, columnIndex);
@@ -127,30 +123,32 @@ function Menu(gD) {
   /**
    * checks if there was a click
    */
-  this.clickEvent = function() {
+  this.updateClicks = function() {
     var clickPos = this.gD.clicks.pop();
-    if (clickPos !== undefined) {
-      if (!this.pressed) {
-        this.pressed = true;
-      } else {
-        var selectedButton = this.buttons[this.selectedRowIndex][this.selectedColumnIndex];
-        if (clickPos.x >= selectedButton.x && clickPos.x <= selectedButton.x + selectedButton.width &&
-            clickPos.y >= selectedButton.y && clickPos.y <= selectedButton.y + selectedButton.height) { // = mouse over selected button
-          callSelectedLink(this, this.gD);
-        } else if (clickPos.x >= this.muteButton.x && clickPos.x <= this.muteButton.x + this.muteButton.width &&
-                   clickPos.y >= this.muteButton.y && clickPos.y <= this.muteButton.y + this.muteButton.height) { // = mouse over mute button
-          this.gD.muted = !this.gD.muted;
-        } else if (clickPos.x >= this.statisticsButton.x && clickPos.x <= this.statisticsButton.x + this.statisticsButton.width &&
-                   clickPos.y >= this.statisticsButton.y && clickPos.y <= this.statisticsButton.y + this.statisticsButton.height) { // = mouse over statistics button
-          this.gD.currentPage = this.statistics;
-        }
-      } 
+    if (!clickPos) {
+      return
+    }
+
+    if (!this.closedTitlescreen) {
+      this.closedTitlescreen = true;
+    } else {
+      var selectedButton = this.buttons[this.selectedRowIndex][this.selectedColumnIndex];
+      if (clickPos.x >= selectedButton.x && clickPos.x <= selectedButton.x + selectedButton.width &&
+          clickPos.y >= selectedButton.y && clickPos.y <= selectedButton.y + selectedButton.height) { // = mouse over selected button
+        callSelectedLink(this, this.gD);
+      } else if (clickPos.x >= this.muteButton.x && clickPos.x <= this.muteButton.x + this.muteButton.width &&
+                 clickPos.y >= this.muteButton.y && clickPos.y <= this.muteButton.y + this.muteButton.height) { // = mouse over mute button
+        this.gD.muted = !this.gD.muted;
+      } else if (clickPos.x >= this.statisticsButton.x && clickPos.x <= this.statisticsButton.x + this.statisticsButton.width &&
+                 clickPos.y >= this.statisticsButton.y && clickPos.y <= this.statisticsButton.y + this.statisticsButton.height) { // = mouse over statistics button
+        this.gD.currentPage = this.statistics;
+      }
     }
   };
   /**
    * checks if the wheel was moved
    */
-  this.wheelEvent = function() {
+  this.updateWheelMoves = function() {
     /* unused */
   };
   /**
@@ -168,17 +166,15 @@ function Menu(gD) {
     this.title.draw(this.gD);
     this.version.draw(this.gD);
 
-    if (!this.pressed) {
+    if (!this.closedTitlescreen) {
       this.pressButton.draw(this.gD);
     } else {
-      var menu = this;
-      this.buttons.map(function(row) {
-        row.map(function(button) {
-          button.draw(menu.gD);
-        });
-      });
+      this.buttons.map(row => {
+        row.map(button => {
+          button.draw(this.gD);
+        }, this);
+      }, this);
       this.muteButton.draw(this.gD);
-      this.statisticsButton.draw(this.gD);
     }
   };
 }
@@ -254,25 +250,5 @@ function callSelectedLink(menu, gD) {
     window.close();
   } else {
     gD.currentPage = link;
-  }
-}
-
-function drawMenu(menu) {
-  menu.clear();
-
-  menu.gD.context.drawImage(menu.backgroundImage, 0, 0);
-
-  menu.title.draw(menu.gD);
-  menu.version.draw(menu.gD);
-
-  if (!menu.pressed) {
-    menu.pressButton.draw(menu.gD);
-  } else {
-    menu.buttons.map(function(row) {
-      row.map(function(button) {
-        button.draw(menu.gD);
-      });
-    });
-    menu.muteButton.draw(menu.gD);
   }
 }
