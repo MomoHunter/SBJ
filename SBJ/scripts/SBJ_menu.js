@@ -27,19 +27,18 @@ function Menu(gD) {
     this.version = new Text(this.gD.canvas.width - 5, this.gD.canvas.height - 5, "10pt", "Consolas", "rgba(255, 255, 255, 1)", "right", "alphabetic", "v3.0.0", 0);
     this.pressButton = new Text(this.gD.canvas.width / 2, 280, "15pt", "Showcard Gothic, Impact", "rgba(200, 200, 200, 1)", "center", "middle", "Dr" + String.fromCharCode(220) + "cke eine beliebige Taste", 1.5);
     this.muteButton = new MenuMuteButton(this.gD.canvas.width - 40, 10, 30, 30, "rgba(255, 255, 255, 1)", 2);
-    this.statisticsButton = new MenuStatisticsButton(this.gD.canvas.width - 80, 10, 30, 30, "rgba(255, 255, 255, 1)", 2);
 
     this.buttonStartTop = 150;
     this.buttonHeight = 30;
-    this.buttonFullWidth = 400;
+    this.buttonFullWidth = 570;
     this.buttonPadding = 6;
     this.buttonStartLeft = (this.gD.canvas.width / 2) - (this.buttonFullWidth / 2);
 
     this.buttonDefinitions = [
       [ { text: "Play", link: this.selectionScreen } ],
-      [ { text: "Shop", link: this.shop }, { text: "Achievements", link: this.achievements } ],
+      [ { text: "Shop", link: this.shop }, { text: "Controls", link: this.controls } ],
       [ { text: "Save", link: this.save }, { text: "Load", link: this.load } ],
-      [ { text: "Highscores", link: this.highscores }, { text: "Controls", link: this.controls } ],
+      [ { text: "Highscores", link: this.highscores }, { text: "Achievements", link: this.achievements }, { text: "Statistics", link: this.statistics } ],
       [ { text: "Exit", link: null } ]
     ];
 
@@ -139,9 +138,6 @@ function Menu(gD) {
       } else if (clickPos.x >= this.muteButton.x && clickPos.x <= this.muteButton.x + this.muteButton.width &&
                  clickPos.y >= this.muteButton.y && clickPos.y <= this.muteButton.y + this.muteButton.height) { // = mouse over mute button
         this.gD.muted = !this.gD.muted;
-      } else if (clickPos.x >= this.statisticsButton.x && clickPos.x <= this.statisticsButton.x + this.statisticsButton.width &&
-                 clickPos.y >= this.statisticsButton.y && clickPos.y <= this.statisticsButton.y + this.statisticsButton.height) { // = mouse over statistics button
-        this.gD.currentPage = this.statistics;
       }
     }
   };
@@ -203,26 +199,6 @@ function MenuMuteButton(x, y, width, height, color, bordersize) {
       gD.context.lineTo(this.x + this.width, this.y);
       gD.context.stroke();
     }
-  };
-}
-
-function MenuStatisticsButton(x, y, width, height, color, bordersize) {
-  this.x = x;
-  this.y = y;
-  this.width = width;
-  this.height = height;
-  this.color = color;
-  this.bordersize = bordersize;
-  this.strokeStyle = "rgba(0, 0, 0, 1)";
-  this.draw = function(gD) {
-    var spriteRef = gD.spriteDict["Icon_Statistics"];
-    gD.context.fillStyle = this.color;
-    gD.context.fillRect(this.x, this.y, this.width, this.height);
-    gD.context.drawImage(gD.spritesheet, spriteRef[0], spriteRef[1], spriteRef[2], spriteRef[3],
-      this.x + ((this.width - spriteRef[2]) / 2), this.y + ((this.height - spriteRef[3]) / 2), spriteRef[2], spriteRef[3]);
-    gD.context.strokeStyle = this.strokeStle;
-    gD.context.lineWidth = this.bordersize;
-    gD.context.strokeRect(this.x, this.y, this.width, this.height);
   };
 }
 
