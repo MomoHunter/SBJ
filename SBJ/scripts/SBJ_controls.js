@@ -5,12 +5,12 @@
   this.backgroundImage.src = "img/Titlescreen.png";
   this.visible = false;
   this.newKeyMode = false;
-  this.keyBindings = {
-    "Menu1" : ["Navigation runter", ["S", "ArrowDown"], [83, 40]],
-    "Menu2" : ["Navigation hoch", ["W", "ArrowUp"], [87, 38]],
-    "Menu3" : ["Navigation rechts", ["D", "ArrowRight"], [68, 39]],
-    "Menu4" : ["Navigation links", ["A", "ArrowLeft"], [65, 37]],
-    "Menu5" : ["Bestätigen", ["Enter", "Space"], [13, 32]],
+  this.keyBindings = {   //Definition, key, code
+    "Menu_NavDown" : ["Navigation runter", ["S", "ArrowDown"], ["KeyS", "ArrowDown"]],
+    "Menu_NavUp" : ["Navigation hoch", ["W", "ArrowUp"], ["KeyW", "ArrowUp"]],
+    "Menu_NavRight" : ["Navigation rechts", ["D", "ArrowRight"], ["KeyD", "ArrowRight"]],
+    "Menu_NavLeft" : ["Navigation links", ["A", "ArrowLeft"], ["KeyA", "ArrowLeft"]],
+    "Menu_Confirm" : ["Bestätigen", ["Enter", "Space"], ["Enter", "Space"]],
     "SelectionScreen1" : ["Navigation rechts", ["D", "ArrowRight"], [68, 39]],
     "SelectionScreen2" : ["Navigation links", ["A", "ArrowLeft"], [65, 37]],
     "SelectionScreen3" : ["Bestätigen", ["Enter", "Space"], [13, 32]],

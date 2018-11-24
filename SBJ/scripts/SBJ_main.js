@@ -7,15 +7,43 @@
   window.addEventListener('click', function (event) { clickEvent(event, globalDict); });
   window.addEventListener('wheel', function (event) { wheelEvent(event, globalDict); });
   menu.init();
-  menu.show();
+  globalDict.currentPage = menu;
+  globalDict.raf = requestAnimationFrame(function(timestamp){ gameloop(globalDict, timestamp); })
+
 }
 
-function gameloop(menu) {
+function gameloop(gD, timestamp) {
+  if (gD.currentPage !== null) {
+  	gD.raf = requestAnimationFrame(function(timestamp){ gameloop(gD, timestamp); });
+
+    gD.timeDiff = timestamp - gD.startTs; //time difference since last frame
+    gD.lag += gD.timeDiff;                //total lag
   
+    while (gD.lag > gD.refreshrate) {
+      gD.currentPage.keydownEvent();
+      gD.currentPage.keyupEvent();
+      gD.currentPage.mousemoveEvent();
+      gD.currentPage.clickEvent();
+      gD.currentPage.wheelEvent();
+
+      gD.currentPage.update();
+    
+      if (gD.lag > gD.refreshrate * 5) {
+        gD.lag %= gD.refreshrate;
+      } else {
+        gD.lag -= gD.refreshrate;
+      }
+    }
+
+    gD.clear();
+    gD.currentPage.draw();
+    gD.startTs = timestamp;
+  }
 }
 
 function keydownEvent(event, gD) {
   gD.keys[event.code] = true;
+  console.log(event.code);
 }
 
 function keyupEvent(event, gD) {
@@ -34,165 +62,26 @@ function clickEvent(event, gD) {
     "x" : (event.clientX - gD.canvas.offsetLeft),
     "y" : (event.clientY - gD.canvas.offsetTop)
   });
+  console.log(gD.clicks);
 }
 
 function wheelEvent(event, gD) {
   gD.wheelMovement.push(event.deltaY);
 }
 
-function keydown(event, gD, menu) {
-  gD.keys[event.keyCode] = true;  //dict for active keys
-  console.log(event.keyCode);
-
-  if (gD.gameIsRunning) {
-    if (menu.controls.keyBindings["Mute1"][2].includes(event.keyCode)) {
-      gD.muted = !gD.muted;
-      if (menu.game.visible) {
-        menu.game.backgroundMusic.muted = gD.muted;
-        menu.game.endMusic.muted = gD.muted;
-      } else if (menu.shop.visible) {
-        menu.shop.backgroundMusic.muted = gD.muted;
-      }
-    }
-
-    if (menu.visible) {
-      menuControlDown(menu, event.keyCode);
-    } else if (menu.selectionScreen.visible) {
-      selectionScreenControlDown(menu.selectionScreen, event.keyCode);
-    } else if (menu.game.visible) {
-      gameControlDown(menu.game, event.keyCode);
-    } else if (menu.shop.visible) {
-      shopControlDown(menu.shop, event.keyCode);
-    } else if (menu.achievements.visible) {
-      achievementsControlDown(menu.achievements, event.keyCode);
-    } else if (menu.save.visible) {
-      saveControlDown(menu.save, event.keyCode);
-    } else if (menu.load.visible) {
-      loadControlDown(menu.load, event.keyCode);
-    } else if (menu.highscores.visible) {
-      highscoresControlDown(menu.highscores, event);
-    } else if (menu.controls.visible) {
-      controlsControlDown(menu.controls, event);
-    }
-  }
-}
-
-function keyup(event, gD, menu) {
-  try {
-    gD.keys[event.keyCode] = false;
-  } catch (err) {
-    console.log(err.message);
-  }
-
-  if (gD.gameIsRunning) {
-    if (menu.visible) {
-      menuControlUp(menu, event.keyCode);
-    } else if (menu.selectionScreen.visible) {
-      selectionScreenControlUp(menu.selectionScreen, event.keyCode);
-    } else if (menu.game.visible) {
-      gameControlUp(menu.game, event.keyCode);
-    } else if (menu.shop.visible) {
-      shopControlUp(menu.shop, event.keyCode);
-    } else if (menu.achievements.visible) {
-      achievementsControlUp(menu.achievements, event.keyCode);
-    } else if (menu.save.visible) {
-      saveControlUp(menu.save, event.keyCode);
-    } else if (menu.load.visible) {
-      loadControlUp(menu.load, event.keyCode);
-    } else if (menu.highscores.visible) {
-      highscoresControlUp(menu.highscores, event);
-    } else if (menu.controls.visible) {
-      controlsControlUp(menu.controls, event);
-    }
-  }
-}
-
-function mousemove(event, gD, menu) {
-  gD.mousePos = {
-    "x" : (event.pageX - gD.canvas.offsetLeft), 
-    "y" : (event.pageY - gD.canvas.offsetTop)
-  };
-  if (gD.gameIsRunning) {
-    if (menu.visible) {
-      menuMouseMove(menu);
-    } else if (menu.selectionScreen.visible) {
-      selectionScreenMouseMove(menu.selectionScreen);
-    } else if (menu.game.visible) {
-      gameMouseMove(menu.game);
-    } else if (menu.shop.visible) {
-      shopMouseMove(menu.shop);
-    } else if (menu.achievements.visible) {
-      achievementsMouseMove(menu.achievements);
-    } else if (menu.save.visible) {
-      saveMouseMove(menu.save);
-    } else if (menu.load.visible) {
-      loadMouseMove(menu.load);
-    } else if (menu.highscores.visible) {
-      highscoresMouseMove(menu.highscores);
-    } else if (menu.controls.visible) {
-      controlsMouseMove(menu.controls);
-    }
-  }
-}
-
-function click(event, gD, menu) {
-  if (gD.gameIsRunning) {
-    if (menu.visible) {
-      menuClick(menu);
-    } else if (menu.selectionScreen.visible) {
-      selectionScreenClick(menu.selectionScreen);
-    } else if (menu.game.visible) {
-      gameClick(menu.game);
-    } else if (menu.shop.visible) {
-      shopClick(menu.shop);
-    } else if (menu.achievements.visible) {
-      achievementsClick(menu.achievements);
-    } else if (menu.save.visible) {
-      saveClick(menu.save);
-    } else if (menu.load.visible) {
-      loadClick(menu.load);
-    } else if (menu.highscores.visible) {
-      highscoresClick(menu.highscores);
-    } else if (menu.controls.visible) {
-      controlsClick(menu.controls);
-    }
-  }
-}
-
-function wheel(event, gD, menu) {
-  if (gD.gameIsRunning) {
-    if (menu.visible) {
-      menuWheel(menu, event);
-    } else if (menu.selectionScreen.visible) {
-      selectionScreenWheel(menu.selectionScreen, event);
-    } else if (menu.game.visible) {
-      gameWheel(menu.game, event);
-    } else if (menu.shop.visible) {
-      shopWheel(menu.shop, event);
-    } else if (menu.achievements.visible) {
-      achievementsWheel(menu.achievements, event);
-    } else if (menu.save.visible) {
-      saveWheel(menu.save, event);
-    } else if (menu.load.visible) {
-      loadWheel(menu.load, event);
-    } else if (menu.highscores.visible) {
-      highscoresWheel(menu.highscores, event);
-    } else if (menu.controls.visible) {
-      controlsWheel(menu.controls, event);
-    }
-  }
-  console.log(event.deltaY);
-}
-
 function GlobalDict() {
   this.canvas = document.getElementById("gamearea");
   this.context = this.canvas.getContext("2d");
-  this.gameIsRunning = false;                 //is needed to prevent errors of the event listeners
-  this.raf = null;
   this.keys = {};
-  this.mousePos = {};
+  this.mousePos = {"x": 0, "y": 0};
   this.clicks = [];
-  this.wheelMovement = []
+  this.wheelMovements = [];
+  this.currentPage = null;                       //saves the current object, that should be displayed
+  this.raf = null;
+  this.startTs = 0;
+  this.lag = 0;
+  this.timeDiff = 0;
+  this.refreshrate = 1000 / 60;
   this.muted = true;
   this.save = {};
   this.spritesheet = new Image();
@@ -340,7 +229,8 @@ function GlobalDict() {
     "Currency2" : [304, 142, 14, 18],
     "Currency3" : [319, 133, 21, 27],
     "Currency4" : [341, 124, 28, 36],
-    "Mute" : [387, 138, 24, 22]
+    "Icon_Mute" : [387, 138, 24, 22],
+    "Icon_Statistics" : [380, 16, 26, 20]
   };
   this.player = {                    //The data for the different playermodels with: jumps, jumpstrength, movementspeed right, movementspeed left, weight, unlocked
     "Player_Standard" : [2, -9, 3, -3, 45, true],
@@ -372,12 +262,159 @@ function GlobalDict() {
     "Floor_Spikes": [0.8, "rgba(173, 6, 6, 1)"],
     "Floor_Moving": [0.1, "stagecolor"]
   };
-  this.stages = {                    //unlocked
+  this.stages = {                    /*/stage class reference, unlocked
     "Stage_Standard": [Stage0, true],
     "Stage_Fortress": [Stage1, true],
     "Stage_Air": [Stage2, false],
     "Stage_Water": [Stage3, false],
     "Stage_Forest": [Stage4, false],
-    "Stage_Universe": [Stage5, false]
+    "Stage_Universe": [Stage5, false]*/
+  };
+  this.clear = function() {
+    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
   };
 }
+
+/*function keydown(event, gD, menu) {
+  gD.keys[event.keyCode] = true;  //dict for active keys
+  console.log(event.keyCode);
+
+  if (gD.gameIsRunning) {
+    if (menu.controls.keyBindings["Mute1"][2].includes(event.keyCode)) {
+      gD.muted = !gD.muted;
+      if (menu.game.visible) {
+        menu.game.backgroundMusic.muted = gD.muted;
+        menu.game.endMusic.muted = gD.muted;
+      } else if (menu.shop.visible) {
+        menu.shop.backgroundMusic.muted = gD.muted;
+      }
+    }
+
+    if (menu.visible) {
+      menuControlDown(menu, event.keyCode);
+    } else if (menu.selectionScreen.visible) {
+      selectionScreenControlDown(menu.selectionScreen, event.keyCode);
+    } else if (menu.game.visible) {
+      gameControlDown(menu.game, event.keyCode);
+    } else if (menu.shop.visible) {
+      shopControlDown(menu.shop, event.keyCode);
+    } else if (menu.achievements.visible) {
+      achievementsControlDown(menu.achievements, event.keyCode);
+    } else if (menu.save.visible) {
+      saveControlDown(menu.save, event.keyCode);
+    } else if (menu.load.visible) {
+      loadControlDown(menu.load, event.keyCode);
+    } else if (menu.highscores.visible) {
+      highscoresControlDown(menu.highscores, event);
+    } else if (menu.controls.visible) {
+      controlsControlDown(menu.controls, event);
+    }
+  }
+}
+
+function keyup(event, gD, menu) {
+  try {
+    gD.keys[event.keyCode] = false;
+  } catch (err) {
+    console.log(err.message);
+  }
+
+  if (gD.gameIsRunning) {
+    if (menu.visible) {
+      menuControlUp(menu, event.keyCode);
+    } else if (menu.selectionScreen.visible) {
+      selectionScreenControlUp(menu.selectionScreen, event.keyCode);
+    } else if (menu.game.visible) {
+      gameControlUp(menu.game, event.keyCode);
+    } else if (menu.shop.visible) {
+      shopControlUp(menu.shop, event.keyCode);
+    } else if (menu.achievements.visible) {
+      achievementsControlUp(menu.achievements, event.keyCode);
+    } else if (menu.save.visible) {
+      saveControlUp(menu.save, event.keyCode);
+    } else if (menu.load.visible) {
+      loadControlUp(menu.load, event.keyCode);
+    } else if (menu.highscores.visible) {
+      highscoresControlUp(menu.highscores, event);
+    } else if (menu.controls.visible) {
+      controlsControlUp(menu.controls, event);
+    }
+  }
+}
+
+function mousemove(event, gD, menu) {
+  gD.mousePos = {
+    "x" : (event.pageX - gD.canvas.offsetLeft), 
+    "y" : (event.pageY - gD.canvas.offsetTop)
+  };
+  if (gD.gameIsRunning) {
+    if (menu.visible) {
+      menuMouseMove(menu);
+    } else if (menu.selectionScreen.visible) {
+      selectionScreenMouseMove(menu.selectionScreen);
+    } else if (menu.game.visible) {
+      gameMouseMove(menu.game);
+    } else if (menu.shop.visible) {
+      shopMouseMove(menu.shop);
+    } else if (menu.achievements.visible) {
+      achievementsMouseMove(menu.achievements);
+    } else if (menu.save.visible) {
+      saveMouseMove(menu.save);
+    } else if (menu.load.visible) {
+      loadMouseMove(menu.load);
+    } else if (menu.highscores.visible) {
+      highscoresMouseMove(menu.highscores);
+    } else if (menu.controls.visible) {
+      controlsMouseMove(menu.controls);
+    }
+  }
+}
+
+function click(event, gD, menu) {
+  if (gD.gameIsRunning) {
+    if (menu.visible) {
+      menuClick(menu);
+    } else if (menu.selectionScreen.visible) {
+      selectionScreenClick(menu.selectionScreen);
+    } else if (menu.game.visible) {
+      gameClick(menu.game);
+    } else if (menu.shop.visible) {
+      shopClick(menu.shop);
+    } else if (menu.achievements.visible) {
+      achievementsClick(menu.achievements);
+    } else if (menu.save.visible) {
+      saveClick(menu.save);
+    } else if (menu.load.visible) {
+      loadClick(menu.load);
+    } else if (menu.highscores.visible) {
+      highscoresClick(menu.highscores);
+    } else if (menu.controls.visible) {
+      controlsClick(menu.controls);
+    }
+  }
+}
+
+function wheel(event, gD, menu) {
+  if (gD.gameIsRunning) {
+    if (menu.visible) {
+      menuWheel(menu, event);
+    } else if (menu.selectionScreen.visible) {
+      selectionScreenWheel(menu.selectionScreen, event);
+    } else if (menu.game.visible) {
+      gameWheel(menu.game, event);
+    } else if (menu.shop.visible) {
+      shopWheel(menu.shop, event);
+    } else if (menu.achievements.visible) {
+      achievementsWheel(menu.achievements, event);
+    } else if (menu.save.visible) {
+      saveWheel(menu.save, event);
+    } else if (menu.load.visible) {
+      loadWheel(menu.load, event);
+    } else if (menu.highscores.visible) {
+      highscoresWheel(menu.highscores, event);
+    } else if (menu.controls.visible) {
+      controlsWheel(menu.controls, event);
+    }
+  }
+  console.log(event.deltaY);
+}*/

@@ -1,10 +1,12 @@
 function Menu(gD) {
   this.gD = gD;
-  this.backgroundImage = new Image();
-  this.backgroundImage.src = "img/Titlescreen.png";
-  this.visible = false;
+  /**
+   * initiates the menu object
+   */
   this.init = function() {
-    this.selectionScreen = new SelectionScreen(this.gD, this);
+    this.backgroundImage = new Image();
+    this.backgroundImage.src = 'img/Titlescreen.png';
+    /*this.selectionScreen = new SelectionScreen(this.gD, this);
     this.selectionScreen.init();
     this.game = new Game(this.gD, this);
     this.game.init();
@@ -17,14 +19,15 @@ function Menu(gD) {
     this.load = new Load(this.gD, this);
     this.load.init();
     this.highscores = new Highscores(this.gD, this);
-    this.highscores.init();
+    this.highscores.init();*/
     this.controls = new Controls(this.gD, this);
     this.controls.init();
 
-    this.title = new Text(this.gD.canvas.width / 2, 100, "40pt", "Showcard Gothic", "rgba(200, 200, 200, 1)", "center", "middle", "Super Block Jump", 3);
-    this.pressButton = new Text(this.gD.canvas.width / 2, 280, "15pt", "Showcard Gothic", "rgba(200, 200, 200, 1)", "center", "middle", "Dr" + String.fromCharCode(220) + "cke eine beliebige Taste", 1.5);
-    this.version = new Text(this.gD.canvas.width - 5, this.gD.canvas.height - 5, "10pt", "Consolas", "rgba(255, 255, 255, 1)", "right", "alphabetic", "v2.6.6", 0);
-    this.muteButton = new MuteButton(this.gD.canvas.width - 40, 10, 30, 30, "rgba(255, 255, 255, 1)", 2);
+    this.title = new Text(this.gD.canvas.width / 2, 100, "40pt", "Showcard Gothic, Impact", "rgba(200, 200, 200, 1)", "center", "middle", "Super Block Jump", 3);
+    this.version = new Text(this.gD.canvas.width - 5, this.gD.canvas.height - 5, "10pt", "Consolas", "rgba(255, 255, 255, 1)", "right", "alphabetic", "v3.0.0", 0);
+    this.pressButton = new Text(this.gD.canvas.width / 2, 280, "15pt", "Showcard Gothic, Impact", "rgba(200, 200, 200, 1)", "center", "middle", "Dr" + String.fromCharCode(220) + "cke eine beliebige Taste", 1.5);
+    this.muteButton = new MenuMuteButton(this.gD.canvas.width - 40, 10, 30, 30, "rgba(255, 255, 255, 1)", 2);
+    this.statisticsButton = new MenuStatisticsButton(this.gD.canvas.width - 80, 10, 30, 30, "rgba(255, 255, 255, 1)", 2);
 
     this.buttonStartTop = 150;
     this.buttonHeight = 30;
@@ -48,7 +51,7 @@ function Menu(gD) {
           this.buttonStartLeft + (buttonWidth + this.buttonPadding) * columnIndex,
           this.buttonStartTop + (this.buttonHeight + this.buttonPadding) * rowIndex,
           buttonWidth, this.buttonHeight,
-          "15pt", "Showcard Gothic", "rgba(255, 255, 255, 1)",
+          "15pt", "Showcard Gothic, Impact", "rgba(255, 255, 255, 1)",
           button.text,
           "rgba(0, 0, 0, .6)", 2
         );
@@ -58,43 +61,172 @@ function Menu(gD) {
     updateSelection(this, 0, 0);
 
     this.pressed = false;        // if a key was pressed at start
+  };
+  /**
+   * checks if a button is pressed
+   */
+  this.keydownEvent = function() {
+    if (!this.pressed) {
+      for (var key in this.gD.keys) {
+        if (this.gD.keys[key]) {
+          this.pressed = true;
+        }
+      }
+    } else {
+      var keyB = this.controls.keyBindings;
+      var rowIndex = this.selectedRowIndex;
+      var columnIndex = this.selectedColumnIndex;
+      if (this.gD.keys[keyB["Menu_NavDown"][2][0]] || this.gD.keys[keyB["Menu_NavDown"][2][1]]) {            // navigation down
+        rowIndex = (rowIndex + 1) % this.buttonDefinitions.length;
+        if (this.buttonDefinitions[rowIndex].length === 1) {
+          columnIndex = 0;
+        }
+      } else if (this.gD.keys[keyB["Menu_NavUp"][2][0]] || this.gD.keys[keyB["Menu_NavUp"][2][1]]) {     // navigation up
+        rowIndex -= 1;
+        if (rowIndex < 0) {
+          rowIndex = this.buttonDefinitions.length - 1;
+        }
+        if (this.buttonDefinitions[rowIndex].length === 1) {
+          columnIndex = 0;
+        }
+      } else if (this.gD.keys[keyB["Menu_NavRight"][2][0]] || this.gD.keys[keyB["Menu_NavRight"][2][1]]) {     // navigation right
+        columnIndex = (columnIndex + 1) % this.buttonDefinitions[rowIndex].length;
+      } else if (this.gD.keys[keyB["Menu_NavLeft"][2][0]] || this.gD.keys[keyB["Menu_NavLeft"][2][1]]) {     // navigation left
+        columnIndex -= 1;
+        if (columnIndex < 0) {
+          columnIndex = this.buttonDefinitions[rowIndex].length - 1;
+        }
+      }
+      updateSelection(this, rowIndex, columnIndex);
 
-    this.gD.gameIsRunning = true;
+      if (this.gD.keys[keyB["Menu_Confirm"][2][0]] || this.gD.keys[keyB["Menu_Confirm"][2][1]]) {      // confirm
+        callSelectedLink(this, this.gD);
+      }
+    }
   };
-  this.clear = function() {
-    this.gD.context.clearRect(0, 0, this.gD.canvas.width, this.gD.canvas.height);
+  /**
+   * checks if a button was lifted
+   */
+  this.keyupEvent = function() {
+    /* unused */
   };
-  this.show = function() {
-    this.visible = true;
-    drawMenu(this);
+  /**
+   * checks if the mouse was moved
+   */
+  this.mousemoveEvent = function() {
+    var menu = this;
+    this.buttons.map(function (buttonRow, rowIndex) {
+      buttonRow.map(function(button, columnIndex) {
+        if (menu.gD.mousePos.x >= button.x && menu.gD.mousePos.x <= button.x + button.width &&
+            menu.gD.mousePos.y >= button.y && menu.gD.mousePos.y <= button.y + button.height) {
+          updateSelection(menu, rowIndex, columnIndex);
+        }
+      })
+    });
   };
-  this.stop = function() {
-    this.visible = false;
+  /**
+   * checks if there was a click
+   */
+  this.clickEvent = function() {
+    var clickPos = this.gD.clicks.pop();
+    if (clickPos !== undefined) {
+      if (!this.pressed) {
+        this.pressed = true;
+      } else {
+        var selectedButton = this.buttons[this.selectedRowIndex][this.selectedColumnIndex];
+        if (clickPos.x >= selectedButton.x && clickPos.x <= selectedButton.x + selectedButton.width &&
+            clickPos.y >= selectedButton.y && clickPos.y <= selectedButton.y + selectedButton.height) { // = mouse over selected button
+          callSelectedLink(this, this.gD);
+        } else if (clickPos.x >= this.muteButton.x && clickPos.x <= this.muteButton.x + this.muteButton.width &&
+                   clickPos.y >= this.muteButton.y && clickPos.y <= this.muteButton.y + this.muteButton.height) { // = mouse over mute button
+          this.gD.muted = !this.gD.muted;
+        } else if (clickPos.x >= this.statisticsButton.x && clickPos.x <= this.statisticsButton.x + this.statisticsButton.width &&
+                   clickPos.y >= this.statisticsButton.y && clickPos.y <= this.statisticsButton.y + this.statisticsButton.height) { // = mouse over statistics button
+          this.gD.currentPage = this.statistics;
+        }
+      } 
+    }
+  };
+  /**
+   * checks if the wheel was moved
+   */
+  this.wheelEvent = function() {
+    /* unused */
+  };
+  /**
+   * updates moving objects in menu
+   */
+  this.update = function() {
+    /* unused */
+  };
+  /**
+   * draws the menu onto the canvas
+   */
+  this.draw = function() {
+    this.gD.context.drawImage(this.backgroundImage, 0, 0);
+
+    this.title.draw(this.gD);
+    this.version.draw(this.gD);
+
+    if (!this.pressed) {
+      this.pressButton.draw(this.gD);
+    } else {
+      var menu = this;
+      this.buttons.map(function(row) {
+        row.map(function(button) {
+          button.draw(menu.gD);
+        });
+      });
+      this.muteButton.draw(this.gD);
+      this.statisticsButton.draw(this.gD);
+    }
   };
 }
 
 
-function MuteButton(x, y, width, height, color, bordersize) {
+function MenuMuteButton(x, y, width, height, color, bordersize) {
   this.x = x;
   this.y = y;
   this.width = width;
   this.height = height;
   this.color = color;
   this.bordersize = bordersize;
+  this.strokeStyle = "rgba(0, 0, 0, 1)";
   this.draw = function(gD) {
+    var spriteRef = gD.spriteDict["Icon_Mute"];
     gD.context.fillStyle = this.color;
     gD.context.fillRect(this.x, this.y, this.width, this.height);
-    gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
+    gD.context.drawImage(gD.spritesheet, spriteRef[0], spriteRef[1], spriteRef[2], spriteRef[3],
+      this.x + ((this.width - spriteRef[2]) / 2), this.y + ((this.height - spriteRef[3]) / 2), spriteRef[2], spriteRef[3]);
+    gD.context.strokeStyle = this.strokeStle;
     gD.context.lineWidth = this.bordersize;
     gD.context.strokeRect(this.x, this.y, this.width, this.height);
-    gD.context.drawImage(gD.spritesheet, gD.spriteDict["Mute"][0], gD.spriteDict["Mute"][1], gD.spriteDict["Mute"][2], gD.spriteDict["Mute"][3],
-      this.x + ((this.width - gD.spriteDict["Mute"][2]) / 2), this.y + ((this.height - gD.spriteDict["Mute"][3]) / 2), gD.spriteDict["Mute"][2], gD.spriteDict["Mute"][2]);
     if (gD.muted) {
       gD.context.beginPath();
       gD.context.moveTo(this.x, this.y + this.height);
       gD.context.lineTo(this.x + this.width, this.y);
       gD.context.stroke();
     }
+  };
+}
+
+function MenuStatisticsButton(x, y, width, height, color, bordersize) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.color = color;
+  this.bordersize = bordersize;
+  this.strokeStyle = "rgba(0, 0, 0, 1)";
+  this.draw = function(gD) {
+    var spriteRef = gD.spriteDict["Icon_Statistics"];
+    gD.context.fillStyle = this.color;
+    gD.context.fillRect(this.x, this.y, this.width, this.height);
+    gD.context.drawImage(gD.spritesheet, spriteRef[0], spriteRef[1], spriteRef[2], spriteRef[3],
+      this.x + ((this.width - spriteRef[2]) / 2), this.y + ((this.height - spriteRef[3]) / 2), spriteRef[2], spriteRef[3]);
+    gD.context.strokeStyle = this.strokeStle;
+    gD.context.lineWidth = this.bordersize;
+    gD.context.strokeRect(this.x, this.y, this.width, this.height);
   };
 }
 
@@ -116,100 +248,14 @@ function updateSelection(menu, rowIndex, columnIndex) {
 /**
  * called to trigger the specified link action
  */
-function callSelectedLink(menu) {
+function callSelectedLink(menu, gD) {
   var link = menu.buttonDefinitions[menu.selectedRowIndex][menu.selectedColumnIndex].link;
   if (link === null) {  // this is the edge-case why this is encapsulated into this special function
-    menu.stop();
-    menu.clear();
-    document.getElementById("start").style.display = "inline-block";
+    window.close();
   } else {
-    link.show();
-    menu.stop();
+    gD.currentPage = link;
   }
 }
-
-
-/**
- * active on Button down event, if menu is visible
- */
-function menuControlDown(menu, key) {
-  if (!menu.pressed) {
-    menu.pressed = true;
-    drawMenu(menu);
-  } else {
-    var rowIndex = menu.selectedRowIndex;
-    var columnIndex = menu.selectedColumnIndex;
-    if (menu.controls.keyBindings["Menu1"][2].includes(key)) {            // navigation down
-      rowIndex = (rowIndex + 1) % menu.buttonDefinitions.length;
-      if (menu.buttonDefinitions[rowIndex].length === 1) {
-        columnIndex = 0;
-      }
-    } else if (menu.controls.keyBindings["Menu2"][2].includes(key)) {     // navigation up
-      rowIndex -= 1;
-      if (rowIndex < 0) {
-        rowIndex = menu.buttonDefinitions.length - 1;
-      }
-      if (menu.buttonDefinitions[rowIndex].length === 1) {
-        columnIndex = 0;
-      }
-    } else if (menu.controls.keyBindings["Menu3"][2].includes(key)) {     // navigation right
-      columnIndex = (columnIndex + 1) % menu.buttonDefinitions[rowIndex].length;
-    } else if (menu.controls.keyBindings["Menu4"][2].includes(key)) {     // navigation left
-      columnIndex -= 1;
-      if (columnIndex < 0) {
-        columnIndex = menu.buttonDefinitions[rowIndex].length - 1;
-      }
-    }
-    updateSelection(menu, rowIndex, columnIndex);
-
-    if (menu.controls.keyBindings["Menu5"][2].includes(key)) {      // confirm
-      callSelectedLink(menu);
-    } else {
-      drawMenu(menu);
-    }
-  }
-}
-
-/**
- * active on Button up event, if menu is visible
- */
-function menuControlUp(menu, key) { /* unused */ }
-
-
-function menuMouseMove(menu) {
-  menu.buttons.map(function (buttonRow, rowIndex) {
-    buttonRow.map(function(button, columnIndex) {
-      if (
-        menu.gD.mousePos.x >= button.x && menu.gD.mousePos.x <= button.x + button.width &&
-        menu.gD.mousePos.y >= button.y && menu.gD.mousePos.y <= button.y + button.height
-      ) {
-        updateSelection(menu, rowIndex, columnIndex);
-      }
-    })
-  });
-
-  drawMenu(menu);
-}
-
-function menuClick(menu) {
-  if (menu.pressed) {
-    var selectedButton = menu.buttons[menu.selectedRowIndex][menu.selectedColumnIndex];
-    if (
-        menu.gD.mousePos.x >= selectedButton.x && menu.gD.mousePos.x <= selectedButton.x + selectedButton.width &&
-        menu.gD.mousePos.y >= selectedButton.y && menu.gD.mousePos.y <= selectedButton.y + selectedButton.height
-    ) { // = mouse over selected button
-      callSelectedLink(menu);
-    } else if (
-        menu.gD.mousePos.x >= menu.muteButton.x && menu.gD.mousePos.x <= menu.muteButton.x + menu.muteButton.width &&
-        menu.gD.mousePos.y >= menu.muteButton.y && menu.gD.mousePos.y <= menu.muteButton.y + menu.muteButton.height
-    ) { // = mouse over mute button
-      menu.gD.muted = !menu.gD.muted;
-      drawMenu(menu);
-    }
-  }
-}
-
-function menuWheel(menu, event) { /* unused */ }
 
 function drawMenu(menu) {
   menu.clear();
