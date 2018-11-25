@@ -79,12 +79,14 @@
         ));
       }
 
-      this.keyEntries.push(new ControlEntry(
+      var entry = new ControlEntry(
         (this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(255, 255, 255, 1)", key, 2
-      ));
+        );
+      entry.init();
+      this.keyEntries.push(entry);
     }
 
-    this.keyEntries[this.selected].select(0, false);
+    this.keyEntries[this.selectedRowIndex].select(this.selectedColumnIndex);
 
     this.scrollBar = new ScrollBar(this.gD.canvas.width - 165, 60, 220, 20, (this.keyEntryHeadlines.length + this.keyEntries.length), "rgba(255, 255, 255, 1)");
 
@@ -97,7 +99,7 @@
   this.updateKeyPresses = function() {
     this.gD.newKeys.map(key => {
       if (this.newKeyMode) {
-        this.keyEntries[this.selected].setNewKey(this, key);
+        this.keyEntries[this.selectedRowIndex].setNewKey(this, key);
         this.newKeyMode = false;
         this.gD.save.keyBindings = this.keyBindings;
         return;
@@ -109,22 +111,35 @@
       if (this.keyBindings.get('Controls_NavDown')[2].includes(key)) {
         rowIndex++;
         if (rowIndex >= this.keyEntries.length) {
-          updateControlsSelection(controls, -1, columnIndex);
+          updateControlsSelection(this, -1, columnIndex);
         } else {
-          updateControlsSelection(controls, rowIndex, columnIndex);
+          updateControlsSelection(this, rowIndex, columnIndex);
         }
       } else if (this.keyBindings.get('Controls_NavUp')[2].includes(key)) {
-
+        rowIndex--;
+        if (rowIndex < -1) {
+          updateControlsSelection(this, this.keyEntries.length - 1, columnIndex);
+        } else {
+          updateControlsSelection(this, rowIndex, columnIndex);
+        }
       } else if (this.keyBindings.get('Controls_NavRight')[2].includes(key)) {
-
+        columnIndex = (columnIndex + 1) % 2;
+        updateControlsSelection(this, rowIndex, columnIndex);
       } else if (this.keyBindings.get('Controls_NavLeft')[2].includes(key)) {
-
+        columnIndex = (columnIndex + 1) % 2;
+        updateControlsSelection(this, rowIndex, columnIndex);
       } else if (this.keyBindings.get('Controls_DeleteKey')[2].includes(key)) {
-
+        this.keyBindings.get(this.keyEntries[rowIndex].name)[1].splice(columnIndex, 1);
+        this.keyBindings.get(this.keyEntries[rowIndex].name)[2].splice(columnIndex, 1);
       } else if (this.keyBindings.get('Controls_Confirm')[2].includes(key)) {
-
+        if (rowIndex === -1) {
+          this.gD.currentPage = this.menu;
+        } else {
+          this.newKeyMode = true;
+          this.keyBindings.get(this.keyEntries[rowIndex].name)[1][columnIndex] = "...";
+        }
       } else if (this.keyBindings.get('Controls_Abort')[2].includes(key)) {
-
+        this.gD.currentPage = this.menu;
       }
     }, this);
   };
@@ -202,6 +217,10 @@ function ControlEntry(x, y, width, height, color, name, bordersize) {
   this.color = color;
   this.name = name;
   this.bordersize = bordersize;
+  this.textAlign = "start";
+  this.textBaseline = "middle";
+  this.font = "12pt Consolas";
+  this.textColor = "rgba(0, 0, 0, 1)";
   this.selected = 0;
   this.keys = [];
   this.init = function() {
@@ -240,12 +259,12 @@ function ControlEntry(x, y, width, height, color, name, bordersize) {
   };
   this.draw = function(controls, gD) {
     gD.context.fillStyle = this.color;
-    gD.context.fillRect(this.x, this.y, this.width - 200, this.height);
-    gD.context.textAlign = "start";
-    gD.context.textBaseline = "bottom";
-    gD.context.font = "12pt Consolas";
-    gD.context.fillStyle = "rgba(0, 0, 0, 1)";
-    gD.context.fillText(controls.keyBindings.get(this.name)[0], this.x + 5, this.y + this.height - 2);
+    gD.context.fillRect(this.x, this.y - controls.scrollHeight, this.width - 200, this.height);
+    gD.context.textAlign = this.textAlign;
+    gD.context.textBaseline = this.textBaseline;
+    gD.context.font = this.font;
+    gD.context.fillStyle = this.textColor;
+    gD.context.fillText(controls.keyBindings.get(this.name)[0], this.x + 5, this.y - controls.scrollHeight + (this.height / 2));
     this.keys.map(key => {
       key.draw(controls, gD);
     });
@@ -310,92 +329,21 @@ function updateControlsSelection(controls, rowIndex, columnIndex) {
     controls.backToMenu.select();
   } else {
     controls.keyEntries[rowIndex].select(columnIndex);
-    controls.vScroll(Math.min((controls.keyEntries[rowIndex].keys[columnIndex].x - 220) / 20, 0));
+    if (controls.keyEntries[rowIndex].y - controls.scrollHeight >= 240) {
+      controls.vScroll(Math.min(
+        (controls.keyEntries[rowIndex].y - 220) / 20,
+        (controls.keyEntries[controls.keyEntries.length - 1].y - 260) / 20
+      ));
+    } else if (controls.keyEntries[rowIndex].y - controls.scrollHeight <= 100) {
+      controls.vScroll(Math.max(
+        (controls.keyEntries[rowIndex].y - 100) / 20,
+        0
+      ));
+    }
   }
 
   controls.selectedRowIndex = rowIndex;
   controls.selectedColumnIndex = columnIndex;
-}
-
-function controlsControlDown(controls, event) {
-  if (!controls.newKeyMode) {
-    if (controls.keyBindings["Controls1"][2].includes(event.keyCode)) {               //navigation down
-      if (controls.selected == -1) {
-        controls.backToMenu.deselect();
-        controls.keyEntries[0].select(controls.keyEntries[0].selected, false);
-        controls.selected = 0;
-        controls.vShift(-controls.shiftFactor);
-      } else if (controls.selected == controls.keyEntries.length - 1) {
-        controls.keyEntries[controls.selected].select(0, true);
-        controls.backToMenu.select();
-        controls.selected = -1;
-      } else {
-        controls.keyEntries[controls.selected].select(0, true);
-        controls.keyEntries[controls.selected + 1].select(controls.keyEntries[controls.selected].selected, false);
-        if (controls.keyEntries[controls.keyEntries.length - 1].y != 260 && controls.keyEntries[controls.selected + 1].y > 220) {
-          controls.vShift((controls.keyEntries[controls.selected + 1].y - 220) / 20);
-        }
-        controls.selected += 1;
-      }
-    } else if (controls.keyBindings["Controls2"][2].includes(event.keyCode)) {        //navigation up
-      if (controls.selected == -1) {
-        controls.backToMenu.deselect();
-        controls.keyEntries[controls.keyEntries.length - 1].select(controls.keyEntries[controls.keyEntries.length - 1].selected, false);
-        controls.selected = controls.keyEntries.length - 1;
-        controls.vShift(-controls.shiftFactor);
-        controls.vShift((((controls.keyEntries.length + controls.keyEntryHeadlines.length) * 20) - 220) / 20);
-      } else if (controls.selected == 0) {
-        controls.keyEntries[0].select(0, true);
-        controls.backToMenu.select();
-        controls.selected = -1;
-      } else {
-        controls.keyEntries[controls.selected].select(0, true);
-        controls.keyEntries[controls.selected - 1].select(controls.keyEntries[controls.selected].selected, false);
-        if (controls.keyEntryHeadlines[0].y != 60 && controls.keyEntries[controls.selected - 1].y < 100) {
-          controls.vShift((controls.keyEntries[controls.selected - 1].y - 100) / 20);
-        }
-        controls.selected -= 1;
-      }
-    } else if (controls.keyBindings["Controls3"][2].includes(event.keyCode)) {        //navigation right
-      if (controls.selected >= 0) {
-        controls.keyEntries[controls.selected].select((controls.keyEntries[controls.selected].selected + 1) % controls.keyEntries[controls.selected].keys.length, false);
-      }
-    } else if (controls.keyBindings["Controls4"][2].includes(event.keyCode)) {        //navigation left
-      if (controls.selected >= 0) {
-        controls.keyEntries[controls.selected].select(
-          (controls.keyEntries[controls.selected].selected + controls.keyEntries[controls.selected].keys.length - 1) % controls.keyEntries[controls.selected].keys.length,
-          false);
-      }
-    } else if (controls.keyBindings["Controls5"][2].includes(event.keyCode)) {
-      controls.keyBindings[controls.keyEntries[controls.selected].name][1].splice(controls.keyEntries[controls.selected].selected, 1);
-      controls.keyBindings[controls.keyEntries[controls.selected].name][2].splice(controls.keyEntries[controls.selected].selected, 1);
-    }
-  
-    if (controls.keyBindings["Controls6"][2].includes(event.keyCode)) {                                    //enter (13) button
-      if (controls.selected == -1) {
-        controls.menu.show();
-        controls.stop();
-      } else {
-        controls.newKeyMode = true;
-        controls.keyBindings[controls.keyEntries[controls.selected].name][1][controls.keyEntries[controls.selected].selected] = "...";
-        drawControls(controls);
-      }
-    } else if (controls.menu.controls.keyBindings["Controls7"][2].includes(event.keyCode)) {
-      controls.menu.show();
-      controls.stop();
-    } else {
-      drawControls(controls);
-    }
-  } else {
-    controls.keyEntries[controls.selected].setNewKey(controls, event);
-    drawControls(controls);
-    controls.newKeyMode = false;
-    controls.gD.save.keyBindings = controls.keyBindings;
-  }
-}
-
-function controlsControlUp(controls, event) {
-
 }
 
 function controlsMouseMove(controls) {
