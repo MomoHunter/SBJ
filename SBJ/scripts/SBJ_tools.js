@@ -58,6 +58,37 @@ function Button(x, y, width, height, size, family, color, text, textcolor, borde
   };
 }
 
+/**
+ * 
+ */
+function ScrollBar(x, y, height, elementHeight, elements, color) {
+  this.x = x;
+  this.y = y;
+  this.height = height;
+  this.elementHeight = elementHeight;
+  this.elements = elements;
+  this.color = color;
+  this.currentElement = 0;
+  this.lineWidthBar = 4;
+  this.lineWidthLine = 1;
+  this.scroll = function(elements) {
+    this.currentElement = elements;
+  };
+  this.draw = function(gD) {
+    gD.context.lineWidth = this.lineWidthLine;
+    gD.context.strokeStyle = this.color;
+    gD.context.beginPath();
+    gD.context.moveTo(this.x, this.y);
+    gD.context.lineTo(this.x, this.y + this.height);
+    gD.context.stroke();
+    gD.context.lineWidth = this.lineWidthBar;
+    gD.context.beginPath();
+    gD.context.moveTo(this.x, this.y + ((this.currentElement / this.elements) * this.height));
+    gD.context.lineTo(this.x, this.y + (((this.height / this.elementHeight) + this.currentElement) / this.elements) * this.height);
+    gD.context.stroke();
+  };
+}
+
 function Background(y, width, height, img) {
   this.y = y;
   this.width = width;

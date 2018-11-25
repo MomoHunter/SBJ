@@ -3,20 +3,20 @@
   this.menu = menu;
   this.init = function() {
     this.newKeyMode = false;
-    this.keyBindings = new Map([   //Definition, key, code
-      ["Menu_NavDown", ["Navigation runter", ["S", "ArrowDown"], ["KeyS", "ArrowDown"]]],
-      ["Menu_NavUp", ["Navigation hoch", ["W", "ArrowUp"], ["KeyW", "ArrowUp"]]],
-      ["Menu_NavRight", ["Navigation rechts", ["D", "ArrowRight"], ["KeyD", "ArrowRight"]]],
-      ["Menu_NavLeft", ["Navigation links", ["A", "ArrowLeft"], ["KeyA", "ArrowLeft"]]],
+    this.keyBindings = new Map([   //Definition, representation, code
+      ["Menu_NavDown", ["Navigation runter", ["S", String.fromCharCode(8595)], ["KeyS", "ArrowDown"]]],
+      ["Menu_NavUp", ["Navigation hoch", ["W", String.fromCharCode(8593)], ["KeyW", "ArrowUp"]]],
+      ["Menu_NavRight", ["Navigation rechts", ["D", String.fromCharCode(8594)], ["KeyD", "ArrowRight"]]],
+      ["Menu_NavLeft", ["Navigation links", ["A", String.fromCharCode(8592)], ["KeyA", "ArrowLeft"]]],
       ["Menu_Confirm", ["Bestätigen", ["Enter", "Space"], ["Enter", "Space"]]],
-      ["SelectionScreen_NavRight", ["Navigation rechts", ["D", "ArrowRight"], ["KeyD", "ArrowRight"]]],
-      ["SelectionScreen_NavLeft", ["Navigation links", ["A", "ArrowLeft"], ["KeyA", "ArrowLeft"]]],
+      ["SelectionScreen_NavRight", ["Navigation rechts", ["D", String.fromCharCode(8594)], ["KeyD", "ArrowRight"]]],
+      ["SelectionScreen_NavLeft", ["Navigation links", ["A", String.fromCharCode(8592)], ["KeyA", "ArrowLeft"]]],
       ["SelectionScreen_Confirm", ["Bestätigen", ["Enter", "Space"], ["Enter", "Space"]]],
       ["SelectionScreen_Abort", ["Abbrechen", ["Escape"], ["Escape"]]],
       ["Game_Pause", ["Spiel pausieren", ["Escape"], ["Escape"]]],
-      ["Game_MoveRight", ["Vorwärts bewegen", ["D", "ArrowRight"], ["KeyD", "ArrowRight"]]],
-      ["Game_MoveLeft", ["Rückwärts bewegen", ["A", "ArrowLeft"], ["KeyA", "ArrowLeft"]]],
-      ["Game_JumpFromPlatform", ["Von der Plattform runterspringen", ["S", "ArrowDown"], ["KeyS", "ArrowDown"]]],
+      ["Game_MoveRight", ["Vorwärts bewegen", ["D", String.fromCharCode(8594)], ["KeyD", "ArrowRight"]]],
+      ["Game_MoveLeft", ["Rückwärts bewegen", ["A", String.fromCharCode(8592)], ["KeyA", "ArrowLeft"]]],
+      ["Game_JumpFromPlatform", ["Von der Plattform runterspringen", ["S", String.fromCharCode(8595)], ["KeyS", "ArrowDown"]]],
       ["Game_Jump", ["Springen", ["Space"], ["Space"]]],
       ["Game_ItemStopwatch", ["Stoppuhr benutzen", ["1"], ["Digit1"]]],
       ["Game_ItemStar", ["Stern benutzen", ["2"], ["Digit2"]]],
@@ -24,110 +24,146 @@
       ["Game_ItemTreasure", ["Schatztruhe benutzen", ["4"], ["Digit4"]]],
       ["Game_ItemMagnet", ["Magnet benutzen", ["5"], ["Digit5"]]],
       ["Game_ItemRocket", ["Rakete benutzen", ["6"], ["Digit6"]]],
-      ["FinishModal_NavDown", ["Navigation runter", ["S", "ArrowDown"], ["KeyS", "ArrowDown"]]],
-      ["FinishModal_NavUp", ["Navigation hoch", ["W", "ArrowUp"], ["KeyW", "ArrowUp"]]],
+      ["FinishModal_NavDown", ["Navigation runter", ["S", String.fromCharCode(8595)], ["KeyS", "ArrowDown"]]],
+      ["FinishModal_NavUp", ["Navigation hoch", ["W", String.fromCharCode(8593)], ["KeyW", "ArrowUp"]]],
       ["FinishModal_Confirm", ["Bestätigen", ["Enter", "Space"], ["Enter", "Space"]]],
-      ["Shop_NavDown", ["Navigation runter", ["S", "ArrowDown"], ["KeyS", "ArrowDown"]]],
-      ["Shop_NavUp", ["Navigation hoch", ["W", "ArrowUp"], ["KeyW", "ArrowUp"]]],
-      ["Shop_NavRight", ["Navigation rechts", ["D", "ArrowRight"], ["KeyD", "ArrowRight"]]],
-      ["Shop_NavLeft", ["Navigation links", ["A", "ArrowLeft"], ["KeyA", "ArrowLeft"]]],
+      ["Shop_NavDown", ["Navigation runter", ["S", String.fromCharCode(8595)], ["KeyS", "ArrowDown"]]],
+      ["Shop_NavUp", ["Navigation hoch", ["W", String.fromCharCode(8593)], ["KeyW", "ArrowUp"]]],
+      ["Shop_NavRight", ["Navigation rechts", ["D", String.fromCharCode(8594)], ["KeyD", "ArrowRight"]]],
+      ["Shop_NavLeft", ["Navigation links", ["A", String.fromCharCode(8592)], ["KeyA", "ArrowLeft"]]],
       ["Shop_Confirm", ["Bestätigen", ["Enter", "Space"], ["Enter", "Space"]]],
       ["Shop_Abort", ["Abbrechen", ["Escape"], ["Escape"]]],
-      ["Achievements_NavDown", ["Navigation runter", ["S", "ArrowDown"], ["KeyS", "ArrowDown"]]],
-      ["Achievements_NavUp", ["Navigation hoch", ["W", "ArrowUp"], ["KeyW", "ArrowUp"]]],
-      ["Achievements_NavRight", ["Navigation rechts", ["D", "ArrowRight"], ["KeyD", "ArrowRight"]]],
-      ["Achievements_NavLeft", ["Navigation links", ["A", "ArrowLeft"], ["KeyA", "ArrowLeft"]]],
+      ["Achievements_NavDown", ["Navigation runter", ["S", String.fromCharCode(8595)], ["KeyS", "ArrowDown"]]],
+      ["Achievements_NavUp", ["Navigation hoch", ["W", String.fromCharCode(8593)], ["KeyW", "ArrowUp"]]],
+      ["Achievements_NavRight", ["Navigation rechts", ["D", String.fromCharCode(8594)], ["KeyD", "ArrowRight"]]],
+      ["Achievements_NavLeft", ["Navigation links", ["A", String.fromCharCode(8592)], ["KeyA", "ArrowLeft"]]],
       ["Achievements_Confirm", ["Bestätigen", ["Enter", "Space"], ["Enter", "Space"]]],
       ["Achievements_Abort", ["Abbrechen", ["Escape"], ["Escape"]]],
       ["Save_Confirm", ["Bestätigen", ["Enter", "Space"], ["Enter", "Space"]]],
       ["Load_Confirm", ["Bestätigen", ["Enter", "Space"], ["Enter", "Space"]]],
-      ["Highscores_NavDown", ["Navigation runter", ["S", "ArrowDown"], ["KeyS", "ArrowDown"]]],
-      ["Highscores_NavUp", ["Navigation hoch", ["W", "ArrowUp"], ["KeyW", "ArrowUp"]]],
+      ["Highscores_NavDown", ["Navigation runter", ["S", String.fromCharCode(8595)], ["KeyS", "ArrowDown"]]],
+      ["Highscores_NavUp", ["Navigation hoch", ["W", String.fromCharCode(8593)], ["KeyW", "ArrowUp"]]],
       ["Highscores_Confirm", ["Bestätigen", ["Enter"], ["Enter"]]],
       ["Highscores_Abort", ["Abbrechen", ["Escape"], ["Escape"]]],
-      ["Highscores_NavRight", ["Navigation rechts", ["ArrowRight"], ["ArrowRight"]]],
-      ["Highscores_NavLeft", ["Navigation links", ["ArrowLeft"], ["ArrowLeft"]]],
+      ["Highscores_NavRight", ["Navigation rechts", [String.fromCharCode(8594)], ["ArrowRight"]]],
+      ["Highscores_NavLeft", ["Navigation links", [String.fromCharCode(8592)], ["ArrowLeft"]]],
       ["Highscores_DeleteLeft", ["Linkes Zeichen löschen", ["Backspace"], ["Backspace"]]],
       ["Highscores_DeleteRight", ["Rechtes Zeichen löschen", ["Delete"], ["Delete"]]],
       ["Highscores_AbortEdit", ["Editieren abbrechen", ["Escape"], ["Escape"]]],
-      ["Controls_NavDown", ["Navigation runter", ["S", "ArrowDown"], ["KeyS", "ArrowDown"]]],
-      ["Controls_NavUp", ["Navigation hoch", ["W", "ArrowUp"], ["KeyW", "ArrowUp"]]],
-      ["Controls_NavRight", ["Navigation rechts", ["D", "ArrowRight"], ["KeyD", "ArrowRight"]]],
-      ["Controls_NavLeft", ["Navigation links", ["A", "ArrowLeft"], ["KeyA", "ArrowLeft"]]],
+      ["Controls_NavDown", ["Navigation runter", ["S", String.fromCharCode(8595)], ["KeyS", "ArrowDown"]]],
+      ["Controls_NavUp", ["Navigation hoch", ["W", String.fromCharCode(8593)], ["KeyW", "ArrowUp"]]],
+      ["Controls_NavRight", ["Navigation rechts", ["D", String.fromCharCode(8594)], ["KeyD", "ArrowRight"]]],
+      ["Controls_NavLeft", ["Navigation links", ["A", String.fromCharCode(8592)], ["KeyA", "ArrowLeft"]]],
       ["Controls_DeleteKey", ["Belegung löschen", ["Delete"], ["Delete"]]],
       ["Controls_Confirm", ["Bestätigen", ["Enter", "Space"], ["Enter", "Space"]]],
       ["Controls_Abort", ["Abbrechen", ["Escape"], ["Escape"]]],
       ["Mute_All", ["Alles muten", ["M"], ["KeyM"]]]
-    ];
-
-    this.
+    ]);
 
     this.keyEntryHeadlines = [];
     this.keyEntries = [];
-    this.selected = 0;
-    this.shiftFactor = 0;
-    this.title = new Text(this.gD.canvas.width / 2, 30, "32pt", "Showcard Gothic", "rgba(200, 200, 200, 1)", "center", "middle", "Controls", 3);
+    this.selectedRowIndex = 0;
+    this.selectedColumnIndex = 0;
+    this.scrollHeight = 0;
 
-    this.keyEntryHeadlines.push(new ControlEntryHeadline((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(50, 200, 80, 1)", "Menü", 2));
-    for (var i = 0; i < 5; i++) {
-      this.keyEntries.push(new ControlEntry((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(255, 255, 255, 1)", "Menu" + (i + 1), 2));
-    }
-    this.keyEntryHeadlines.push(new ControlEntryHeadline((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(50, 200, 80, 1)", "Spielerauswahl Bildschirm", 2));
-    for (var i = 0; i < 4; i++) {
-      this.keyEntries.push(new ControlEntry((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(255, 255, 255, 1)", "SelectionScreen" + (i + 1), 2));
-    }
-    this.keyEntryHeadlines.push(new ControlEntryHeadline((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(50, 200, 80, 1)", "Spiel", 2));
-    for (var i = 0; i < 11; i++) {
-      this.keyEntries.push(new ControlEntry((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(255, 255, 255, 1)", "Game" + (i + 1), 2));
-    }
-    this.keyEntryHeadlines.push(new ControlEntryHeadline((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(50, 200, 80, 1)", "Spielendanzeige", 2));
-    for (var i = 0; i < 3; i++) {
-      this.keyEntries.push(new ControlEntry((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(255, 255, 255, 1)", "FinishModal" + (i + 1), 2));
-    }
-    this.keyEntryHeadlines.push(new ControlEntryHeadline((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(50, 200, 80, 1)", "Shop", 2));
-    for (var i = 0; i < 6; i++) {
-      this.keyEntries.push(new ControlEntry((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(255, 255, 255, 1)", "Shop" + (i + 1), 2));
-    }
-    this.keyEntryHeadlines.push(new ControlEntryHeadline((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(50, 200, 80, 1)", "Achievements", 2));
-    for (var i = 0; i < 6; i++) {
-      this.keyEntries.push(new ControlEntry((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(255, 255, 255, 1)", "Achievements" + (i + 1), 2));
-    }
-    this.keyEntryHeadlines.push(new ControlEntryHeadline((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(50, 200, 80, 1)", "Speichern", 2));
-    for (var i = 0; i < 1; i++) {
-      this.keyEntries.push(new ControlEntry((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(255, 255, 255, 1)", "Save" + (i + 1), 2));
-    }
-    this.keyEntryHeadlines.push(new ControlEntryHeadline((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(50, 200, 80, 1)", "Laden", 2));
-    for (var i = 0; i < 1; i++) {
-      this.keyEntries.push(new ControlEntry((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(255, 255, 255, 1)", "Load" + (i + 1), 2));
-    }
-    this.keyEntryHeadlines.push(new ControlEntryHeadline((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(50, 200, 80, 1)", "Highscores", 2));
-    for (var i = 0; i < 9; i++) {
-      this.keyEntries.push(new ControlEntry((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(255, 255, 255, 1)", "Highscores" + (i + 1), 2));
-    }
-    this.keyEntryHeadlines.push(new ControlEntryHeadline((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(50, 200, 80, 1)", "Controls", 2));
-    for (var i = 0; i < 7; i++) {
-      this.keyEntries.push(new ControlEntry((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(255, 255, 255, 1)", "Controls" + (i + 1), 2));
-    }
-    this.keyEntryHeadlines.push(new ControlEntryHeadline((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(50, 200, 80, 1)", "Mute", 2));
-    for (var i = 0; i < 1; i++) {
-      this.keyEntries.push(new ControlEntry((this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(255, 255, 255, 1)", "Mute" + (i + 1), 2));
+
+    this.title = new Text(this.gD.canvas.width / 2, 30, "32pt", "Showcard Gothic, Impact", "rgba(200, 200, 200, 1)", "center", "middle", "Controls", 3);
+
+    var headline = "";
+
+    for (var key of this.keyBindings.keys()) {
+      if (key.split("_")[0] !== headline) {
+        headline = key.split("_")[0];
+        this.keyEntryHeadlines.push(new ControlEntryHeadline(
+          (this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(50, 200, 80, 1)", headline, 2
+        ));
+      }
+
+      this.keyEntries.push(new ControlEntry(
+        (this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(255, 255, 255, 1)", key, 2
+      ));
     }
 
     this.keyEntries[this.selected].select(0, false);
 
-    this.backToMenu = new Button((this.gD.canvas.width / 2) - 100, this.gD.canvas.height - 50, 200, 30, "15pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Main Menu", "rgba(0, 0, 0, .6)", 2);
+    this.scrollBar = new ScrollBar(this.gD.canvas.width - 165, 60, 220, 20, (this.keyEntryHeadlines.length + this.keyEntries.length), "rgba(255, 255, 255, 1)");
+
+    this.backToMenu = new Button((this.gD.canvas.width / 2) - 100, this.gD.canvas.height - 50, 200, 30, "15pt", "Showcard Gothic, Impact", "rgba(255, 255, 255, 1)", "Main Menu", "rgba(0, 0, 0, .6)", 2);
   };
-  this.vShift = function(shiftFactor) {
-    for (var i = 0; i < this.keyEntryHeadlines.length; i++) {
-      this.keyEntryHeadlines[i].y -= (shiftFactor * 20);
-    }
-    for (var i = 0; i < this.keyEntries.length; i++) {
-      this.keyEntries[i].y -= (shiftFactor * 20);
-      for (var j = 0; j < this.keyEntries[i].keys.length; j++) {
-        this.keyEntries[i].keys[j].y -= (shiftFactor * 20);
+  this.vScroll = function(elementsScrolled) {
+    this.scrollHeight = elementsScrolled * 20;
+    this.scrollBar.scroll(elementsScrolled);
+  };
+  this.updateKeyPresses = function() {
+    this.gD.newKeys.map(key => {
+      if (this.newKeyMode) {
+        this.keyEntries[this.selected].setNewKey(this, key);
+        this.newKeyMode = false;
+        this.gD.save.keyBindings = this.keyBindings;
+        return;
       }
-    }
-    this.shiftFactor += shiftFactor;
+
+      var rowIndex = this.selectedRowIndex;
+      var columnIndex = this.selectedColumnIndex;
+
+      if (this.keyBindings.get('Controls_NavDown')[2].includes(key)) {
+        rowIndex++;
+        if (rowIndex >= this.keyEntries.length) {
+          updateControlsSelection(controls, -1, columnIndex);
+        } else {
+          updateControlsSelection(controls, rowIndex, columnIndex);
+        }
+      } else if (this.keyBindings.get('Controls_NavUp')[2].includes(key)) {
+
+      } else if (this.keyBindings.get('Controls_NavRight')[2].includes(key)) {
+
+      } else if (this.keyBindings.get('Controls_NavLeft')[2].includes(key)) {
+
+      } else if (this.keyBindings.get('Controls_DeleteKey')[2].includes(key)) {
+
+      } else if (this.keyBindings.get('Controls_Confirm')[2].includes(key)) {
+
+      } else if (this.keyBindings.get('Controls_Abort')[2].includes(key)) {
+
+      }
+    }, this);
+  };
+  this.updateMouseMoves = function() {
+
+  };
+  this.updateClicks = function() {
+
+  };
+  this.updateWheelMoves = function() {
+
+  };
+  this.update = function() {
+    /* unused */
+  };
+  this.draw = function() {
+    this.gD.context.drawImage(this.menu.backgroundImage, 0, 0);
+
+    this.title.draw(this.gD);
+    this.scrollBar.draw(this.gD);
+    this.backToMenu.draw(this.gD);
+
+    this.keyEntries.map(entry => {
+      var realHeight = entry.y - this.scrollHeight;
+      if (realHeight >= 60 && realHeight < 280) {
+        entry.draw(this, this.gD);
+      }
+    }, this);
+
+    this.keyEntryHeadlines.map(headline => {
+      var realHeight = headline.y - this.scrollHeight;
+      if (realHeight >= 60 && realHeight < 280) {
+        headline.draw(this, this.gD);
+      }
+    }, this);
+
+    this.gD.context.lineWidth = 2;
+    this.gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
+    this.gD.context.strokeRect(200, 60, 600, 220);
   };
 }
 
@@ -139,17 +175,22 @@ function ControlEntryHeadline(x, y, width, height, color, text, bordersize) {
   this.color = color;
   this.text = text;
   this.bordersize = bordersize;
-  this.draw = function(gD) {
+  this.textAlign = "center";
+  this.textBaseline = "middle";
+  this.font = "bold 12pt Consolas";
+  this.textColor = "rgba(0, 0, 0, 1)";
+  this.borderColor = "rgba(0, 0, 0, 1)";
+  this.draw = function(controls, gD) {
     gD.context.fillStyle = this.color;
-    gD.context.fillRect(this.x, this.y, this.width, this.height);
-    gD.context.textAlign = "center";
-    gD.context.textBaseline = "middle";
-    gD.context.font = "bold 12pt Consolas";
-    gD.context.fillStyle = "rgba(0, 0, 0, 1)";
-    gD.context.fillText(this.text, this.x + (this.width / 2), this.y + (this.height / 2));
-    gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
+    gD.context.fillRect(this.x, this.y - controls.scrollHeight, this.width, this.height);
+    gD.context.textAlign = this.textAlign;
+    gD.context.textBaseline = this.textBaseline;
+    gD.context.font = this.font;
+    gD.context.fillStyle = this.textColor;
+    gD.context.fillText(this.text, this.x + (this.width / 2), this.y + (this.height / 2) - controls.scrollHeight);
+    gD.context.strokeStyle = this.borderColor;
     gD.context.lineWidth = this.bordersize;
-    gD.context.strokeRect(this.x, this.y, this.width, this.height);
+    gD.context.strokeRect(this.x, this.y - controls.scrollHeight, this.width, this.height);
   };
 }
 
@@ -163,24 +204,39 @@ function ControlEntry(x, y, width, height, color, name, bordersize) {
   this.bordersize = bordersize;
   this.selected = 0;
   this.keys = [];
-  this.keys.push(new ControlKey(this.x + this.width - 200, this.y, 100, this.height, this.color, this.name, 0, this.bordersize));
-  this.keys.push(new ControlKey(this.x + this.width - 100, this.y, 100, this.height, this.color, this.name, 1, this.bordersize));
-  this.select = function(index, deselectAll) {
-    this.keys[this.selected].deselect();
-    if (!deselectAll) {
-      this.keys[index].select();
-      this.selected = index;
-    }
+  this.init = function() {
+    this.keys.push(new ControlKey(this.x + this.width - 200, this.y, 100, this.height, this.color, this.name, 0, this.bordersize));
+    this.keys.push(new ControlKey(this.x + this.width - 100, this.y, 100, this.height, this.color, this.name, 1, this.bordersize));
   };
-  this.setNewKey = function(controls, event) {
-    if (event.keyCode == 32) {
-      controls.keyBindings[this.name][1][this.selected] = "Space";
-    } else if (event.key.length == 1) {
-      controls.keyBindings[this.name][1][this.selected] = event.key.toUpperCase();
+  this.select = function(index) {
+    this.keys[index].select();
+    this.selected = index;
+  };
+  this.deselect = function() {
+    this.keys[this.selected].deselect();
+  };
+  this.setNewKey = function(controls, key) {
+    if (key.startsWith('Key') || key.startsWith('Digit')) {
+      controls.keyBindings.get(this.name)[1][this.selected] = key.slice(-1);
     } else {
-      controls.keyBindings[this.name][1][this.selected] = event.key;
+      switch (key) {
+        case 'ArrowLeft':
+          controls.keyBindings.get(this.name)[1][this.selected] = String.fromCharCode(8592);
+          break;
+        case 'ArrowUp':
+          controls.keyBindings.get(this.name)[1][this.selected] = String.fromCharCode(8593);
+          break;
+        case 'ArrowRight':
+          controls.keyBindings.get(this.name)[1][this.selected] = String.fromCharCode(8594);
+          break;
+        case 'ArrowDown':
+          controls.keyBindings.get(this.name)[1][this.selected] = String.fromCharCode(8595);
+          break;
+        default:
+          controls.keyBindings.get(this.name)[1][this.selected] = key;
+      }
     }
-    controls.keyBindings[this.name][2][this.selected] = event.keyCode;
+    controls.keyBindings.get(this.name)[2][this.selected] = key;
   };
   this.draw = function(controls, gD) {
     gD.context.fillStyle = this.color;
@@ -189,13 +245,10 @@ function ControlEntry(x, y, width, height, color, name, bordersize) {
     gD.context.textBaseline = "bottom";
     gD.context.font = "12pt Consolas";
     gD.context.fillStyle = "rgba(0, 0, 0, 1)";
-    gD.context.fillText(controls.keyBindings[this.name][0], this.x + 5, this.y + this.height - 2);
-    gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
-    gD.context.lineWidth = this.bordersize;
-    gD.context.strokeRect(this.x, this.y, this.width, this.height);
-    for (var i = 0; i < this.keys.length; i++) {
-      this.keys[i].draw(controls, gD);
-    }
+    gD.context.fillText(controls.keyBindings.get(this.name)[0], this.x + 5, this.y + this.height - 2);
+    this.keys.map(key => {
+      key.draw(controls, gD);
+    });
   };
 }
 
@@ -208,6 +261,11 @@ function ControlKey(x, y, width, height, color, name, keyNr, bordersize) {
   this.name = name;
   this.keyNr = keyNr;
   this.bordersize = bordersize;
+  this.selectedColor = "rgba(180, 50, 50, 1)";
+  this.textAlign = "center";
+  this.textBaseline = "middle";
+  this.font = "11pt Consolas";
+  this.textColor = "rgba(0, 0, 0, 1)";
   this.selected = false;
   this.select = function() {
     this.selected = true;
@@ -216,23 +274,47 @@ function ControlKey(x, y, width, height, color, name, keyNr, bordersize) {
     this.selected = false;
   };
   this.draw = function(controls, gD) {
+    var keyRef = controls.keyBindings.get(this.name)[1][this.keyNr];
+
     if (this.selected) {
-      gD.context.fillStyle = "rgba(180, 50, 50, 1)";
+      gD.context.fillStyle = this.selectedColor;
     } else {
       gD.context.fillStyle = this.color;
     }
-    gD.context.fillRect(this.x, this.y, this.width, this.height);
-    gD.context.textAlign = "end";
-    gD.context.textBaseline = "bottom";
-    gD.context.font = "12pt Consolas";
-    gD.context.fillStyle = "rgba(0, 0, 0, 1)";
-    if (controls.keyBindings[this.name][1][this.keyNr] != undefined) {
-      gD.context.fillText(controls.keyBindings[this.name][1][this.keyNr], this.x + this.width - 5, this.y + this.height - 2);
+    gD.context.fillRect(this.x, this.y - controls.scrollHeight, this.width, this.height);
+    if (keyRef !== undefined) {
+      var spriteRef = gD.spriteDict["Icon_KeyShort"];
+      if (keyRef.length > 1) {
+        spriteRef = gD.spriteDict["Icon_KeyLong"];
+      }
+
+      gD.context.drawImage(gD.spritesheet, spriteRef[0], spriteRef[1], spriteRef[2], spriteRef[3],
+        this.x + (this.width - spriteRef[2]) / 2, this.y - controls.scrollHeight + (this.height - spriteRef[3]) / 2, spriteRef[2], spriteRef[3]);
+      gD.context.textAlign = this.textAlign;
+      gD.context.textBaseline = this.textBaseline;
+      gD.context.font = this.font;
+      gD.context.fillStyle = this.textColor;
+      gD.context.fillText(keyRef, this.x + (this.width / 2), this.y - controls.scrollHeight + (this.height / 2));
     }
-    gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
-    gD.context.lineWidth = this.bordersize;
-    gD.context.strokeRect(this.x, this.y, this.width, this.height);
   };
+}
+
+function updateControlsSelection(controls, rowIndex, columnIndex) {
+  if (controls.selectedRowIndex === -1) {
+    controls.backToMenu.deselect();
+  } else {
+    controls.keyEntries[controls.selectedRowIndex].deselect();
+  }
+
+  if (rowIndex === -1) {
+    controls.backToMenu.select();
+  } else {
+    controls.keyEntries[rowIndex].select(columnIndex);
+    controls.vScroll(Math.min((controls.keyEntries[rowIndex].keys[columnIndex].x - 220) / 20, 0));
+  }
+
+  controls.selectedRowIndex = rowIndex;
+  controls.selectedColumnIndex = columnIndex;
 }
 
 function controlsControlDown(controls, event) {
@@ -397,38 +479,4 @@ function controlsWheel(controls, event) {
     }
     drawControls(controls);
   }
-}
-
-function drawControls(controls) {
-  controls.clear();
-
-  controls.gD.context.drawImage(controls.backgroundImage, 0, 0);
-
-  controls.title.draw(controls.gD);
-
-  for (var i = 0; i < controls.keyEntryHeadlines.length; i++) {
-    if (controls.keyEntryHeadlines[i].y >= 60 && controls.keyEntryHeadlines[i].y < 280) {
-      controls.keyEntryHeadlines[i].draw(controls.gD);
-    }
-  }
-
-  for (var i = 0; i < controls.keyEntries.length; i++) {
-    if (controls.keyEntries[i].y >= 60 && controls.keyEntries[i].y < 280) {
-      controls.keyEntries[i].draw(controls, controls.gD);
-    }
-  }
-
-  controls.backToMenu.draw(controls.gD);
-
-  controls.gD.context.lineWidth = 4;
-  controls.gD.context.strokeStyle = "rgba(255, 255, 255, 1)";
-  controls.gD.context.beginPath();
-  controls.gD.context.moveTo(controls.gD.canvas.width - 165, 60 + ((controls.shiftFactor / (controls.keyEntryHeadlines.length + controls.keyEntries.length)) * 220));
-  controls.gD.context.lineTo(controls.gD.canvas.width - 165, 60 + ((Math.min(11 + controls.shiftFactor, (controls.keyEntryHeadlines.length + controls.keyEntries.length)) / (controls.keyEntryHeadlines.length + controls.keyEntries.length)) * 220));
-  controls.gD.context.stroke();
-  controls.gD.context.lineWidth = 1;
-  controls.gD.context.beginPath();
-  controls.gD.context.moveTo(controls.gD.canvas.width - 165, 60);
-  controls.gD.context.lineTo(controls.gD.canvas.width - 165, 280);
-  controls.gD.context.stroke();
 }
