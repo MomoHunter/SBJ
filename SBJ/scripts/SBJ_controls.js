@@ -111,23 +111,23 @@
       if (this.keyBindings.get('Controls_NavDown')[2].includes(key)) {
         rowIndex++;
         if (rowIndex >= this.keyEntries.length) {
-          updateControlsSelection(this, -1, columnIndex);
+          updateControlsSelection(this, -1, columnIndex, true);
         } else {
-          updateControlsSelection(this, rowIndex, columnIndex);
+          updateControlsSelection(this, rowIndex, columnIndex, true);
         }
       } else if (this.keyBindings.get('Controls_NavUp')[2].includes(key)) {
         rowIndex--;
         if (rowIndex < -1) {
-          updateControlsSelection(this, this.keyEntries.length - 1, columnIndex);
+          updateControlsSelection(this, this.keyEntries.length - 1, columnIndex, true);
         } else {
-          updateControlsSelection(this, rowIndex, columnIndex);
+          updateControlsSelection(this, rowIndex, columnIndex, true);
         }
       } else if (this.keyBindings.get('Controls_NavRight')[2].includes(key)) {
         columnIndex = (columnIndex + 1) % 2;
-        updateControlsSelection(this, rowIndex, columnIndex);
+        updateControlsSelection(this, rowIndex, columnIndex, true);
       } else if (this.keyBindings.get('Controls_NavLeft')[2].includes(key)) {
         columnIndex = (columnIndex + 1) % 2;
-        updateControlsSelection(this, rowIndex, columnIndex);
+        updateControlsSelection(this, rowIndex, columnIndex, true);
       } else if (this.keyBindings.get('Controls_DeleteKey')[2].includes(key)) {
         this.keyBindings.get(this.keyEntries[rowIndex].name)[1].splice(columnIndex, 1);
         this.keyBindings.get(this.keyEntries[rowIndex].name)[2].splice(columnIndex, 1);
@@ -144,7 +144,21 @@
     }, this);
   };
   this.updateMouseMoves = function() {
+    this.keyEntries.map((entry, rowIndex) => {
+      if (entry.y - this.scrollHeight < 280 && entry.y - this.scrollHeight >= 60) {
+        entry.keys.map((key, columnIndex) => {
+          if (this.gD.mousePos.x >= key.x && this.gD.mousePos.x < key.x + key.width &&
+              this.gD.mousePos.y >= key.y - this.scrollHeight && this.gD.mousePos.y < key.y - this.scrollHeight + key.height) {
+            updateControlsSelection(this, rowIndex, columnIndex, false);
+          }
+        }, this);
+      }
+    }, this);
 
+    if (this.gD.mousePos.x >= this.backToMenu.x && this.gD.mousePos.x < this.backToMenu.x + this.backToMenu.width &&
+        this.gD.mousePos.y >= this.backToMenu.y && this.gD.mousePos.y < this.backToMenu.y + this.backToMenu.height) {
+      updateControlsSelection(this, -1, this.selectedColumnIndex, false);
+    }
   };
   this.updateClicks = function() {
 
@@ -318,7 +332,7 @@ function ControlKey(x, y, width, height, color, name, keyNr, bordersize) {
   };
 }
 
-function updateControlsSelection(controls, rowIndex, columnIndex) {
+function updateControlsSelection(controls, rowIndex, columnIndex, scroll) {
   if (controls.selectedRowIndex === -1) {
     controls.backToMenu.deselect();
   } else {
@@ -329,16 +343,18 @@ function updateControlsSelection(controls, rowIndex, columnIndex) {
     controls.backToMenu.select();
   } else {
     controls.keyEntries[rowIndex].select(columnIndex);
-    if (controls.keyEntries[rowIndex].y - controls.scrollHeight >= 240) {
-      controls.vScroll(Math.min(
-        (controls.keyEntries[rowIndex].y - 220) / 20,
-        (controls.keyEntries[controls.keyEntries.length - 1].y - 260) / 20
-      ));
-    } else if (controls.keyEntries[rowIndex].y - controls.scrollHeight <= 100) {
-      controls.vScroll(Math.max(
-        (controls.keyEntries[rowIndex].y - 100) / 20,
-        0
-      ));
+    if (scroll) {
+      if (controls.keyEntries[rowIndex].y - controls.scrollHeight >= 240) {
+        controls.vScroll(Math.min(
+          (controls.keyEntries[rowIndex].y - 220) / 20,
+          (controls.keyEntries[controls.keyEntries.length - 1].y - 260) / 20
+        ));
+      } else if (controls.keyEntries[rowIndex].y - controls.scrollHeight <= 100) {
+        controls.vScroll(Math.max(
+          (controls.keyEntries[rowIndex].y - 100) / 20,
+          0
+        ));
+      }
     }
   }
 

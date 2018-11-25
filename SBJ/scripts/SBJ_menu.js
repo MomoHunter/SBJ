@@ -109,15 +109,14 @@ function Menu(gD) {
    * checks if the mouse was moved
    */
   this.updateMouseMoves = function() {
-    var menu = this;
     this.buttons.map((buttonRow, rowIndex) => {
       buttonRow.map((button, columnIndex) => {
-        if (menu.gD.mousePos.x >= button.x && menu.gD.mousePos.x <= button.x + button.width &&
-            menu.gD.mousePos.y >= button.y && menu.gD.mousePos.y <= button.y + button.height) {
-          updateSelection(menu, rowIndex, columnIndex);
+        if (this.gD.mousePos.x >= button.x && this.gD.mousePos.x <= button.x + button.width &&
+            this.gD.mousePos.y >= button.y && this.gD.mousePos.y <= button.y + button.height) {
+          updateSelection(this, rowIndex, columnIndex);
         }
-      })
-    });
+      }, this);
+    }, this);
   };
   /**
    * checks if there was a click
