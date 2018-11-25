@@ -1,6 +1,11 @@
+<meta http-equiv="refresh" content="0; url=https://momohunter.github.io/SBJ/SBJ/SBJ.html" />
+<!-- this only triggers when viewd as a GitHub-Pages site -->
+
 ![Super Block Jump](readme_img/super_block_jump.png "Super Block Jump")
 
 Super Block Jump ist ein in Javascript geschriebenes Jump'n'Run-Spiel, welches das Canvas-Element von HTML benutzt.
+
+Es kann unter [momohunter.github.io/SBJ](https://momohunter.github.io/SBJ) direkt gespielt werden.
 
 ## Spielprinzip
 
