@@ -352,7 +352,7 @@ function ControlKey(x, y, width, height, color, name, keyNr, bordersize) {
   this.selectedColor = "rgba(180, 50, 50, 1)";
   this.textAlign = "center";
   this.textBaseline = "middle";
-  this.font = "11pt Consolas";
+  this.font = "10pt Consolas";
   this.textColor = "rgba(0, 0, 0, 1)";
   this.selected = false;
   this.select = function() {
@@ -377,7 +377,7 @@ function ControlKey(x, y, width, height, color, name, keyNr, bordersize) {
       }
 
       gD.context.drawImage(gD.spritesheet, spriteRef[0], spriteRef[1], spriteRef[2], spriteRef[3],
-        this.x + (this.width - spriteRef[2]) / 2, this.y - controls.scrollHeight + Math.floor((this.height - spriteRef[3]) / 2), spriteRef[2], spriteRef[3]);
+        this.x + (this.width - spriteRef[2]) / 2, this.y - controls.scrollHeight + (this.height - spriteRef[3]) / 2, spriteRef[2], spriteRef[3]);
       gD.context.textAlign = this.textAlign;
       gD.context.textBaseline = this.textBaseline;
       gD.context.font = this.font;

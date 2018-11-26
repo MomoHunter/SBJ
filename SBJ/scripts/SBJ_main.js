@@ -68,7 +68,7 @@ function clickEvent(event, gD) {
 }
 
 function wheelEvent(event, gD) {
-  gD.wheelMovement.push(event.deltaY);
+  gD.wheelMovements.push(event.deltaY);
 }
 
 function GlobalDict() {
