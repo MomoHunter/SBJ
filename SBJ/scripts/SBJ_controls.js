@@ -47,7 +47,7 @@
       ["Highscores_Abort", ["Abbrechen", ["Escape"], ["Escape"]]],
       ["Highscores_NavRight", ["Navigation rechts", [String.fromCharCode(8594)], ["ArrowRight"]]],
       ["Highscores_NavLeft", ["Navigation links", [String.fromCharCode(8592)], ["ArrowLeft"]]],
-      ["Highscores_DeleteLeft", ["Linkes Zeichen löschen", ["Backspace"], ["Backspace"]]],
+      ["Highscores_DeleteLeft", ["Linkes Zeichen löschen", [" " + String.fromCharCode(8612) + " "], ["Backspace"]]],
       ["Highscores_DeleteRight", ["Rechtes Zeichen löschen", ["Delete"], ["Delete"]]],
       ["Highscores_AbortEdit", ["Editieren abbrechen", ["Escape"], ["Escape"]]],
       ["Controls_NavDown", ["Navigation runter", ["S", String.fromCharCode(8595)], ["KeyS", "ArrowDown"]]],
@@ -60,12 +60,37 @@
       ["Mute_All", ["Alles muten", ["M"], ["KeyM"]]]
     ]);
 
+    this.visualKeys = {
+      "ArrowLeft": String.fromCharCode(8592),
+      "ArrowUp": String.fromCharCode(8593),
+      "ArrowRight": String.fromCharCode(8594),
+      "ArrowDown": String.fromCharCode(8595),
+      "Backspace": " " + String.fromCharCode(8612) + " ",
+      "Minus": "ß",
+      "BracketLeft": "Ü",
+      "BracketRight": "+",
+      "Semicolon": "Ö",
+      "Quote": "Ä",
+      "Backslash": "#",
+      "Comma": ",",
+      "Period": ".",
+      "Slash": "-",
+      "ShiftRight": String.fromCharCode(8679) + " R",
+      "ShiftLeft": String.fromCharCode(8679) + " L",
+      "IntlBackslash": "<",
+      "Backquote": "^",
+      "Equal": "´",
+      "CapsLock": String.fromCharCode(8681),
+      "Tab": " " + String.fromCharCode(8633) + " "
+    };
+
     this.keyEntryHeadlines = [];
     this.keyEntries = [];
     this.selectedRowIndex = 0;
     this.selectedColumnIndex = 0;
     this.scrollHeight = 0;
-
+    this.oldKey = undefined;
+    this.newKeyEntry = [];
 
     this.title = new Text(this.gD.canvas.width / 2, 30, "32pt", "Showcard Gothic, Impact", "rgba(200, 200, 200, 1)", "center", "middle", "Controls", 3);
 
@@ -96,12 +121,39 @@
     this.scrollHeight = elementsScrolled * 20;
     this.scrollBar.scroll(elementsScrolled);
   };
+  this.activateNewKeyMode = function() {
+    var selectedEntry = this.keyEntries[this.selectedRowIndex];
+    if (!this.newKeyMode) {
+      this.newKeyMode = true;
+    } else {
+      if (this.oldKey === undefined) {
+        delete this.keyBindings.get(this.newKeyEntry[0])[1][this.newKeyEntry[1]];
+      } else {
+        this.keyBindings.get(this.newKeyEntry[0])[1][this.newKeyEntry[1]] = this.oldKey;
+      }
+    }
+    this.oldKey = this.keyBindings.get(selectedEntry.name)[1][this.selectedColumnIndex];
+    this.keyBindings.get(selectedEntry.name)[1][this.selectedColumnIndex] = "...";
+    this.newKeyEntry = [selectedEntry.name, this.selectedColumnIndex];
+  };
+  this.setNewKey = function(key) {
+    if (key.startsWith('Key') || key.startsWith('Digit')) {
+      this.keyBindings.get(this.newKeyEntry[0])[1][this.newKeyEntry[1]] = key.slice(-1);
+    } else {
+      if (this.visualKeys[key] !== undefined) {
+        this.keyBindings.get(this.newKeyEntry[0])[1][this.newKeyEntry[1]] = this.visualKeys[key];
+      } else {
+        this.keyBindings.get(this.newKeyEntry[0])[1][this.newKeyEntry[1]] = key;
+      }
+    }
+    this.keyBindings.get(this.newKeyEntry[0])[2][this.newKeyEntry[1]] = key;
+    this.newKeyMode = false;
+    this.gD.save.keyBindings = this.keyBindings;
+  };
   this.updateKeyPresses = function() {
     this.gD.newKeys.map(key => {
       if (this.newKeyMode) {
-        this.keyEntries[this.selectedRowIndex].setNewKey(this, key);
-        this.newKeyMode = false;
-        this.gD.save.keyBindings = this.keyBindings;
+        this.setNewKey(key);
         return;
       }
 
@@ -135,8 +187,7 @@
         if (rowIndex === -1) {
           this.gD.currentPage = this.menu;
         } else {
-          this.newKeyMode = true;
-          this.keyBindings.get(this.keyEntries[rowIndex].name)[1][columnIndex] = "...";
+          this.activateNewKeyMode();
         }
       } else if (this.keyBindings.get('Controls_Abort')[2].includes(key)) {
         this.gD.currentPage = this.menu;
@@ -161,10 +212,37 @@
     }
   };
   this.updateClicks = function() {
+    var clickPos = this.gD.clicks.pop();
+    if (!clickPos) {
+      return
+    }
 
+    if (this.selectedRowIndex === -1) {
+      if (clickPos.x >= this.backToMenu.x && clickPos.x <= this.backToMenu.x + this.backToMenu.width &&
+          clickPos.y >= this.backToMenu.y && clickPos.y <= this.backToMenu.y + this.backToMenu.height) { // = mouse over menu button
+        this.gD.currentPage = this.menu;
+      }
+    } else {
+      var selectedEntry = this.keyEntries[this.selectedRowIndex];
+      if (clickPos.x >= selectedEntry.x && clickPos.x <= selectedEntry.x + selectedEntry.width &&
+          clickPos.y >= selectedEntry.y - this.scrollHeight && clickPos.y <= selectedEntry.y - this.scrollHeight + selectedEntry.height) { // = mouse over selected entry
+        this.activateNewKeyMode();
+      }
+    }
   };
   this.updateWheelMoves = function() {
-
+    var wheelMove = this.gD.wheelMovements.pop();
+    if (wheelMove < 0) {
+      this.vScroll(Math.max(
+        (this.scrollHeight / 20) - 1, 
+        0
+        ));
+    } else if (wheelMove > 0) {
+      this.vScroll(Math.min(
+        (this.scrollHeight / 20) + 1, 
+        (this.keyEntries[this.keyEntries.length - 1].y - 260) / 20
+      ));
+    }
   };
   this.update = function() {
     /* unused */
@@ -248,29 +326,6 @@ function ControlEntry(x, y, width, height, color, name, bordersize) {
   this.deselect = function() {
     this.keys[this.selected].deselect();
   };
-  this.setNewKey = function(controls, key) {
-    if (key.startsWith('Key') || key.startsWith('Digit')) {
-      controls.keyBindings.get(this.name)[1][this.selected] = key.slice(-1);
-    } else {
-      switch (key) {
-        case 'ArrowLeft':
-          controls.keyBindings.get(this.name)[1][this.selected] = String.fromCharCode(8592);
-          break;
-        case 'ArrowUp':
-          controls.keyBindings.get(this.name)[1][this.selected] = String.fromCharCode(8593);
-          break;
-        case 'ArrowRight':
-          controls.keyBindings.get(this.name)[1][this.selected] = String.fromCharCode(8594);
-          break;
-        case 'ArrowDown':
-          controls.keyBindings.get(this.name)[1][this.selected] = String.fromCharCode(8595);
-          break;
-        default:
-          controls.keyBindings.get(this.name)[1][this.selected] = key;
-      }
-    }
-    controls.keyBindings.get(this.name)[2][this.selected] = key;
-  };
   this.draw = function(controls, gD) {
     gD.context.fillStyle = this.color;
     gD.context.fillRect(this.x, this.y - controls.scrollHeight, this.width - 200, this.height);
@@ -322,7 +377,7 @@ function ControlKey(x, y, width, height, color, name, keyNr, bordersize) {
       }
 
       gD.context.drawImage(gD.spritesheet, spriteRef[0], spriteRef[1], spriteRef[2], spriteRef[3],
-        this.x + (this.width - spriteRef[2]) / 2, this.y - controls.scrollHeight + (this.height - spriteRef[3]) / 2, spriteRef[2], spriteRef[3]);
+        this.x + (this.width - spriteRef[2]) / 2, this.y - controls.scrollHeight + Math.floor((this.height - spriteRef[3]) / 2), spriteRef[2], spriteRef[3]);
       gD.context.textAlign = this.textAlign;
       gD.context.textBaseline = this.textBaseline;
       gD.context.font = this.font;
@@ -360,87 +415,4 @@ function updateControlsSelection(controls, rowIndex, columnIndex, scroll) {
 
   controls.selectedRowIndex = rowIndex;
   controls.selectedColumnIndex = columnIndex;
-}
-
-function controlsMouseMove(controls) {
-  if (!controls.newKeyMode) {
-    for (var i = 0; i < controls.keyEntries.length; i++) {
-      if (controls.keyEntries[i].y >= 60 && controls.keyEntries[i].y < 280) {
-        if (controls.gD.mousePos.x >= controls.keyEntries[i].keys[0].x && controls.gD.mousePos.x <= controls.keyEntries[i].keys[0].x + controls.keyEntries[i].keys[0].width &&
-            controls.gD.mousePos.y >= controls.keyEntries[i].keys[0].y && controls.gD.mousePos.y <= controls.keyEntries[i].keys[0].y + controls.keyEntries[i].keys[0].height) {
-          if (controls.selected < 0) {
-            controls.backToMenu.deselect();
-          } else {
-            controls.keyEntries[controls.selected].select(0, true);
-          }
-          controls.keyEntries[i].select(0, false);
-          controls.selected = i;
-          break;
-        } else if (controls.gD.mousePos.x >= controls.keyEntries[i].keys[1].x && controls.gD.mousePos.x <= controls.keyEntries[i].keys[1].x + controls.keyEntries[i].keys[1].width &&
-            controls.gD.mousePos.y >= controls.keyEntries[i].keys[1].y && controls.gD.mousePos.y <= controls.keyEntries[i].keys[1].y + controls.keyEntries[i].keys[1].height) {
-          if (controls.selected < 0) {
-            controls.backToMenu.deselect();
-          } else {
-            controls.keyEntries[controls.selected].select(0, true);
-          }
-          controls.keyEntries[i].select(1, false);
-          controls.selected = i;
-          break;
-        }
-      }
-    }
-    if (controls.gD.mousePos.x >= controls.backToMenu.x && controls.gD.mousePos.x <= controls.backToMenu.x + controls.backToMenu.width &&
-        controls.gD.mousePos.y >= controls.backToMenu.y && controls.gD.mousePos.y <= controls.backToMenu.y + controls.backToMenu.height) {
-      if (controls.selected < 0) {
-        controls.backToMenu.deselect();
-      } else {
-        controls.keyEntries[controls.selected].select(0, true);
-      }
-      controls.backToMenu.select();
-      controls.selected = -1;
-    }
-    drawControls(controls);
-  }
-}
-
-function controlsClick(controls) {
-  if (!controls.newKeyMode) {
-    if (controls.gD.mousePos.x >= controls.backToMenu.x && controls.gD.mousePos.x <= controls.backToMenu.x + controls.backToMenu.width &&
-        controls.gD.mousePos.y >= controls.backToMenu.y && controls.gD.mousePos.y <= controls.backToMenu.y + controls.backToMenu.height) {
-      controls.menu.show();
-      controls.stop();
-    } else if (controls.gD.mousePos.x >= controls.keyEntries[controls.selected].keys[controls.keyEntries[controls.selected].selected].x &&
-        controls.gD.mousePos.x <= controls.keyEntries[controls.selected].keys[controls.keyEntries[controls.selected].selected].x + controls.keyEntries[controls.selected].keys[controls.keyEntries[controls.selected].selected].width &&
-        controls.gD.mousePos.y >= controls.keyEntries[controls.selected].keys[controls.keyEntries[controls.selected].selected].y &&
-        controls.gD.mousePos.y <= controls.keyEntries[controls.selected].keys[controls.keyEntries[controls.selected].selected].y + controls.keyEntries[controls.selected].keys[controls.keyEntries[controls.selected].selected].height) {
-      controls.newKeyMode = true;
-      controls.keyBindings[controls.keyEntries[controls.selected].name][1][controls.keyEntries[controls.selected].selected] = "...";
-      drawControls(controls);
-    }
-  }
-}
-
-function controlsWheel(controls, event) {
-  if (controls.selected >= 0) {
-    if (event.deltaY > 0) {
-      if (controls.selected + 1 < controls.keyEntries.length) {
-        controls.keyEntries[controls.selected].select(0, true);
-        controls.keyEntries[controls.selected + 1].select(controls.keyEntries[controls.selected].selected, false);
-        if (controls.keyEntries[controls.keyEntries.length - 1].y != 260 && controls.keyEntries[controls.selected + 1].y > 220) {
-          controls.vShift((controls.keyEntries[controls.selected + 1].y - 220) / 20);
-        }
-        controls.selected += 1;
-      }
-    } else {
-      if (controls.selected - 1 >= 0) {
-        controls.keyEntries[controls.selected].select(0, true);
-        controls.keyEntries[controls.selected - 1].select(controls.keyEntries[controls.selected].selected, false);
-        if (controls.keyEntryHeadlines[0].y != 60 && controls.keyEntries[controls.selected - 1].y < 100) {
-          controls.vShift((controls.keyEntries[controls.selected - 1].y - 100) / 20);
-        }
-        controls.selected -= 1;
-      }
-    }
-    drawControls(controls);
-  }
 }
