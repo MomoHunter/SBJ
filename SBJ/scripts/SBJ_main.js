@@ -37,7 +37,7 @@ function gameloop(gD, timestamp) {
     }
 
     gD.clear();
-    gD.currentPage.draw();
+    gD.currentPage.draw(gD.lag / gD.refreshrate);
     gD.startTs = timestamp;
   }
 }

@@ -155,7 +155,7 @@ function Menu(gD) {
   /**
    * draws the menu onto the canvas
    */
-  this.draw = function() {
+  this.draw = function(ghostFactor) {
     this.gD.context.drawImage(this.backgroundImage, 0, 0);
 
     this.title.draw(this.gD);

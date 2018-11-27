@@ -81,7 +81,9 @@
       "Backquote": "^",
       "Equal": "´",
       "CapsLock": String.fromCharCode(8681),
-      "Tab": " " + String.fromCharCode(8633) + " "
+      "Tab": " " + String.fromCharCode(8633) + " ",
+      "ControlRight": "Strg R",
+      "ControlLeft": "Strg L"
     };
 
     this.keyEntryHeadlines = [];
@@ -105,7 +107,7 @@
       }
 
       var entry = new ControlEntry(
-        (this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(255, 255, 255, 1)", key, 2
+        (this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(255, 255, 255, 0.7)", key, 2
         );
       entry.init();
       this.keyEntries.push(entry);
@@ -247,7 +249,7 @@
   this.update = function() {
     /* unused */
   };
-  this.draw = function() {
+  this.draw = function(ghostFactor) {
     this.gD.context.drawImage(this.menu.backgroundImage, 0, 0);
 
     this.title.draw(this.gD);
