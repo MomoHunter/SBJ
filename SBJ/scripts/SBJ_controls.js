@@ -418,3 +418,7 @@ function updateControlsSelection(controls, rowIndex, columnIndex, scroll) {
   controls.selectedRowIndex = rowIndex;
   controls.selectedColumnIndex = columnIndex;
 }
+
+function Test1() {
+  this.text = "asdf";
+}

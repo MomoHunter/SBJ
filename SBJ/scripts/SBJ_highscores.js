@@ -1,14 +1,10 @@
 function Highscores(gD, menu) {
   this.gD = gD;
   this.menu = menu;
-  this.backgroundImage = new Image();
-  this.backgroundImage.src = "img/Titlescreen.png";
-  this.highscores = {};
-  this.editingMode = false;
-  this.oldName = "";
-  this.visible = false;
-  this.selected = -1;
   this.init = function() {
+    this.editingMode = false;
+    this.oldName = "";
+    this.selectedRowIndex = -1;
     this.title = new Text(this.gD.canvas.width / 2, 30, "32pt", "Showcard Gothic", "rgba(200, 200, 200, 1)", "center", "middle", "Highscores", 3);
 
     this.highscoreList = new HighscoreList((this.gD.canvas.width / 2) - 300, 60, 600, 20, "rgba(255, 255, 255, 1)", 2);

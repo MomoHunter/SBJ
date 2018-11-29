@@ -109,3 +109,14 @@ function drawLoad(load) {
 
   load.backToMenu.draw(load.gD);
 }
+
+/*var count = 1;
+function LoadNext()
+{
+var newScript = document.createElement("script");
+newScript.setAttribute("type", "text/javascript");
+newScript.setAttribute("src", "basename-" + count++ + ".js");  //Increment the counter so we get the next page each time
+newScript.onload = LoadNext;  //When the script loads call this function again
+document.getElementsByTagName("head")[0].appendChild(newScript)
+}
+LoadNext(); //Load basename-1.js*/
