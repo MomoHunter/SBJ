@@ -64,7 +64,6 @@ function clickEvent(event, gD) {
     "x" : (event.clientX - gD.canvas.offsetLeft),
     "y" : (event.clientY - gD.canvas.offsetTop)
   });
-  console.log(gD.clicks);
 }
 
 function wheelEvent(event, gD) {

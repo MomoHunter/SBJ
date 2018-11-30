@@ -4,11 +4,20 @@ function SaveLoad(gD, menu) {
   this.init = function() {
     this.filesLoaded = 0;
     this.savestates = [];
-    this.savestate = null;
-
-
+    this.saveStateFunctions = [];
+    this.buttons = [];
+    this.selectedRowIndex = -1;
+    this.selectedColumnIndex = 0;
+    this.scrollHeight = 0;
 
     this.loadFile();
+
+    this.title = new Text(this.gD.canvas.width / 2, 30, "32pt", "Showcard Gothic, Impact", "rgba(200, 200, 200, 1)", "center", "middle", "Save / Load", 3);
+
+    this.buttons.push(new Button((this.gD.canvas.width / 2) - 310, this.gD.canvas.height - 50, 200, 30, "15pt", "Showcard Gothic, Impact", "rgba(255, 255, 255, 1)", "Save", "rgba(0, 0, 0, .6)", 2));
+    this.buttons.push(new Button((this.gD.canvas.width / 2) - 100, this.gD.canvas.height - 50, 200, 30, "15pt", "Showcard Gothic, Impact", "rgba(255, 255, 255, 1)", "Main Menu", "rgba(0, 0, 0, .6)", 2));
+    this.buttons.push(new Button((this.gD.canvas.width / 2) + 110, this.gD.canvas.height - 50, 200, 30, "15pt", "Showcard Gothic, Impact", "rgba(255, 255, 255, 1)", "Load", "rgba(0, 0, 0, .6)", 2));
+
   };
   this.loadFile = function() {
     var saveLoad = this;
@@ -29,7 +38,8 @@ function SaveLoad(gD, menu) {
     this.filesLoaded++;
     this.loadFile();
   };
-  this.getSaveStates = function() {
+  this.getSaves = function() {
+    this.savestates = [];
     for (var func in window) {
       if (typeof window[func] === 'function' && func.startsWith('SaveState')) {
         var saveState = new window[func];
@@ -42,13 +52,20 @@ function SaveLoad(gD, menu) {
         this.savestates.splice(pos, 0, saveState);
       }
     }
+    this.savestates.map((state, index) => {
+      this.savestates[index] = new SLSaveState((this.gD.canvas.width / 2) - 310, 60 + (55 * index), 620, 50, "rgba(255, 255, 255, 0.7)", state);
+    }, this);
     console.log(this.savestates);
-    //this.createSaveState();
   };
-  this.createSaveState = function() {
-    var data = b64EncodeUnicode(JSON.stringify(this.gD.save));
-    var savestate = "function SaveState" + this.filesLoaded + "(){this.version='" + this.menu.version.text + "';this.date=" + Date.now() + ";this.data='" + data + "';}";
-    this.downloadSaveState();
+  this.createSaveState = function(name) {
+    var data = [];
+    data[0] = "this.name='" + name "';";
+    data[1] = "this.date=" + Date.now() + ";";
+    data[2] = "this.version='" + this.menu.version.text + "';";
+    data[3] = "this.data='" + b64EncodeUnicode(JSON.stringify(this.gD.save)) + "';";
+    this.downloadSaveState(
+      "function SaveState" + Date.now() + "(){" + data.join('') + "}"
+    );
   };
   this.downloadSaveState = function(savestate) {
     var element = document.createElement('a');
@@ -74,30 +91,56 @@ function SaveLoad(gD, menu) {
   };
   this.draw = function(ghostFactor) {
     this.gD.context.drawImage(this.menu.backgroundImage, 0, 0);
+
+    this.title.draw(this.gD);
+
+    this.savestates.map(state => {
+      var realHeight = state.y - this.scrollHeight;
+      if (realHeight >= 60 && realHeight < 280) {
+        state.draw(this.gD);
+      }
+    }, this);
+
+    this.buttons.map(button => {
+      button.draw(this.gD);
+    }, this);
   };
 }
 
-function SLSaveState(x, y, width, height, color, saveState) {
+function SLSaveState(x, y, width, height, color, savestate) {
   this.x = x;
   this.y = y;
   this.width = width;
   this.height = height;
   this.color = color;
+  this.savestate = savestate;
+  this.selected = false;
   this.borderColor = "rgba(0, 0, 0, 1)";
   this.textColor = "rgba(0, 0, 0, 1)";
-  this.selectedColor = "rgba(50, 200, 80, 1)";
+  this.selectedColor = "rgba(180, 50, 50, 1)";
   this.textAlign = "start";
   this.textBaseline = "middle";
-  this.font = "14pt Consolas";
-  this.saveState = saveState;
+  this.font = "10pt Consolas";
   this.draw = function(gD) {
-    gD.context.fillStyle = this.color;
-    gD.context.fillRect(this.x, this.y, this.width, this.height);
+    var date = new Date(this.savestate.date);
+    date = date.toLocaleString('de-DE', {weekday: 'short'}) + " " + date.toLocaleString('de-DE');
+
+    if (this.selected) {
+      gD.context.fillStyle = this.selectedColor;
+    } else {
+      gD.context.fillStyle = this.color;
+    }
+    gD.context.fillRect(this.x, this.y - this.scrollHeight, this.width, this.height);
     gD.context.fillStyle = this.textColor;
     gD.context.textAlign = this.textAlign;
     gD.context.textBaseline = this.textBaseline;
     gD.context.font = this.font;
-    gD.context.fillText()
+    gD.context.fillText("Name: " + this.savestate.name, this.x + 60, this.y + 10);
+    gD.context.fillText("Date: " + date, this.x + 60, this.y + 25);
+    gD.context.fillText("Version: " + this.savestate.version, this.x + 60, this.y + 40);
+    gD.context.strokeStyle = this.borderColor;
+    gD.context.lineWidth = this.bordersize;
+    gD.context.strokeRect(this.x, this.y - this.scrollHeight, this.width, this.height);
   };
 }
 

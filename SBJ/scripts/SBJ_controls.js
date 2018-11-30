@@ -150,7 +150,7 @@
     }
     this.keyBindings.get(this.newKeyEntry[0])[2][this.newKeyEntry[1]] = key;
     this.newKeyMode = false;
-    this.gD.save.keyBindings = this.keyBindings;
+    this.gD.save.keyBindings = Array.from(this.keyBindings.entries());
   };
   this.updateKeyPresses = function() {
     this.gD.newKeys.map(key => {
@@ -417,8 +417,4 @@ function updateControlsSelection(controls, rowIndex, columnIndex, scroll) {
 
   controls.selectedRowIndex = rowIndex;
   controls.selectedColumnIndex = columnIndex;
-}
-
-function Test1() {
-  this.text = "asdf";
 }

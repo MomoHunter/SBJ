@@ -22,6 +22,8 @@ function Menu(gD) {
     this.highscores.init();*/
     this.controls = new Controls(this.gD, this);
     this.controls.init();
+    this.saveLoad = new SaveLoad(this.gD, this);
+    this.saveLoad.init();
 
     this.title = new Text(this.gD.canvas.width / 2, 100, "40pt", "Showcard Gothic, Impact", "rgba(200, 200, 200, 1)", "center", "middle", "Super Block Jump", 3);
     this.version = new Text(this.gD.canvas.width - 5, this.gD.canvas.height - 5, "10pt", "Consolas", "rgba(255, 255, 255, 1)", "right", "alphabetic", "v3.0.0", 0);
@@ -30,15 +32,15 @@ function Menu(gD) {
 
     this.buttonStartTop = 150;
     this.buttonHeight = 30;
-    this.buttonFullWidth = 570;
+    this.buttonFullWidth = 300;
     this.buttonPadding = 6;
     this.buttonStartLeft = (this.gD.canvas.width / 2) - (this.buttonFullWidth / 2);
 
     this.buttonDefinitions = [
       [ { text: "Play", link: this.selectionScreen } ],
-      [ { text: "Shop", link: this.shop }, { text: "Controls", link: this.controls } ],
-      [ { text: "Save", link: this.save }, { text: "Load", link: this.load } ],
-      [ { text: "Highscores", link: this.highscores }, { text: "Achievements", link: this.achievements }, { text: "Statistics", link: this.statistics } ],
+      [ { text: "Shop", link: this.shop } ], //{ text: "Controls", link: this.controls } ],
+      [ { text: "Save / Load", link: this.saveLoad } ], //{ text: "Load", link: this.load } ],
+      [ { text: "Controls", link: this.controls } ], //{ text: "Achievements", link: this.achievements }, { text: "Statistics", link: this.statistics } ],
       [ { text: "Exit", link: null } ]
     ];
 
@@ -76,12 +78,12 @@ function Menu(gD) {
     var columnIndex = this.selectedColumnIndex;
 
     this.gD.newKeys.map(key => {
-      if (keyB["Menu_NavDown"][2].includes(key)) {
+      if (keyB.get("Menu_NavDown")[2].includes(key)) {
         rowIndex = (rowIndex + 1) % this.buttonDefinitions.length;
         if (this.buttonDefinitions[rowIndex].length === 1) {
           columnIndex = 0;
         }
-      } else if (keyB["Menu_NavUp"][2].includes(key)) {
+      } else if (keyB.get("Menu_NavUp")[2].includes(key)) {
         rowIndex -= 1;
         if (rowIndex < 0) {
           rowIndex = this.buttonDefinitions.length - 1;
@@ -89,9 +91,9 @@ function Menu(gD) {
         if (this.buttonDefinitions[rowIndex].length === 1) {
           columnIndex = 0;
         }
-      } else if (keyB["Menu_NavRight"][2].includes(key)) {
+      } else if (keyB.get("Menu_NavRight")[2].includes(key)) {
         columnIndex = (columnIndex + 1) % this.buttonDefinitions[rowIndex].length;
-      } else if (keyB["Menu_NavLeft"][2].includes(key)) {
+      } else if (keyB.get("Menu_NavLeft")[2].includes(key)) {
         columnIndex -= 1;
         if (columnIndex < 0) {
           columnIndex = this.buttonDefinitions[rowIndex].length - 1;
@@ -100,7 +102,7 @@ function Menu(gD) {
 
       updateSelection(this, rowIndex, columnIndex);
 
-      if (keyB["Menu_Confirm"][2].includes(key)) {
+      if (keyB.get("Menu_Confirm")[2].includes(key)) {
         callSelectedLink(this, this.gD);
       }
     });
