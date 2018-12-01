@@ -59,7 +59,7 @@ function SaveLoad(gD, menu) {
   };
   this.createSaveState = function(name) {
     var data = [];
-    data[0] = "this.name='" + name "';";
+    data[0] = "this.name='" + name + "';";
     data[1] = "this.date=" + Date.now() + ";";
     data[2] = "this.version='" + this.menu.version.text + "';";
     data[3] = "this.data='" + b64EncodeUnicode(JSON.stringify(this.gD.save)) + "';";
