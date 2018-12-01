@@ -47,7 +47,7 @@ function Menu(gD) {
     this.buttons = this.buttonDefinitions.map((rowButtons, rowIndex) => {
       var buttonWidth = (this.buttonFullWidth - (rowButtons.length - 1) * this.buttonPadding) / rowButtons.length;
       return rowButtons.map((button, columnIndex) => {
-        return new Button(
+        return new MenuButton(
           this.buttonStartLeft + (buttonWidth + this.buttonPadding) * columnIndex,
           this.buttonStartTop + (this.buttonHeight + this.buttonPadding) * rowIndex,
           buttonWidth, this.buttonHeight,

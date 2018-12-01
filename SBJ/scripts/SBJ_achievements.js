@@ -52,7 +52,7 @@
 
     this.description = new AchievementDescription(this.gD.canvas.width / 2, 60, 300, 230, "12pt", "Consolas", "rgba(200, 150, 150, 1)", "rgba(1,1,1,1)", 2);
 
-    this.backToMenu = new Button((this.gD.canvas.width / 2) - 100, this.gD.canvas.height - 50, 200, 30, "15pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Main Menu", "rgba(0, 0, 0, .6)", 2);
+    this.backToMenu = new MenuButton((this.gD.canvas.width / 2) - 100, this.gD.canvas.height - 50, 200, 30, "15pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Main Menu", "rgba(0, 0, 0, .6)", 2);
     this.achievementList.achievements[this.selected].select(this);
   };
   this.clear = function() {
