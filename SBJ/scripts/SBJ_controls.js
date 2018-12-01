@@ -94,7 +94,7 @@
     this.oldKey = undefined;
     this.newKeyEntry = [];
 
-    this.title = new Text(this.gD.canvas.width / 2, 30, "32pt", "Showcard Gothic, Impact", "rgba(200, 200, 200, 1)", "center", "middle", "Controls", 3);
+    this.title = new CanvasText(this.gD.canvas.width / 2, 30, "32pt", "Showcard Gothic, Impact", "rgba(200, 200, 200, 1)", "center", "middle", "Controls", 3);
 
     var headline = "";
 

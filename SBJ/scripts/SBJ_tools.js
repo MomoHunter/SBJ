@@ -1,4 +1,4 @@
-function Text(x, y, size, family, color, textAlign, textBaseline, text, bordersize) {
+function CanvasText(x, y, size, family, color, textAlign, textBaseline, text, bordersize) {
   this.x = x;
   this.y = y;
   this.size = size;
@@ -35,10 +35,10 @@ function Text(x, y, size, family, color, textAlign, textBaseline, text, bordersi
  * @param borderSize {number|undefined} If > 0, add an black border around the text with this size as its thickness.
  * @constructor
  */
-function CanvasText(x, y, size, family, color, textAlign, textBaseline, text, borderSize) {
+/*function CanvasText(x, y, size, family, color, textAlign, textBaseline, text, borderSize) {
   // TODO: refactor all the places using Text to CanvasText
   return new Text(x, y, size, family, color, textAlign, textBaseline, text, borderSize);
-}
+}*/
 
 /**
  * An Image which should be drawn onto the canvas. Image can be changed dynamically.
