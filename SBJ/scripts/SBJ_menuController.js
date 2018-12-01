@@ -171,3 +171,63 @@ function MenuTextButton(x, y, width, height, size, family, color, text, textcolo
     gD.context.strokeRect(this.x, this.y, this.width, this.height);
   };
 }
+
+/**
+ * Represents a Button with an Image on a menu-screen which can be clicked or selected via the keyboard.
+ * @param x {number} x-Coordinate of the top left corner
+ * @param y {number} y-Coordinate of the top left corner
+ * @param width {number}
+ * @param height {number}
+ * @param color {string} background-color of the button when it is not selected
+ * @param spriteKey {string} under which key in the gD the sprite for this button's image can be found
+ * @param bordersize {number}
+ * @param link {Function|null} what should be executed once the button is pressed
+ * @param data {object|null} data to be accessible when this button is selected
+ * @constructor
+ */
+function MenuImageButton(x, y, width, height, color, spriteKey, bordersize, link = null, data = null) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.padding = bordersize * 2;
+  this.color = color;
+  this.spriteKey = spriteKey;
+  this.bordersize = bordersize;
+  this.link = link;
+  this.data = data;
+  this.selected = false;
+  this.select = function() {
+    this.selected = true;
+  };
+  this.deselect = function() {
+    this.selected = false;
+  };
+  this.callLink = function(gD) {
+    if (this.link) {
+      this.link(gD);
+    }
+  };
+  this.draw = function(gD) {
+    var [spriteX, spriteY, spriteWidth, spriteHeight] = gD.spriteDict[this.spriteKey];
+
+    if (this.selected) {
+      gD.context.fillStyle = "rgba(180, 50, 50, 1)";
+    } else {
+      gD.context.fillStyle = this.color;
+    }
+    gD.context.fillRect(this.x, this.y, this.width, this.height);
+
+    gD.context.drawImage(
+      gD.spritesheet,
+      spriteX, spriteY,
+      spriteWidth, spriteHeight,
+      this.x + this.padding, this.y + this.padding,
+      this.width - this.padding*2, this.height - this.padding*2
+    );
+
+    gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
+    gD.context.lineWidth = this.bordersize;
+    gD.context.strokeRect(this.x, this.y, this.width, this.height);
+  };
+}

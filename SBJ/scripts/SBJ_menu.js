@@ -28,7 +28,6 @@ function Menu(gD) {
     this.title = new Text(this.gD.canvas.width / 2, 100, "40pt", "Showcard Gothic, Impact", "rgba(200, 200, 200, 1)", "center", "middle", "Super Block Jump", 3);
     this.version = new Text(this.gD.canvas.width - 5, this.gD.canvas.height - 5, "10pt", "Consolas", "rgba(255, 255, 255, 1)", "right", "alphabetic", "v3.0.0", 0);
     this.pressButton = new Text(this.gD.canvas.width / 2, 280, "15pt", "Showcard Gothic, Impact", "rgba(200, 200, 200, 1)", "center", "middle", "Dr" + String.fromCharCode(220) + "cke eine beliebige Taste", 1.5);
-    this.muteButton = new MenuMuteButton(this.gD.canvas.width - 40, 10, 30, 30, "rgba(255, 255, 255, 1)", 2);
 
     this.buttonStartTop = 150;
     this.buttonHeight = 30;
@@ -85,6 +84,14 @@ function Menu(gD) {
       }, this);
     }, this);
 
+    buttons.push([
+      new MenuImageButton(
+        this.gD.canvas.width - 40, 10, 30, 30,
+        "rgba(255, 255, 255, 1)", "Icon_Mute", 2,
+        (gD) => { gD.muted = !gD.muted }
+      )
+    ]);
+
     this.menuController = new MenuController(gD);
     this.menuController.init(buttons);
 
@@ -120,12 +127,7 @@ function Menu(gD) {
     if (!this.closedTitlescreen) {
       this.closedTitlescreen = true;
     } else {
-      if (clickPos.x >= this.muteButton.x && clickPos.x <= this.muteButton.x + this.muteButton.width &&
-                 clickPos.y >= this.muteButton.y && clickPos.y <= this.muteButton.y + this.muteButton.height) { // = mouse over mute button
-        this.gD.muted = !this.gD.muted;
-      } else {
-        this.menuController.updateClick(clickPos);
-      }
+      this.menuController.updateClick(clickPos);
     }
   };
   /**
@@ -153,34 +155,12 @@ function Menu(gD) {
       this.pressButton.draw(this.gD);
     } else {
       this.menuController.draw(this.gD);
-      this.muteButton.draw(this.gD);
-    }
-  };
-}
-
-
-function MenuMuteButton(x, y, width, height, color, bordersize) {
-  this.x = x;
-  this.y = y;
-  this.width = width;
-  this.height = height;
-  this.color = color;
-  this.bordersize = bordersize;
-  this.strokeStyle = "rgba(0, 0, 0, 1)";
-  this.draw = function(gD) {
-    var spriteRef = gD.spriteDict["Icon_Mute"];
-    gD.context.fillStyle = this.color;
-    gD.context.fillRect(this.x, this.y, this.width, this.height);
-    gD.context.drawImage(gD.spritesheet, spriteRef[0], spriteRef[1], spriteRef[2], spriteRef[3],
-      this.x + ((this.width - spriteRef[2]) / 2), this.y + ((this.height - spriteRef[3]) / 2), spriteRef[2], spriteRef[3]);
-    gD.context.strokeStyle = this.strokeStyle;
-    gD.context.lineWidth = this.bordersize;
-    gD.context.strokeRect(this.x, this.y, this.width, this.height);
-    if (gD.muted) {
-      gD.context.beginPath();
-      gD.context.moveTo(this.x, this.y + this.height);
-      gD.context.lineTo(this.x + this.width, this.y);
-      gD.context.stroke();
+      if (gD.muted) {
+        gD.context.beginPath();
+        gD.context.moveTo(this.gD.canvas.width - 40, 10);
+        gD.context.lineTo(this.gD.canvas.width - 40 + 30, 10 + 30);
+        gD.context.stroke();
+      }
     }
   };
 }
