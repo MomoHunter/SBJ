@@ -18,6 +18,7 @@ function SaveLoad(gD, menu) {
     this.buttons.push(new Button((this.gD.canvas.width / 2) - 100, this.gD.canvas.height - 50, 200, 30, "15pt", "Showcard Gothic, Impact", "rgba(255, 255, 255, 1)", "Main Menu", "rgba(0, 0, 0, .6)", 2));
     this.buttons.push(new Button((this.gD.canvas.width / 2) + 110, this.gD.canvas.height - 50, 200, 30, "15pt", "Showcard Gothic, Impact", "rgba(255, 255, 255, 1)", "Load", "rgba(0, 0, 0, .6)", 2));
 
+    this.refreshButton = new SLRefreshButton(this.gD.canvas.width - 40, 10, 30, 30, "rgba(255, 255, 255, 1)", 2);
   };
   this.loadFile = function() {
     var saveLoad = this;
@@ -30,7 +31,7 @@ function SaveLoad(gD, menu) {
     };
     newScript.onerror = function(e) {
       console.log(saveLoad.filesLoaded + " savestates have been loaded!");
-      saveLoad.getSaveStates();
+      saveLoad.getSaves();
     };
     document.body.appendChild(newScript);
   };
@@ -59,7 +60,7 @@ function SaveLoad(gD, menu) {
   };
   this.createSaveState = function(name) {
     var data = [];
-    data[0] = "this.name='" + name "';";
+    data[0] = "this.name='" + name + "';";
     data[1] = "this.date=" + Date.now() + ";";
     data[2] = "this.version='" + this.menu.version.text + "';";
     data[3] = "this.data='" + b64EncodeUnicode(JSON.stringify(this.gD.save)) + "';";
@@ -104,6 +105,8 @@ function SaveLoad(gD, menu) {
     this.buttons.map(button => {
       button.draw(this.gD);
     }, this);
+
+    this.refreshButton.draw(this.gD);
   };
 }
 
@@ -141,6 +144,26 @@ function SLSaveState(x, y, width, height, color, savestate) {
     gD.context.strokeStyle = this.borderColor;
     gD.context.lineWidth = this.bordersize;
     gD.context.strokeRect(this.x, this.y - this.scrollHeight, this.width, this.height);
+  };
+}
+
+function SLRefreshButton(x, y, width, height, color, bordersize)  {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.color = color;
+  this.bordersize = bordersize;
+  this.borderColor = "rgba(0, 0, 0, 1)";
+  this.draw = function(gD) {
+    var spriteRef = gD.spriteDict["Icon_Refresh"];
+    gD.context.fillStyle = this.color;
+    gD.context.fillRect(this.x, this.y, this.width, this.height);
+    gD.context.drawImage(gD.spritesheet, spriteRef[0], spriteRef[1], spriteRef[2], spriteRef[3],
+      this.x + ((this.width - spriteRef[2]) / 2), this.y + ((this.height - spriteRef[3]) / 2), spriteRef[2], spriteRef[3]);
+    gD.context.strokeStyle = this.borderColor;
+    gD.context.lineWidth = this.bordersize;
+    gD.context.strokeRect(this.x, this.y, this.width, this.height);
   };
 }
 

@@ -272,6 +272,7 @@ function GlobalDict() {
 	"Deco_Bubble_2": [845, 22, 3, 3],
 	"Icon_Mute": [857, 1, 24, 22],
 	"Icon_Statistics": [857, 32, 26, 20],
+  "Icon_Refresh": [857, 63, 26, 27],
 	"Icon_KeyShort": [888, 1, 16, 17],
 	"Icon_KeyLong": [888, 22, 68, 17]
   };
