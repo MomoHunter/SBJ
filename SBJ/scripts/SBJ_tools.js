@@ -23,6 +23,83 @@ function Text(x, y, size, family, color, textAlign, textBaseline, text, bordersi
 }
 
 /**
+ * A Text which should be drawn onto the canvas.
+ * @param x {number} x-coordinate of the top-left corner of the text on the canvas
+ * @param y {number} y-coordinate of the top-left corner of the text on the canvas
+ * @param size {string} size of the button's text font (i.e. `15pt`)
+ * @param family {string} font-family of the button's text
+ * @param color {string} background-color of the button when it is not selected
+ * @param textAlign {string} How to align the Text vertically. "left" || "right" || "center" || "start" || "end"
+ * @param textBaseline {string} How to align the Text horizontally. "top" || "hanging" || "middle" || "alphabetic" || "ideographic" || "bottom"
+ * @param text {string}
+ * @param borderSize {number|undefined} If > 0, add an black border around the text with this size as its thickness.
+ * @constructor
+ */
+function CanvasText(x, y, size, family, color, textAlign, textBaseline, text, borderSize) {
+  // TODO: refactor all the places using Text to CanvasText
+  return new Text(x, y, size, family, color, textAlign, textBaseline, text, borderSize);
+}
+
+/**
+ * An Image which should be drawn onto the canvas. Image can be changed dynamically.
+ * @param x {number} x-coordinate of the top-left corner of the image on the canvas
+ * @param y {number} y-coordinate of the top-left corner of the image on the canvas
+ * @param width {number} width of the image on the canvas
+ * @param height {number} height of the image on the canvas
+ * @param spriteKey {string|null} key to determine which data from gD.spriteDict should be used. If null, no image is drawn.
+ * @constructor
+ */
+function CanvasImage(x, y, width, height, spriteKey = null) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.spriteKey = spriteKey;
+  this.draw = function(gD) {
+    if (this.spriteKey == null) {
+      return
+    }
+
+    var [spriteX, spriteY, spriteWidth, spriteHeight] = gD.spriteDict[this.spriteKey];
+    gD.context.drawImage(
+      gD.spritesheet,
+      spriteX, spriteY,
+      spriteWidth, spriteHeight,
+      this.x, this.y,
+      this.width, this.height
+    );
+  };
+}
+
+/**
+ * A filled Rectangle which should be drawn onto the canvas.
+ * @param x {number} x-coordinate of the top-left corner of the image on the canvas
+ * @param y {number} y-coordinate of the top-left corner of the image on the canvas
+ * @param width {number} width of the image on the canvas
+ * @param height {number} height of the image on the canvas
+ * @param backgroundColor {string}
+ * @param borderColor {string}
+ * @param borderSize {number}
+ * @constructor
+ */
+function CanvasRect(x, y, width, height, backgroundColor, borderColor, borderSize) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.backgroundColor = backgroundColor;
+  this.borderColor = borderColor;
+  this.bordersize = borderSize;
+  this.draw = function(gD) {
+    gD.context.fillStyle = this.backgroundColor;
+    gD.context.fillRect(this.x, this.y, this.width, this.height);
+    gD.context.strokeStyle = this.borderColor;
+    gD.context.lineWidth = this.borderSize;
+    gD.context.strokeRect(this.x, this.y, this.width, this.height);
+  };
+}
+
+/**
  * 
  */
 function ScrollBar(x, y, height, elementHeight, elements, color) {
