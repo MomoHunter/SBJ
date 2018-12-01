@@ -18,7 +18,7 @@
   this.costFactors = [1.15, 1.55];                           //defines the multiplicators for the down- and upgrades of the items
   this.shiftFactor = 0;
   this.init = function() {
-    this.title = new Text(this.gD.canvas.width / 2, 30, "32pt", "Showcard Gothic", "rgba(200, 200, 200, 1)", "center", "middle", "Shop", 3);
+    this.title = new CanvasText(this.gD.canvas.width / 2, 30, "32pt", "Showcard Gothic", "rgba(200, 200, 200, 1)", "center", "middle", "Shop", 3);
 
     this.money = new ShopMoney(this.gD.canvas.width - 215, 0, 200, 30, "20pt", "Consolas", "rgba(220, 255, 220, 1)", "rgba(0, 0, 0, 1)", 2);
 

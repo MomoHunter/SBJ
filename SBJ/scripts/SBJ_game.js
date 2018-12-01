@@ -21,7 +21,7 @@ function Game(gD, menu) {
     this.objects = [];
     this.objects.push(new GameObject(randomBetween(30000, 40000), randomBetween(50, 300),
       this.gD.spriteDict["Item_GoldenShamrock_0"][2], this.gD.spriteDict["Item_GoldenShamrock_0"][3],
-      "Item_GoldenShamrock", 1);
+      "Item_GoldenShamrock", 1));
 
     this.floorObjects = [new GameFloor(0, this.gD.canvas.height - 50.5, this.gD.canvas.width + 100, "Floor_Standard")];
 
@@ -633,7 +633,7 @@ function GameModal(x, y, width, height, color) {
   this.color = color;
   this.selected = 0;
   this.init = function(game, gD) {
-    this.title = new Text(this.gD.canvas.width / 2, this.gD.canvas.height / 2 - 60, "30pt", "Consolas", "rgba(200, 200, 200, 1)", "center", "middle", "YOU DIED", 0);
+    this.title = new CanvasText(this.gD.canvas.width / 2, this.gD.canvas.height / 2 - 60, "30pt", "Consolas", "rgba(200, 200, 200, 1)", "center", "middle", "YOU DIED", 0);
   };
   this.draw = function(game, gD) {
     this.title.draw(gD);

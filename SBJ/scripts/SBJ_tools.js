@@ -1,27 +1,3 @@
-function CanvasText(x, y, size, family, color, textAlign, textBaseline, text, bordersize) {
-  this.x = x;
-  this.y = y;
-  this.size = size;
-  this.family = family;
-  this.color = color;
-  this.textAlign = textAlign;
-  this.textBaseline = textBaseline;
-  this.text = text;
-  this.bordersize = bordersize;
-  this.draw = function(gD) {
-    gD.context.textAlign = this.textAlign;
-    gD.context.textBaseline = this.textBaseline;
-    gD.context.font = this.size + " " + this.family;
-    gD.context.fillStyle = this.color;
-    gD.context.fillText(this.text, this.x, this.y);
-    if (this.bordersize > 0) {
-      gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
-      gD.context.lineWidth = this.bordersize;
-      gD.context.strokeText(this.text, this.x, this.y);
-    }
-  };
-}
-
 /**
  * A Text which should be drawn onto the canvas.
  * @param x {number} x-coordinate of the top-left corner of the text on the canvas
@@ -35,10 +11,29 @@ function CanvasText(x, y, size, family, color, textAlign, textBaseline, text, bo
  * @param borderSize {number|undefined} If > 0, add an black border around the text with this size as its thickness.
  * @constructor
  */
-/*function CanvasText(x, y, size, family, color, textAlign, textBaseline, text, borderSize) {
-  // TODO: refactor all the places using Text to CanvasText
-  return new Text(x, y, size, family, color, textAlign, textBaseline, text, borderSize);
-}*/
+function CanvasText(x, y, size, family, color, textAlign, textBaseline, text, borderSize) {
+  this.x = x;
+  this.y = y;
+  this.size = size;
+  this.family = family;
+  this.color = color;
+  this.textAlign = textAlign;
+  this.textBaseline = textBaseline;
+  this.text = text;
+  this.borderSize = borderSize;
+  this.draw = function(gD) {
+    gD.context.textAlign = this.textAlign;
+    gD.context.textBaseline = this.textBaseline;
+    gD.context.font = this.size + " " + this.family;
+    gD.context.fillStyle = this.color;
+    gD.context.fillText(this.text, this.x, this.y);
+    if (this.bordersize > 0) {
+      gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
+      gD.context.lineWidth = this.borderSize;
+      gD.context.strokeText(this.text, this.x, this.y);
+    }
+  };
+}
 
 /**
  * An Image which should be drawn onto the canvas. Image can be changed dynamically.

@@ -5,7 +5,7 @@ function Highscores(gD, menu) {
     this.editingMode = false;
     this.oldName = "";
     this.selectedRowIndex = -1;
-    this.title = new Text(this.gD.canvas.width / 2, 30, "32pt", "Showcard Gothic", "rgba(200, 200, 200, 1)", "center", "middle", "Highscores", 3);
+    this.title = new CanvasText(this.gD.canvas.width / 2, 30, "32pt", "Showcard Gothic", "rgba(200, 200, 200, 1)", "center", "middle", "Highscores", 3);
 
     this.highscoreList = new HighscoreList((this.gD.canvas.width / 2) - 300, 60, 600, 20, "rgba(255, 255, 255, 1)", 2);
 

@@ -6,7 +6,7 @@
   this.visible = false;
   this.page = 1;
   this.init = function() {
-    this.title = new Text(this.gD.canvas.width / 2, 30, "32pt", "Showcard Gothic", "rgba(200, 200, 200, 1)", "center", "middle", "Select Your Character", 3);
+    this.title = new CanvasText(this.gD.canvas.width / 2, 30, "32pt", "Showcard Gothic", "rgba(200, 200, 200, 1)", "center", "middle", "Select Your Character", 3);
     this.modal = new SelectionScreenModal(0, 0, this.gD.canvas.width, this.gD.canvas.height, "rgba(0, 0, 0, .5)");
     this.modal.player.push(new SelectionScreenImage(this.gD.canvas.width / 2 - 135, this.gD.canvas.height - 45, 30, 30, "Player1", 1, [], ["Doppel Sprung"], 2));
     this.modal.player.push(new SelectionScreenImage(this.gD.canvas.width / 2 - 95, this.gD.canvas.height - 45, 30, 30, "Player2", 2, ["Freischaltbar im Shop"], ["Doppel Sprung", "1.5x höhere Sprungkraft"], 2));

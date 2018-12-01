@@ -5,9 +5,9 @@ function Save(gD, menu) {
   this.backgroundImage.src = "img/Titlescreen.png";
   this.visible = false;
   this.init = function() {
-    this.title = new Text(this.gD.canvas.width / 2, 30, "32pt", "Showcard Gothic", "rgba(200, 200, 200, 1)", "center", "middle", "Save", 3);
+    this.title = new CanvasText(this.gD.canvas.width / 2, 30, "32pt", "Showcard Gothic", "rgba(200, 200, 200, 1)", "center", "middle", "Save", 3);
 
-    this.text = new Text(this.gD.canvas.width / 2, this.gD.canvas.height / 2, "15pt", "Showcard Gothic", "rgba(200, 200, 200, 1)", "center", "middle", "", 1.5);
+    this.text = new CanvasText(this.gD.canvas.width / 2, this.gD.canvas.height / 2, "15pt", "Showcard Gothic", "rgba(200, 200, 200, 1)", "center", "middle", "", 1.5);
 
     this.backToMenu = new MenuTextButton((this.gD.canvas.width / 2) - 100, this.gD.canvas.height - 50, 200, 30, "15pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Main Menu", "rgba(0, 0, 0, .6)", 2);
     this.backToMenu.select();
