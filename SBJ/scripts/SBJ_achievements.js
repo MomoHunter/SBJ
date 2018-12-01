@@ -3,433 +3,225 @@
   this.menu = menu;
   this.backgroundImage = new Image();
   this.backgroundImage.src = "img/Titlescreen.png";
-  this.visible = false;
-  this.selected = 0;
   this.achievementDict = {
-    "A1" : ["Haste mal n Hype?", "Sammle den ersten Hype", 1],
-    "A2" : ["Gold!? Ich bin reich!!!", "Sammle die erste Schatztruhe", 1],
-    "A3" : ["Er kann fliegen", "Entdecke den Doppelsprung", 1],
-    "A4" : ["$$$$", "Sammle den ersten 1000 Hype Schein", 1],
-    "A5" : ["Von allem etwas", "Benutze jedes Item einmal in einer Runde", 6],
-    "A6" : ["Matrix", "Benutze 5 Stoppuhren in einer Runde", 5],
-    "A7" : ["Unverwundbar", "Benutze 5 Sterne in einer Runde", 5],
-    "A8" : ["Federleicht", "Benutze 5 Federn in einer Runde", 5],
-    "A9" : ["Lucky No5", "Benutze 5 Schatzkisten in einer Runde", 5],
-    "A10" : ["Supermagnet", "Benutze 5 Magnete in einer Runde", 5],
-    "A11" : ["Rocketboy", "Benutze 5 Raketen in einer Runde", 5],
-    "A12" : ["Infinite Power", "Benutze alle Items gleichzeitig", 6],
-    "A13" : ["Verlangsamung", "Verlangsame die Zeit für insgesamt eine Stunde oder 3.600 Sekunden", 3600],
-    "A14" : ["Outta Space", "Verlasse 100 Mal die Spielfläche", 100],
-    "A15" : ["Tagelöhner", "Sammle 100 Hype in einer Runde", 100],
-    "A16" : ["Ein neuer PC", "Sammle 2.000 Hype in einer Runde", 2000],
-    "A17" : ["It's over 9000!!", "Sammle 9.001 Hype in einer Runde", 9001],
-    "A18" : ["24K Magic", "Sammle 24.000 Hype in einer Runde", 24000],
-    "A19" : ["1000m Sprint", "Lege eine Distanz von 1.000m in einer Runde zurück", 1000],
-    "A20" : ["5Km Rennen", "Lege eine Distanz von 5.000m in einer Runde zurück", 5000],
-    "A21" : ["Ausdauerprofi", "Lege eine Distanz von 10.000m in einer Runde zurück", 10000],
-    "A22" : ["Geisterfahrer", "Lege insgesamt 5.000m in die falsche Richtung zurück", 5000],
-    "A23" : ["Flummi", "Springe insgesamt 100.000 Mal", 100000],
-    "A24" : ["In letzter Sekunde", "Setze einen Stern ein, kurz bevor du die Lava berührst", 1],
-    "A25" : ["Upgrade", "Level ein Item", 1],
-    "A26" : ["To the Max", "Level eine Sache auf das Maximum", 1],
-    "A27" : ["Maximize", "Level alles auf das Maximum", 5],
-    "A28" : ["YOU DIED", "Sterbe 1.000 Mal", 1000],
-    "A29" : ["Gutverdiener", "Sammle insgesamt 1.000.000 Hype", 1000000],
-    "A30" : ["Endlich reich", "Besitze 1.000.000 Hype", 1000000],
-    "A31" : ["I would walk 500 Miles", "Lege eine gesamte Distanz von 804.672m zurück", 804672],
-    "A32" : ["Glücksbringer", "Sammle das erste goldene Kleeblatt", 1],
-    "A33" : ["Wow, so viel Glück", "Sammle 25 goldene Kleeblätter", 25],
-    "A34" : ["50:50", "Sammle 50 goldene Kleeblätter", 50],
-    "A35" : ["Für immer Glück", "Sammle 100 goldene Kleeblätter", 100],
-    "A36" : ["Achievementhunter", "Sammle alle anderen Achievements", 35]
+    "A1" :  ["Haste mal n Hype?", ["Sammle den ersten Hype", ""], 1],
+    "A2" :  ["Gold!? Ich bin reich!!!", ["Sammle die erste Schatztruhe", ""], 1],
+    "A3" :  ["Er kann fliegen", ["Entdecke den Doppelsprung", ""], 1],
+    "A4" :  ["$$$$", ["Sammle den ersten 1000 Hype Schein", ""], 1],
+    "A5" :  ["Von allem etwas", ["Benutze jedes Item einmal in einer Runde", ""], 6],
+    "A6" :  ["Matrix", ["Benutze 5 Stoppuhren in einer Runde", ""], 5],
+    "A7" :  ["Unverwundbar", ["Benutze 5 Sterne in einer Runde", ""], 5],
+    "A8" :  ["Federleicht", ["Benutze 5 Federn in einer Runde", ""], 5],
+    "A9" :  ["Lucky No5", ["Benutze 5 Schatzkisten in einer Runde", ""], 5],
+    "A10" : ["Supermagnet", ["Benutze 5 Magnete in einer Runde", ""], 5],
+    "A11" : ["Rocketboy", ["Benutze 5 Raketen in einer Runde", ""], 5],
+    "A12" : ["Infinite Power", ["Benutze alle Items gleichzeitig", ""], 6],
+    "A13" : ["Verlangsamung", ["Verlangsame die Zeit für insgesamt", "eine Stunde oder 3.600 Sekunden"], 3600],
+    "A14" : ["Outta Space", ["Verlasse 100 Mal die Spielfläche", ""], 100],
+    "A15" : ["Tagelöhner", ["Sammle 100 Hype in einer Runde", ""], 100],
+    "A16" : ["Ein neuer PC", ["Sammle 2.000 Hype in einer Runde", ""], 2000],
+    "A17" : ["It's over 9000!!", ["Sammle 9.001 Hype in einer Runde", ""], 9001],
+    "A18" : ["24K Magic", ["Sammle 24.000 Hype in einer Runde", ""], 24000],
+    "A19" : ["1000m Sprint", ["Lege eine Distanz von 1.000m", "in einer Runde zurück"], 1000],
+    "A20" : ["5Km Rennen", ["Lege eine Distanz von 5.000m", "in einer Runde zurück"], 5000],
+    "A21" : ["Ausdauerprofi", ["Lege eine Distanz von 10.000m", "in einer Runde zurück"], 10000],
+    "A22" : ["Geisterfahrer", ["Lege insgesamt 5.000m in die", "falsche Richtung zurück"], 5000],
+    "A23" : ["Flummi", ["Springe insgesamt 100.000 Mal", ""], 100000],
+    "A24" : ["In letzter Sekunde", ["Setze einen Stern ein,", "kurz bevor du die Lava berührst"], 1],
+    "A25" : ["Upgrade", ["Level ein Item", ""], 1],
+    "A26" : ["To the Max", ["Level eine Sache auf das Maximum", ""], 1],
+    "A27" : ["Maximize", ["Level alles auf das Maximum", ""], 5],
+    "A28" : ["YOU DIED", ["Sterbe 1.000 Mal", ""], 1000],
+    "A29" : ["Gutverdiener", ["Sammle insgesamt 1.000.000 Hype", ""], 1000000],
+    "A30" : ["Endlich reich", ["Besitze 1.000.000 Hype", ""], 1000000],
+    "A31" : ["I would walk 500 Miles", ["Lege eine gesamte Distanz von", "804.672m zurück"], 804672],
+    "A32" : ["Glücksbringer", ["Sammle das erste goldene Kleeblatt", ""], 1],
+    "A33" : ["Wow, so viel Glück", ["Sammle 25 goldene Kleeblätter", ""], 25],
+    "A34" : ["50:50", ["Sammle 50 goldene Kleeblätter", ""], 50],
+    "A35" : ["Für immer Glück", ["Sammle 100 goldene Kleeblätter", ""], 100],
+    "A36" : ["Achievementhunter", ["Sammle alle anderen Achievements", ""], 35]
   };
   this.achievementValues = new Array(Object.keys(this.achievementDict).length).fill(0);
   this.init = function() {
-    this.title = new Text(this.gD.canvas.width / 2, 30, "32pt", "Showcard Gothic", "rgba(200, 200, 200, 1)", "center", "middle", "Achievements", 3);
+    this.title = new CanvasText(
+      this.gD.canvas.width / 2, 30,
+      "32pt", "Showcard Gothic", "rgba(200, 200, 200, 1)",
+      "center", "middle",
+      "Achievements",
+      3
+    );
 
-    this.achievementList = new AchievementList((this.gD.canvas.width / 2) - 300, 60, 300, 230, "rgba(200, 180, 150, 1)", 2);
-    this.achievementList.init(this);
+    this.buttonStartTop = 70;
+    this.buttonStartLeft = 20;
+    this.buttonHeight = 50;
+    this.buttonWidth = 50;
+    this.buttonPadding = 10;
+    this.buttonsPerRow = 10;
 
-    this.description = new AchievementDescription(this.gD.canvas.width / 2, 60, 300, 230, "12pt", "Consolas", "rgba(200, 150, 150, 1)", "rgba(1,1,1,1)", 2);
+    var achievementList = new Array(Object.keys(this.achievementDict).length)
+      .fill()
+      .map((_, index) => this.achievementDict["A" + (index + 1).toString()] )
+    ;
+    var buttons = achievementList
+      .map((element, index) => {
+        return index % this.buttonsPerRow === 0 ? achievementList.slice(index, index + this.buttonsPerRow) : null;
+      })
+      .filter(element => element != null)
+      .map((rowButtons, rowIndex) => {
+        return rowButtons.map((achievementData, columnIndex) => {
+          return new MenuImageButton(
+            this.buttonStartLeft + (this.buttonWidth + this.buttonPadding) * columnIndex,
+            this.buttonStartTop + (this.buttonHeight + this.buttonPadding) * rowIndex,
+            this.buttonWidth, this.buttonHeight,
+            "rgba(255, 255, 255, 1)",
+            "Item_Star_0"/* TODO: replace with correct key once the sprites are migrated to the new spritesheet */,
+            2,
+            null, [rowIndex * this.buttonsPerRow + columnIndex, ...achievementData]
+          )
+        });
+      })
+    ;
 
-    this.backToMenu = new Button((this.gD.canvas.width / 2) - 100, this.gD.canvas.height - 50, 200, 30, "15pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Main Menu", "rgba(0, 0, 0, .6)", 2);
-    this.achievementList.achievements[this.selected].select(this);
+    var bigAchievementBoxTop = 70;
+    var bigAchievementBoxLeft = this.buttonStartLeft + (this.buttonWidth + this.buttonPadding) * this.buttonsPerRow;
+    var bigAchievementBoxWidth = this.gD.canvas.width - bigAchievementBoxLeft - this.buttonStartLeft;
+    var bigAchievementBoxCenter = bigAchievementBoxLeft + bigAchievementBoxWidth / 2;
+    var bigAchievementBoxHeight = 230;
+    var bigAchievementBoxPadding = 20;
+    var bigAchievementImageSize = 75;
+    var bigAchievementProgressHeight = 30;
+
+    this.bigAchievementBox = new CanvasRect(
+      bigAchievementBoxLeft, bigAchievementBoxTop,
+      bigAchievementBoxWidth, bigAchievementBoxHeight,
+      "rgba(255, 255, 255, 0.85)", "rgba(0, 0, 0, 0.9)", 2
+    );
+    this.bigAchivementImage = new CanvasImage(
+      bigAchievementBoxLeft + (bigAchievementBoxWidth - bigAchievementImageSize) / 2,
+      bigAchievementBoxTop + bigAchievementBoxPadding,
+      bigAchievementImageSize, bigAchievementImageSize,
+      "Item_Star_0"
+    );
+    this.bigAchivementName = new CanvasText(
+      bigAchievementBoxCenter,
+      bigAchievementBoxTop + bigAchievementImageSize + bigAchievementBoxPadding * 2,
+      "20pt", "Consolas", "rgba(1, 1, 1, 1)",
+      "center", "middle",
+      "Placeholder"
+    );
+    this.bigAchivementDescriptionLine1 = new CanvasText(
+      bigAchievementBoxCenter,
+      bigAchievementBoxTop + bigAchievementImageSize + 17 + bigAchievementBoxPadding * 3,
+      "12pt", "Consolas", "rgba(1, 1, 1, 1)",
+      "center", "middle",
+      "Placeholder"
+    );
+    this.bigAchivementDescriptionLine2 = new CanvasText(
+      bigAchievementBoxCenter,
+      bigAchievementBoxTop + bigAchievementImageSize + 17 + bigAchievementBoxPadding * 3 + 17,
+      "12pt", "Consolas", "rgba(1, 1, 1, 1)",
+      "center", "middle",
+      "Placeholder"
+    );
+    this.bigAchivementProgress = new ProgressBar(
+      bigAchievementBoxLeft + bigAchievementBoxPadding,
+      bigAchievementBoxTop + bigAchievementBoxHeight - bigAchievementBoxPadding - bigAchievementProgressHeight,
+      bigAchievementBoxWidth - bigAchievementBoxPadding * 2, bigAchievementProgressHeight,
+      "12pt", "Consolas",
+      0
+    );
+
+    var backToMenuWidth = 100;
+    var backToMenuHeight = 30;
+    buttons.push([
+      new MenuTextButton(
+        (this.gD.canvas.width - backToMenuWidth) / 2, this.gD.canvas.height - 10 - backToMenuHeight,
+        backToMenuWidth, backToMenuHeight,
+        "15pt", "Showcard Gothic, Impact", "rgba(255, 255, 255, 1)",
+        "back",
+        "rgba(0, 0, 0, .6)", 2,
+        gD => { gD.currentPage = this.menu }
+      )
+    ]);
+
+    this.menuController = new MenuController(gD);
+    this.menuController.init(buttons);
   };
-  this.clear = function() {
-    this.gD.context.clearRect(0, 0, this.gD.canvas.width, this.gD.canvas.height);
+  /**
+   * checks if a button is pressed
+   */
+  this.updateKeyPresses = function() {
+    this.menuController.updateKeyPresses();
   };
-  this.show = function() {
-    if (this.selected >= 0) {
-      this.achievementList.achievements[this.selected].select(this);
+  /**
+   * checks if the mouse was moved
+   */
+  this.updateMouseMoves = function() {
+    this.menuController.updateMouseMoves();
+  };
+  /**
+   * checks if there was a click
+   */
+  this.updateClicks = function() {
+    var clickPos = this.gD.clicks.pop();
+    if (clickPos) {
+      this.menuController.updateClick(clickPos);
     }
-    this.visible = true;
-    drawAchievements(this);
   };
-  this.stop = function() {
-    this.visible = false;
+  /**
+   * checks if the wheel was moved
+   */
+  this.updateWheelMoves = function() {
+    /* unused */
+  };
+  /**
+   * updates moving objects in menu
+   */
+  this.update = function() {
+    var selectedData = this.menuController.getSelectedData();
+    if (selectedData) {
+      var [index, name, [descLine1, descLine2], goal] = selectedData;
+      this.bigAchivementName.text = name;
+      this.bigAchivementDescriptionLine1.text = descLine1;
+      this.bigAchivementDescriptionLine2.text = descLine2;
+      this.bigAchivementProgress.current = this.achievementValues[index];
+      this.bigAchivementProgress.goal = goal;
+    }
+  };
+  /**
+   * draws the screen onto the canvas
+   */
+  this.draw = function(ghostFactor) {
+    this.gD.context.drawImage(this.backgroundImage, 0, 0);
+    this.title.draw(this.gD);
+
+    this.menuController.draw(this.gD);
+
+    this.bigAchievementBox.draw(this.gD);
+    this.bigAchivementImage.draw(this.gD);
+    this.bigAchivementName.draw(this.gD);
+    this.bigAchivementDescriptionLine1.draw(this.gD);
+    this.bigAchivementDescriptionLine2.draw(this.gD);
+    this.bigAchivementProgress.draw(this.gD);
   };
 }
 
-function AchievementList(x, y, width, height, color, bordersize) {
-  this.x = x;
-  this.y = y;
+
+function ProgressBar(x, y, width, height, fontSize, fontFamily, goal) {
   this.width = width;
-  this.height = height;
-  this.color = color;
-  this.bordersize = bordersize;
-  this.achievements = [];
-  this.shiftFactor = 0;
-  this.init = function(achievements) {
-    for (var i = 0; i < Object.keys(achievements.achievementDict).length; i++) {
-      this.achievements.push(new Achievement(this.x + 30 + ((i % 5) * 50), this.y + 20 + (Math.floor(i / 5) * 50), 40, 40, i + 1, 2));
-    }
-  };
-  this.vShift = function(shiftFactor) {
-    for (var i = 0; i < this.achievements.length; i++) {
-      this.achievements[i].y -= shiftFactor * 50;
-    }
-    this.shiftFactor += shiftFactor;
-  };
+  this.goal = goal;
+  this.current = 0;
+  this.text = new CanvasText(
+    x + width / 2, y + height / 2,
+    fontSize, fontFamily, "rgba(0, 0, 0, 0.7)", "center", "middle", ""
+  );
+  this.backgroundRect = new CanvasRect(x, y, width, height, "rgba(200, 200, 200, 0.7)");
+  this.foregroundRect = new CanvasRect(x, y, 0, height, "rgba(0, 129, 57, 0.9)");
   this.draw = function(gD) {
-    gD.context.fillStyle = this.color;
-    gD.context.fillRect(this.x, this.y, this.width, this.height);
-    gD.strokeStyle = "rgba(0, 0, 0, 1)";
-    gD.context.lineWidth = this.bordersize;
-    gD.context.strokeRect(this.x, this.y, this.width, this.height);
-    for (var i = (this.shiftFactor * 5); i < Math.min(20 + (this.shiftFactor * 5), this.achievements.length); i++) {
-      this.achievements[i].draw(gD);
-    }
-    gD.context.lineWidth = 4;
-    gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
-    gD.context.beginPath();
-    gD.context.moveTo(this.x + this.width - 15, this.y + 20 + (((this.shiftFactor * 5) / this.achievements.length) * 190));
-    gD.context.lineTo(this.x + this.width - 15, this.y + 20 + ((Math.min(20 + (this.shiftFactor * 5), this.achievements.length) / this.achievements.length) * 190));
-    gD.context.stroke();
-    gD.context.lineWidth = 1;
-    gD.context.beginPath();
-    gD.context.moveTo(this.x + this.width - 15, this.y + 20);
-    gD.context.lineTo(this.x + this.width - 15, this.y + 210);
-    gD.context.stroke();
+    this.text.text = `${this.current} / ${this.goal}`;
+    this.foregroundRect.width = width * (this.current / this.goal);
+    this.backgroundRect.draw(gD);
+    this.foregroundRect.draw(gD);
+    this.text.draw(gD);
   };
-}
-
-function Achievement(x, y, width, height, achievementNr, bordersize) {
-  this.x = x;
-  this.y = y;
-  this.width = width;
-  this.height = height;
-  this.achievementNr = achievementNr;
-  this.bordersize = bordersize;
-  this.finished = false;
-  this.selected = false;
-  this.check = function(achievements) {
-    if (achievements.achievementValues[this.achievementNr - 1] >= achievements.achievementDict["A" + this.achievementNr][2]) {
-      this.finished = true;
-      achievements.achievementValues[this.achievementNr - 1] = achievements.achievementDict["A" + this.achievementNr][2];
-    }
-    var temp = achievements.achievementList.achievements.reduce(function(a, b){b.finished ? a++ : a; return a;}, 0);
-    if (!achievements.achievementList.achievements[35].finished && achievements.achievementValues[35] < temp) {
-      achievements.achievementValues[35] = temp;
-      achievements.achievementList.achievements[35].check(achievements);
-      if (achievements.achievementList.achievements[35].finished) {
-        achievements.gD.playerUnlocked[5] = true;
-        achievements.gD.save.playerUnlocked = achievements.gD.playerUnlocked;
-      }
-    }
-    achievements.gD.save.achievementValues = achievements.achievementValues;
-  };
-  this.select = function(achievements) {
-    this.selected = true;
-    if (achievements.achievementValues[this.achievementNr - 1] / achievements.achievementDict["A" + this.achievementNr][2] >= 0.5) {
-      achievements.description.newData(achievements.achievementDict["A" + this.achievementNr][0], achievements.achievementDict["A" + this.achievementNr][1],
-        achievements.achievementValues[this.achievementNr - 1], achievements.achievementDict["A" + this.achievementNr][2], "Reward" + this.achievementNr + "B", this.finished);
-    } else {
-      achievements.description.newData(achievements.achievementDict["A" + this.achievementNr][0], "???",
-        achievements.achievementValues[this.achievementNr - 1], achievements.achievementDict["A" + this.achievementNr][2], "Reward" + this.achievementNr + "B", this.finished);
-    }
-  };
-  this.deselect = function() {
-    this.selected = false;
-  };
-  this.draw = function(gD) {
-    gD.context.fillStyle = "rgba(255, 255, 255, 1)";
-    gD.context.fillRect(this.x, this.y, this.width, this.height);
-    if (this.finished) {
-      gD.context.drawImage(gD.spritesheet, gD.spriteDict["Reward" + this.achievementNr][0], gD.spriteDict["Reward" + this.achievementNr][1],
-        gD.spriteDict["Reward" + this.achievementNr][2], gD.spriteDict["Reward" + this.achievementNr][3], this.x + Math.floor((this.width - gD.spriteDict["Reward" + this.achievementNr][2]) / 2),
-        this.y + Math.floor((this.height - gD.spriteDict["Reward" + this.achievementNr][3]) / 2), gD.spriteDict["Reward" + this.achievementNr][2], gD.spriteDict["Reward" + this.achievementNr][3]);
-    }
-    if (this.selected) {
-      gD.context.strokeStyle = "rgba(180, 50, 50, 1)";
-    } else {
-      gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
-    }
-    gD.context.lineWidth = this.bordersize;
-    gD.context.strokeRect(this.x, this.y, this.width, this.height);
-  };
-}
-
-function AchievementDescription(x, y, width, height, size, family, color, textcolor, bordersize) {
-  this.x = x;
-  this.y = y;
-  this.width = width;
-  this.height = height;
-  this.size = size;
-  this.family = family;
-  this.color = color;
-  this.textcolor = textcolor;
-  this.bordersize = bordersize;
-  this.showcase = new DescriptionShowcase(this.x, this.y, 80, 80, 2);
-  this.progressBar = new DescriptionProgressBar(this.x, this.y + this.height - 20, this.width, 20, this.size, this.family, this.bordersize);
-  this.newData = function(title, desc, actual, goal, name, finished) {
-    this.title = title;
-    this.descWords = desc.split(" ");
-    this.progressBar.actual = actual;
-    this.progressBar.goal = goal;
-    this.showcase.name = name;
-    this.showcase.finished = finished;
-  };
-  this.draw = function(gD) {
-    gD.context.fillStyle = this.color;
-    gD.context.fillRect(this.x, this.y, this.width, this.height);
-    gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
-    gD.context.lineWidth = this.bordersize;
-    gD.context.strokeRect(this.x, this.y, this.width, this.height);
-
-    this.showcase.draw(gD);
-    this.progressBar.draw(gD);
-
-    gD.context.textAlign = "start";
-    gD.context.textBaseline = "hanging";
-    gD.context.font = "bold " + this.size + " " + this.family;
-    gD.context.fillStyle = "rgba(0, 0, 0, 1)";
-    gD.context.fillText(this.title, this.x + 90, this.y + 20);
-
-    gD.context.font = this.size + " " + this.family;
-    var text = "";
-    var line = 0;
-    for(var i = 0; i < this.descWords.length; i++) {
-      if (gD.context.measureText(text + this.descWords[i] + " ").width > this.width - 10 - (Math.floor(1.03 - (line * 0.02)) * 80) && line < 8) {
-        gD.context.fillText(text, this.x + 10 + (Math.floor(1.03 - (line * 0.02)) * 80), this.y + 50 + (line * 20));
-        line++;
-        text = this.descWords[i] + " ";
-      } else {
-        text += this.descWords[i] + " ";
-      }
-    }
-    if (text != "" && line < 8) {
-      gD.context.fillText(text, this.x + 10 + (Math.floor(1.03 - (line * 0.02)) * 80), this.y + 50 + (line * 20));
-    }
-  };
-}
-
-function DescriptionShowcase(x, y, width, height, bordersize) {
-  this.x = x;
-  this.y = y;
-  this.width = width;
-  this.height = height;
-  this.name = name;
-  this.bordersize = bordersize;
-  this.draw = function(gD) {
-    gD.context.fillStyle = "rgba(255, 255, 255, 1)";
-    gD.context.fillRect(this.x, this.y, this.width, this.height);
-    if (this.finished) {
-      gD.context.drawImage(gD.spritesheet, gD.spriteDict[this.name][0], gD.spriteDict[this.name][1], gD.spriteDict[this.name][2], gD.spriteDict[this.name][3], 
-        this.x + ((this.width - gD.spriteDict[this.name][2]) / 2), this.y + ((this.height - gD.spriteDict[this.name][3]) / 2), gD.spriteDict[this.name][2], gD.spriteDict[this.name][3]);
-    }
-    gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
-    gD.context.lineWidth = this.bordersize;
-    gD.context.strokeRect(this.x, this.y, this.width, this.height);
-  };
-}
-
-function DescriptionProgressBar(x, y, width, height, size, family, bordersize) {
-  this.x = x;
-  this.y = y;
-  this.width = width;
-  this.height = height;
-  this.size = size;
-  this.family = family;
-  this.bordersize = bordersize;
-  this.draw = function(gD) {
-    gD.context.fillStyle = "rgba(180, 180, 180, 1)";
-    gD.context.fillRect(this.x, this.y, this.width, this.height);
-    gD.context.fillStyle = "rgba(0, 255, 0, 1)";
-    gD.context.fillRect(this.x, this.y, this.width * (this.actual / this.goal), this.height);
-    gD.context.textAlign = "center";
-    gD.context.textBaseline = "middle";
-    gD.context.font = this.size + " " + this.family;
-    gD.context.fillStyle = "rgba(0, 0, 0, 1)";
-
-    var placeholder = "";
-    for(var i = this.actual.toString().length; i < this.goal.toString().length; i++) {
-      placeholder += " ";
-    }
-    gD.context.fillText(placeholder + this.actual.toString() + " / " + this.goal.toString(), this.x + (this.width / 2), this.y + (this.height / 2));
-
-    gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
-    gD.context.lineWidth = this.bordersize;
-    gD.context.strokeRect(this.x, this.y, this.width, this.height);
-  };
-}
-
-function achievementsControlDown(achievements, key) {
-  if (achievements.menu.controls.keyBindings["Achievements1"][2].includes(key)) {                       //navigation down
-    if (achievements.selected < 0) {
-      achievements.backToMenu.deselect();
-      achievements.achievementList.achievements[-(achievements.selected + 1)].select(achievements);
-      achievements.selected = -(achievements.selected + 1);
-      achievements.achievementList.vShift(-achievements.achievementList.shiftFactor);
-    } else if (achievements.selected >= achievements.achievementList.achievements.length - 5) {
-      achievements.achievementList.achievements[achievements.selected].deselect();
-      achievements.backToMenu.select();
-      achievements.selected = -(achievements.selected % 5) - 1;
-    } else {
-      achievements.achievementList.achievements[achievements.selected].deselect();
-      achievements.achievementList.achievements[achievements.selected + 5].select(achievements);
-      achievements.selected += 5;
-      if (achievements.achievementList.achievements[achievements.achievementList.achievements.length - 1].y > 230 && achievements.achievementList.achievements[achievements.selected].y > 180) {
-        achievements.achievementList.vShift(1);
-      }
-    }
-  } else if (achievements.menu.controls.keyBindings["Achievements2"][2].includes(key)) {                //navigation up
-    if (achievements.selected < 0) {
-      achievements.backToMenu.deselect();
-      if (-(achievements.selected + 1) < achievements.achievementList.achievements.length % 5) {
-        achievements.achievementList.achievements[achievements.achievementList.achievements.length - (achievements.achievementList.achievements.length % 5) - (achievements.selected + 1)].select(achievements);
-        achievements.selected = achievements.achievementList.achievements.length - (achievements.achievementList.achievements.length % 5) - (achievements.selected + 1);
-      } else {
-        achievements.achievementList.achievements[achievements.achievementList.achievements.length - (achievements.achievementList.achievements.length % 5) - 5 - (achievements.selected + 1)].select(achievements);
-        achievements.selected = achievements.achievementList.achievements.length - (achievements.achievementList.achievements.length % 5) - 5 - (achievements.selected + 1);
-      }
-      achievements.achievementList.vShift(-achievements.achievementList.shiftFactor);
-      achievements.achievementList.vShift(Math.floor((achievements.achievementList.achievements.length - 16) / 5));
-    } else if (achievements.selected < 5) {
-      achievements.achievementList.achievements[achievements.selected].deselect();
-      achievements.backToMenu.select();
-      achievements.selected = -(achievements.selected + 1);
-    } else {
-      achievements.achievementList.achievements[achievements.selected].deselect();
-      achievements.achievementList.achievements[achievements.selected - 5].select(achievements);
-      achievements.selected -= 5;
-      if (achievements.achievementList.achievements[0].y < 80 && achievements.achievementList.achievements[achievements.selected].y < 130) {
-        achievements.achievementList.vShift(-1);
-      }
-    }
-  } else if (achievements.menu.controls.keyBindings["Achievements3"][2].includes(key)) {                //navigation right
-    if (achievements.selected >= 0) {
-      achievements.achievementList.achievements[achievements.selected].deselect();
-      if (achievements.selected + 1 < achievements.achievementList.achievements.length) {
-        achievements.achievementList.achievements[(Math.floor(achievements.selected / 5) * 5) + ((achievements.selected + 1) % 5)].select(achievements);
-        achievements.selected = (Math.floor(achievements.selected / 5) * 5) + ((achievements.selected + 1) % 5);
-      } else {
-        achievements.achievementList.achievements[Math.floor(achievements.selected / 5) * 5].select(achievements);
-        achievements.selected = Math.floor(achievements.selected / 5) * 5;
-      }
-    }
-  } else if (achievements.menu.controls.keyBindings["Achievements4"][2].includes(key)) {                //navigation left
-    if (achievements.selected >= 0) {
-      achievements.achievementList.achievements[achievements.selected].deselect();
-      if (achievements.selected != Math.floor((achievements.achievementList.achievements.length - 1) / 5) * 5) {
-        achievements.achievementList.achievements[(Math.floor(achievements.selected / 5) * 5) + ((achievements.selected + 4) % 5)].select(achievements);
-        achievements.selected = (Math.floor(achievements.selected / 5) * 5) + ((achievements.selected + 4) % 5);
-      } else {
-        achievements.achievementList.achievements[achievements.achievementList.achievements.length - 1].select(achievements);
-        achievements.selected = achievements.achievementList.achievements.length - 1;
-      }
-    }
-  }
-
-  if (achievements.menu.controls.keyBindings["Achievements5"][2].includes(key)) {                                    //confirm
-    if (achievements.selected < 0) {
-      achievements.menu.show();
-      achievements.stop();
-    }
-  } else if (achievements.menu.controls.keyBindings["Achievements6"][2].includes(key)) {                             //abort
-    achievements.menu.show();
-    achievements.stop();
-  } else {
-    drawAchievements(achievements);
-  }
-}
-
-function achievementsControlUp(achievements, key) {
-
-}
-
-function achievementsMouseMove(achievements) {
-  for (var i = (achievements.achievementList.shiftFactor * 5); i < Math.min(20 + (achievements.achievementList.shiftFactor * 5), achievements.achievementList.achievements.length); i++) {
-    if (achievements.gD.mousePos.x >= achievements.achievementList.achievements[i].x && achievements.gD.mousePos.x <= achievements.achievementList.achievements[i].x + achievements.achievementList.achievements[i].width &&
-        achievements.gD.mousePos.y >= achievements.achievementList.achievements[i].y && achievements.gD.mousePos.y <= achievements.achievementList.achievements[i].y + achievements.achievementList.achievements[i].height) {
-      if (achievements.selected < 0) {
-        achievements.backToMenu.deselect();
-      } else {
-        achievements.achievementList.achievements[achievements.selected].deselect();
-      }
-      achievements.achievementList.achievements[i].select(achievements);
-      achievements.selected = i;
-      break;
-    }
-  }
-
-  if (achievements.gD.mousePos.x >= achievements.backToMenu.x && achievements.gD.mousePos.x <= achievements.backToMenu.x + achievements.backToMenu.width &&
-      achievements.gD.mousePos.y >= achievements.backToMenu.y && achievements.gD.mousePos.y <= achievements.backToMenu.y + achievements.backToMenu.height) {
-    if (achievements.selected < 0) {
-      achievements.backToMenu.deselect();
-    } else {
-      achievements.achievementList.achievements[achievements.selected].deselect();
-    }
-    achievements.backToMenu.select();
-    if (achievements.selected >= 0) {
-      achievements.selected = -((achievements.selected % 5) + 1);
-    }
-  }
-  drawAchievements(achievements);
-}
-
-function achievementsClick(achievements) {
-  if (achievements.selected < 0) {
-    if (achievements.gD.mousePos.x >= achievements.backToMenu.x && achievements.gD.mousePos.x <= achievements.backToMenu.x + achievements.backToMenu.width &&
-        achievements.gD.mousePos.y >= achievements.backToMenu.y && achievements.gD.mousePos.y <= achievements.backToMenu.y + achievements.backToMenu.height) {
-      achievements.menu.show();
-      achievements.stop();
-    }
-  }
-}
-
-function achievementsWheel(achievements, event) {
-  if (achievements.selected >= 0) {
-    if (event.deltaY > 0) {
-      if (achievements.selected + 5 < achievements.achievementList.achievements.length) {
-        achievements.achievementList.achievements[achievements.selected].deselect();
-        achievements.achievementList.achievements[achievements.selected + 5].select(achievements);
-        achievements.selected += 5;
-        if (achievements.achievementList.achievements[achievements.achievementList.achievements.length - 1].y > 230 && achievements.achievementList.achievements[achievements.selected].y > 180) {
-          achievements.achievementList.vShift(1);
-        }
-      }
-    } else {
-      if (achievements.selected - 5 >= 0) {
-        achievements.achievementList.achievements[achievements.selected].deselect();
-        achievements.achievementList.achievements[achievements.selected - 5].select(achievements);
-        achievements.selected -= 5;
-        if (achievements.achievementList.achievements[0].y < 80 && achievements.achievementList.achievements[achievements.selected].y < 130) {
-          achievements.achievementList.vShift(-1);
-        }
-      }
-    }
-    drawAchievements(achievements);
-  }
-}
-
-function drawAchievements(achievements) {
-  achievements.clear();
-
-  achievements.gD.context.drawImage(achievements.backgroundImage, 0, 0);
-
-  achievements.title.draw(achievements.gD);
-  achievements.achievementList.draw(achievements.gD);
-  achievements.description.draw(achievements.gD);
-
-  achievements.backToMenu.draw(achievements.gD);
 }

@@ -14,9 +14,9 @@ function SaveLoad(gD, menu) {
 
     this.title = new Text(this.gD.canvas.width / 2, 30, "32pt", "Showcard Gothic, Impact", "rgba(200, 200, 200, 1)", "center", "middle", "Save / Load", 3);
 
-    this.buttons.push(new Button((this.gD.canvas.width / 2) - 310, this.gD.canvas.height - 50, 200, 30, "15pt", "Showcard Gothic, Impact", "rgba(255, 255, 255, 1)", "Save", "rgba(0, 0, 0, .6)", 2));
-    this.buttons.push(new Button((this.gD.canvas.width / 2) - 100, this.gD.canvas.height - 50, 200, 30, "15pt", "Showcard Gothic, Impact", "rgba(255, 255, 255, 1)", "Main Menu", "rgba(0, 0, 0, .6)", 2));
-    this.buttons.push(new Button((this.gD.canvas.width / 2) + 110, this.gD.canvas.height - 50, 200, 30, "15pt", "Showcard Gothic, Impact", "rgba(255, 255, 255, 1)", "Load", "rgba(0, 0, 0, .6)", 2));
+    this.buttons.push(new MenuTextButton((this.gD.canvas.width / 2) - 310, this.gD.canvas.height - 50, 200, 30, "15pt", "Showcard Gothic, Impact", "rgba(255, 255, 255, 1)", "Save", "rgba(0, 0, 0, .6)", 2));
+    this.buttons.push(new MenuTextButton((this.gD.canvas.width / 2) - 100, this.gD.canvas.height - 50, 200, 30, "15pt", "Showcard Gothic, Impact", "rgba(255, 255, 255, 1)", "Main Menu", "rgba(0, 0, 0, .6)", 2));
+    this.buttons.push(new MenuTextButton((this.gD.canvas.width / 2) + 110, this.gD.canvas.height - 50, 200, 30, "15pt", "Showcard Gothic, Impact", "rgba(255, 255, 255, 1)", "Load", "rgba(0, 0, 0, .6)", 2));
 
     this.refreshButton = new SLRefreshButton(this.gD.canvas.width - 40, 10, 30, 30, "rgba(255, 255, 255, 1)", 2);
   };
@@ -39,7 +39,7 @@ function SaveLoad(gD, menu) {
     this.filesLoaded++;
     this.loadFile();
   };
-  this.getSaves = function() {
+  this.getSaveStates = function() {
     this.savestates = [];
     for (var func in window) {
       if (typeof window[func] === 'function' && func.startsWith('SaveState')) {
