@@ -38,7 +38,7 @@ function SaveLoad(gD, menu) {
     this.filesLoaded++;
     this.loadFile();
   };
-  this.getSaves = function() {
+  this.getSaveStates = function() {
     this.savestates = [];
     for (var func in window) {
       if (typeof window[func] === 'function' && func.startsWith('SaveState')) {
