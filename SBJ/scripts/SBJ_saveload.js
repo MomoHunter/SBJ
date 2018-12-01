@@ -14,9 +14,9 @@ function SaveLoad(gD, menu) {
 
     this.title = new Text(this.gD.canvas.width / 2, 30, "32pt", "Showcard Gothic, Impact", "rgba(200, 200, 200, 1)", "center", "middle", "Save / Load", 3);
 
-    this.buttons.push(new MenuButton((this.gD.canvas.width / 2) - 310, this.gD.canvas.height - 50, 200, 30, "15pt", "Showcard Gothic, Impact", "rgba(255, 255, 255, 1)", "Save", "rgba(0, 0, 0, .6)", 2));
-    this.buttons.push(new MenuButton((this.gD.canvas.width / 2) - 100, this.gD.canvas.height - 50, 200, 30, "15pt", "Showcard Gothic, Impact", "rgba(255, 255, 255, 1)", "Main Menu", "rgba(0, 0, 0, .6)", 2));
-    this.buttons.push(new MenuButton((this.gD.canvas.width / 2) + 110, this.gD.canvas.height - 50, 200, 30, "15pt", "Showcard Gothic, Impact", "rgba(255, 255, 255, 1)", "Load", "rgba(0, 0, 0, .6)", 2));
+    this.buttons.push(new MenuTextButton((this.gD.canvas.width / 2) - 310, this.gD.canvas.height - 50, 200, 30, "15pt", "Showcard Gothic, Impact", "rgba(255, 255, 255, 1)", "Save", "rgba(0, 0, 0, .6)", 2));
+    this.buttons.push(new MenuTextButton((this.gD.canvas.width / 2) - 100, this.gD.canvas.height - 50, 200, 30, "15pt", "Showcard Gothic, Impact", "rgba(255, 255, 255, 1)", "Main Menu", "rgba(0, 0, 0, .6)", 2));
+    this.buttons.push(new MenuTextButton((this.gD.canvas.width / 2) + 110, this.gD.canvas.height - 50, 200, 30, "15pt", "Showcard Gothic, Impact", "rgba(255, 255, 255, 1)", "Load", "rgba(0, 0, 0, .6)", 2));
 
   };
   this.loadFile = function() {

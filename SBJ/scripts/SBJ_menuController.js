@@ -2,7 +2,7 @@ function MenuController(gD) {
   this.gD = gD;
   /**
    * initiates the menu object
-   * @param {Array<MenuButton>} buttons The list of already created buttons to manage.
+   * @param {Array<MenuTextButton>} buttons The list of already created buttons to manage.
    */
   this.init = function(buttons) {
     this.buttons = buttons;
@@ -114,21 +114,22 @@ function MenuController(gD) {
 }
 
 /**
- * Represents a Button on a menu-screen which can be clicked or selected via the keyboard.
+ * Represents a Button with text on a menu-screen which can be clicked or selected via the keyboard.
  * @param x {number} x-Coordinate of the top left corner
  * @param y {number} y-Coordinate of the top left corner
  * @param width {number}
  * @param height {number}
  * @param size {string} size of the button's text font (i.e. `15pt`)
  * @param family {string} font-family of the button's text
- * @param color {string} background-color of the button
+ * @param color {string} background-color of the button when it is not selected
  * @param text {string}
  * @param textcolor {string}
  * @param bordersize {number}
- * @param link {Function} what should be executed once the button is pressed
+ * @param link {Function|null} what should be executed once the button is pressed
+ * @param data {object|null} data to be accessible when this button is selected
  * @constructor
  */
-function MenuButton(x, y, width, height, size, family, color, text, textcolor, bordersize, link) {
+function MenuTextButton(x, y, width, height, size, family, color, text, textcolor, bordersize, link = null, data = null) {
   this.x = x;
   this.y = y;
   this.width = width;
@@ -140,6 +141,7 @@ function MenuButton(x, y, width, height, size, family, color, text, textcolor, b
   this.textcolor = textcolor;
   this.bordersize = bordersize;
   this.link = link;
+  this.data = data;
   this.selected = false;
   this.select = function() {
     this.selected = true;

@@ -50,15 +50,17 @@ function Menu(gD) {
       ],
       [
         {
-          text: "Save / Load", link: (gD) => {gD.currentPage = this.saveLoad }
+          text: "Achievements", link: (gD) => { gD.currentPage = this.achievements }
         }
         //{ text: "Load", link: (gD) => { gD.currentPage = this.load }}
       ],
       [
         {
           text: "Controls", link: (gD) => { gD.currentPage = this.controls }
+        },
+        {
+          text: "Save / Load", link: (gD) => {gD.currentPage = this.saveLoad }
         }
-        //{ text: "Achievements", link: (gD) => { gD.currentPage = this.achievements }},
         //{ text: "Statistics", link: (gD) => { gD.currentPage = this.statistics }}
       ],
       [
@@ -71,7 +73,7 @@ function Menu(gD) {
     var buttons = buttonDefinitions.map((rowButtons, rowIndex) => {
       var buttonWidth = (this.buttonFullWidth - (rowButtons.length - 1) * this.buttonPadding) / rowButtons.length;
       return rowButtons.map((button, columnIndex) => {
-        return new MenuButton(
+        return new MenuTextButton(
           this.buttonStartLeft + (buttonWidth + this.buttonPadding) * columnIndex,
           this.buttonStartTop + (this.buttonHeight + this.buttonPadding) * rowIndex,
           buttonWidth, this.buttonHeight,

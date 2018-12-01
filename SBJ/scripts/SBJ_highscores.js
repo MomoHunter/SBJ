@@ -9,7 +9,7 @@ function Highscores(gD, menu) {
 
     this.highscoreList = new HighscoreList((this.gD.canvas.width / 2) - 300, 60, 600, 20, "rgba(255, 255, 255, 1)", 2);
 
-    this.backToMenu = new MenuButton((this.gD.canvas.width / 2) - 100, this.gD.canvas.height - 50, 200, 30, "15pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Main Menu", "rgba(0, 0, 0, .6)", 2);
+    this.backToMenu = new MenuTextButton((this.gD.canvas.width / 2) - 100, this.gD.canvas.height - 50, 200, 30, "15pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Main Menu", "rgba(0, 0, 0, .6)", 2);
     this.backToMenu.select();
   };
   this.newHighscore = function(data) {
