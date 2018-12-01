@@ -82,7 +82,7 @@ function CanvasImage(x, y, width, height, spriteKey = null) {
  * @param borderSize {number}
  * @constructor
  */
-function CanvasRect(x, y, width, height, backgroundColor, borderColor, borderSize) {
+function CanvasRect(x, y, width, height, backgroundColor, borderColor = "rgba(0, 0, 0, 0)", borderSize = 0) {
   this.x = x;
   this.y = y;
   this.width = width;

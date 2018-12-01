@@ -11,10 +11,10 @@ function Menu(gD) {
     this.game = new Game(this.gD, this);
     this.game.init();
     this.shop = new Shop(this.gD, this);
-    this.shop.init();
+    this.shop.init();*/
     this.achievements = new Achievements(this.gD, this);
     this.achievements.init();
-    this.save = new Save(this.gD, this);
+    /*this.save = new Save(this.gD, this);
     this.save.init();
     this.load = new Load(this.gD, this);
     this.load.init();
@@ -45,7 +45,6 @@ function Menu(gD) {
         {
           text: "Shop", link: (gD) => { gD.currentPage = this.shop }
         }
-        //{ text: "Controls", link: (gD) => { gD.currentPage = this.controls }}
       ],
       [
         {

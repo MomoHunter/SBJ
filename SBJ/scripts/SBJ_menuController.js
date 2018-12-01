@@ -110,7 +110,15 @@ function MenuController(gD) {
   };
   this.getSelectedButton = function() {
     return this.buttons[this.selectedRowIndex][this.selectedColumnIndex];
-  }
+  };
+  this.getSelectedData = function () {
+    var selectedButton = this.getSelectedButton();
+    if (!selectedButton) {
+      return undefined;
+    } else {
+      return selectedButton.data;
+    }
+  };
 }
 
 /**
