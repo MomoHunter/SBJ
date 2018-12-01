@@ -22,8 +22,8 @@ function MenuController(gD) {
     this.gD.newKeys.map(key => {
       if (keyB.get("Menu_NavDown")[2].includes(key)) {
         rowIndex = (rowIndex + 1) % this.buttons.length;
-        if (this.buttons[rowIndex].length === 1) {
-          columnIndex = 0;
+        if (this.buttons[rowIndex].length < columnIndex) {
+          columnIndex = this.buttons[rowIndex].length - 1;
         }
       } else if (keyB.get("Menu_NavUp")[2].includes(key)) {
         rowIndex -= 1;
