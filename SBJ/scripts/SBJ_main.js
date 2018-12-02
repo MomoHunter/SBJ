@@ -326,6 +326,48 @@ function GlobalDict() {
       borderColor: "rgba(0, 0, 0, 1)",
 			borderSize: 2,
 			padding: 5
+    },
+    text: {
+      normal: {
+        font: "12pt Consolas",
+        color: "0, 0, 0, 1",
+        borderSize: 0,
+        borderColor: "",
+        align: "center",
+        baseline: "middle"
+      },
+      title: {
+      	font: "40pt Showcard Gothic, Impact",
+				color: "200, 200, 200, 1",
+				borderSize: 3,
+				borderColor: "0, 0, 0, 1",
+				align: "center",
+				baseline: "middle"
+      },
+      header: {
+        font: "32pt Showcard Gothic, Impact",
+        color: "200, 200, 200, 1",
+        borderSize: 3,
+        borderColor: "0, 0, 0, 1",
+        align: "center",
+        baseline: "middle"
+      },
+			instruction: {
+        font: "15pt Showcard Gothic, Impact",
+        color: "200, 200, 200, 1",
+        borderSize: 1.5,
+        borderColor: "0, 0, 0, 1",
+        align: "center",
+        baseline: "middle"
+			},
+      version: {
+        font: "10pt Consolas",
+        color: "255, 255, 255, 1",
+        borderSize: 0,
+        borderColor: "",
+        align: "right",
+        baseline: "alphabetic"
+      }
     }
 	};
   this.clear = function() {

@@ -25,9 +25,9 @@ function Menu(gD) {
     this.saveLoad = new SaveLoad(this.gD, this);
     this.saveLoad.init();
 
-    this.title = new CanvasText(this.gD.canvas.width / 2, 100, "40pt", "Showcard Gothic, Impact", "rgba(200, 200, 200, 1)", "center", "middle", "Super Block Jump", 3);
-    this.version = new CanvasText(this.gD.canvas.width - 5, this.gD.canvas.height - 5, "10pt", "Consolas", "rgba(255, 255, 255, 1)", "right", "alphabetic", "v3.0.0", 0);
-    this.pressButton = new CanvasText(this.gD.canvas.width / 2, 280, "15pt", "Showcard Gothic, Impact", "rgba(200, 200, 200, 1)", "center", "middle", "Dr" + String.fromCharCode(220) + "cke eine beliebige Taste", 1.5);
+    this.title = new CanvasText(this.gD.canvas.width / 2, 100, "Super Block Jump", "title");
+    this.version = new CanvasText(this.gD.canvas.width - 5, this.gD.canvas.height - 5, "v3.0.0", "version");
+    this.pressButton = new CanvasText(this.gD.canvas.width / 2, 280, "Dr" + String.fromCharCode(220) + "cke eine beliebige Taste", "instruction");
 
     this.buttonStartTop = 150;
     this.buttonHeight = 30;

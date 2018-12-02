@@ -43,13 +43,7 @@
   };
   this.achievementValues = new Array(Object.keys(this.achievementDict).length).fill(0);
   this.init = function() {
-    this.title = new CanvasText(
-      this.gD.canvas.width / 2, 30,
-      "32pt", "Showcard Gothic", "rgba(200, 200, 200, 1)",
-      "center", "middle",
-      "Achievements",
-      3
-    );
+    this.title = new CanvasText(this.gD.canvas.width / 2, 30, "Achievements", "header");
 
     this.buttonStartTop = 70;
     this.buttonStartLeft = 20;
@@ -90,27 +84,9 @@
       bigAchievementImageSize, bigAchievementImageSize,
       "Item_Star_0"
     );
-    this.bigAchivementName = new CanvasText(
-      bigAchievementBoxCenter,
-      bigAchievementBoxTop + bigAchievementImageSize + bigAchievementBoxPadding * 2,
-      "20pt", "Consolas", "rgba(1, 1, 1, 1)",
-      "center", "middle",
-      "Placeholder"
-    );
-    this.bigAchivementDescriptionLine1 = new CanvasText(
-      bigAchievementBoxCenter,
-      bigAchievementBoxTop + bigAchievementImageSize + 17 + bigAchievementBoxPadding * 3,
-      "12pt", "Consolas", "rgba(1, 1, 1, 1)",
-      "center", "middle",
-      "Placeholder"
-    );
-    this.bigAchivementDescriptionLine2 = new CanvasText(
-      bigAchievementBoxCenter,
-      bigAchievementBoxTop + bigAchievementImageSize + 17 + bigAchievementBoxPadding * 3 + 17,
-      "12pt", "Consolas", "rgba(1, 1, 1, 1)",
-      "center", "middle",
-      "Placeholder"
-    );
+    this.bigAchivementName = new CanvasText(bigAchievementBoxCenter, bigAchievementBoxTop + bigAchievementImageSize + bigAchievementBoxPadding * 2, "Placeholder", "normal");
+    this.bigAchivementDescriptionLine1 = new CanvasText(bigAchievementBoxCenter, bigAchievementBoxTop + bigAchievementImageSize + 17 + bigAchievementBoxPadding * 3, "Placeholder", "normal");
+    this.bigAchivementDescriptionLine2 = new CanvasText(bigAchievementBoxCenter, bigAchievementBoxTop + bigAchievementImageSize + 17 + bigAchievementBoxPadding * 3 + 17, "Placeholder", "normal");
     this.bigAchivementProgress = new ProgressBar(
       bigAchievementBoxLeft + bigAchievementBoxPadding,
       bigAchievementBoxTop + bigAchievementBoxHeight - bigAchievementBoxPadding - bigAchievementProgressHeight,
@@ -194,10 +170,7 @@ function ProgressBar(x, y, width, height, fontSize, fontFamily, goal) {
   this.width = width;
   this.goal = goal;
   this.current = 0;
-  this.text = new CanvasText(
-    x + width / 2, y + height / 2,
-    fontSize, fontFamily, "rgba(0, 0, 0, 0.7)", "center", "middle", ""
-  );
+  this.text = new CanvasText(x + width / 2, y + height / 2, "", "normal");
   this.backgroundRect = new CanvasRect(x, y, width, height, "rgba(200, 200, 200, 0.7)");
   this.foregroundRect = new CanvasRect(x, y, 0, height, "rgba(0, 129, 57, 0.9)");
   this.draw = function(gD) {

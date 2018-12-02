@@ -12,7 +12,7 @@ function SaveLoad(gD, menu) {
 
     this.loadFile();
 
-    this.title = new CanvasText(this.gD.canvas.width / 2, 30, "32pt", "Showcard Gothic, Impact", "rgba(200, 200, 200, 1)", "center", "middle", "Save / Load", 3);
+    this.title = new CanvasText(this.gD.canvas.width / 2, 30, "Save / Load", "header");
 
     this.buttons.push(new MenuTextButton((this.gD.canvas.width / 2) - 310, this.gD.canvas.height - 50, 200, 30, "Save"));
     this.buttons.push(new MenuTextButton((this.gD.canvas.width / 2) - 100, this.gD.canvas.height - 50, 200, 30, "Main Menu"));

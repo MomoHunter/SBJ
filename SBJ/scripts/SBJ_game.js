@@ -633,7 +633,7 @@ function GameModal(x, y, width, height, color) {
   this.color = color;
   this.selected = 0;
   this.init = function(game, gD) {
-    this.title = new CanvasText(this.gD.canvas.width / 2, this.gD.canvas.height / 2 - 60, "30pt", "Consolas", "rgba(200, 200, 200, 1)", "center", "middle", "YOU DIED", 0);
+    this.title = new CanvasText(this.gD.canvas.width / 2, this.gD.canvas.height / 2 - 60, "YOU DIED", "normal");
   };
   this.draw = function(game, gD) {
     this.title.draw(gD);

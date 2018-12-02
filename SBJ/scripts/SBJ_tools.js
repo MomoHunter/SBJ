@@ -2,34 +2,25 @@
  * A Text which should be drawn onto the canvas.
  * @param x {number} x-coordinate of the top-left corner of the text on the canvas
  * @param y {number} y-coordinate of the top-left corner of the text on the canvas
- * @param size {string} size of the button's text font (i.e. `15pt`)
- * @param family {string} font-family of the button's text
- * @param color {string} background-color of the button when it is not selected
- * @param textAlign {string} How to align the Text vertically. "left" || "right" || "center" || "start" || "end"
- * @param textBaseline {string} How to align the Text horizontally. "top" || "hanging" || "middle" || "alphabetic" || "ideographic" || "bottom"
- * @param text {string}
- * @param borderSize {number|undefined} If > 0, add an black border around the text with this size as its thickness.
+ * @param text {string} string of text to write
+ * @param styleKey {string} name of the style-class to use
  * @constructor
  */
-function CanvasText(x, y, size, family, color, textAlign, textBaseline, text, borderSize) {
+function CanvasText(x, y, text, styleKey) {
   this.x = x;
   this.y = y;
-  this.size = size;
-  this.family = family;
-  this.color = color;
-  this.textAlign = textAlign;
-  this.textBaseline = textBaseline;
   this.text = text;
-  this.borderSize = borderSize;
+  this.styleKey = styleKey;
   this.draw = function(gD) {
-    gD.context.textAlign = this.textAlign;
-    gD.context.textBaseline = this.textBaseline;
-    gD.context.font = this.size + " " + this.family;
-    gD.context.fillStyle = this.color;
+    var design = gD.design.text[styleKey];
+    gD.context.textAlign = design.align;
+    gD.context.textBaseline = design.baseline;
+    gD.context.font = design.font;
+    gD.context.fillStyle = `rgba(${design.color})`;
     gD.context.fillText(this.text, this.x, this.y);
-    if (this.borderSize > 0) {
-      gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
-      gD.context.lineWidth = this.borderSize;
+    if (design.borderSize > 0) {
+      gD.context.strokeStyle = `rgba(${design.borderColor})`;
+      gD.context.lineWidth = design.borderSize;
       gD.context.strokeText(this.text, this.x, this.y);
     }
   };
