@@ -1,4 +1,4 @@
-﻿function Controls(gD, menu) {
+function Controls(gD, menu) {
   this.gD = gD;
   this.menu = menu;
   this.init = function() {
@@ -33,12 +33,6 @@
       ["Shop_NavLeft", ["Navigation links", ["A", String.fromCharCode(8592)], ["KeyA", "ArrowLeft"]]],
       ["Shop_Confirm", ["Bestätigen", ["Enter", "Space"], ["Enter", "Space"]]],
       ["Shop_Abort", ["Abbrechen", ["Escape"], ["Escape"]]],
-      ["Achievements_NavDown", ["Navigation runter", ["S", String.fromCharCode(8595)], ["KeyS", "ArrowDown"]]],
-      ["Achievements_NavUp", ["Navigation hoch", ["W", String.fromCharCode(8593)], ["KeyW", "ArrowUp"]]],
-      ["Achievements_NavRight", ["Navigation rechts", ["D", String.fromCharCode(8594)], ["KeyD", "ArrowRight"]]],
-      ["Achievements_NavLeft", ["Navigation links", ["A", String.fromCharCode(8592)], ["KeyA", "ArrowLeft"]]],
-      ["Achievements_Confirm", ["Bestätigen", ["Enter", "Space"], ["Enter", "Space"]]],
-      ["Achievements_Abort", ["Abbrechen", ["Escape"], ["Escape"]]],
       ["Save_Confirm", ["Bestätigen", ["Enter", "Space"], ["Enter", "Space"]]],
       ["Load_Confirm", ["Bestätigen", ["Enter", "Space"], ["Enter", "Space"]]],
       ["Highscores_NavDown", ["Navigation runter", ["S", String.fromCharCode(8595)], ["KeyS", "ArrowDown"]]],
