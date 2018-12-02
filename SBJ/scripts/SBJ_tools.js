@@ -27,7 +27,7 @@ function CanvasText(x, y, size, family, color, textAlign, textBaseline, text, bo
     gD.context.font = this.size + " " + this.family;
     gD.context.fillStyle = this.color;
     gD.context.fillText(this.text, this.x, this.y);
-    if (this.bordersize > 0) {
+    if (this.borderSize > 0) {
       gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
       gD.context.lineWidth = this.borderSize;
       gD.context.strokeText(this.text, this.x, this.y);
