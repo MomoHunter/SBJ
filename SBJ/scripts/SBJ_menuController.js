@@ -49,6 +49,10 @@ function MenuController() {
       if (keyB.get("Mute_All")[2].includes(key)) {
         gD.muted = !gD.muted;
       }
+
+      if (keyB.get("Menu_Back")[2].includes(key)) {
+        gD.currentPage = this.menu;
+      }
     });
   };
   /**

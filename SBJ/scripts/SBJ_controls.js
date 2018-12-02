@@ -1,4 +1,4 @@
-function Controls(gD, menu) {
+﻿function Controls(gD, menu) {
   this.gD = gD;
   this.menu = menu;
   this.init = function() {
@@ -9,6 +9,7 @@ function Controls(gD, menu) {
       ["Menu_NavRight", ["Navigation rechts", ["D", String.fromCharCode(8594)], ["KeyD", "ArrowRight"]]],
       ["Menu_NavLeft", ["Navigation links", ["A", String.fromCharCode(8592)], ["KeyA", "ArrowLeft"]]],
       ["Menu_Confirm", ["Bestätigen", ["Enter", "Space"], ["Enter", "Space"]]],
+      ["Menu_Back", ["zur vorherigen Seite gehen", ["Escape"], ["Escape"]]],
       ["SelectionScreen_NavRight", ["Navigation rechts", ["D", String.fromCharCode(8594)], ["KeyD", "ArrowRight"]]],
       ["SelectionScreen_NavLeft", ["Navigation links", ["A", String.fromCharCode(8592)], ["KeyA", "ArrowLeft"]]],
       ["SelectionScreen_Confirm", ["Bestätigen", ["Enter", "Space"], ["Enter", "Space"]]],
