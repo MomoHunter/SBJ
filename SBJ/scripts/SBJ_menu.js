@@ -81,7 +81,7 @@ function Menu(gD) {
     );
 
     this.menuController = new MenuController();
-    this.menuController.init(buttons, this.controls);
+    this.menuController.init(buttons, this);
 
     this.closedTitlescreen = false;        // if a key was pressed at start to close the tile-screen
   };

@@ -105,18 +105,18 @@ function CanvasBorder(x, y, width, height, borderColor, borderSize) {
 /**
  *
  */
-function ScrollBar(x, y, height, elementHeight, elements, color) {
+function ScrollBar(x, y, height, elementHeight, elementsCount, color) {
   this.x = x;
   this.y = y;
   this.height = height;
   this.elementHeight = elementHeight;
-  this.elements = elements;
+  this.elementsCount = elementsCount;
   this.color = color;
-  this.currentElement = 0;
+  this.currentElementIndex = 0;
   this.lineWidthBar = 4;
   this.lineWidthLine = 1;
-  this.scroll = function(elements) {
-    this.currentElement = elements;
+  this.scroll = function(currentElementIndex) {
+    this.currentElementIndex = currentElementIndex;
   };
   this.draw = function(gD) {
     gD.context.lineWidth = this.lineWidthLine;
@@ -127,8 +127,8 @@ function ScrollBar(x, y, height, elementHeight, elements, color) {
     gD.context.stroke();
     gD.context.lineWidth = this.lineWidthBar;
     gD.context.beginPath();
-    gD.context.moveTo(this.x, this.y + ((this.currentElement / this.elements) * this.height));
-    gD.context.lineTo(this.x, this.y + (((this.height / this.elementHeight) + this.currentElement) / this.elements) * this.height);
+    gD.context.moveTo(this.x, this.y + ((this.currentElementIndex / this.elementsCount) * this.height));
+    gD.context.lineTo(this.x, this.y + (((this.height / this.elementHeight) + this.currentElementIndex) / this.elementsCount) * this.height);
     gD.context.stroke();
   };
 }

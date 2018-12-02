@@ -2,18 +2,18 @@ function MenuController() {
   /**
    * initiates the menu object
    * @param grid {Array<Array<MenuTextButton>>} The list of already created grid to manage.
-   * @param controls {Controls} carries the key-bindings
+   * @param menu {Menu} carries the main menu
    */
-  this.init = function(grid, controls) {
+  this.init = function(grid, menu) {
     this.grid = grid;
     this.updateSelection(0, 0);
-    this.controls = controls;
+    this.menu = menu;
   };
   /**
    * checks if a button is pressed
    */
   this.updateKeyPresses = function(gD) {
-    var keyB = this.controls.keyBindings;
+    var keyB = this.menu.controls.keyBindings;
     var rowIndex = this.selectedRowIndex;
     var columnIndex = this.selectedColumnIndex;
 

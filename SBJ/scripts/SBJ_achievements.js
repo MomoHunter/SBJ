@@ -84,7 +84,7 @@
     ]);
 
     this.menuController = new MenuController();
-    this.menuController.init(buttons, this.menu.cotrols);
+    this.menuController.init(buttons, this.menu);
   };
   /**
    * checks if a button is pressed
