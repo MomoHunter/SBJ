@@ -63,7 +63,7 @@ function Menu(gD) {
       ],
       [
         {
-          text: "Exit", link: (gD) => {gD.currentPage = null }
+          text: "Exit", link: (gD) => { window.close() }
         }
       ]
     ];
