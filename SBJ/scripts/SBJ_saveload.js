@@ -31,7 +31,7 @@ function SaveLoad(gD, menu) {
     };
     newScript.onerror = function(e) {
       console.log(saveLoad.filesLoaded + " savestates have been loaded!");
-      saveLoad.getSaves();
+      saveLoad.getSaveStates();
     };
     document.body.appendChild(newScript);
   };
