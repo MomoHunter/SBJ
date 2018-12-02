@@ -83,11 +83,7 @@
     var bigAchievementImageSize = 75;
     var bigAchievementProgressHeight = 30;
 
-    this.bigAchievementBox = new CanvasRect(
-      bigAchievementBoxLeft, bigAchievementBoxTop,
-      bigAchievementBoxWidth, bigAchievementBoxHeight,
-      "rgba(255, 255, 255, 0.85)", "rgba(0, 0, 0, 0.9)", 2
-    );
+    this.bigAchievementBox = new CanvasRect(bigAchievementBoxLeft, bigAchievementBoxTop, bigAchievementBoxWidth, bigAchievementBoxHeight, "rgba(255, 255, 255, 0.85)");
     this.bigAchivementImage = new CanvasImage(
       bigAchievementBoxLeft + (bigAchievementBoxWidth - bigAchievementImageSize) / 2,
       bigAchievementBoxTop + bigAchievementBoxPadding,

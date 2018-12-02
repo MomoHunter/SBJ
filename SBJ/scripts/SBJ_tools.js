@@ -68,34 +68,51 @@ function CanvasImage(x, y, width, height, spriteKey = null) {
 
 /**
  * A filled Rectangle which should be drawn onto the canvas.
- * @param x {number} x-coordinate of the top-left corner of the image on the canvas
- * @param y {number} y-coordinate of the top-left corner of the image on the canvas
- * @param width {number} width of the image on the canvas
- * @param height {number} height of the image on the canvas
- * @param backgroundColor {string}
- * @param borderColor {string}
- * @param borderSize {number}
+ * @param x {number} x-coordinate of the top-left corner of the Rectangle on the canvas
+ * @param y {number} y-coordinate of the top-left corner of the Rectangle on the canvas
+ * @param width {number} width of the Rectangle on the canvas
+ * @param height {number} height of the Rectangle on the canvas
+ * @param backgroundColor {string} CSS-color-definition for the background of the Rectangle
  * @constructor
  */
-function CanvasRect(x, y, width, height, backgroundColor, borderColor = "rgba(0, 0, 0, 0)", borderSize = 0) {
+function CanvasRect(x, y, width, height, backgroundColor) {
   this.x = x;
   this.y = y;
   this.width = width;
   this.height = height;
   this.backgroundColor = backgroundColor;
-  this.borderColor = borderColor;
-  this.bordersize = borderSize;
   this.draw = function(gD) {
     gD.context.fillStyle = this.backgroundColor;
     gD.context.fillRect(this.x, this.y, this.width, this.height);
-    gD.context.strokeStyle = this.borderColor;
-    gD.context.lineWidth = this.borderSize;
-    gD.context.strokeRect(this.x, this.y, this.width, this.height);
   };
 }
 
 /**
- * 
+ * A Rectangle-Outline which should be drawn onto the canvas.
+ * @param x {number} x-coordinate of the top-left corner of the Rectangle on the canvas
+ * @param y {number} y-coordinate of the top-left corner of the Rectangle on the canvas
+ * @param width {number} width of the Rectangle on the canvas
+ * @param height {number} height of the Rectangle on the canvas
+ * @param borderColor {string} CSS-color-definition for the outline
+ * @param borderSize {string} width of the outline in pixel
+ * @constructor
+ */
+function CanvasBorder(x, y, width, height, borderColor, borderSize) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.borderColor = borderColor;
+  this.borderSize = borderSize;
+  this.draw = function(gD) {
+    gD.context.strokeStyle = this.borderColor;
+    gD.context.lineWidth = this.borderSize;
+    gD.context.strokeRect(this.x, this.y, this.width, this.height);
+  }
+}
+
+/**
+ *
  */
 function ScrollBar(x, y, height, elementHeight, elements, color) {
   this.x = x;
