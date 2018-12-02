@@ -27,21 +27,21 @@
     this.tabs[this.active].activate();
 
     for (var i = 0; i < 3; i++) {
-      this.buttons.push(new MenuTextButton((this.gD.canvas.width / 2) - 290 + (i * 200), 245, 180, 20, "11pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Kaufen", "rgba(0, 0, 0, .6)", 2));
+      this.buttons.push(new MenuTextButton((this.gD.canvas.width / 2) - 290 + (i * 200), 245, 180, 20, "Kaufen"));
     }
     this.shopEntries.push(new ShopEntryPlayer((this.gD.canvas.width / 2) - 300, 90, 200, 200, "12pt", "Consolas", "rgba(150, 180, 150, 1)", 2, "Höhere Sprungkraft", 19999, 2));
     this.shopEntries.push(new ShopEntryPlayer((this.gD.canvas.width / 2) - 100, 90, 200, 200, "12pt", "Consolas", "rgba(150, 180, 150, 1)", 3, "Schnellere Bewegung", 12999, 2));
     this.shopEntries.push(new ShopEntryPlayer((this.gD.canvas.width / 2) + 100, 90, 200, 200, "12pt", "Consolas", "rgba(150, 180, 150, 1)", 4, "Dreifach Sprung", 59999, 2));
 
     for (var i = 0; i < this.gD.itemProb.length; i++) {
-      this.buttons.push(new MenuTextButton((this.gD.canvas.width / 2) - 290 + (i * 120), 200, 100, 20, "11pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Upgrade", "rgba(0, 0, 0, .6)", 2));
-      this.buttons.push(new MenuTextButton((this.gD.canvas.width / 2) - 290 + (i * 120), 245, 100, 20, "11pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Downgrade", "rgba(0, 0, 0, .6)", 2));
+      this.buttons.push(new MenuTextButton((this.gD.canvas.width / 2) - 290 + (i * 120), 200, 100, 20, "Upgrade"));
+      this.buttons.push(new MenuTextButton((this.gD.canvas.width / 2) - 290 + (i * 120), 245, 100, 20, "Downgrade"));
     }
     for (var i = 0; i < this.gD.itemProb.length; i++) {
       this.shopEntries.push(new ShopEntryItem((this.gD.canvas.width / 2) - 300 + (i * 120), 90, 120, 200, "12pt", "Consolas", "rgba(200, 200, 0, 1)", i + 1, "+" + (this.gD.itemPerLvlDur[i] / 60).toFixed(2) + "s", 2));
     }
 
-    this.backToMenu = new MenuTextButton((this.gD.canvas.width / 2) - 100, this.gD.canvas.height - 50, 200, 30, "15pt", "Showcard Gothic", "rgba(255, 255, 255, 1)", "Main Menu", "rgba(0, 0, 0, .6)", 2);
+    this.backToMenu = new MenuTextButton((this.gD.canvas.width / 2) - 100, this.gD.canvas.height - 50, 200, 30, "Main Menu");
     this.buttons[this.selected].select();
   };
   this.hShift = function(shiftFactor) {

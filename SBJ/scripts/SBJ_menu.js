@@ -71,24 +71,14 @@ function Menu(gD) {
     var buttons = buttonDefinitions.map((rowButtons, rowIndex) => {
       var buttonWidth = (this.buttonFullWidth - (rowButtons.length - 1) * this.buttonPadding) / rowButtons.length;
       return rowButtons.map((button, columnIndex) => {
-        return new MenuTextButton(
-          this.buttonStartLeft + (buttonWidth + this.buttonPadding) * columnIndex,
-          this.buttonStartTop + (this.buttonHeight + this.buttonPadding) * rowIndex,
-          buttonWidth, this.buttonHeight,
-          "15pt", "Showcard Gothic, Impact", "rgba(255, 255, 255, 1)",
-          button.text,
-          "rgba(0, 0, 0, .6)", 2,
-          button.link
-        );
+        return new MenuTextButton(this.buttonStartLeft + (buttonWidth + this.buttonPadding) * columnIndex, this.buttonStartTop + (this.buttonHeight + this.buttonPadding) * rowIndex, buttonWidth, this.buttonHeight, button.text, button.link);
       }, this);
     }, this);
 
     buttons.push([
-      new MenuImageButton(
-        this.gD.canvas.width - 40, 10, 30, 30,
-        "rgba(255, 255, 255, 1)", "Icon_Mute", 2,
-        (gD) => { gD.muted = !gD.muted }
-      )
+      new MenuImageButton(this.gD.canvas.width - 40, 10, 30, 30, "Icon_Mute", (gD) => {
+        gD.muted = !gD.muted
+      })
     ]);
 
     this.menuController = new MenuController(gD);

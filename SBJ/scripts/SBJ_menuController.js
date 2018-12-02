@@ -2,7 +2,7 @@ function MenuController(gD) {
   this.gD = gD;
   /**
    * initiates the menu object
-   * @param {Array<MenuTextButton>} buttons The list of already created buttons to manage.
+   * @param {MenuTextButton<MenuTextButton>} buttons The list of already created buttons to manage.
    */
   this.init = function(buttons) {
     this.buttons = buttons;
@@ -127,27 +127,17 @@ function MenuController(gD) {
  * @param y {number} y-Coordinate of the top left corner
  * @param width {number}
  * @param height {number}
- * @param size {string} size of the button's text font (i.e. `15pt`)
- * @param family {string} font-family of the button's text
- * @param color {string} background-color of the button when it is not selected
  * @param text {string}
- * @param textcolor {string}
- * @param bordersize {number}
  * @param link {Function|null} what should be executed once the button is pressed
  * @param data {object|null} data to be accessible when this button is selected
  * @constructor
  */
-function MenuTextButton(x, y, width, height, size, family, color, text, textcolor, bordersize, link = null, data = null) {
+function MenuTextButton(x, y, width, height, text, link = null, data = null) {
   this.x = x;
   this.y = y;
   this.width = width;
   this.height = height;
-  this.size = size;
-  this.family = family;
-  this.color = color;
   this.text = text;
-  this.textcolor = textcolor;
-  this.bordersize = bordersize;
   this.link = link;
   this.data = data;
   this.selected = false;
@@ -164,18 +154,18 @@ function MenuTextButton(x, y, width, height, size, family, color, text, textcolo
   };
   this.draw = function(gD) {
     if (this.selected) {
-      gD.context.fillStyle = "rgba(180, 50, 50, 1)";
+      gD.context.fillStyle = gD.design.button.backgroundColor.selected;
     } else {
-      gD.context.fillStyle = this.color;
+      gD.context.fillStyle = gD.design.button.backgroundColor.normal;
     }
     gD.context.fillRect(this.x, this.y, this.width, this.height);
     gD.context.textAlign = "center";
     gD.context.textBaseline = "middle";
-    gD.context.font = this.size + " " + this.family;
-    gD.context.fillStyle = this.textcolor;
+    gD.context.font = gD.design.button.fontSize + " " + gD.design.button.fontFamily;
+    gD.context.fillStyle = gD.design.button.fontColor;
     gD.context.fillText(this.text, this.x + (this.width / 2), this.y + (this.height / 2));
-    gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
-    gD.context.lineWidth = this.bordersize;
+    gD.context.strokeStyle = gD.design.button.borderColor;
+    gD.context.lineWidth = gD.design.button.borderSize;
     gD.context.strokeRect(this.x, this.y, this.width, this.height);
   };
 }
@@ -186,22 +176,17 @@ function MenuTextButton(x, y, width, height, size, family, color, text, textcolo
  * @param y {number} y-Coordinate of the top left corner
  * @param width {number}
  * @param height {number}
- * @param color {string} background-color of the button when it is not selected
  * @param spriteKey {string} under which key in the gD the sprite for this button's image can be found
- * @param bordersize {number}
  * @param link {Function|null} what should be executed once the button is pressed
  * @param data {object|null} data to be accessible when this button is selected
  * @constructor
  */
-function MenuImageButton(x, y, width, height, color, spriteKey, bordersize, link = null, data = null) {
+function MenuImageButton(x, y, width, height, spriteKey, link = null, data = null) {
   this.x = x;
   this.y = y;
   this.width = width;
   this.height = height;
-  this.padding = bordersize * 2;
-  this.color = color;
   this.spriteKey = spriteKey;
-  this.bordersize = bordersize;
   this.link = link;
   this.data = data;
   this.selected = false;
@@ -220,9 +205,9 @@ function MenuImageButton(x, y, width, height, color, spriteKey, bordersize, link
     var [spriteX, spriteY, spriteWidth, spriteHeight] = gD.spriteDict[this.spriteKey];
 
     if (this.selected) {
-      gD.context.fillStyle = "rgba(180, 50, 50, 1)";
+      gD.context.fillStyle = gD.design.button.backgroundColor.selected;
     } else {
-      gD.context.fillStyle = this.color;
+      gD.context.fillStyle = gD.design.button.backgroundColor.normal;
     }
     gD.context.fillRect(this.x, this.y, this.width, this.height);
 
@@ -230,12 +215,12 @@ function MenuImageButton(x, y, width, height, color, spriteKey, bordersize, link
       gD.spritesheet,
       spriteX, spriteY,
       spriteWidth, spriteHeight,
-      this.x + this.padding, this.y + this.padding,
-      this.width - this.padding*2, this.height - this.padding*2
+      this.x + gD.design.button.padding, this.y + gD.design.button.padding,
+      this.width - gD.design.button.padding*2, this.height - gD.design.button.padding*2
     );
 
-    gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
-    gD.context.lineWidth = this.bordersize;
+    gD.context.strokeStyle = gD.design.button.borderColor;
+    gD.context.lineWidth = gD.design.button.borderSize;
     gD.context.strokeRect(this.x, this.y, this.width, this.height);
   };
 }

@@ -69,15 +69,7 @@
       .filter(element => element != null)
       .map((rowButtons, rowIndex) => {
         return rowButtons.map((achievementData, columnIndex) => {
-          return new MenuImageButton(
-            this.buttonStartLeft + (this.buttonWidth + this.buttonPadding) * columnIndex,
-            this.buttonStartTop + (this.buttonHeight + this.buttonPadding) * rowIndex,
-            this.buttonWidth, this.buttonHeight,
-            "rgba(255, 255, 255, 1)",
-            "Item_Star_0"/* TODO: replace with correct key once the sprites are migrated to the new spritesheet */,
-            2,
-            null, [rowIndex * this.buttonsPerRow + columnIndex, ...achievementData]
-          )
+          return new MenuImageButton(this.buttonStartLeft + (this.buttonWidth + this.buttonPadding) * columnIndex, this.buttonStartTop + (this.buttonHeight + this.buttonPadding) * rowIndex, this.buttonWidth, this.buttonHeight, "Item_Star_0", null, [rowIndex * this.buttonsPerRow + columnIndex, ...achievementData])
         });
       })
     ;
@@ -134,14 +126,9 @@
     var backToMenuWidth = 100;
     var backToMenuHeight = 30;
     buttons.push([
-      new MenuTextButton(
-        (this.gD.canvas.width - backToMenuWidth) / 2, this.gD.canvas.height - 10 - backToMenuHeight,
-        backToMenuWidth, backToMenuHeight,
-        "15pt", "Showcard Gothic, Impact", "rgba(255, 255, 255, 1)",
-        "back",
-        "rgba(0, 0, 0, .6)", 2,
-        gD => { gD.currentPage = this.menu }
-      )
+      new MenuTextButton((this.gD.canvas.width - backToMenuWidth) / 2, this.gD.canvas.height - 10 - backToMenuHeight, backToMenuWidth, backToMenuHeight, "back", gD => {
+        gD.currentPage = this.menu
+      })
     ]);
 
     this.menuController = new MenuController(gD);
