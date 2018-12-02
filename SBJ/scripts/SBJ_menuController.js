@@ -1,76 +1,75 @@
-function MenuController(gD) {
-  this.gD = gD;
+function MenuController() {
   /**
    * initiates the menu object
-   * @param {MenuTextButton<MenuTextButton>} buttons The list of already created buttons to manage.
+   * @param grid {Array<Array<MenuTextButton>>} The list of already created grid to manage.
+   * @param controls {Controls} carries the key-bindings
    */
-  this.init = function(buttons) {
-    this.buttons = buttons;
-    this.updateSelection(this, 0, 0);
-
-    this.controls = new Controls(this.gD, this);
-    this.controls.init();
+  this.init = function(grid, controls) {
+    this.grid = grid;
+    this.updateSelection(0, 0);
+    this.controls = controls;
   };
   /**
    * checks if a button is pressed
    */
-  this.updateKeyPresses = function() {
+  this.updateKeyPresses = function(gD) {
     var keyB = this.controls.keyBindings;
     var rowIndex = this.selectedRowIndex;
     var columnIndex = this.selectedColumnIndex;
 
-    this.gD.newKeys.map(key => {
+    gD.newKeys.map(key => {
       if (keyB.get("Menu_NavDown")[2].includes(key)) {
-        rowIndex = (rowIndex + 1) % this.buttons.length;
-        if (this.buttons[rowIndex].length - 1 < columnIndex) {
-          columnIndex = this.buttons[rowIndex].length - 1;
+        rowIndex = (rowIndex + 1) % this.grid.length;
+        if (this.grid[rowIndex].length - 1 < columnIndex) {
+          columnIndex = this.grid[rowIndex].length - 1;
         }
       } else if (keyB.get("Menu_NavUp")[2].includes(key)) {
         rowIndex -= 1;
         if (rowIndex < 0) {
-          rowIndex = this.buttons.length - 1;
+          rowIndex = this.grid.length - 1;
         }
-        if (this.buttons[rowIndex].length - 1 < columnIndex) {
-          columnIndex = this.buttons[rowIndex].length - 1;
+        if (this.grid[rowIndex].length - 1 < columnIndex) {
+          columnIndex = this.grid[rowIndex].length - 1;
         }
       } else if (keyB.get("Menu_NavRight")[2].includes(key)) {
-        columnIndex = (columnIndex + 1) % this.buttons[rowIndex].length;
+        columnIndex = (columnIndex + 1) % this.grid[rowIndex].length;
       } else if (keyB.get("Menu_NavLeft")[2].includes(key)) {
         columnIndex -= 1;
         if (columnIndex < 0) {
-          columnIndex = this.buttons[rowIndex].length - 1;
+          columnIndex = this.grid[rowIndex].length - 1;
         }
       }
 
-      this.updateSelection(this, rowIndex, columnIndex);
+      this.updateSelection(rowIndex, columnIndex);
 
       if (keyB.get("Menu_Confirm")[2].includes(key)) {
-        this.getSelectedButton().callLink(this.gD);
+        this.getSelectedButton().callLink(gD);
       }
     });
   };
   /**
    * checks if the mouse was moved
    */
-  this.updateMouseMoves = function() {
-    this.buttons.map((buttonRow, rowIndex) => {
+  this.updateMouseMoves = function(gD) {
+    this.grid.map((buttonRow, rowIndex) => {
       buttonRow.map((button, columnIndex) => {
-        if (this.gD.mousePos.x >= button.x && this.gD.mousePos.x <= button.x + button.width &&
-            this.gD.mousePos.y >= button.y && this.gD.mousePos.y <= button.y + button.height) {
-          this.updateSelection(this, rowIndex, columnIndex);
+        if (gD.mousePos.x >= button.x && gD.mousePos.x <= button.x + button.width &&
+            gD.mousePos.y >= button.y && gD.mousePos.y <= button.y + button.height) {
+          this.updateSelection(rowIndex, columnIndex);
         }
       }, this);
     }, this);
   };
   /**
    * checks if there was a click
-   * @param {Object} clickPos the popped, non-null position of the click
+   * @param clickPos {Object} the popped, non-null position of the click
+   * @param gD {GlobalDict} carries global information
    */
-  this.updateClick = function(clickPos) {
+  this.updateClick = function(clickPos, gD) {
     var selectedButton = this.getSelectedButton();
     if (clickPos.x >= selectedButton.x && clickPos.x <= selectedButton.x + selectedButton.width &&
         clickPos.y >= selectedButton.y && clickPos.y <= selectedButton.y + selectedButton.height) { // = mouse over selected button
-      selectedButton.callLink(this.gD);
+      selectedButton.callLink(gD);
     }
   };
   /**
@@ -89,29 +88,29 @@ function MenuController(gD) {
    * called to update the current button selection
    * (deselects old selection and sets specified button as selected)
    */
-  this.updateSelection = function(menu, rowIndex, columnIndex) {
-    if (menu.selectedRowIndex !== undefined && menu.selectedColumnIndex !== undefined) {
-      menu.buttons[menu.selectedRowIndex][menu.selectedColumnIndex].deselect();
+  this.updateSelection = function(rowIndex, columnIndex) {
+    if (this.selectedRowIndex !== undefined && this.selectedColumnIndex !== undefined) {
+      this.grid[this.selectedRowIndex][this.selectedColumnIndex].deselect();
     }
 
-    menu.buttons[rowIndex][columnIndex].select();
-    menu.selectedRowIndex = rowIndex;
-    menu.selectedColumnIndex = columnIndex;
+    this.grid[rowIndex][columnIndex].select();
+    this.selectedRowIndex = rowIndex;
+    this.selectedColumnIndex = columnIndex;
   };
   /**
    * draws the menu onto the canvas
    */
-  this.draw = function(ghostFactor) {
-      this.buttons.map(row => {
+  this.draw = function(gD) {
+      this.grid.map(row => {
         row.map(button => {
-          button.draw(this.gD);
+          button.draw(gD);
         }, this);
       }, this);
   };
   this.getSelectedButton = function() {
-    return this.buttons[this.selectedRowIndex][this.selectedColumnIndex];
+    return this.grid[this.selectedRowIndex][this.selectedColumnIndex];
   };
-  this.getSelectedData = function () {
+  this.getSelectedData = function() {
     var selectedButton = this.getSelectedButton();
     if (!selectedButton) {
       return undefined;

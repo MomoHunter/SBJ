@@ -1,4 +1,4 @@
-﻿function Achievements(gD, menu) {
+function Achievements(gD, menu) {
   this.gD = gD;
   this.menu = menu;
   this.backgroundImage = new Image();
@@ -103,20 +103,20 @@
       })
     ]);
 
-    this.menuController = new MenuController(gD);
-    this.menuController.init(buttons);
+    this.menuController = new MenuController();
+    this.menuController.init(buttons, this.menu.cotrols);
   };
   /**
    * checks if a button is pressed
    */
   this.updateKeyPresses = function() {
-    this.menuController.updateKeyPresses();
+    this.menuController.updateKeyPresses(this.gD);
   };
   /**
    * checks if the mouse was moved
    */
   this.updateMouseMoves = function() {
-    this.menuController.updateMouseMoves();
+    this.menuController.updateMouseMoves(this.gD);
   };
   /**
    * checks if there was a click
@@ -124,7 +124,7 @@
   this.updateClicks = function() {
     var clickPos = this.gD.clicks.pop();
     if (clickPos) {
-      this.menuController.updateClick(clickPos);
+      this.menuController.updateClick(clickPos, this.gD);
     }
   };
   /**

@@ -81,8 +81,8 @@ function Menu(gD) {
       })
     ]);
 
-    this.menuController = new MenuController(gD);
-    this.menuController.init(buttons);
+    this.menuController = new MenuController();
+    this.menuController.init(buttons, this.controls);
 
     this.closedTitlescreen = false;        // if a key was pressed at start to close the tile-screen
   };
@@ -95,14 +95,14 @@ function Menu(gD) {
         this.closedTitlescreen = true;
       }
     } else {
-      this.menuController.updateKeyPresses();
+      this.menuController.updateKeyPresses(this.gD);
     }
   };
   /**
    * checks if the mouse was moved
    */
   this.updateMouseMoves = function() {
-    this.menuController.updateMouseMoves();
+    this.menuController.updateMouseMoves(this.gD);
   };
   /**
    * checks if there was a click
@@ -116,7 +116,7 @@ function Menu(gD) {
     if (!this.closedTitlescreen) {
       this.closedTitlescreen = true;
     } else {
-      this.menuController.updateClick(clickPos);
+      this.menuController.updateClick(clickPos, this.gD);
     }
   };
   /**
