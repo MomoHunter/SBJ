@@ -1,4 +1,4 @@
-function Achievements(gD, menu) {
+﻿function Achievements(gD, menu) {
   this.gD = gD;
   this.menu = menu;
   this.backgroundImage = new Image();
@@ -68,31 +68,11 @@ function Achievements(gD, menu) {
       })
     ;
 
-    var bigAchievementBoxTop = 70;
     var bigAchievementBoxLeft = this.buttonStartLeft + (this.buttonWidth + this.buttonPadding) * this.buttonsPerRow;
-    var bigAchievementBoxWidth = this.gD.canvas.width - bigAchievementBoxLeft - this.buttonStartLeft;
-    var bigAchievementBoxCenter = bigAchievementBoxLeft + bigAchievementBoxWidth / 2;
-    var bigAchievementBoxHeight = 230;
-    var bigAchievementBoxPadding = 20;
-    var bigAchievementImageSize = 75;
-    var bigAchievementProgressHeight = 30;
-
-    this.bigAchievementBox = new CanvasRect(bigAchievementBoxLeft, bigAchievementBoxTop, bigAchievementBoxWidth, bigAchievementBoxHeight, "rgba(255, 255, 255, 0.85)");
-    this.bigAchivementImage = new CanvasImage(
-      bigAchievementBoxLeft + (bigAchievementBoxWidth - bigAchievementImageSize) / 2,
-      bigAchievementBoxTop + bigAchievementBoxPadding,
-      bigAchievementImageSize, bigAchievementImageSize,
-      "Item_Star_0"
-    );
-    this.bigAchivementName = new CanvasText(bigAchievementBoxCenter, bigAchievementBoxTop + bigAchievementImageSize + bigAchievementBoxPadding * 2, "Placeholder", "normal");
-    this.bigAchivementDescriptionLine1 = new CanvasText(bigAchievementBoxCenter, bigAchievementBoxTop + bigAchievementImageSize + 17 + bigAchievementBoxPadding * 3, "Placeholder", "normal");
-    this.bigAchivementDescriptionLine2 = new CanvasText(bigAchievementBoxCenter, bigAchievementBoxTop + bigAchievementImageSize + 17 + bigAchievementBoxPadding * 3 + 17, "Placeholder", "normal");
-    this.bigAchivementProgress = new ProgressBar(
-      bigAchievementBoxLeft + bigAchievementBoxPadding,
-      bigAchievementBoxTop + bigAchievementBoxHeight - bigAchievementBoxPadding - bigAchievementProgressHeight,
-      bigAchievementBoxWidth - bigAchievementBoxPadding * 2, bigAchievementProgressHeight,
-      "12pt", "Consolas",
-      0
+    this.achievementBox = new AchievementBox(
+      bigAchievementBoxLeft, 70,
+      this.gD.canvas.width - bigAchievementBoxLeft - this.buttonStartLeft, 230,
+      20, 75, 30
     );
 
     var backToMenuWidth = 100;
@@ -140,11 +120,8 @@ function Achievements(gD, menu) {
     var selectedData = this.menuController.getSelectedData();
     if (selectedData) {
       var [index, name, [descLine1, descLine2], goal] = selectedData;
-      this.bigAchivementName.text = name;
-      this.bigAchivementDescriptionLine1.text = descLine1;
-      this.bigAchivementDescriptionLine2.text = descLine2;
-      this.bigAchivementProgress.current = this.achievementValues[index];
-      this.bigAchivementProgress.goal = goal;
+      var current = this.achievementValues[index];
+      this.achievementBox.setData(name, descLine1, descLine2, current, goal);
     }
   };
   /**
@@ -153,18 +130,54 @@ function Achievements(gD, menu) {
   this.draw = function(ghostFactor) {
     this.gD.context.drawImage(this.backgroundImage, 0, 0);
     this.title.draw(this.gD);
-
     this.menuController.draw(this.gD);
-
-    this.bigAchievementBox.draw(this.gD);
-    this.bigAchivementImage.draw(this.gD);
-    this.bigAchivementName.draw(this.gD);
-    this.bigAchivementDescriptionLine1.draw(this.gD);
-    this.bigAchivementDescriptionLine2.draw(this.gD);
-    this.bigAchivementProgress.draw(this.gD);
+    this.achievementBox.draw(this.gD);
   };
 }
 
+
+function AchievementBox(x, y, width, height, padding, imageSize, progressHeight) {
+  var centerX = x + width / 2;
+  this.backgroundRect = new CanvasRect(x, y, width, height, "rgba(255, 255, 255, 0.85)");
+  this.border = new CanvasBorder(x, y, width, height, "rgba(0, 0, 0, 1)", 3);
+  this.image = new CanvasImage(
+    x + (width - imageSize) / 2, y + padding,
+    imageSize, imageSize,
+    "Item_Star_0"
+  );
+  this.name = new CanvasText(
+    centerX, y + imageSize + padding * 2,
+    "", "normal"
+  );
+  this.descriptionLine1 = new CanvasText(
+    centerX, y + imageSize + 7 + padding * 3,
+    "", "small"
+  );
+  this.descriptionLine2 = new CanvasText(
+    centerX, y + imageSize + 7 + 14 + padding * 3,
+    "", "small"
+  );
+  this.progress = new ProgressBar(
+    x + padding, y + height - padding - progressHeight,
+    width - padding * 2, progressHeight
+  );
+  this.setData = function(name, descLine1, descLine2, current, goal) {
+    this.name.text = name;
+    this.descriptionLine1.text = descLine1;
+    this.descriptionLine2.text = descLine2;
+    this.progress.current = current;
+    this.progress.goal = goal;
+  };
+  this.draw = function(gD) {
+    this.backgroundRect.draw(gD);
+    this.image.draw(gD);
+    this.name.draw(gD);
+    this.descriptionLine1.draw(gD);
+    this.descriptionLine2.draw(gD);
+    this.progress.draw(gD);
+    this.border.draw(gD);
+  };
+}
 
 function ProgressBar(x, y, width, height, fontSize, fontFamily, goal) {
   this.width = width;

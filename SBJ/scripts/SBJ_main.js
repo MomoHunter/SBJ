@@ -336,6 +336,14 @@ function GlobalDict() {
         align: "center",
         baseline: "middle"
       },
+			small: {
+        font: "9pt Consolas",
+        color: "0, 0, 0, 0.9",
+        borderSize: 0,
+        borderColor: "",
+        align: "center",
+        baseline: "middle"
+      },
       title: {
       	font: "40pt Showcard Gothic, Impact",
 				color: "200, 200, 200, 1",
