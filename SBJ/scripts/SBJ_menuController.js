@@ -45,6 +45,10 @@ function MenuController() {
       if (keyB.get("Menu_Confirm")[2].includes(key)) {
         this.getSelectedButton().callLink(gD);
       }
+
+      if (keyB.get("Mute_All")[2].includes(key)) {
+        gD.muted = !gD.muted;
+      }
     });
   };
   /**

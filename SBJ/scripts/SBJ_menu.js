@@ -75,11 +75,10 @@ function Menu(gD) {
       }, this);
     }, this);
 
-    buttons.push([
-      new MenuImageButton(this.gD.canvas.width - 40, 10, 30, 30, "Icon_Mute", (gD) => {
-        gD.muted = !gD.muted
-      })
-    ]);
+    this.muteButton = new MenuImageButton(
+      this.gD.canvas.width - 40, 10, 30, 30, "Icon_Mute",
+      gD => { gD.muted = !gD.muted }
+    );
 
     this.menuController = new MenuController();
     this.menuController.init(buttons, this.controls);
@@ -103,6 +102,10 @@ function Menu(gD) {
    */
   this.updateMouseMoves = function() {
     this.menuController.updateMouseMoves(this.gD);
+    this.muteButton.selected = (
+      this.gD.mousePos.x >= this.muteButton.x && this.gD.mousePos.y >= this.muteButton.y &&
+      this.gD.mousePos.x <= this.muteButton.x + this.muteButton.width && this.gD.mousePos.y <= this.muteButton.y + this.muteButton.height
+    )
   };
   /**
    * checks if there was a click
@@ -117,6 +120,14 @@ function Menu(gD) {
       this.closedTitlescreen = true;
     } else {
       this.menuController.updateClick(clickPos, this.gD);
+      if (this.muteButton.selected) {
+        if (
+          clickPos.x >= this.muteButton.x && clickPos.y >= this.muteButton.y &&
+          clickPos.x <= this.muteButton.x + this.muteButton.width && clickPos.y <= this.muteButton.y + this.muteButton.height
+        ) {
+          this.gD.muted = !this.gD.muted;
+        }
+      }
     }
   };
   /**
@@ -144,6 +155,7 @@ function Menu(gD) {
       this.pressButton.draw(this.gD);
     } else {
       this.menuController.draw(this.gD);
+      this.muteButton.draw(this.gD);
       if (gD.muted) {
         gD.context.beginPath();
         gD.context.moveTo(this.gD.canvas.width - 40, 10);
