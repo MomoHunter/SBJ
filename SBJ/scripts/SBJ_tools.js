@@ -12,17 +12,7 @@ function CanvasText(x, y, text, styleKey) {
   this.text = text;
   this.styleKey = styleKey;
   this.draw = function(gD) {
-    var design = gD.design.text[styleKey];
-    gD.context.textAlign = design.align;
-    gD.context.textBaseline = design.baseline;
-    gD.context.font = design.font;
-    gD.context.fillStyle = `rgba(${design.color})`;
-    gD.context.fillText(this.text, this.x, this.y);
-    if (design.borderSize > 0) {
-      gD.context.strokeStyle = `rgba(${design.borderColor})`;
-      gD.context.lineWidth = design.borderSize;
-      gD.context.strokeText(this.text, this.x, this.y);
-    }
+    drawCanvasText(this.x, this.y, this.text, this.styleKey, gD);
   };
 }
 
@@ -35,25 +25,12 @@ function CanvasText(x, y, text, styleKey) {
  * @param spriteKey {string|null} key to determine which data from gD.spriteDict should be used. If null, no image is drawn.
  * @constructor
  */
-function CanvasImage(x, y, width, height, spriteKey = null) {
+function CanvasImage(x, y, spriteKey = null) {
   this.x = x;
   this.y = y;
-  this.width = width;
-  this.height = height;
   this.spriteKey = spriteKey;
   this.draw = function(gD) {
-    if (this.spriteKey == null) {
-      return
-    }
-
-    var [spriteX, spriteY, spriteWidth, spriteHeight] = gD.spriteDict[this.spriteKey];
-    gD.context.drawImage(
-      gD.spritesheet,
-      spriteX, spriteY,
-      spriteWidth, spriteHeight,
-      this.x, this.y,
-      this.width, this.height
-    );
+    drawCanvasImage(this.x, this.y, this.spriteKey, this.gD);
   };
 }
 
@@ -66,15 +43,14 @@ function CanvasImage(x, y, width, height, spriteKey = null) {
  * @param backgroundColor {string} CSS-color-definition for the background of the Rectangle
  * @constructor
  */
-function CanvasRect(x, y, width, height, backgroundColor) {
+function CanvasRect(x, y, width, height, styleKey) {
   this.x = x;
   this.y = y;
   this.width = width;
   this.height = height;
-  this.backgroundColor = backgroundColor;
+  this.styleKey = styleKey;
   this.draw = function(gD) {
-    gD.context.fillStyle = this.backgroundColor;
-    gD.context.fillRect(this.x, this.y, this.width, this.height);
+    drawCanvasRect(this.x, this.y, this.width, this.height, this.styleKey, this.gD);
   };
 }
 
@@ -88,48 +64,46 @@ function CanvasRect(x, y, width, height, backgroundColor) {
  * @param borderSize {string} width of the outline in pixel
  * @constructor
  */
-function CanvasBorder(x, y, width, height, borderColor, borderSize) {
+function CanvasBorder(x, y, width, height, styleKey) {
   this.x = x;
   this.y = y;
   this.width = width;
   this.height = height;
-  this.borderColor = borderColor;
-  this.borderSize = borderSize;
+  this.styleKey = styleKey;
   this.draw = function(gD) {
-    gD.context.strokeStyle = this.borderColor;
-    gD.context.lineWidth = this.borderSize;
-    gD.context.strokeRect(this.x, this.y, this.width, this.height);
+    drawCanvasRectBorder(this.x, this.y, this.width, this.height, this.styleKey, this.gD);
   }
 }
 
 /**
  *
  */
-function ScrollBar(x, y, height, elementHeight, elementsCount, color) {
+function CanvasScrollBar(x, y, height, elementHeight, elementsCount, styleKey) {
   this.x = x;
   this.y = y;
   this.height = height;
   this.elementHeight = elementHeight;
   this.elementsCount = elementsCount;
-  this.color = color;
+  this.styleKey = styleKey;
   this.currentElementIndex = 0;
-  this.lineWidthBar = 4;
-  this.lineWidthLine = 1;
+  this.refresh = function(newElementsCount) {
+    this.elementsCount = newElementsCount;
+  };
   this.scroll = function(currentElementIndex) {
     this.currentElementIndex = currentElementIndex;
   };
   this.draw = function(gD) {
-    gD.context.lineWidth = this.lineWidthLine;
-    gD.context.strokeStyle = this.color;
-    gD.context.beginPath();
-    gD.context.moveTo(this.x, this.y);
-    gD.context.lineTo(this.x, this.y + this.height);
-    gD.context.stroke();
-    gD.context.lineWidth = this.lineWidthBar;
-    gD.context.beginPath();
-    gD.context.moveTo(this.x, this.y + ((this.currentElementIndex / this.elementsCount) * this.height));
-    gD.context.lineTo(this.x, this.y + (((this.height / this.elementHeight) + this.currentElementIndex) / this.elementsCount) * this.height);
-    gD.context.stroke();
+    if (this.elementsCount * this.elementHeight <= this.height) {
+      return;
+    }
+    
+    var design = gD.design.elements[this.styleKey];
+    drawCanvasLine(this.x, this.y, this.x, this.y + this.height, design.lineKey, gD);
+    drawCanvasLine(
+      this.x, this.y + ((this.currentElementIndex / this.elementsCount) * this.height),
+      this.x, this.y + (((this.height / this.elementHeight) + this.currentElementIndex) / this.elementsCount) * this.height,
+      design.barKey, gD
+    );
   };
 }
 
@@ -201,4 +175,158 @@ function copy(object) {
     }
     return result;
   }
+}
+
+function drawCanvasText(x, y, text, styleKey, gD) {
+  var design = gD.design.text[styleKey];
+  gD.context.textAlign = design.align;
+  gD.context.textBaseline = design.baseline;
+  gD.context.font = design.font;
+  gD.context.fillStyle = `rgba(${design.color})`;
+  gD.context.fillText(text, x, y);
+  if (design.borderKey !== "") {
+    drawCanvasTextBorder(x, y, text, design.borderKey, gD);
+  }
+}
+
+function drawCanvasTextBorder(x, y, text, styleKey, gD) {
+  var design = gD.design.border[styleKey];
+  gD.context.strokeStyle = `rgba(${design.borderColor})`;
+  gD.context.lineWidth = design.borderSize;
+  gD.context.strokeText(text, x, y);
+}
+
+function drawCanvasImage(x, y, spriteKey = null, gD) {
+  if (spriteKey === null) {
+    return;
+  }
+
+  var [spriteX, spriteY, spriteWidth, spriteHeight] = gD.spriteDict[spriteKey];
+  gD.context.drawImage(
+    gD.spritesheet, 
+    spriteX, spriteY, spriteWidth, spriteHeight,
+    x, y, spriteWidth, spriteHeight
+  );
+}
+
+function drawCanvasRect(x, y, width, height, styleKey, gD) {
+  var design = gD.design.rect[styleKey];
+  gD.context.fillStyle = `rgba(${design.backgroundColor})`;
+  gD.context.fillRect(x, y, width, height);
+}
+
+function drawCanvasRectBorder(x, y, width, height, styleKey, gD) {
+  var design = gD.design.border[styleKey]
+  gD.context.strokeStyle = `rgba(${design.borderColor})`;
+  gD.context.lineWidth = design.borderSize;
+  gD.context.strokeRect(x, y, width, height);
+}
+
+function drawCanvasLine(startX, startY, endX, endY, styleKey, gD) {
+  var design = gD.design.border[styleKey];
+  gD.context.strokeStyle = `rgba(${design.borderColor})`;
+  gD.context.lineWidth = design.borderSize;
+  gD.context.beginPath();
+  gD.context.moveTo(startX, startY);
+  gD.context.lineTo(endX, endY);
+  gD.context.stroke();
+}
+
+function CanvasButton(x, y, width, height, text, styleKey) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.text = text;
+  this.styleKey = styleKey;
+  this.selected = false;
+  this.select = function() {
+    this.selected = true;
+  };
+  this.deselect = function() {
+    this.selected = false;
+  };
+  this.draw = function(gD) {
+    var design = gD.design.button[this.styleKey];
+    if (this.selected) {
+      drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.selected, gD);
+    } else {
+      drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.standard, gD);
+    }
+    drawCanvasText(this.x + this.width / 2, this.y + this.height / 2, this.text, design.textKey, gD);
+    drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
+  };
+}
+
+function CanvasImageButton(x, y, width, height, spriteKey, styleKey) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.spriteKey = spriteKey;
+  this.styleKey = styleKey;
+  this.selected = false;
+  this.select = function() {
+    this.selected = true;
+  };
+  this.deselect = function() {
+    this.selected = false;
+  };
+  this.draw = function(gD) {
+    var design = gD.design.button[this.styleKey];
+    var [spriteX, spriteY, spriteWidth, spriteHeight] = gD.spriteDict[this.spriteKey];
+    if (this.selected) {
+      drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.selected, gD);
+    } else {
+      drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.standard, gD);
+    }
+    drawCanvasImage(this.x + (this.width - spriteWidth) / 2, this.y + (this.height - spriteHeight) / 2, this.spriteKey, gD);
+    drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
+  };
+}
+
+function CanvasEnterNameModal(x, y, width, height, styleKey) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.styleKey = styleKey;
+  this.counter = 0;
+  this.cursorPosition = 0;
+  this.text = "";
+  this.moveCursor = function(characters) {
+    this.cursorPosition += characters;
+    if (this.cursorPosition < 0) {
+      this.cursorPosition = 0;
+    } else if (this.cursorPosition > this.text.length) {
+      this.cursorPosition = this.text.length;
+    }
+  };
+  this.addCharacter(character) {
+    this.text = this.text.slice(0, this.cursorPosition) + character + this.text.slice(this.cursorPosition, this.text.length);
+    this.moveCursor(1);
+  };
+  this.draw = function(gD) {
+    var design = gD.design.elements[this.styleKey];
+
+    drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.modal, gD);
+    drawCanvasRect(
+      this.x + (this.width - (this.width / 3)) / 2, this.y + (this.height - (this.height / 3)) / 2, 
+      this.width / 3, this.height / 3, design.rectKey.background, gD
+    );
+    drawCanvasText(this.x + this.width / 2, this.y + this.height / 2 - 20, "Bitte Name eingeben:", design.textKey, gD);
+    drawCanvasRect(
+      this.x + (this.width - (this.width / 3)) / 2 + 5, this.y + this.height / 2 + 20,
+      this.width / 3 - 10, 20, design.rectKey.textField, gD
+    );
+    drawCanvasRectBorder(
+      this.x + (this.width - (this.width / 3)) / 2, this.y + (this.height - (this.height / 3)) / 2, 
+      this.width / 3, this.height / 3, design.borderKey.background, gD
+    );
+    drawCanvasRectBorder(
+      this.x + (this.width - (this.width / 3)) / 2 + 5, this.y + this.height / 2 + 20,
+      this.width / 3 - 10, 20, design.borderKey.textField, gD
+    );
+    
+  };
 }

@@ -1,72 +1,91 @@
-function MenuController() {
+function MenuController(menu) {
+  this.menu = menu;
   /**
-   * initiates the menu object
-   * @param grid {Array<Array<MenuTextButton>>} The list of already created grid to manage.
-   * @param menu {Menu} carries the main menu
+   * initiates the menuController object
+   * @param page {Object} an object that represents a view
+   * @param scrollBar {CanvasScrollBar} the scrollBar of the page, if it has one
    */
-  this.init = function(grid, menu) {
-    this.grid = grid;
-    this.updateSelection(0, 0);
-    this.menu = menu;
+  this.setNewPage = function(page, scrollBar = null) {
+    this.currentPage = page;
+    this.scrollBar = scrollBar;
+    this.deselectAll();
+    this.updateNGSelection(0, 0);
+    this.updateAGSelection(undefined, undefined);
   };
   /**
    * checks if a button is pressed
+   * @param key {String} The keycode that should be checked
+   * @param gD {GlobalDict} the global dictionary
    */
-  this.updateKeyPresses = function(gD) {
+  this.updateKeyPresses = function(key, gD) {
     var keyB = this.menu.controls.keyBindings;
-    var rowIndex = this.selectedRowIndex;
-    var columnIndex = this.selectedColumnIndex;
+    var rowIndex = this.selectedNGRowIndex;
+    var columnIndex = this.selectedNGColumnIndex;
 
-    gD.newKeys.map(key => {
-      if (keyB.get("Menu_NavDown")[2].includes(key)) {
-        rowIndex = (rowIndex + 1) % this.grid.length;
-        if (this.grid[rowIndex].length - 1 < columnIndex) {
-          columnIndex = this.grid[rowIndex].length - 1;
-        }
-      } else if (keyB.get("Menu_NavUp")[2].includes(key)) {
-        rowIndex -= 1;
-        if (rowIndex < 0) {
-          rowIndex = this.grid.length - 1;
-        }
-        if (this.grid[rowIndex].length - 1 < columnIndex) {
-          columnIndex = this.grid[rowIndex].length - 1;
-        }
-      } else if (keyB.get("Menu_NavRight")[2].includes(key)) {
-        columnIndex = (columnIndex + 1) % this.grid[rowIndex].length;
-      } else if (keyB.get("Menu_NavLeft")[2].includes(key)) {
-        columnIndex -= 1;
-        if (columnIndex < 0) {
-          columnIndex = this.grid[rowIndex].length - 1;
-        }
+    if (keyB.get("Menu_NavDown")[2].includes(key)) {
+      rowIndex = (rowIndex + 1) % this.currentPage.nG.length;
+      if (this.currentPage.nG[rowIndex].length - 1 < columnIndex) {
+        columnIndex = this.currentPage.nG[rowIndex].length - 1;
       }
-
-      this.updateSelection(rowIndex, columnIndex);
-
-      if (keyB.get("Menu_Confirm")[2].includes(key)) {
-        this.getSelectedButton().callLink(gD);
+    } else if (keyB.get("Menu_NavUp")[2].includes(key)) {
+      rowIndex -= 1;
+      if (rowIndex < 0) {
+        rowIndex = this.currentPage.nG.length - 1;
       }
-
-      if (keyB.get("Mute_All")[2].includes(key)) {
-        gD.muted = !gD.muted;
+      if (this.currentPage.nG[rowIndex].length - 1 < columnIndex) {
+        columnIndex = this.currentPage.nG[rowIndex].length - 1;
       }
-
-      if (keyB.get("Menu_Back")[2].includes(key)) {
-        gD.currentPage = this.menu;
+    } else if (keyB.get("Menu_NavRight")[2].includes(key)) {
+      columnIndex = (columnIndex + 1) % this.currentPage.nG[rowIndex].length;
+    } else if (keyB.get("Menu_NavLeft")[2].includes(key)) {
+      columnIndex -= 1;
+      if (columnIndex < 0) {
+        columnIndex = this.currentPage.nG[rowIndex].length - 1;
       }
-    });
+    }
+
+    this.updateNGSelection(rowIndex, columnIndex);
+
+    if (keyB.get("Menu_Confirm")[2].includes(key)) {
+      this.getSelectedButtons()[0].action(this.gD);
+    }
+
+    if (keyB.get("Menu_Back")[2].includes(key)) {
+      gD.setNewPage(this.menu, true);
+    }
+
+    if (keyB.get("Mute_All")[2].includes(key)) {
+      gD.muted = !gD.muted;
+    }
   };
   /**
    * checks if the mouse was moved
    */
   this.updateMouseMoves = function(gD) {
-    this.grid.map((buttonRow, rowIndex) => {
+    this.currentPage.nG.map((buttonRow, rowIndex) => {
       buttonRow.map((button, columnIndex) => {
-        if (gD.mousePos.x >= button.x && gD.mousePos.x <= button.x + button.width &&
-            gD.mousePos.y >= button.y && gD.mousePos.y <= button.y + button.height) {
-          this.updateSelection(rowIndex, columnIndex);
+        if (gD.mousePos.x >= button.button.x && gD.mousePos.x <= button.button.x + button.button.width &&
+            gD.mousePos.y >= button.button.y && gD.mousePos.y <= button.button.y + button.button.height) {
+          this.updateNGSelection(rowIndex, columnIndex);
         }
       }, this);
     }, this);
+
+    var updated = false;
+
+    this.currentPage.aG.map((buttonRow, rowIndex) => {
+      buttonRow.map((button, columnIndex) => {
+        if (gD.mousePos.x >= button.button.x && gD.mousePos.x <= button.button.x + button.button.width &&
+            gD.mousePos.y >= button.button.y && gD.mousePos.y <= button.button.y + button.button.height) {
+          this.updateAGSelection(rowIndex, columnIndex);
+          updated = true;
+        }
+      }, this);
+    }, this);
+
+    if (!updated) {
+      this.updateAGSelection(undefined, undefined);
+    }
   };
   /**
    * checks if there was a click
@@ -74,11 +93,12 @@ function MenuController() {
    * @param gD {GlobalDict} carries global information
    */
   this.updateClick = function(clickPos, gD) {
-    var selectedButton = this.getSelectedButton();
-    if (clickPos.x >= selectedButton.x && clickPos.x <= selectedButton.x + selectedButton.width &&
-        clickPos.y >= selectedButton.y && clickPos.y <= selectedButton.y + selectedButton.height) { // = mouse over selected button
-      selectedButton.callLink(gD);
-    }
+    this.getSelectedButtons().map(button => {
+      if (clickPos.x >= button.button.x && clickPos.x <= button.button.x + button.button.width &&
+          clickPos.y >= button.button.y && clickPos.y <= button.button.y + button.button.height) {
+        button.action(gD);
+      }
+    }, this);
   };
   /**
    * checks if the wheel was moved
@@ -96,35 +116,73 @@ function MenuController() {
    * called to update the current button selection
    * (deselects old selection and sets specified button as selected)
    */
-  this.updateSelection = function(rowIndex, columnIndex) {
-    if (this.selectedRowIndex !== undefined && this.selectedColumnIndex !== undefined) {
-      this.grid[this.selectedRowIndex][this.selectedColumnIndex].deselect();
+  this.updateNGSelection = function(rowIndex, columnIndex) {
+    if (this.selectedNGRowIndex !== undefined && this.selectedNGColumnIndex !== undefined) {
+      this.currentPage.nG[this.selectedNGRowIndex][this.selectedNGColumnIndex].button.deselect();
     }
 
-    this.grid[rowIndex][columnIndex].select();
-    this.selectedRowIndex = rowIndex;
-    this.selectedColumnIndex = columnIndex;
+    var object = this.currentPage.nG[rowIndex][columnIndex];
+    object.button.select();
+    if (object.selected !== undefined) {
+      object.selected(this.gD);
+    }
+    this.selectedNGRowIndex = rowIndex;
+    this.selectedNGColumnIndex = columnIndex;
+  };
+  this.updateAGSelection = function(rowIndex, columnIndex) {
+    if (this.selectedAGRowIndex !== undefined && this.selectedAGColumnIndex !== undefined) {
+      this.currentPage.aG[this.selectedAGRowIndex][this.selectedAGColumnIndex].button.deselect();
+    }
+
+    if (rowIndex !== undefined && columnIndex !== undefined) {
+      var object = this.currentPage.nG[rowIndex][columnIndex];
+      object.button.select();
+      if (object.selected !== undefined) {
+        object.selected(this.gD);
+      }
+    }
+    this.selectedAGRowIndex = rowIndex;
+    this.selectedAGColumnIndex = columnIndex;
+  };
+  this.deselectAll = function() {
+    this.currentPage.nG.map(row => {
+      row.map(button => {
+        button.button.deselect();
+      });
+    });
+    this.currentPage.aG.map(row => {
+      row.map(button => {
+        button.button.deselect();
+      });
+    });
+    this.selectedNGRowIndex = 0;
+    this.selectedNGColumnIndex = 0;
+    this.selectedAGRowIndex = undefined;
+    this.selectedAGColumnIndex = undefined;
   };
   /**
    * draws the menu onto the canvas
    */
   this.draw = function(gD) {
-      this.grid.map(row => {
-        row.map(button => {
-          button.draw(gD);
-        }, this);
+    this.currentPage.nG.map(row => {
+      row.map(button => {
+        button.button.draw(gD, menu);
       }, this);
+    }, this);
+
+    this.currentPage.aG.map(row => {
+      row.map(button => {
+        button.button.draw(gD);
+      }, this);
+    }, this);
   };
-  this.getSelectedButton = function() {
-    return this.grid[this.selectedRowIndex][this.selectedColumnIndex];
-  };
-  this.getSelectedData = function() {
-    var selectedButton = this.getSelectedButton();
-    if (!selectedButton) {
-      return undefined;
-    } else {
-      return selectedButton.data;
+  this.getSelectedButtons = function() {
+    var buttons = [];
+    buttons.push(this.currentPage.nG[this.selectedNGRowIndex][this.selectedNGColumnIndex]);
+    if (this.selectedAGRowIndex !== undefined && this.selectedAGColumnIndex !== undefined) {
+      buttons.push(this.currentPage.aG[this.selectedAGRowIndex][this.selectedAGColumnIndex]);
     }
+    return buttons;
   };
 }
 

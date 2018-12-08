@@ -1,6 +1,7 @@
-﻿function Controls(gD, menu) {
-  this.gD = gD;
+﻿function Controls(menu, gD, mC) {
   this.menu = menu;
+  this.gD = gD;
+  this.mC = mC;
   this.init = function() {
     this.newKeyMode = false;
     this.keyBindings = new Map([   //Definition, representation, code
@@ -10,6 +11,7 @@
       ["Menu_NavLeft", ["Navigation links", ["A", String.fromCharCode(8592)], ["KeyA", "ArrowLeft"]]],
       ["Menu_Confirm", ["Bestätigen", ["Enter", "Space"], ["Enter", "Space"]]],
       ["Menu_Back", ["zur vorherigen Seite gehen", ["Escape"], ["Escape"]]],
+      ["Menu_Refresh", ["Daten neu laden", ["R"], ["KeyR"]]],
       ["SelectionScreen_NavRight", ["Navigation rechts", ["D", String.fromCharCode(8594)], ["KeyD", "ArrowRight"]]],
       ["SelectionScreen_NavLeft", ["Navigation links", ["A", String.fromCharCode(8592)], ["KeyA", "ArrowLeft"]]],
       ["SelectionScreen_Confirm", ["Bestätigen", ["Enter", "Space"], ["Enter", "Space"]]],
@@ -83,13 +85,11 @@
 
     this.keyEntryHeadlines = [];
     this.keyEntries = [];
-    this.selectedRowIndex = 0;
-    this.selectedColumnIndex = 0;
     this.scrollHeight = 0;
     this.oldKey = undefined;
     this.newKeyEntry = [];
 
-    this.title = new CanvasText(this.gD.canvas.width / 2, 30, "Controls", "header");
+    this.title = new CanvasText(this.gD.canvas.width / 2, 30, "Controls", "pageTitle");
 
     var headline = "";
 
@@ -108,18 +108,34 @@
       this.keyEntries.push(entry);
     }
 
-    this.keyEntries[this.selectedRowIndex].select(this.selectedColumnIndex);
+    this.nG = [];
 
-    this.scrollBar = new ScrollBar(this.gD.canvas.width - 165, 60, 220, 20, (this.keyEntryHeadlines.length + this.keyEntries.length), "rgba(255, 255, 255, 1)");
+    this.keyEntries.map((keyArray, rowIndex) => {
+      var objectArray = [];
+      keyArray.keys.map((key, columnIndex) => {
+        objectArray.push({
+          button: key,
+          action: (gD) => { this.activateNewKeyMode() }
+        });
+      }, this);
+      this.nG.push(objectArray);
+    }, this);
 
-    this.backToMenu = new MenuTextButton((this.gD.canvas.width / 2) - 100, this.gD.canvas.height - 50, 200, 30, "Main Menu");
+    this.nG.push([{
+      button: new CanvasButton((this.gD.canvas.width / 2) - 100, this.gD.canvas.height - 50, 200, 30, "Main Menu", "menu"),
+      action: (gD) => { gD.setNewPage(this.menu, true) }
+    }]);
+
+    this.aG = [];
+
+    this.scrollBar = new CanvasScrollBar(this.gD.canvas.width - 165, 60, 220, 20, (this.keyEntryHeadlines.length + this.keyEntries.length), "scrollBarStandard");
   };
   this.vScroll = function(elementsScrolled) {
     this.scrollHeight = elementsScrolled * 20;
     this.scrollBar.scroll(elementsScrolled);
   };
   this.activateNewKeyMode = function() {
-    var selectedEntry = this.keyEntries[this.selectedRowIndex];
+    var selectedEntry = this.keyEntries[this.mC.selectedNGRowIndex];
     if (!this.newKeyMode) {
       this.newKeyMode = true;
     } else {
@@ -129,9 +145,9 @@
         this.keyBindings.get(this.newKeyEntry[0])[1][this.newKeyEntry[1]] = this.oldKey;
       }
     }
-    this.oldKey = this.keyBindings.get(selectedEntry.name)[1][this.selectedColumnIndex];
-    this.keyBindings.get(selectedEntry.name)[1][this.selectedColumnIndex] = "...";
-    this.newKeyEntry = [selectedEntry.name, this.selectedColumnIndex];
+    this.oldKey = this.keyBindings.get(selectedEntry.name)[1][this.mC.selectedNGColumnIndex];
+    this.keyBindings.get(selectedEntry.name)[1][this.mC.selectedNGColumnIndex] = "...";
+    this.newKeyEntry = [selectedEntry.name, this.mC.selectedNGColumnIndex];
   };
   this.setNewKey = function(key) {
     if (key.startsWith('Key') || key.startsWith('Digit')) {
@@ -154,81 +170,30 @@
         return;
       }
 
-      var rowIndex = this.selectedRowIndex;
-      var columnIndex = this.selectedColumnIndex;
+      this.mC.updateKeyPresses(key, this.gD);
 
-      if (this.keyBindings.get('Controls_NavDown')[2].includes(key)) {
-        rowIndex++;
-        if (rowIndex >= this.keyEntries.length) {
-          updateControlsSelection(this, -1, columnIndex, true);
-        } else {
-          updateControlsSelection(this, rowIndex, columnIndex, true);
-        }
-      } else if (this.keyBindings.get('Controls_NavUp')[2].includes(key)) {
-        rowIndex--;
-        if (rowIndex < -1) {
-          updateControlsSelection(this, this.keyEntries.length - 1, columnIndex, true);
-        } else {
-          updateControlsSelection(this, rowIndex, columnIndex, true);
-        }
-      } else if (this.keyBindings.get('Controls_NavRight')[2].includes(key)) {
-        columnIndex = (columnIndex + 1) % 2;
-        updateControlsSelection(this, rowIndex, columnIndex, true);
-      } else if (this.keyBindings.get('Controls_NavLeft')[2].includes(key)) {
-        columnIndex = (columnIndex + 1) % 2;
-        updateControlsSelection(this, rowIndex, columnIndex, true);
-      } else if (this.keyBindings.get('Controls_DeleteKey')[2].includes(key)) {
+      var rowIndex = this.mC.selectedNGRowIndex;
+      var columnIndex = this.mC.selectedNGColumnIndex;
+
+      if (this.keyBindings.get('Controls_DeleteKey')[2].includes(key)) {
         this.keyBindings.get(this.keyEntries[rowIndex].name)[1].splice(columnIndex, 1);
         this.keyBindings.get(this.keyEntries[rowIndex].name)[2].splice(columnIndex, 1);
-      } else if (this.keyBindings.get('Controls_Confirm')[2].includes(key)) {
-        if (rowIndex === -1) {
-          this.gD.currentPage = this.menu;
-        } else {
-          this.activateNewKeyMode();
-        }
-      } else if (this.keyBindings.get('Controls_Abort')[2].includes(key)) {
-        this.gD.currentPage = this.menu;
       }
     }, this);
   };
   this.updateMouseMoves = function() {
-    this.keyEntries.map((entry, rowIndex) => {
-      if (entry.y - this.scrollHeight < 280 && entry.y - this.scrollHeight >= 60) {
-        entry.keys.map((key, columnIndex) => {
-          if (this.gD.mousePos.x >= key.x && this.gD.mousePos.x < key.x + key.width &&
-              this.gD.mousePos.y >= key.y - this.scrollHeight && this.gD.mousePos.y < key.y - this.scrollHeight + key.height) {
-            updateControlsSelection(this, rowIndex, columnIndex, false);
-          }
-        }, this);
-      }
-    }, this);
-
-    if (this.gD.mousePos.x >= this.backToMenu.x && this.gD.mousePos.x < this.backToMenu.x + this.backToMenu.width &&
-        this.gD.mousePos.y >= this.backToMenu.y && this.gD.mousePos.y < this.backToMenu.y + this.backToMenu.height) {
-      updateControlsSelection(this, -1, this.selectedColumnIndex, false);
-    }
+    this.mC.updateMouseMoves(this.gD);
   };
-  this.updateClicks = function() {
+  this.updateClick = function() {
     var clickPos = this.gD.clicks.pop();
     if (!clickPos) {
       return
     }
 
-    if (this.selectedRowIndex === -1) {
-      if (clickPos.x >= this.backToMenu.x && clickPos.x <= this.backToMenu.x + this.backToMenu.width &&
-          clickPos.y >= this.backToMenu.y && clickPos.y <= this.backToMenu.y + this.backToMenu.height) { // = mouse over menu button
-        this.gD.currentPage = this.menu;
-      }
-    } else {
-      var selectedEntry = this.keyEntries[this.selectedRowIndex];
-      if (clickPos.x >= selectedEntry.x && clickPos.x <= selectedEntry.x + selectedEntry.width &&
-          clickPos.y >= selectedEntry.y - this.scrollHeight && clickPos.y <= selectedEntry.y - this.scrollHeight + selectedEntry.height) { // = mouse over selected entry
-        this.activateNewKeyMode();
-      }
-    }
+    this.mC.updateClick(clickPos, this.gD);
   };
   this.updateWheelMoves = function() {
-    var wheelMove = this.gD.wheelMovements.pop();
+    /*var wheelMove = this.gD.wheelMovements.pop();
     if (wheelMove < 0) {
       this.vScroll(Math.max(
         (this.scrollHeight / 20) - 1, 
@@ -239,7 +204,7 @@
         (this.scrollHeight / 20) + 1, 
         (this.keyEntries[this.keyEntries.length - 1].y - 260) / 20
       ));
-    }
+    }*/
   };
   this.update = function() {
     /* unused */
@@ -249,7 +214,8 @@
 
     this.title.draw(this.gD);
     this.scrollBar.draw(this.gD);
-    this.backToMenu.draw(this.gD);
+
+    this.mC.draw(this.gD);
 
     this.keyEntries.map(entry => {
       var realHeight = entry.y - this.scrollHeight;
@@ -265,9 +231,7 @@
       }
     }, this);
 
-    this.gD.context.lineWidth = 2;
-    this.gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
-    this.gD.context.strokeRect(200, 60, 600, 220);
+    drawCanvasRectBorder(200, 60, 600, 220, "standard", this.gD);
   };
 }
 
@@ -331,9 +295,9 @@ function ControlEntry(x, y, width, height, color, name, bordersize) {
     gD.context.font = this.font;
     gD.context.fillStyle = this.textColor;
     gD.context.fillText(controls.keyBindings.get(this.name)[0], this.x + 5, this.y - controls.scrollHeight + (this.height / 2));
-    this.keys.map(key => {
+    /*this.keys.map(key => {
       key.draw(controls, gD);
-    });
+    });*/
   };
 }
 
@@ -358,15 +322,15 @@ function ControlKey(x, y, width, height, color, name, keyNr, bordersize) {
   this.deselect = function() {
     this.selected = false;
   };
-  this.draw = function(controls, gD) {
-    var keyRef = controls.keyBindings.get(this.name)[1][this.keyNr];
+  this.draw = function(gD, menu) {
+    var keyRef = menu.controls.keyBindings.get(this.name)[1][this.keyNr];
 
     if (this.selected) {
       gD.context.fillStyle = this.selectedColor;
     } else {
       gD.context.fillStyle = this.color;
     }
-    gD.context.fillRect(this.x, this.y - controls.scrollHeight, this.width, this.height);
+    gD.context.fillRect(this.x, this.y - menu.controls.scrollHeight, this.width, this.height);
     if (keyRef !== undefined) {
       var spriteRef = gD.spriteDict["Icon_KeyShort"];
       if (keyRef.length > 1) {
@@ -374,12 +338,12 @@ function ControlKey(x, y, width, height, color, name, keyNr, bordersize) {
       }
 
       gD.context.drawImage(gD.spritesheet, spriteRef[0], spriteRef[1], spriteRef[2], spriteRef[3],
-        this.x + (this.width - spriteRef[2]) / 2, this.y - controls.scrollHeight + (this.height - spriteRef[3]) / 2, spriteRef[2], spriteRef[3]);
+        this.x + (this.width - spriteRef[2]) / 2, this.y - menu.controls.scrollHeight + (this.height - spriteRef[3]) / 2, spriteRef[2], spriteRef[3]);
       gD.context.textAlign = this.textAlign;
       gD.context.textBaseline = this.textBaseline;
       gD.context.font = this.font;
       gD.context.fillStyle = this.textColor;
-      gD.context.fillText(keyRef, this.x + (this.width / 2), this.y - controls.scrollHeight + (this.height / 2));
+      gD.context.fillText(keyRef, this.x + (this.width / 2), this.y - menu.controls.scrollHeight + (this.height / 2));
     }
   };
 }
