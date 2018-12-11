@@ -1,0 +1,1 @@
+function Savestate1544471066720(){this.name='asdf';this.spriteKey='Money_100_0';this.date=1544471066719;this.version='v3.0.0';this.data='e30=';}
