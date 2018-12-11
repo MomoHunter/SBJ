@@ -1,51 +1,35 @@
-function SaveLoad(menu, gD, mC) {
+function SaveLoad(menu, gD) {
   this.menu = menu;
   this.gD = gD;
-  this.mC = mC;
   this.init = function() {
     this.filesLoaded = 0;
     this.savestates = [];
+    this.buttons = ["Save", "Main Menu", "Load"];
+    this.enterName = false;
 
     this.loadFile();
 
     this.title = new CanvasText(this.gD.canvas.width / 2, 30, "Save / Load", "pageTitle");
 
-    this.buttonStartTop = this.gD.canvas.height - 50;
-    this.buttonHeight = 30;
-    this.buttonFullWidth = 620;
-    this.buttonPadding = 10;
-    this.buttonStartLeft = (this.gD.canvas.width / 2) - (this.buttonFullWidth / 2);
+    this.infoText = new CanvasText(this.gD.canvas.width / 2, this.gD.canvas.height / 2, "", "instruction");
 
-    this.basisNG = [
-      [
-        { button: "Save",      action: (gD) => { this.createSavestate("Test", "Money_1000_0") } },
-        { button: "Main Menu", action: (gD) => { gD.setNewPage(this.menu, true) } },
-        { button: "Load",      action: (gD) => { this.loadSavestate() } }
-      ]
-    ];
-
-    this.basisNG.map((rowButtons, rowIndex) => {
-      var buttonWidth = (this.buttonFullWidth - (rowButtons.length - 1) * this.buttonPadding) / rowButtons.length;
-      rowButtons.map((button, columnIndex) => {
-        this.basisNG[rowIndex][columnIndex].button = new CanvasButton(
-          this.buttonStartLeft + (buttonWidth + this.buttonPadding) * columnIndex, this.buttonStartTop + (this.buttonHeight + this.buttonPadding) * rowIndex,
-          buttonWidth, this.buttonHeight, this.basisNG[rowIndex][columnIndex].button, "menu"
-        );
-      }, this);
+    this.buttons.map((name, index) => {
+      this.buttons[index] = new CanvasButton(
+        this.gD.canvas.width / 2 - 310 + 210 * index, this.gD.canvas.height - 50, 200, 30, this.buttons[index], "menu"
+      );
     }, this);
 
-    this.aG = [
-      [{ 
-        button: new CanvasImageButton(this.gD.canvas.width - 40, 10, 30, 30, "Icon_Refresh", "standardImage"), 
-        action: (gD) => { this.reloadSavestates() }
-      }]
-    ];
+    this.refreshButton = new CanvasImageButton(
+      this.gD.canvas.width - 40, 10, 30, 30, "Icon_Refresh", "standardImage"
+    );
 
-    this.scrollBar = new CanvasScrollBar(this.gD.canvas.width / 2 + 330, 60, 220, 55, 0, "scrollBarStandard");
+    this.scrollBar = new CanvasScrollBar(this.gD.canvas.width / 2 + 320, 60, 220, 55, 0, "scrollBarStandard");
 
-    this.savestateDetails = new SLSavestateDetails(this.gD.canvas.width - 160, 60, 150, 220, "savestateDetails");
+    this.savestateDetails = new SLSavestateDetails(this.gD.canvas.width - 170, 60, 160, 220, "savestateDetails");
 
-    this.nG = this.savestates.concat(this.basisNG);
+    this.enterNameModal = new CanvasEnterNameModal(0, 0, this.gD.canvas.width, this.gD.canvas.height, "enterNameModal");
+
+    this.updateSelection(-1, 1);
   };
   this.loadFile = function() {
     var saveLoad = this;
@@ -80,43 +64,31 @@ function SaveLoad(menu, gD, mC) {
         this.savestates.splice(pos, 0, savestate);
       }
     }
+
     this.savestates.map((state, index) => {
-      var savestateObject = new SLSavestate((this.gD.canvas.width / 2) - 310, 60 + (55 * index), 620, 55, "savestate", state)
-      this.savestates[index] = [{
-        button: savestateObject,
-        action: (gD) => { this.markSavestate(savestateObject) },
-        selected: (gD) => { this.savestateDetails.setSavestate(state) }
-      }];
+      this.savestates[index] = new SLSavestate(
+        (this.gD.canvas.width / 2) - 310, 60 + (55 * index), 620, 55, "savestate", state
+      );
     }, this);
 
     this.scrollBar.refresh(this.savestates.length);
-    this.nG = this.savestates.concat(this.basisNG);
-    this.readyToLoadSavestate = undefined;
-  };
-  this.markSavestate = function(savestate) {
-    if (this.readyToLoadSavestate !== undefined) {
-      this.readyToLoadSavestate.demark();
-    }
-    this.readyToLoadSavestate = savestate;
-    this.readyToLoadSavestate.mark();
+    this.selectedSavestate = undefined;
   };
   this.loadSavestate = function() {
-    if (this.readyToLoadSavestate === undefined) {
+    if (this.selectedSavestate === undefined) {
       return;
     }
     try {
-      this.gD.save = JSON.parse(b64DecodeUnicode(this.readyToLoadSavestate.savestate.data));
+      this.gD.save = JSON.parse(b64DecodeUnicode(this.savestates[this.selectedSavestate].savestate.data));
       if (this.gD.save.keyBindings) {
         this.menu.controls.keyBindings = new Map(this.gD.save.keyBindings);
       }
-      this.loadSucceeded = true;
+      this.infoText.text = "Erfolgreich geladen!";
       console.log("Erfolgreich geladen!");
     } catch (e) {
-      this.loadFailed = true;
+      this.infoText.text = "Fehler beim Laden!";
       console.log("Fehler beim Laden!");
     }
-    /*this.nG = this.basisNG;
-    this.gD.setNewPage(this, true);*/
   };
   this.reloadSavestates = function() {
     Array.from(document.getElementsByTagName("script")).map(script => {
@@ -147,23 +119,123 @@ function SaveLoad(menu, gD, mC) {
   };
   this.updateKeyPresses = function() {
     this.gD.newKeys.map(key => {
-      this.mC.updateKeyPresses(key, this.gD);
+      var keyB = this.menu.controls.keyBindings;
+      var rowIndex = this.selectedRowIndex;
+      var columnIndex = this.selectedColumnIndex;
 
-      if (this.menu.controls.keyBindings.get("Menu_Refresh")[2].includes(key)) {
+      if (keyB.get("Menu_NavDown")[2].includes(key)) {
+        rowIndex++;
+        if (rowIndex >= this.savestates.length) {
+          this.updateSelection(-1, columnIndex);
+        } else {
+          this.updateSelection(rowIndex, columnIndex);
+        }
+      } else if (keyB.get("Menu_NavUp")[2].includes(key)) {
+        rowIndex--;
+        if (rowIndex < -1) {
+          this.updateSelection(this.savestates.length - 1, columnIndex);
+        } else {
+          this.updateSelection(rowIndex, columnIndex);
+        }
+      } else if (keyB.get("Menu_NavLeft")[2].includes(key)) {
+        columnIndex--;
+        if (columnIndex < 0) {
+          this.updateSelection(rowIndex, this.buttons.length - 1);
+        } else {
+          this.updateSelection(rowIndex, columnIndex);
+        }
+      } else if (keyB.get("Menu_NavRight")[2].includes(key)) {
+        columnIndex++;
+        if (columnIndex >= this.buttons.length) {
+          this.updateSelection(rowIndex, 0);
+        } else {
+          this.updateSelection(rowIndex, columnIndex);
+        }
+      } else if (keyB.get("Menu_Confirm")[2].includes(key)) {
+        if (rowIndex >= 0) {
+          this.markSavestate(rowIndex);
+        } else {
+          switch (columnIndex) {
+            case 0:
+              this.enterName = true;
+              break;
+            case 1:
+              this.gD.currentPage = this.menu;
+              break;
+            case 2:
+              this.loadSavestate();
+              break;
+          }
+        }
+      } else if (keyB.get("Menu_Refresh")[2].includes(key)) {
         this.reloadSavestates();
       }
     }, this);
   };
   this.updateMouseMoves = function() {
-    this.mC.updateMouseMoves(this.gD);
+    this.savestates.map((state, index) => {
+      if (gD.mousePos.x >= state.x && gD.mousePos.x <= state.x + state.width &&
+          gD.mousePos.y >= state.y && gD.mousePos.y <= state.y + state.height) {
+        this.updateSelection(index, this.selectedColumnIndex);
+      }
+    }, this);
+
+    this.buttons.map((button, index) => {
+      if (gD.mousePos.x >= button.x && gD.mousePos.x <= button.x + button.width &&
+          gD.mousePos.y >= button.y && gD.mousePos.y <= button.y + button.height) {
+        this.updateSelection(-1, index);
+      }
+    }, this);
+
+    var button = this.refreshButton;
+    var mouseOver = false;
+
+    if (gD.mousePos.x >= button.x && gD.mousePos.x <= button.x + button.width &&
+        gD.mousePos.y >= button.y && gD.mousePos.y <= button.y + button.height) {
+      button.select();
+      mouseOver = true;
+    }
+
+    if (!mouseOver) {
+      button.deselect();
+    }
   };
   this.updateClick = function() {
     var clickPos = this.gD.clicks.pop();
     if (!clickPos) {
-      return
+      return;
     }
 
-    this.mC.updateClick(clickPos, this.gD);
+    this.savestates.map((savestate, index) => {
+      if (clickPos.x >= savestate.x && clickPos.x <= savestate.x + savestate.width &&
+          clickPos.y >= savestate.y && clickPos.y <= savestate.y + savestate.height) {
+        this.markSavestate(index);
+      }
+    }, this);
+
+    this.buttons.map((button, index) => {
+      if (clickPos.x >= button.x && clickPos.x <= button.x + button.width &&
+          clickPos.y >= button.y && clickPos.y <= button.y + button.height) {
+        switch (index) {
+          case 0:
+              this.enterName = true;
+            break;
+          case 1:
+            this.gD.currentPage = this.menu;
+            break;
+          case 2:
+            this.loadSavestate();
+            break;
+        }
+      }
+    }, this);
+
+    var button = this.refreshButton;
+
+    if (gD.mousePos.x >= button.x && gD.mousePos.x <= button.x + button.width &&
+        gD.mousePos.y >= button.y && gD.mousePos.y <= button.y + button.height) {
+      this.reloadSavestates();
+    }
   };
   this.updateWheelMoves = function() {
     /* unused  */
@@ -177,13 +249,46 @@ function SaveLoad(menu, gD, mC) {
     this.scrollBar.draw(this.gD);
     this.savestateDetails.draw(this.gD);
 
-    /*if (this.loadSucceeded) {
-      this.loadStates[0].draw(this.gD);
-    } else if (this.loadFailed) {
-      this.loadStates[1].draw(this.gD);
-    }*/
+    this.savestates.map(state => {
+      state.draw(this.gD);
+    }, this);
 
-    this.mC.draw(this.gD);
+    this.buttons.map(button => {
+      button.draw(this.gD);
+    }, this);
+
+    this.refreshButton.draw(this.gD);
+
+    if (this.enterName) {
+      this.enterNameModal.draw(this.gD);
+    }
+  };
+  this.updateSelection = function(rowIndex, columnIndex) {
+    if (this.selectedRowIndex !== undefined && this.selectedColumnIndex !== undefined) {
+      if (this.selectedRowIndex === -1) {
+        this.buttons[this.selectedColumnIndex].deselect();
+      } else {
+        this.savestates[this.selectedRowIndex].deselect();
+        this.savestateDetails.setSavestate(null);
+      }
+    }
+
+    if (rowIndex === -1) {
+      this.buttons[columnIndex].select();
+    } else {
+      var savestate = this.savestates[rowIndex];
+      savestate.select();
+      this.savestateDetails.setSavestate(savestate.savestate);
+    }
+    this.selectedRowIndex = rowIndex;
+    this.selectedColumnIndex = columnIndex;
+  };
+  this.markSavestate = function(rowIndex) {
+    if (this.selectedSavestate !== undefined) {
+      this.savestates[this.selectedSavestate].demark();
+    }
+    this.savestates[rowIndex].mark();
+    this.selectedSavestate = rowIndex;
   };
 }
 
@@ -251,6 +356,7 @@ function SLSavestateDetails(x, y, width, height, styleKey) {
     drawCanvasImage(this.x + (this.width - spriteWidth) / 2, this.y + 10, this.currentSavestate.spriteKey, gD);
     drawCanvasText(this.x + 10, this.y + 50, "Name: " + this.currentSavestate.name, design.textKey, gD);
     drawCanvasText(this.x + 10, this.y + 62, "Date: " + this.currentSavestate.date, design.textKey, gD);
+    drawCanvasText(this.x + 10, this.y + 74, "Version: " + this.currentSavestate.version, design.textKey, gD);
     drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
   };
 }

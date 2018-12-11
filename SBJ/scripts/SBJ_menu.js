@@ -27,7 +27,7 @@ function Menu(gD) {
     this.nG = [
       [{ button: "Play",        action: (gD) => { gD.setNewPage(this.selectionScreen, false) } }],
       [{ button: "Shop",        action: (gD) => { gD.setNewPage(this.shop, true) } }],
-      [{ button: "Save / Load", action: (gD) => { gD.setNewPage(this.saveLoad, true) } }],
+      [{ button: "Save / Load", action: (gD) => { gD.setNewPage(this.saveLoad, false) } }],
       [{ button: "Controls",    action: (gD) => { gD.setNewPage(this.controls, true) } }],
       [{ button: "Exit",        action: (gD) => { window.close() } }]
     ];

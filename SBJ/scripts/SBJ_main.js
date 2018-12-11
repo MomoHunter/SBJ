@@ -330,6 +330,22 @@ function GlobalDict() {
         textKey: "savestate",
         borderKey: "standard"
       },
+      enterNameModal: {
+        rectKey: {
+          modal: "modal",
+          background: "blur",
+          textField: "standard"
+        },
+        textKey: {
+          label: "normal",
+          textField: "enterNameModal"
+        },
+        borderKey: {
+          background: "standard",
+          textField: "standard"
+        },
+        cursorKey: "standard"
+      },
       scrollBarStandard: {
         lineKey: "smallWhite",
         barKey: "bigWhite"
@@ -364,6 +380,9 @@ function GlobalDict() {
       },
       blur: {
         backgroundColor: "255, 255, 255, 0.7"
+      },
+      modal: {
+        backgroundColor: "44, 47, 51, 0.6"
       }
     },
     border: {
@@ -409,6 +428,13 @@ function GlobalDict() {
       },
       savestate: {
         font: "10pt Consolas",
+        color: "0, 0, 0, 1",
+        align: "left",
+        baseline: "middle",
+        borderKey: ""
+      },
+      enterNameModal: {
+        font: "12pt Consolas",
         color: "0, 0, 0, 1",
         align: "left",
         baseline: "middle",
