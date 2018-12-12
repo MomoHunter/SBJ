@@ -146,7 +146,12 @@ function SaveLoad(menu, gD) {
           this.enterNameModal.deleteCharacter(1);
         } else if (keyB.get("NameModal_Confirm")[2].includes(key)) {
           this.enterName = false;
-          this.createSavestate(this.enterNameModal.text, "Money_100_0");
+          if (this.enterNameModal.text === "") {
+            var date = new Date();
+            this.createSavestate(date.toLocaleString('de-DE', {weekday:'short'}) + " " + date.toLocaleString('de-DE'), "Money_100_0");
+          } else {
+            this.createSavestate(this.enterNameModal.text, "Money_100_0");
+          }
         } else {
           var event = this.gD.events[index];
           if (event.key.length === 1) {
