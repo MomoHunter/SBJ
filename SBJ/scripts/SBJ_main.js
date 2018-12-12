@@ -26,6 +26,7 @@ function gameloop(gD, timestamp) {
       gD.currentPage.update();
 
       gD.newKeys = [];
+      gD.events = [];
       gD.clicks = [];
       gD.wheelMovements = [];
     
@@ -45,6 +46,7 @@ function gameloop(gD, timestamp) {
 function keydownEvent(event, gD) {
   gD.keys[event.code] = true;
   gD.newKeys.push(event.code);
+  gD.events.push(event);
   console.log(event.code);
 }
 
@@ -75,6 +77,7 @@ function GlobalDict() {
   this.context = this.canvas.getContext("2d");
   this.keys = {};
   this.newKeys = [];
+  this.events = [];
   this.mousePos = {"x": 0, "y": 0};
   this.clicks = [];
   this.wheelMovements = [];
@@ -376,7 +379,7 @@ function GlobalDict() {
         backgroundColor: "180, 50, 50, 1"
       },
       marked: {
-        backgroundColor: "180, 160, 50, 1"
+        backgroundColor: "180, 160, 50, 0.6"
       },
       blur: {
         backgroundColor: "255, 255, 255, 0.7"

@@ -237,7 +237,7 @@ function CanvasEnterNameModal(x, y, width, height, styleKey) {
   this.styleKey = styleKey;
   this.counter = 0;
   this.cursorPosition = 10;
-  this.text = "aertger55ze baaetgbh";
+  this.text = "";
   this.moveCursor = function(characters) {
     this.cursorPosition += characters;
     if (this.cursorPosition < 0) {
@@ -247,6 +247,9 @@ function CanvasEnterNameModal(x, y, width, height, styleKey) {
     }
   };
   this.addCharacter = function(character) {
+    if (this.text.length === 36) {
+      return;
+    }
     this.text = this.text.slice(0, this.cursorPosition) + character + this.text.slice(this.cursorPosition, this.text.length);
     this.moveCursor(1);
   };
@@ -288,7 +291,10 @@ function CanvasEnterNameModal(x, y, width, height, styleKey) {
       this.width / 3 - 10, 20, design.borderKey.textField, gD
     );
     if (Math.floor(this.counter / 80) % 2 == 0) {
-      var addCharLength = (gD.context.measureText(this.text).width / this.text.length) * this.cursorPosition;
+      var addCharLength = 0;
+      if (this.text.length !== 0) {
+        addCharLength = (gD.context.measureText(this.text).width / this.text.length) * this.cursorPosition;
+      }
       drawCanvasLine(
         this.x + (this.width - (this.width / 3)) / 2 + 8 + addCharLength, this.y + this.height / 2 + 22,
         this.x + (this.width - (this.width / 3)) / 2 + 8 + addCharLength, this.y + this.height / 2 + 38,

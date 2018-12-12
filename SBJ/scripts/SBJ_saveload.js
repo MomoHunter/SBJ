@@ -5,7 +5,9 @@ function SaveLoad(menu, gD) {
     this.filesLoaded = 0;
     this.savestates = [];
     this.buttons = ["Save", "Main Menu", "Load"];
+    this.scrollHeight = 0;
     this.enterName = false;
+    this.loaded = false;
 
     this.loadFile();
 
@@ -22,6 +24,10 @@ function SaveLoad(menu, gD) {
     this.refreshButton = new CanvasImageButton(
       this.gD.canvas.width - 40, 10, 30, 30, "Icon_Refresh", "standardImage"
     );
+    this.backButton = new CanvasButton(
+      this.gD.canvas.width / 2 - 100, this.gD.canvas.height - 50, 200, 30, "Back", "menu"
+    );
+    this.backButton.select();
 
     this.scrollBar = new CanvasScrollBar(this.gD.canvas.width / 2 + 320, 60, 220, 55, 0, "scrollBarStandard");
 
@@ -29,7 +35,7 @@ function SaveLoad(menu, gD) {
 
     this.enterNameModal = new CanvasEnterNameModal(0, 0, this.gD.canvas.width, this.gD.canvas.height, "enterNameModal");
 
-    this.updateSelection(-1, 1);
+    this.updateSelection(-1, 1, false);
   };
   this.loadFile = function() {
     var saveLoad = this;
@@ -89,6 +95,8 @@ function SaveLoad(menu, gD) {
       this.infoText.text = "Fehler beim Laden!";
       console.log("Fehler beim Laden!");
     }
+    this.loaded = true;
+    this.markSavestate(undefined);
   };
   this.reloadSavestates = function() {
     Array.from(document.getElementsByTagName("script")).map(script => {
@@ -118,38 +126,60 @@ function SaveLoad(menu, gD) {
     element.click();
   };
   this.updateKeyPresses = function() {
-    this.gD.newKeys.map(key => {
+    this.gD.newKeys.map((key, index) => {
       var keyB = this.menu.controls.keyBindings;
       var rowIndex = this.selectedRowIndex;
       var columnIndex = this.selectedColumnIndex;
 
-      if (keyB.get("Menu_NavDown")[2].includes(key)) {
+      if (this.loaded) {
+        if (keyB.get("Menu_Confirm")[2].includes(key)) {
+          this.loaded = false;
+        }
+      } else if (this.enterName) {
+        if (keyB.get("NameModal_NavRight")[2].includes(key)) {
+          this.enterNameModal.moveCursor(1);
+        } else if (keyB.get("NameModal_NavLeft")[2].includes(key)) {
+          this.enterNameModal.moveCursor(-1);
+        } else if (keyB.get("NameModal_DeleteLeft")[2].includes(key)) {
+          this.enterNameModal.deleteCharacter(-1);
+        } else if (keyB.get("NameModal_DeleteRight")[2].includes(key)) {
+          this.enterNameModal.deleteCharacter(1);
+        } else if (keyB.get("NameModal_Confirm")[2].includes(key)) {
+          this.enterName = false;
+          this.createSavestate(this.enterNameModal.text, "Money_100_0");
+        } else {
+          var event = this.gD.events[index];
+          if (event.key.length === 1) {
+            this.enterNameModal.addCharacter(event.key);
+          }
+        }
+      } else if (keyB.get("Menu_NavDown")[2].includes(key)) {
         rowIndex++;
         if (rowIndex >= this.savestates.length) {
-          this.updateSelection(-1, columnIndex);
+          this.updateSelection(-1, columnIndex, true);
         } else {
-          this.updateSelection(rowIndex, columnIndex);
+          this.updateSelection(rowIndex, columnIndex, true);
         }
       } else if (keyB.get("Menu_NavUp")[2].includes(key)) {
         rowIndex--;
         if (rowIndex < -1) {
-          this.updateSelection(this.savestates.length - 1, columnIndex);
+          this.updateSelection(this.savestates.length - 1, columnIndex, true);
         } else {
-          this.updateSelection(rowIndex, columnIndex);
+          this.updateSelection(rowIndex, columnIndex, true);
         }
       } else if (keyB.get("Menu_NavLeft")[2].includes(key)) {
         columnIndex--;
         if (columnIndex < 0) {
-          this.updateSelection(rowIndex, this.buttons.length - 1);
+          this.updateSelection(rowIndex, this.buttons.length - 1, true);
         } else {
-          this.updateSelection(rowIndex, columnIndex);
+          this.updateSelection(rowIndex, columnIndex, true);
         }
       } else if (keyB.get("Menu_NavRight")[2].includes(key)) {
         columnIndex++;
         if (columnIndex >= this.buttons.length) {
-          this.updateSelection(rowIndex, 0);
+          this.updateSelection(rowIndex, 0, true);
         } else {
-          this.updateSelection(rowIndex, columnIndex);
+          this.updateSelection(rowIndex, columnIndex, true);
         }
       } else if (keyB.get("Menu_Confirm")[2].includes(key)) {
         if (rowIndex >= 0) {
@@ -158,6 +188,7 @@ function SaveLoad(menu, gD) {
           switch (columnIndex) {
             case 0:
               this.enterName = true;
+              this.enterNameModal.text = "";
               break;
             case 1:
               this.gD.currentPage = this.menu;
@@ -173,17 +204,24 @@ function SaveLoad(menu, gD) {
     }, this);
   };
   this.updateMouseMoves = function() {
+    if (this.loaded) {
+      return;
+    }
+
     this.savestates.map((state, index) => {
       if (gD.mousePos.x >= state.x && gD.mousePos.x <= state.x + state.width &&
-          gD.mousePos.y >= state.y && gD.mousePos.y <= state.y + state.height) {
-        this.updateSelection(index, this.selectedColumnIndex);
+          gD.mousePos.y >= state.y - this.scrollHeight && gD.mousePos.y <= state.y + state.height - this.scrollHeight) {
+        var realHeight = state.y - this.scrollHeight;
+        if (realHeight >= 60 && realHeight < 280) {
+          this.updateSelection(index, this.selectedColumnIndex, false);
+        }
       }
     }, this);
 
     this.buttons.map((button, index) => {
       if (gD.mousePos.x >= button.x && gD.mousePos.x <= button.x + button.width &&
           gD.mousePos.y >= button.y && gD.mousePos.y <= button.y + button.height) {
-        this.updateSelection(-1, index);
+        this.updateSelection(-1, index, false);
       }
     }, this);
 
@@ -206,39 +244,66 @@ function SaveLoad(menu, gD) {
       return;
     }
 
-    this.savestates.map((savestate, index) => {
-      if (clickPos.x >= savestate.x && clickPos.x <= savestate.x + savestate.width &&
-          clickPos.y >= savestate.y && clickPos.y <= savestate.y + savestate.height) {
-        this.markSavestate(index);
+    if (this.loaded) {
+      var button = this.backButton;
+      if (gD.mousePos.x >= button.x && gD.mousePos.x <= button.x + button.width &&
+          gD.mousePos.y >= button.y && gD.mousePos.y <= button.y + button.height) {
+        this.loaded = false;
       }
-    }, this);
-
-    this.buttons.map((button, index) => {
-      if (clickPos.x >= button.x && clickPos.x <= button.x + button.width &&
-          clickPos.y >= button.y && clickPos.y <= button.y + button.height) {
-        switch (index) {
-          case 0:
-              this.enterName = true;
-            break;
-          case 1:
-            this.gD.currentPage = this.menu;
-            break;
-          case 2:
-            this.loadSavestate();
-            break;
+    } else {
+      this.savestates.map((state, index) => {
+        if (clickPos.x >= state.x && clickPos.x <= state.x + state.width &&
+            clickPos.y >= state.y - this.scrollHeight && clickPos.y <= state.y + state.height - this.scrollHeight) {
+          var realHeight = state.y - this.scrollHeight;
+          if (realHeight >= 60 && realHeight < 280) {
+            this.markSavestate(index);
+          }
         }
+      }, this);
+
+      this.buttons.map((button, index) => {
+        if (clickPos.x >= button.x && clickPos.x <= button.x + button.width &&
+            clickPos.y >= button.y && clickPos.y <= button.y + button.height) {
+          switch (index) {
+            case 0:
+              this.enterName = true;
+              this.enterNameModal.text = "";
+              break;
+            case 1:
+              this.gD.currentPage = this.menu;
+              break;
+            case 2:
+              this.loadSavestate();
+              break;
+          }
+        }
+      }, this);
+
+      var button = this.refreshButton;
+
+      if (gD.mousePos.x >= button.x && gD.mousePos.x <= button.x + button.width &&
+          gD.mousePos.y >= button.y && gD.mousePos.y <= button.y + button.height) {
+        this.reloadSavestates();
       }
-    }, this);
-
-    var button = this.refreshButton;
-
-    if (gD.mousePos.x >= button.x && gD.mousePos.x <= button.x + button.width &&
-        gD.mousePos.y >= button.y && gD.mousePos.y <= button.y + button.height) {
-      this.reloadSavestates();
     }
   };
   this.updateWheelMoves = function() {
-    /* unused  */
+    var wheelMove = this.gD.wheelMovements.pop();
+    if (this.loaded) {
+      return;
+    }
+
+    if (wheelMove < 0) {
+      this.vScroll(Math.max(
+        (this.scrollHeight / 55) - 1, 
+        0
+      ));
+    } else if (wheelMove > 0) {
+      this.vScroll(Math.min(
+        (this.scrollHeight / 55) + 1, 
+        (this.savestates[this.savestates.length - 1].y - 225) / 55
+      ));
+    }
   };
   this.update = function() {
     /* unused */
@@ -246,24 +311,32 @@ function SaveLoad(menu, gD) {
   this.draw = function(ghostFactor) {
     this.gD.context.drawImage(this.menu.backgroundImage, 0, 0);
     this.title.draw(this.gD);
-    this.scrollBar.draw(this.gD);
-    this.savestateDetails.draw(this.gD);
+    if (this.loaded) {
+      this.infoText.draw(this.gD);
+      this.backButton.draw(this.gD);
+    } else {
+      this.scrollBar.draw(this.gD);
+      this.savestateDetails.draw(this.gD);
 
-    this.savestates.map(state => {
-      state.draw(this.gD);
-    }, this);
+      this.savestates.map(state => {
+        var realHeight = state.y - this.scrollHeight;
+        if (realHeight >= 60 && realHeight < 280) {
+          state.draw(this, this.gD);
+        }
+      }, this);
 
-    this.buttons.map(button => {
-      button.draw(this.gD);
-    }, this);
+      this.buttons.map(button => {
+        button.draw(this.gD);
+      }, this);
 
-    this.refreshButton.draw(this.gD);
+      this.refreshButton.draw(this.gD);
 
-    if (this.enterName) {
-      this.enterNameModal.draw(this.gD);
+      if (this.enterName) {
+        this.enterNameModal.draw(this.gD);
+      }
     }
   };
-  this.updateSelection = function(rowIndex, columnIndex) {
+  this.updateSelection = function(rowIndex, columnIndex, scroll) {
     if (this.selectedRowIndex !== undefined && this.selectedColumnIndex !== undefined) {
       if (this.selectedRowIndex === -1) {
         this.buttons[this.selectedColumnIndex].deselect();
@@ -279,6 +352,19 @@ function SaveLoad(menu, gD) {
       var savestate = this.savestates[rowIndex];
       savestate.select();
       this.savestateDetails.setSavestate(savestate.savestate);
+      if (scroll) {
+        if (savestate.y - this.scrollHeight >= 225) {
+          this.vScroll(Math.min(
+            (this.savestates[this.savestates.length - 1].y - 225) / 55, 
+            (savestate.y - 170) / 55
+          ));
+        } else if (savestate.y - this.scrollHeight < 115) {
+          this.vScroll(Math.max(
+            (savestate.y - 115) / 55, 
+            0
+          ));
+        }
+      }
     }
     this.selectedRowIndex = rowIndex;
     this.selectedColumnIndex = columnIndex;
@@ -287,8 +373,14 @@ function SaveLoad(menu, gD) {
     if (this.selectedSavestate !== undefined) {
       this.savestates[this.selectedSavestate].demark();
     }
-    this.savestates[rowIndex].mark();
+    if (rowIndex !== undefined) {
+      this.savestates[rowIndex].mark();
+    }
     this.selectedSavestate = rowIndex;
+  };
+  this.vScroll = function(elementsScrolled) {
+    this.scrollHeight = elementsScrolled * 55;
+    this.scrollBar.scroll(elementsScrolled);
   };
 }
 
@@ -313,25 +405,26 @@ function SLSavestate(x, y, width, height, styleKey, savestate) {
   this.demark = function() {
     this.marked = false;
   };
-  this.draw = function(gD) {
+  this.draw = function(saveLoad, gD) {
     var design = gD.design.elements[this.styleKey];
     var date = new Date(this.savestate.date);
     date = date.toLocaleString('de-DE', {weekday: 'short'}) + " " + date.toLocaleString('de-DE');
     var [spriteX, spriteY, spriteWidth, spriteHeight] = gD.spriteDict[this.savestate.spriteKey];
 
-    if (this.marked) {
-      drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.marked, gD);
-    } else if (this.selected) {
-      drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.selected, gD);
+    if (this.selected) {
+      drawCanvasRect(this.x, this.y - saveLoad.scrollHeight, this.width, this.height, design.rectKey.selected, gD);
     } else {
-      drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.standard, gD);
+      drawCanvasRect(this.x, this.y - saveLoad.scrollHeight, this.width, this.height, design.rectKey.standard, gD);
+    }
+    if (this.marked) {
+      drawCanvasRect(this.x, this.y - saveLoad.scrollHeight, this.width, this.height, design.rectKey.marked, gD);
     }
 
-    drawCanvasImage(this.x + (60 - spriteWidth) / 2, this.y + (this.height - spriteHeight) / 2, this.savestate.spriteKey, gD);
-    drawCanvasText(this.x + 60, this.y + 6, "Name: " + this.savestate.name, design.textKey, gD);
-    drawCanvasText(this.x + 60, this.y + 18, "Date: " + date, design.textKey, gD);
-    drawCanvasText(this.x + 60, this.y + 30, "Version: " + this.savestate.version, design.textKey, gD);
-    drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
+    drawCanvasImage(this.x + (60 - spriteWidth) / 2, this.y + (this.height - spriteHeight) / 2 - saveLoad.scrollHeight, this.savestate.spriteKey, gD);
+    drawCanvasText(this.x + 60, this.y + 6 - saveLoad.scrollHeight, "Name: " + this.savestate.name, design.textKey, gD);
+    drawCanvasText(this.x + 60, this.y + 18 - saveLoad.scrollHeight, "Date: " + date, design.textKey, gD);
+    drawCanvasText(this.x + 60, this.y + 30 - saveLoad.scrollHeight, "Version: " + this.savestate.version, design.textKey, gD);
+    drawCanvasRectBorder(this.x, this.y - saveLoad.scrollHeight, this.width, this.height, design.borderKey, gD);
   };
 }
 
