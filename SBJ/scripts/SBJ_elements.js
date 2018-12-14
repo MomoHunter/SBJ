@@ -216,7 +216,7 @@ function CanvasImageButton(x, y, width, height, spriteKey, styleKey) {
     } else {
       drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.standard, gD);
     }
-    drawCanvasImage(this.x + (this.width - spriteWidth) / 2, this.y + (this.height - spriteHeight) / 2, this.spriteKey, gD);
+    drawCanvasImage(this.x + Math.floor((this.width - spriteWidth) / 2), this.y + Math.floor((this.height - spriteHeight) / 2), this.spriteKey, gD);
     drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
   };
 }
@@ -238,14 +238,22 @@ function CanvasEnterNameModal(x, y, width, height, styleKey) {
   this.counter = 0;
   this.cursorPosition = 10;
   this.text = "";
-  this.moveCursor = function(characters) {
-    this.cursorPosition += characters;
+  /**
+   * moves the cursor
+   * @param {number} places the amount of positions that the cursor moves
+   */
+  this.moveCursor = function(places) {
+    this.cursorPosition += places;
     if (this.cursorPosition < 0) {
       this.cursorPosition = 0;
     } else if (this.cursorPosition > this.text.length) {
       this.cursorPosition = this.text.length;
     }
   };
+  /**
+   * adds character to the text
+   * @param {string} character the character that is added
+   */
   this.addCharacter = function(character) {
     if (this.text.length === 36) {
       return;
@@ -253,7 +261,11 @@ function CanvasEnterNameModal(x, y, width, height, styleKey) {
     this.text = this.text.slice(0, this.cursorPosition) + character + this.text.slice(this.cursorPosition, this.text.length);
     this.moveCursor(1);
   };
-  this.deleteCharacter = function(position) {     //if position is 1 the character right of the cursor, if -1 the character left of the cursor
+  /**
+   * deletes the character at the specified position relative to the cursor
+   * @param {number} position the position of the character, 1 if right of the cursor, -1 if left of the cursor
+   */
+  this.deleteCharacter = function(position) {
     if (position === -1 && this.cursorPosition > 0) {
       this.text = this.text.slice(0, this.cursorPosition - 1) + this.text.slice(this.cursorPosition, this.text.length);
       this.moveCursor(-1);
@@ -301,5 +313,128 @@ function CanvasEnterNameModal(x, y, width, height, styleKey) {
         design.cursorKey, gD
       );
     }
+  };
+}
+
+/**
+ * A modal for choosing a picture for something
+ * @param {number} x        x-coordinate of the top-left corner of the modal on the canvas
+ * @param {number} y        y-coordinate of the top-left corner of the modal on the canvas
+ * @param {number} width    width of the modal on the canvas
+ * @param {number} height   height of the modal on the canvas
+ * @param {string} styleKey the design to use for the modal
+ */
+function CanvasChoosePictureModal(x, y, width, height, styleKey) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.styleKey = styleKey;
+  this.pictures = [
+    "Item_Stopwatch_0",
+    "Item_Star_0",
+    "Item_Feather_0",
+    "Item_Treasure_3",
+    "Item_Magnet_0",
+    "Item_Rocket_0",
+    "Special_GoldenShamrock_0",
+    "Money_1_0",
+    "Money_10_0",
+    "Money_100_0",
+    "Money_1000_0",
+    "Enemy_Fireball",
+    "Enemy_Airplane_0",
+    "Enemy_Airplane_1",
+    "Enemy_Airplane_2",
+    "Enemy_Airplane_3",
+    "Enemy_Rocket_0",
+    "Enemy_Fish_0",
+    "Enemy_Fish_1",
+    "Enemy_Fish_2",
+    "Enemy_Fish_3",
+    "Enemy_Bird_0_0",
+    "Enemy_Asteroid_0",
+    "Enemy_Asteroid_1",
+    "Enemy_Asteroid_2",
+    "Player_Standard",
+    "Player_Longjohn",
+    "Player_Speedy",
+    "Player_Magician",
+    "Player_Strooper",
+    "Player_Disgusty",
+    "Player_Afroman"
+  ];
+  this.pictureButtons = [];
+  this.selectedRowIndex = 0;
+  this.selectedColumnIndex = 0;
+  this.init = function(gD) {
+    var design = gD.design.elements[this.styleKey];
+    this.pictures.map((picture, index) => {
+      if (this.pictureButtons[Math.floor(index / 8)] === undefined) {
+        this.pictureButtons[Math.floor(index / 8)] = [];
+      }
+      this.pictureButtons[Math.floor(index / 8)].push(new CanvasImageButton(
+        this.x + 258 + (index % 8) * 61, this.y + 70 + Math.floor(index / 8) * 61,
+        55, 55, this.pictures[index], design.buttonKey
+      ));
+    }, this);
+    this.updateSelection(0, 0);
+  };
+  this.getSelectedButton = function() {
+    return this.pictureButtons[this.selectedRowIndex][this.selectedColumnIndex];
+  };
+  this.updateKeyPresses = function(keyB, key) {
+    var rowIndex = this.selectedRowIndex;
+    var columnIndex = this.selectedColumnIndex;
+
+    if (keyB.get("Menu_NavDown")[2].includes(key)) {
+      rowIndex = (rowIndex + 1) % this.pictureButtons.length;
+    } else if (keyB.get("Menu_NavUp")[2].includes(key)) {
+      rowIndex--;
+      if (rowIndex < 0) {
+        rowIndex = this.pictureButtons.length - 1;
+      }
+    } else if (keyB.get("Menu_NavRight")[2].includes(key)) {
+      columnIndex = (columnIndex + 1) % this.pictureButtons[rowIndex].length;
+    } else if (keyB.get("Menu_NavLeft")[2].includes(key)) {
+      columnIndex--;
+      if (columnIndex < 0) {
+        columnIndex = this.pictureButtons[rowIndex].length - 1;
+      }
+    }
+    this.updateSelection(rowIndex, columnIndex);
+  };
+  this.updateMouseMoves = function(gD) {
+    this.pictureButtons.map((buttonRow, rowIndex) => {
+      buttonRow.map((button, columnIndex) => {
+        if (gD.mousePos.x >= button.x && gD.mousePos.x <= button.x + button.width &&
+            gD.mousePos.y >= button.y && gD.mousePos.y <= button.y + button.height) {
+          this.updateSelection(rowIndex, columnIndex);
+        }
+      }, this);
+    }, this);
+  };
+  this.updateSelection = function(rowIndex, columnIndex) {
+    if (this.selectedRowIndex !== undefined && this.selectedColumnIndex !== undefined) {
+      this.pictureButtons[this.selectedRowIndex][this.selectedColumnIndex].deselect();
+    }
+    this.pictureButtons[rowIndex][columnIndex].select();
+    this.selectedRowIndex = rowIndex;
+    this.selectedColumnIndex = columnIndex;
+  };
+  this.draw = function(gD) {
+    var design = gD.design.elements[this.styleKey];
+
+    drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.modal, gD);
+    drawCanvasRect(this.x + 253, this.y + 35, this.width - 506, this.height - 70, design.rectKey.background, gD);
+    drawCanvasText(this.x + this.width / 2, this.y + 53, "Bitte Bild auswählen:", design.textKey, gD);
+
+    this.pictureButtons.map((buttonRow, rowIndex) => {
+      buttonRow.map((button, columnIndex) => {
+        button.draw(gD);
+      }, this);
+    }, this);
+
+    drawCanvasRectBorder(this.x + 253, this.y + 35, this.width - 506, this.height - 70, design.borderKey.background, gD);
   };
 }

@@ -1,1 +1,1 @@
-function Savestate1544089323883(){this.name='Test';this.spriteKey='Money_1000_0';this.date=1544089323882;this.version='v3.0.0';this.data='e30=';}
+function Savestate1544692768796(){this.name='Dies ist ein ausgesprochener Test!!';this.spriteKey='Item_Stopwatch_0';this.date=1544692768795;this.version='v3.0.0';this.data='e30=';}

@@ -7,7 +7,7 @@
   window.addEventListener('click', event => clickEvent(event, globalDict));
   window.addEventListener('wheel', event => wheelEvent(event, globalDict));
   menu.init();
-  globalDict.setNewPage(menu, true);
+  globalDict.currentPage = menu;
   globalDict.raf = requestAnimationFrame(timestamp => gameloop(globalDict, timestamp));
 }
 
@@ -252,9 +252,9 @@ function GlobalDict() {
     "Enemy_Bird_0_1": [675, 17, 27, 12],
     "Enemy_Bird_1_0": [703, 1, 27, 15],
     "Enemy_Bird_1_1": [703, 17, 27, 12],
-    "Enemy_Asteroid_0": [731, 1, 19, 19],
-    "Enemy_Asteroid_1": [731, 21, 19, 19],
-    "Enemy_Asteroid_2": [731, 41, 19, 19],
+    "Enemy_Asteroid_0": [731, 1, 19, 20],
+    "Enemy_Asteroid_1": [731, 22, 19, 20],
+    "Enemy_Asteroid_2": [731, 43, 19, 20],
     "Player_Standard": [751, 1, 20, 20],
     "Player_Longjohn": [751, 32, 14, 26],
     "Player_Speedy": [751, 63, 14, 14],
@@ -319,6 +319,21 @@ function GlobalDict() {
   };
   this.design = {
     elements: {
+      controlsHeadline: {
+        rectKey: "headline",
+        textKey: "normalBold",
+        borderKey: "standard"
+      },
+      controlsEntry: {
+        rectKey: {
+          standard: "blur",
+          selected: "selected"
+        },
+        textKey: {
+          name: "enterNameModal",
+          key: "small"
+        }
+      },
       savestate: {
         rectKey: {
           standard: "blur",
@@ -348,6 +363,17 @@ function GlobalDict() {
           textField: "standard"
         },
         cursorKey: "standard"
+      },
+      choosePictureModal: {
+        rectKey: {
+          modal: "modal",
+          background: "blur"
+        },
+        buttonKey: "standardImage",
+        textKey: "normal",
+        borderKey: {
+          background: "standard"
+        }
       },
       scrollBarStandard: {
         lineKey: "smallWhite",
@@ -386,6 +412,9 @@ function GlobalDict() {
       },
       modal: {
         backgroundColor: "44, 47, 51, 0.6"
+      },
+      headline: {
+        backgroundColor: "50, 200, 80, 1"
       }
     },
     border: {
@@ -416,6 +445,13 @@ function GlobalDict() {
     },
     text: {
       normal: {
+        font: "12pt Consolas",
+        color: "0, 0, 0, 1",
+        align: "center",
+        baseline: "middle",
+        borderKey: ""
+      },
+      normalBold: {
         font: "12pt Consolas",
         color: "0, 0, 0, 1",
         align: "center",
@@ -478,12 +514,6 @@ function GlobalDict() {
         baseline: "alphabetic",
         borderKey: ""
       }
-    }
-  };
-  this.setNewPage = function(page, inMenu) {
-    this.currentPage = page;
-    if (inMenu) {
-      this.currentPage.mC.setNewPage(page, page.scrollBar);
     }
   };
   this.clear = function() {

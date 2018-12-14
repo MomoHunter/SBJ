@@ -1,1 +1,0 @@
-function Savestate1544639274225(){this.name='1';this.spriteKey='Money_100_0';this.date=1544639274225;this.version='v3.0.0';this.data='e30=';}

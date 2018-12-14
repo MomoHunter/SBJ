@@ -1,7 +1,6 @@
-﻿function Controls(menu, gD, mC) {
+﻿function Controls(menu, gD) {
   this.menu = menu;
   this.gD = gD;
-  this.mC = mC;
   this.init = function() {
     this.newKeyMode = false;
     this.keyBindings = new Map([   //Definition, representation, code
@@ -11,16 +10,14 @@
       ["Menu_NavLeft", ["Navigation links", ["A", String.fromCharCode(8592)], ["KeyA", "ArrowLeft"]]],
       ["Menu_Confirm", ["Bestätigen", ["Enter", "Space"], ["Enter", "Space"]]],
       ["Menu_Back", ["zur vorherigen Seite gehen", ["Escape"], ["Escape"]]],
+      ["Menu_Abort", ["Tätigkeit abbrechen", ["Escape"], ["Escape"]]],
       ["Menu_Refresh", ["Daten neu laden", ["R"], ["KeyR"]]],
       ["NameModal_NavRight", ["Navigation rechts", [String.fromCharCode(8594)], ["ArrowRight"]]],
       ["NameModal_NavLeft", ["Navigation links", [String.fromCharCode(8592)], ["ArrowLeft"]]],
       ["NameModal_DeleteLeft", ["Linkes Zeichen löschen", [" " + String.fromCharCode(8612) + " "], ["Backspace"]]],
       ["NameModal_DeleteRight", ["Rechtes Zeichen löschen", ["Delete"], ["Delete"]]],
       ["NameModal_Confirm", ["Bestätigen", ["Enter"], ["Enter"]]],
-      ["SelectionScreen_NavRight", ["Navigation rechts", ["D", String.fromCharCode(8594)], ["KeyD", "ArrowRight"]]],
-      ["SelectionScreen_NavLeft", ["Navigation links", ["A", String.fromCharCode(8592)], ["KeyA", "ArrowLeft"]]],
-      ["SelectionScreen_Confirm", ["Bestätigen", ["Enter", "Space"], ["Enter", "Space"]]],
-      ["SelectionScreen_Abort", ["Abbrechen", ["Escape"], ["Escape"]]],
+      ["NameModal_Abort", ["Tätigkeit abbrechen", ["Escape"], ["Escape"]]],
       ["Game_Pause", ["Spiel pausieren", ["Escape"], ["Escape"]]],
       ["Game_MoveRight", ["Vorwärts bewegen", ["D", String.fromCharCode(8594)], ["KeyD", "ArrowRight"]]],
       ["Game_MoveLeft", ["Rückwärts bewegen", ["A", String.fromCharCode(8592)], ["KeyA", "ArrowLeft"]]],
@@ -32,33 +29,6 @@
       ["Game_ItemTreasure", ["Schatztruhe benutzen", ["4"], ["Digit4"]]],
       ["Game_ItemMagnet", ["Magnet benutzen", ["5"], ["Digit5"]]],
       ["Game_ItemRocket", ["Rakete benutzen", ["6"], ["Digit6"]]],
-      ["FinishModal_NavDown", ["Navigation runter", ["S", String.fromCharCode(8595)], ["KeyS", "ArrowDown"]]],
-      ["FinishModal_NavUp", ["Navigation hoch", ["W", String.fromCharCode(8593)], ["KeyW", "ArrowUp"]]],
-      ["FinishModal_Confirm", ["Bestätigen", ["Enter", "Space"], ["Enter", "Space"]]],
-      ["Shop_NavDown", ["Navigation runter", ["S", String.fromCharCode(8595)], ["KeyS", "ArrowDown"]]],
-      ["Shop_NavUp", ["Navigation hoch", ["W", String.fromCharCode(8593)], ["KeyW", "ArrowUp"]]],
-      ["Shop_NavRight", ["Navigation rechts", ["D", String.fromCharCode(8594)], ["KeyD", "ArrowRight"]]],
-      ["Shop_NavLeft", ["Navigation links", ["A", String.fromCharCode(8592)], ["KeyA", "ArrowLeft"]]],
-      ["Shop_Confirm", ["Bestätigen", ["Enter", "Space"], ["Enter", "Space"]]],
-      ["Shop_Abort", ["Abbrechen", ["Escape"], ["Escape"]]],
-      ["Save_Confirm", ["Bestätigen", ["Enter", "Space"], ["Enter", "Space"]]],
-      ["Load_Confirm", ["Bestätigen", ["Enter", "Space"], ["Enter", "Space"]]],
-      ["Highscores_NavDown", ["Navigation runter", ["S", String.fromCharCode(8595)], ["KeyS", "ArrowDown"]]],
-      ["Highscores_NavUp", ["Navigation hoch", ["W", String.fromCharCode(8593)], ["KeyW", "ArrowUp"]]],
-      ["Highscores_Confirm", ["Bestätigen", ["Enter"], ["Enter"]]],
-      ["Highscores_Abort", ["Abbrechen", ["Escape"], ["Escape"]]],
-      ["Highscores_NavRight", ["Navigation rechts", [String.fromCharCode(8594)], ["ArrowRight"]]],
-      ["Highscores_NavLeft", ["Navigation links", [String.fromCharCode(8592)], ["ArrowLeft"]]],
-      ["Highscores_DeleteLeft", ["Linkes Zeichen löschen", [" " + String.fromCharCode(8612) + " "], ["Backspace"]]],
-      ["Highscores_DeleteRight", ["Rechtes Zeichen löschen", ["Delete"], ["Delete"]]],
-      ["Highscores_AbortEdit", ["Editieren abbrechen", ["Escape"], ["Escape"]]],
-      ["Controls_NavDown", ["Navigation runter", ["S", String.fromCharCode(8595)], ["KeyS", "ArrowDown"]]],
-      ["Controls_NavUp", ["Navigation hoch", ["W", String.fromCharCode(8593)], ["KeyW", "ArrowUp"]]],
-      ["Controls_NavRight", ["Navigation rechts", ["D", String.fromCharCode(8594)], ["KeyD", "ArrowRight"]]],
-      ["Controls_NavLeft", ["Navigation links", ["A", String.fromCharCode(8592)], ["KeyA", "ArrowLeft"]]],
-      ["Controls_DeleteKey", ["Belegung löschen", ["Delete"], ["Delete"]]],
-      ["Controls_Confirm", ["Bestätigen", ["Enter", "Space"], ["Enter", "Space"]]],
-      ["Controls_Abort", ["Abbrechen", ["Escape"], ["Escape"]]],
       ["Mute_All", ["Alles muten", ["M"], ["KeyM"]]]
     ]);
 
@@ -102,45 +72,23 @@
       if (key.split("_")[0] !== headline) {
         headline = key.split("_")[0];
         this.keyEntryHeadlines.push(new ControlEntryHeadline(
-          (this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(50, 200, 80, 1)", headline, 2
+          (this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20),
+          600, 20, headline, "controlsHeadline"
         ));
       }
 
       var entry = new ControlEntry(
-        (this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20), 600, 20, "rgba(255, 255, 255, 0.7)", key, 2
-        );
+        (this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20),
+        600, 20, key, "controlsEntry"
+      );
       entry.init();
       this.keyEntries.push(entry);
     }
 
-    this.nG = [];
-
-    this.keyEntries.map((keyArray, rowIndex) => {
-      var objectArray = [];
-      keyArray.keys.map((key, columnIndex) => {
-        objectArray.push({
-          button: key,
-          action: (gD) => { this.activateNewKeyMode() }
-        });
-      }, this);
-      this.nG.push(objectArray);
-    }, this);
-
-    this.nG.push([{
-      button: new CanvasButton((this.gD.canvas.width / 2) - 100, this.gD.canvas.height - 50, 200, 30, "Main Menu", "menu"),
-      action: (gD) => { gD.setNewPage(this.menu, true) }
-    }]);
-
-    this.aG = [];
-
     this.scrollBar = new CanvasScrollBar(this.gD.canvas.width - 165, 60, 220, 20, (this.keyEntryHeadlines.length + this.keyEntries.length), "scrollBarStandard");
   };
-  this.vScroll = function(elementsScrolled) {
-    this.scrollHeight = elementsScrolled * 20;
-    this.scrollBar.scroll(elementsScrolled);
-  };
   this.activateNewKeyMode = function() {
-    var selectedEntry = this.keyEntries[this.mC.selectedNGRowIndex];
+    var selectedEntry = this.keyEntries[this.selectedRowIndex];
     if (!this.newKeyMode) {
       this.newKeyMode = true;
     } else {
@@ -150,9 +98,9 @@
         this.keyBindings.get(this.newKeyEntry[0])[1][this.newKeyEntry[1]] = this.oldKey;
       }
     }
-    this.oldKey = this.keyBindings.get(selectedEntry.name)[1][this.mC.selectedNGColumnIndex];
-    this.keyBindings.get(selectedEntry.name)[1][this.mC.selectedNGColumnIndex] = "...";
-    this.newKeyEntry = [selectedEntry.name, this.mC.selectedNGColumnIndex];
+    this.oldKey = this.keyBindings.get(selectedEntry.name)[1][this.selectedColumnIndex];
+    this.keyBindings.get(selectedEntry.name)[1][this.selectedColumnIndex] = "...";
+    this.newKeyEntry = [selectedEntry.name, this.selectedColumnIndex];
   };
   this.setNewKey = function(key) {
     if (key.startsWith('Key') || key.startsWith('Digit')) {
@@ -198,7 +146,7 @@
     this.mC.updateClick(clickPos, this.gD);
   };
   this.updateWheelMoves = function() {
-    /*var wheelMove = this.gD.wheelMovements.pop();
+    var wheelMove = this.gD.wheelMovements.pop();
     if (wheelMove < 0) {
       this.vScroll(Math.max(
         (this.scrollHeight / 20) - 1, 
@@ -209,7 +157,7 @@
         (this.scrollHeight / 20) + 1, 
         (this.keyEntries[this.keyEntries.length - 1].y - 260) / 20
       ));
-    }*/
+    }
   };
   this.update = function() {
     /* unused */
@@ -238,52 +186,42 @@
 
     drawCanvasRectBorder(200, 60, 600, 220, "standard", this.gD);
   };
-}
-
-function ControlEntryHeadline(x, y, width, height, color, text, bordersize) {
-  this.x = x;
-  this.y = y;
-  this.width = width;
-  this.height = height;
-  this.color = color;
-  this.text = text;
-  this.bordersize = bordersize;
-  this.textAlign = "center";
-  this.textBaseline = "middle";
-  this.font = "bold 12pt Consolas";
-  this.textColor = "rgba(0, 0, 0, 1)";
-  this.borderColor = "rgba(0, 0, 0, 1)";
-  this.draw = function(controls, gD) {
-    gD.context.fillStyle = this.color;
-    gD.context.fillRect(this.x, this.y - controls.scrollHeight, this.width, this.height);
-    gD.context.textAlign = this.textAlign;
-    gD.context.textBaseline = this.textBaseline;
-    gD.context.font = this.font;
-    gD.context.fillStyle = this.textColor;
-    gD.context.fillText(this.text, this.x + (this.width / 2), this.y + (this.height / 2) - controls.scrollHeight);
-    gD.context.strokeStyle = this.borderColor;
-    gD.context.lineWidth = this.bordersize;
-    gD.context.strokeRect(this.x, this.y - controls.scrollHeight, this.width, this.height);
+  this.vScroll = function(elementsScrolled) {
+    this.scrollHeight = elementsScrolled * 20;
+    this.scrollBar.scroll(elementsScrolled);
   };
 }
 
-function ControlEntry(x, y, width, height, color, name, bordersize) {
+function ControlEntryHeadline(x, y, width, height, text, styleKey) {
   this.x = x;
   this.y = y;
   this.width = width;
   this.height = height;
-  this.color = color;
+  this.text = text;
+  this.styleKey = styleKey;
+  this.draw = function(controls, gD) {
+    var design = gD.design.elements[this.styleKey];
+    drawCanvasRect(this.x, this.y - controls.scrollHeight, this.width, this.height, design.rectKey, gD);
+    drawCanvasText(
+      this.x + (this.width / 2), this.y + (this.height / 2) - controls.scrollHeight, 
+      this.text, design.textKey, gD
+    );
+    drawCanvasRectBorder(this.x, this.y - controls.scrollHeight, this.width, this.height, design.borderKey, gD);
+  };
+}
+
+function ControlEntry(x, y, width, height, name, styleKey) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
   this.name = name;
-  this.bordersize = bordersize;
-  this.textAlign = "start";
-  this.textBaseline = "middle";
-  this.font = "12pt Consolas";
-  this.textColor = "rgba(0, 0, 0, 1)";
+  this.styleKey = styleKey;
   this.selected = 0;
   this.keys = [];
   this.init = function() {
-    this.keys.push(new ControlKey(this.x + this.width - 200, this.y, 100, this.height, this.color, this.name, 0, this.bordersize));
-    this.keys.push(new ControlKey(this.x + this.width - 100, this.y, 100, this.height, this.color, this.name, 1, this.bordersize));
+    this.keys.push(new ControlKey(this.x + this.width - 200, this.y, 100, this.height, this.name, 0, this.styleKey));
+    this.keys.push(new ControlKey(this.x + this.width - 100, this.y, 100, this.height, this.name, 1, this.styleKey));
   };
   this.select = function(index) {
     this.keys[index].select();
@@ -293,33 +231,26 @@ function ControlEntry(x, y, width, height, color, name, bordersize) {
     this.keys[this.selected].deselect();
   };
   this.draw = function(controls, gD) {
-    gD.context.fillStyle = this.color;
-    gD.context.fillRect(this.x, this.y - controls.scrollHeight, this.width - 200, this.height);
-    gD.context.textAlign = this.textAlign;
-    gD.context.textBaseline = this.textBaseline;
-    gD.context.font = this.font;
-    gD.context.fillStyle = this.textColor;
-    gD.context.fillText(controls.keyBindings.get(this.name)[0], this.x + 5, this.y - controls.scrollHeight + (this.height / 2));
-    /*this.keys.map(key => {
+    var design = gD.design.elements[this.styleKey];
+    drawCanvasRect(this.x, this.y - controls.scrollHeight, this.width - 200, this.height, design.rectKey.standard, gD);
+    drawCanvasText(
+      this.x + 5, this.y - controls.scrollHeight + (this.height / 2), 
+      controls.keyBindings.get(this.name)[0], design.textKey.name, gD
+    );
+    this.keys.map(key => {
       key.draw(controls, gD);
-    });*/
+    });
   };
 }
 
-function ControlKey(x, y, width, height, color, name, keyNr, bordersize) {
+function ControlKey(x, y, width, height, name, keyNr, styleKey) {
   this.x = x;
   this.y = y;
   this.width = width;
   this.height = height;
-  this.color = color;
   this.name = name;
   this.keyNr = keyNr;
-  this.bordersize = bordersize;
-  this.selectedColor = "rgba(180, 50, 50, 1)";
-  this.textAlign = "center";
-  this.textBaseline = "middle";
-  this.font = "10pt Consolas";
-  this.textColor = "rgba(0, 0, 0, 1)";
+  this.styleKey = styleKey;
   this.selected = false;
   this.select = function() {
     this.selected = true;
@@ -327,28 +258,27 @@ function ControlKey(x, y, width, height, color, name, keyNr, bordersize) {
   this.deselect = function() {
     this.selected = false;
   };
-  this.draw = function(gD, menu) {
-    var keyRef = menu.controls.keyBindings.get(this.name)[1][this.keyNr];
+  this.draw = function(controls, gD) {
+    var keyRef = controls.keyBindings.get(this.name)[1][this.keyNr];
+    var design = gD.design.elements[this.styleKey];
 
     if (this.selected) {
-      gD.context.fillStyle = this.selectedColor;
+      drawCanvasRect(this.x, this.y - controls.scrollHeight, this.width, this.height, design.rectKey.selected, gD);
     } else {
-      gD.context.fillStyle = this.color;
+      drawCanvasRect(this.x, this.y - controls.scrollHeight, this.width, this.height, design.rectKey.standard, gD);
     }
-    gD.context.fillRect(this.x, this.y - menu.controls.scrollHeight, this.width, this.height);
     if (keyRef !== undefined) {
-      var spriteRef = gD.spriteDict["Icon_KeyShort"];
+      var spriteKey = "Icon_KeyShort";
       if (keyRef.length > 1) {
-        spriteRef = gD.spriteDict["Icon_KeyLong"];
+        spriteKey = "Icon_KeyLong";
       }
 
-      gD.context.drawImage(gD.spritesheet, spriteRef[0], spriteRef[1], spriteRef[2], spriteRef[3],
-        this.x + (this.width - spriteRef[2]) / 2, this.y - menu.controls.scrollHeight + (this.height - spriteRef[3]) / 2, spriteRef[2], spriteRef[3]);
-      gD.context.textAlign = this.textAlign;
-      gD.context.textBaseline = this.textBaseline;
-      gD.context.font = this.font;
-      gD.context.fillStyle = this.textColor;
-      gD.context.fillText(keyRef, this.x + (this.width / 2), this.y - menu.controls.scrollHeight + (this.height / 2));
+      var [spriteX, spriteY, spriteWidth, spriteHeight] = gD.spriteDict[spriteKey];
+      drawCanvasImage(
+        this.x + (this.width - spriteWidth) / 2, this.y - controls.scrollHeight + (this.height - spriteHeight) / 2,
+        spriteKey, gD
+      );
+      drawCanvasText(this.x + (this.width / 2), this.y - controls.scrollHeight + (this.height / 2), keyRef, design.textKey.key, gD);
     }
   };
 }

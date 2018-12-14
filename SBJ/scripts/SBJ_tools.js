@@ -145,4 +145,3 @@ function drawCanvasLine(startX, startY, endX, endY, styleKey, gD) {
   gD.context.lineTo(endX, endY);
   gD.context.stroke();
 }
-
