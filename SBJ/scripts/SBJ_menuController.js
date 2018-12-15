@@ -1,233 +1,176 @@
-function MenuController() {
+function MenuController(menu) {
+  this.menu = menu;
   /**
-   * initiates the menu object
-   * @param grid {Array<Array<MenuTextButton>>} The list of already created grid to manage.
-   * @param menu {Menu} carries the main menu
+   * initiates the menuController object
+   * @param {Array<Array<Object>>} navigationGrid the main grid that includes all selectable objects and controls the navigation
+   * @param {Array<Array<Object>>} additionalGrid an additional grid that includes selectable objects outside the navigation
    */
-  this.init = function(grid, menu) {
-    this.grid = grid;
-    this.updateSelection(0, 0);
-    this.menu = menu;
+  this.setNewGrids = function(navigationGrid, additionalGrid) {
+    this.nG = navigationGrid;
+    this.aG = additionalGrid;
+    this.updateNGSelection(0, 0);
+    this.updateAGSelection(undefined, undefined);
   };
   /**
-   * checks if a button is pressed
+   * checks if a key is pressed and executes commands
+   * @param  {string}     key a key code of a button that was pressed
+   * @param  {globalDict} gD  the global dictionary
    */
-  this.updateKeyPresses = function(gD) {
+  this.updateKeyPresses = function(key, gD) {
     var keyB = this.menu.controls.keyBindings;
-    var rowIndex = this.selectedRowIndex;
-    var columnIndex = this.selectedColumnIndex;
+    var rowIndex = this.selectedNGRowIndex;
+    var columnIndex = this.selectedNGColumnIndex;
 
-    gD.newKeys.map(key => {
-      if (keyB.get("Menu_NavDown")[2].includes(key)) {
-        rowIndex = (rowIndex + 1) % this.grid.length;
-        if (this.grid[rowIndex].length - 1 < columnIndex) {
-          columnIndex = this.grid[rowIndex].length - 1;
-        }
-      } else if (keyB.get("Menu_NavUp")[2].includes(key)) {
-        rowIndex -= 1;
-        if (rowIndex < 0) {
-          rowIndex = this.grid.length - 1;
-        }
-        if (this.grid[rowIndex].length - 1 < columnIndex) {
-          columnIndex = this.grid[rowIndex].length - 1;
-        }
-      } else if (keyB.get("Menu_NavRight")[2].includes(key)) {
-        columnIndex = (columnIndex + 1) % this.grid[rowIndex].length;
-      } else if (keyB.get("Menu_NavLeft")[2].includes(key)) {
-        columnIndex -= 1;
-        if (columnIndex < 0) {
-          columnIndex = this.grid[rowIndex].length - 1;
-        }
+    if (keyB.get("Menu_NavDown")[2].includes(key)) {
+      rowIndex = (rowIndex + 1) % this.nG.length;
+      if (this.nG[rowIndex].length - 1 < columnIndex) {
+        columnIndex = this.nG[rowIndex].length - 1;
       }
-
-      this.updateSelection(rowIndex, columnIndex);
-
-      if (keyB.get("Menu_Confirm")[2].includes(key)) {
-        this.getSelectedButton().callLink(gD);
+    } else if (keyB.get("Menu_NavUp")[2].includes(key)) {
+      rowIndex -= 1;
+      if (rowIndex < 0) {
+        rowIndex = this.nG.length - 1;
       }
-
-      if (keyB.get("Mute_All")[2].includes(key)) {
-        gD.muted = !gD.muted;
+      if (this.nG[rowIndex].length - 1 < columnIndex) {
+        columnIndex = this.nG[rowIndex].length - 1;
       }
-
-      if (keyB.get("Menu_Back")[2].includes(key)) {
-        gD.currentPage = this.menu;
+    } else if (keyB.get("Menu_NavRight")[2].includes(key)) {
+      columnIndex = (columnIndex + 1) % this.nG[rowIndex].length;
+    } else if (keyB.get("Menu_NavLeft")[2].includes(key)) {
+      columnIndex -= 1;
+      if (columnIndex < 0) {
+        columnIndex = this.nG[rowIndex].length - 1;
       }
-    });
-  };
-  /**
-   * checks if the mouse was moved
-   */
-  this.updateMouseMoves = function(gD) {
-    this.grid.map((buttonRow, rowIndex) => {
-      buttonRow.map((button, columnIndex) => {
-        if (gD.mousePos.x >= button.x && gD.mousePos.x <= button.x + button.width &&
-            gD.mousePos.y >= button.y && gD.mousePos.y <= button.y + button.height) {
-          this.updateSelection(rowIndex, columnIndex);
-        }
-      }, this);
-    }, this);
-  };
-  /**
-   * checks if there was a click
-   * @param clickPos {Object} the popped, non-null position of the click
-   * @param gD {GlobalDict} carries global information
-   */
-  this.updateClick = function(clickPos, gD) {
-    var selectedButton = this.getSelectedButton();
-    if (clickPos.x >= selectedButton.x && clickPos.x <= selectedButton.x + selectedButton.width &&
-        clickPos.y >= selectedButton.y && clickPos.y <= selectedButton.y + selectedButton.height) { // = mouse over selected button
-      selectedButton.callLink(gD);
+    }
+
+    this.updateNGSelection(rowIndex, columnIndex);
+
+    if (keyB.get("Menu_Confirm")[2].includes(key)) {
+      this.getSelectedButtons()[0].action(this.gD);
+    } else if (keyB.get("Menu_Back")[2].includes(key)) {
+      gD.currentPage = this.menu;
+    } else if (keyB.get("Mute_All")[2].includes(key)) {
+      gD.muted = !gD.muted;
     }
   };
   /**
-   * checks if the wheel was moved
+   * checks, if the mouse was moved, what the mouse hit 
+   * @param  {globalDict} gD the global Dictionary
+   */
+  this.updateMouseMoves = function(gD) {
+    this.nG.map((buttonRow, rowIndex) => {
+      buttonRow.map((button, columnIndex) => {
+        if (gD.mousePos.x >= button.button.x && gD.mousePos.x <= button.button.x + button.button.width &&
+            gD.mousePos.y >= button.button.y && gD.mousePos.y <= button.button.y + button.button.height) {
+          this.updateNGSelection(rowIndex, columnIndex);
+        }
+      }, this);
+    }, this);
+
+    var selectedSomething = false;
+
+    this.aG.map((buttonRow, rowIndex) => {
+      buttonRow.map((button, columnIndex) => {
+        if (gD.mousePos.x >= button.button.x && gD.mousePos.x <= button.button.x + button.button.width &&
+            gD.mousePos.y >= button.button.y && gD.mousePos.y <= button.button.y + button.button.height) {
+          this.updateAGSelection(rowIndex, columnIndex);
+          selectedSomething = true;
+        }
+      }, this);
+    }, this);
+
+    if (!selectedSomething) {
+      this.updateAGSelection(undefined, undefined);
+    }
+  };
+  /**
+   * checks where a click was executed
+   * @param  {Object} clickPos the popped, non-null position of the click
+   * @param  {globalDict} gD       the global dictionary
+   */
+  this.updateClick = function(clickPos, gD) {
+    this.getSelectedButtons().map(buttonObject => {
+      if (clickPos.x >= buttonObject.button.x && clickPos.x <= buttonObject.button.x + buttonObject.button.width &&
+          clickPos.y >= buttonObject.button.y && clickPos.y <= buttonObject.button.y + buttonObject.button.height) {
+        buttonObject.action(gD);
+      }
+    }, this);
+  };
+  /**
+   * checks if the mouse wheel was moved
    */
   this.updateWheelMoves = function() {
     /* unused */
   };
   /**
-   * updates moving objects in menu
+   * updates moving objects
    */
   this.update = function() {
     /* unused */
   };
   /**
-   * called to update the current button selection
-   * (deselects old selection and sets specified button as selected)
+   * draws the objects of the grids onto the canvas
+   * @param {globalDict} gD the global dictionary
    */
-  this.updateSelection = function(rowIndex, columnIndex) {
-    if (this.selectedRowIndex !== undefined && this.selectedColumnIndex !== undefined) {
-      this.grid[this.selectedRowIndex][this.selectedColumnIndex].deselect();
-    }
+  this.draw = function(gD) {
+    this.nG.map(buttonRow => {
+      buttonRow.map(buttonObject => {
+        buttonObject.button.draw(gD, menu);
+      }, this);
+    }, this);
 
-    this.grid[rowIndex][columnIndex].select();
-    this.selectedRowIndex = rowIndex;
-    this.selectedColumnIndex = columnIndex;
+    this.aG.map(buttonRow => {
+      buttonRow.map(buttonObject => {
+        buttonObject.button.draw(gD);
+      }, this);
+    }, this);
   };
   /**
-   * draws the menu onto the canvas
+   * updates the selected object of the navigationGrid and deselects the old object
+   * @param  {number} rowIndex    the row of the new selected object
+   * @param  {number} columnIndex the column of the new selected object
    */
-  this.draw = function(gD) {
-      this.grid.map(row => {
-        row.map(button => {
-          button.draw(gD);
-        }, this);
-      }, this);
-  };
-  this.getSelectedButton = function() {
-    return this.grid[this.selectedRowIndex][this.selectedColumnIndex];
-  };
-  this.getSelectedData = function() {
-    var selectedButton = this.getSelectedButton();
-    if (!selectedButton) {
-      return undefined;
-    } else {
-      return selectedButton.data;
+  this.updateNGSelection = function(rowIndex, columnIndex) {
+    if (this.selectedNGRowIndex !== undefined && this.selectedNGColumnIndex !== undefined) {
+      this.nG[this.selectedNGRowIndex][this.selectedNGColumnIndex].button.deselect();
     }
-  };
-}
 
-/**
- * Represents a Button with text on a menu-screen which can be clicked or selected via the keyboard.
- * @param x {number} x-Coordinate of the top left corner
- * @param y {number} y-Coordinate of the top left corner
- * @param width {number}
- * @param height {number}
- * @param text {string}
- * @param link {Function|null} what should be executed once the button is pressed
- * @param data {object|null} data to be accessible when this button is selected
- * @constructor
- */
-function MenuTextButton(x, y, width, height, text, link = null, data = null) {
-  this.x = x;
-  this.y = y;
-  this.width = width;
-  this.height = height;
-  this.text = text;
-  this.link = link;
-  this.data = data;
-  this.selected = false;
-  this.select = function() {
-    this.selected = true;
-  };
-  this.deselect = function() {
-    this.selected = false;
-  };
-  this.callLink = function(gD) {
-    if (this.link) {
-      this.link(gD);
+    this.nG[rowIndex][columnIndex].button.select();
+    if (this.nG[rowIndex][columnIndex].selected !== undefined) {
+      this.nG[rowIndex][columnIndex].selected(this.gD);
     }
+    this.selectedNGRowIndex = rowIndex;
+    this.selectedNGColumnIndex = columnIndex;
   };
-  this.draw = function(gD) {
-    if (this.selected) {
-      gD.context.fillStyle = gD.design.button.backgroundColor.selected;
-    } else {
-      gD.context.fillStyle = gD.design.button.backgroundColor.normal;
+  /**
+   * updates the selected object of the additionalGrid and deselects the old object
+   * @param  {number} rowIndex    the row of the new selected object
+   * @param  {number} columnIndex the column of the new selected object
+   */
+  this.updateAGSelection = function(rowIndex, columnIndex) {
+    if (this.selectedAGRowIndex !== undefined && this.selectedAGColumnIndex !== undefined) {
+      this.aG[this.selectedAGRowIndex][this.selectedAGColumnIndex].button.deselect();
     }
-    gD.context.fillRect(this.x, this.y, this.width, this.height);
-    gD.context.textAlign = "center";
-    gD.context.textBaseline = "middle";
-    gD.context.font = gD.design.button.fontSize + " " + gD.design.button.fontFamily;
-    gD.context.fillStyle = gD.design.button.fontColor;
-    gD.context.fillText(this.text, this.x + (this.width / 2), this.y + (this.height / 2));
-    gD.context.strokeStyle = gD.design.button.borderColor;
-    gD.context.lineWidth = gD.design.button.borderSize;
-    gD.context.strokeRect(this.x, this.y, this.width, this.height);
-  };
-}
 
-/**
- * Represents a Button with an Image on a menu-screen which can be clicked or selected via the keyboard.
- * @param x {number} x-Coordinate of the top left corner
- * @param y {number} y-Coordinate of the top left corner
- * @param width {number}
- * @param height {number}
- * @param spriteKey {string} under which key in the gD the sprite for this button's image can be found
- * @param link {Function|null} what should be executed once the button is pressed
- * @param data {object|null} data to be accessible when this button is selected
- * @constructor
- */
-function MenuImageButton(x, y, width, height, spriteKey, link = null, data = null) {
-  this.x = x;
-  this.y = y;
-  this.width = width;
-  this.height = height;
-  this.spriteKey = spriteKey;
-  this.link = link;
-  this.data = data;
-  this.selected = false;
-  this.select = function() {
-    this.selected = true;
-  };
-  this.deselect = function() {
-    this.selected = false;
-  };
-  this.callLink = function(gD) {
-    if (this.link) {
-      this.link(gD);
+    if (rowIndex !== undefined && columnIndex !== undefined) {
+      this.aG[rowIndex][columnIndex].button.select();
+      if (this.aG[rowIndex][columnIndex].selected !== undefined) {
+        this.aG[rowIndex][columnIndex].selected(this.gD);
+      }
     }
+    this.selectedAGRowIndex = rowIndex;
+    this.selectedAGColumnIndex = columnIndex;
   };
-  this.draw = function(gD) {
-    var [spriteX, spriteY, spriteWidth, spriteHeight] = gD.spriteDict[this.spriteKey];
-
-    if (this.selected) {
-      gD.context.fillStyle = gD.design.button.backgroundColor.selected;
-    } else {
-      gD.context.fillStyle = gD.design.button.backgroundColor.normal;
+  /**
+   * returns the selected buttons from the navigationGrid and the additionalGrid
+   * @return {Array<Object>} the button objects from the navigationGrid and the additionalGrid 
+   */
+  this.getSelectedButtons = function() {
+    var buttons = [];
+    buttons.push(this.nG[this.selectedNGRowIndex][this.selectedNGColumnIndex]);
+    if (this.selectedAGRowIndex !== undefined && this.selectedAGColumnIndex !== undefined) {
+      buttons.push(this.aG[this.selectedAGRowIndex][this.selectedAGColumnIndex]);
     }
-    gD.context.fillRect(this.x, this.y, this.width, this.height);
-
-    gD.context.drawImage(
-      gD.spritesheet,
-      spriteX, spriteY,
-      spriteWidth, spriteHeight,
-      this.x + gD.design.button.padding, this.y + gD.design.button.padding,
-      this.width - gD.design.button.padding*2, this.height - gD.design.button.padding*2
-    );
-
-    gD.context.strokeStyle = gD.design.button.borderColor;
-    gD.context.lineWidth = gD.design.button.borderSize;
-    gD.context.strokeRect(this.x, this.y, this.width, this.height);
+    return buttons;
   };
 }
