@@ -592,8 +592,8 @@ function SLSavestateDetails(x, y, width, height, styleKey) {
     drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey, gD);
     drawCanvasImage(this.x + Math.floor((this.width - spriteWidth) / 2), this.y + Math.floor((55 - spriteHeight) / 2), this.currentSavestate.spriteKey, gD);
     drawCanvasText(this.x + 6, this.y + 60, "Name: " + this.currentSavestate.name.slice(0, 11) + "...", design.textKey, gD);
-    drawCanvasText(this.x + 6, this.y + 72 + height, "Date: " + this.currentSavestate.date, design.textKey, gD);
-    drawCanvasText(this.x + 6, this.y + 84 + height, "Version: " + this.currentSavestate.version, design.textKey, gD);
+    drawCanvasText(this.x + 6, this.y + 72, "Date: " + this.currentSavestate.date, design.textKey, gD);
+    drawCanvasText(this.x + 6, this.y + 84, "Version: " + this.currentSavestate.version, design.textKey, gD);
     drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
   };
 }

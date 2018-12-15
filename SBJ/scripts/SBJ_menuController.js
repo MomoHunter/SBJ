@@ -12,11 +12,6 @@ function MenuController(menu) {
     this.updateAGSelection(undefined, undefined);
   };
   /**
-   * checks if a button is pressed
-   * @param key {String} The keycode that should be checked
-   * @param gD  {GlobalDict} the global dictionary
-   */
-  /**
    * checks if a key is pressed and executes commands
    * @param  {string}     key a key code of a button that was pressed
    * @param  {globalDict} gD  the global dictionary
@@ -59,11 +54,7 @@ function MenuController(menu) {
     }
   };
   /**
-   * checks if the mouse was moved
-   * @param <parameter_name> { parameter_description }
-   */
-  /**
-   *  checks, if the mouse was moved, what the mouse hit 
+   * checks, if the mouse was moved, what the mouse hit 
    * @param  {globalDict} gD the global Dictionary
    */
   this.updateMouseMoves = function(gD) {
@@ -92,11 +83,6 @@ function MenuController(menu) {
       this.updateAGSelection(undefined, undefined);
     }
   };
-  /**
-   * checks if there was a click
-   * @param clickPos {Object} the popped, non-null position of the click
-   * @param gD {GlobalDict} carries global information
-   */
   /**
    * checks where a click was executed
    * @param  {Object} clickPos the popped, non-null position of the click

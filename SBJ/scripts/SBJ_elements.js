@@ -374,7 +374,7 @@ function CanvasChoosePictureModal(x, y, width, height, styleKey) {
         this.pictureButtons[Math.floor(index / 8)] = [];
       }
       this.pictureButtons[Math.floor(index / 8)].push(new CanvasImageButton(
-        this.x + 258 + (index % 8) * 61, this.y + 70 + Math.floor(index / 8) * 61,
+        this.x + 280 + (index % 8) * 55, this.y + 90 + Math.floor(index / 8) * 55,
         55, 55, this.pictures[index], design.buttonKey
       ));
     }, this);
@@ -426,8 +426,8 @@ function CanvasChoosePictureModal(x, y, width, height, styleKey) {
     var design = gD.design.elements[this.styleKey];
 
     drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.modal, gD);
-    drawCanvasRect(this.x + 253, this.y + 35, this.width - 506, this.height - 70, design.rectKey.background, gD);
-    drawCanvasText(this.x + this.width / 2, this.y + 53, "Bitte Bild auswählen:", design.textKey, gD);
+    drawCanvasRect(this.x + 275, this.y + 35, this.width - 550, this.height - 70, design.rectKey.background, gD);
+    drawCanvasText(this.x + this.width / 2, this.y + 63, "Bitte Bild auswählen:", design.textKey, gD);
 
     this.pictureButtons.map((buttonRow, rowIndex) => {
       buttonRow.map((button, columnIndex) => {
@@ -435,6 +435,6 @@ function CanvasChoosePictureModal(x, y, width, height, styleKey) {
       }, this);
     }, this);
 
-    drawCanvasRectBorder(this.x + 253, this.y + 35, this.width - 506, this.height - 70, design.borderKey.background, gD);
+    drawCanvasRectBorder(this.x + 275, this.y + 35, this.width - 550, this.height - 70, design.borderKey.background, gD);
   };
 }
