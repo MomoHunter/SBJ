@@ -348,6 +348,27 @@ function GlobalDict() {
         textKey: "savestate",
         borderKey: "standard"
       },
+      highscoresHeadline: {
+        rectKey: "headline",
+        textKey: "normalBold",
+        borderKey: "standard"
+      },
+      highscoresEntry: {
+        rectKey: {
+          standard: "blur",
+          selected: "selected"
+        },
+        textKey: {
+          number: "highscoreNumber",
+          name: "enterNameModal"
+        },
+        borderKey: "standard"
+      },
+      highscoresDetails: {
+        rectKey: "standard",
+        textKey: "savestate",
+        borderKey: "standard"
+      },
       enterNameModal: {
         rectKey: {
           modal: "modal",
@@ -452,7 +473,7 @@ function GlobalDict() {
         borderKey: ""
       },
       normalBold: {
-        font: "12pt Consolas",
+        font: "bold 12pt Consolas",
         color: "0, 0, 0, 1",
         align: "center",
         baseline: "middle",
@@ -476,6 +497,13 @@ function GlobalDict() {
         font: "12pt Consolas",
         color: "0, 0, 0, 1",
         align: "left",
+        baseline: "middle",
+        borderKey: ""
+      },
+      highscoreNumber: {
+        font: "12pt Consolas",
+        color: "0, 0, 0, 1",
+        align: "right",
         baseline: "middle",
         borderKey: ""
       },

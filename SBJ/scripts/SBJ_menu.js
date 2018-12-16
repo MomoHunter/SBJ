@@ -10,6 +10,8 @@ function Menu(gD) {
     this.setNewBackground();
     /*this.achievements = new Achievements(this, this.gD, this.mC);
     this.achievements.init();*/
+    this.highscores = new Highscores(this, this.gD);
+    this.highscores.init();
     this.controls = new Controls(this, this.gD);
     this.controls.init();
     this.saveLoad = new SaveLoad(this, this.gD);

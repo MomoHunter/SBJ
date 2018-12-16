@@ -131,7 +131,6 @@
     this.newKeyMode = false;
     this.gD.save.keyBindings = Array.from(this.keyBindings.entries());
   };
-  
   /**
    * checks if a key is pressed and executes commands
    */
@@ -292,9 +291,9 @@
   };
   /**
    * updates the selected object and deselects the old object
-   * @param  {number} rowIndex    the row of the new selected object
-   * @param  {number} columnIndex the column of the new selected object
-   * @param  {bool}   scroll      if the action should influence scrolling
+   * @param {number} rowIndex    the row of the new selected object
+   * @param {number} columnIndex the column of the new selected object
+   * @param {bool}   scroll      if the action should influence scrolling
    */
   this.updateSelection = function(rowIndex, columnIndex, scroll) {
     if (this.selectedRowIndex !== undefined && this.selectedColumnIndex !== undefined) {
@@ -329,7 +328,7 @@
   };
   /**
    * scrolls the page with a defined number of objects
-   * @param  {number} elementsScrolled the number of objects that should be scrolled
+   * @param {number} elementsScrolled the number of objects that should be scrolled
    */
   this.vScroll = function(elementsScrolled) {
     this.scrollHeight = elementsScrolled * 20;
@@ -355,8 +354,8 @@ function ControlEntryHeadline(x, y, width, height, text, styleKey) {
   this.styleKey = styleKey;
   /**
    * draws the objects onto the canvas
-   * @param  {Controls} controls the controls object
-   * @param  {GlobalDict} gD     the global dictionary
+   * @param {Controls} controls the controls object
+   * @param {GlobalDict} gD     the global dictionary
    */
   this.draw = function(controls, gD) {
     var design = gD.design.elements[this.styleKey];
@@ -410,8 +409,8 @@ function ControlEntry(x, y, width, height, name, styleKey) {
   };
   /**
    * draws the objects onto the canvas
-   * @param  {Controls} controls the controls object
-   * @param  {GlobalDict} gD     the global dictionary
+   * @param {Controls} controls the controls object
+   * @param {GlobalDict} gD     the global dictionary
    */
   this.draw = function(controls, gD) {
     var design = gD.design.elements[this.styleKey];
@@ -459,8 +458,8 @@ function ControlKey(x, y, width, height, name, keyNr, styleKey) {
   };
   /**
    * draws the objects onto the canvas
-   * @param  {Controls} controls the controls object
-   * @param  {GlobalDict} gD     the global dictionary
+   * @param {Controls}   controls the controls object
+   * @param {GlobalDict} gD       the global dictionary
    */
   this.draw = function(controls, gD) {
     var keyRef = controls.keyBindings.get(this.name)[1][this.keyNr];

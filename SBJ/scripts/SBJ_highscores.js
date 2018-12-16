@@ -1,424 +1,415 @@
-function Highscores(gD, menu) {
-  this.gD = gD;
+function Highscores(menu, gD) {
   this.menu = menu;
+  this.gD = gD;
+  /**
+   * initiates the object
+   */
   this.init = function() {
-    this.editingMode = false;
+    this.chooseName = false;
     this.oldName = "";
-    this.selectedRowIndex = -1;
-    this.title = new CanvasText(this.gD.canvas.width / 2, 30, "Highscores", "header");
+    this.highscores = [];
+    this.scrollHeight = 0;
+    this.title = new CanvasText(this.gD.canvas.width / 2, 30, "Highscores", "pageTitle");
 
-    this.highscoreList = new HighscoreList((this.gD.canvas.width / 2) - 300, 60, 600, 20, "rgba(255, 255, 255, 1)", 2);
+    this.headline = new HighscoreHeadline(this.gD.canvas.width / 2 - 300, 60, 600, 20, "Highscores", "highscoresHeadline");
 
-    this.backToMenu = new MenuTextButton((this.gD.canvas.width / 2) - 100, this.gD.canvas.height - 50, 200, 30, "Main Menu");
-    this.backToMenu.select();
+    this.highscoreDetails = new HighscoreDetails(this.gD.canvas.width - 180, 60, 170, 220, "highscoresDetails");
+
+    this.enterNameModal = new CanvasEnterNameModal(0, 0, this.gD.canvas.width, this.gD.canvas.height, "enterNameModal");
+
+    this.scrollBar = new CanvasScrollBar(this.gD.canvas.width / 2 + 310, 80, 200, 20, this.highscores.length, "scrollBarStandard");
+
+    this.backToMenu = new CanvasButton(
+      (this.gD.canvas.width / 2) - 100, this.gD.canvas.height - 50, 200, 30, "Main Menu", "menu"
+    );
+
+    this.updateSelection(-1, 0, false);
   };
-  this.newHighscore = function(data) {
-    if (Object.keys(this.highscores).length == 0) {
-      this.highscores["1"] = data;
-    } else {
-      for (var i = Math.min(Object.keys(this.highscores).length, 99); i > 0; i--) {
-        if (parseInt(this.highscores[i.toString()][1].substr(0, (this.highscores[i.toString()][1].length - 1))) < parseInt(data[1].substr(0, (data[1].length - 1)))) {
-          this.highscores[(i + 1).toString()] = this.highscores[i.toString()];
-          if (i == 1) {
-            this.highscores["1"] = data;
-            break;
-          }
-        } else if (parseInt(this.highscores[i.toString()][1].substr(0, (this.highscores[i.toString()][1].length - 1))) == parseInt(data[1].substr(0, (data[1].length - 1)))) {
-          for (var j = i; j > 0; j--) {
-            if (parseInt(this.highscores[j.toString()][1].substr(0, (this.highscores[j.toString()][1].length - 1))) == parseInt(data[1].substr(0, (data[1].length - 1)))) {
-              if (parseInt(this.highscores[j.toString()][2]) >= parseInt(data[2])) {
-                this.highscores[(j + 1).toString()] = data;
-                break;
-              } else {
-                this.highscores[(j + 1).toString()] = this.highscores[j.toString()];
-                if (j == 1) {
-                  this.highscores["1"] = data;
-                  break;
-                }
-              }
-            } else {
-              this.highscores[(j + 1).toString()] = data;
-              break;
-            }
-          }
-          break;
+  /**
+   * adds a new highscore to the list and cuts at 100 highscores
+   * @param {Object} highscore a highscore object
+   */
+  this.addHighscore = function(highscore) {
+    this.highscores.map((entry, index) => {
+      this.highscores[index] = entry.highscore;
+    }, this);
+
+    var pos = 0;
+    this.highscores.map((entry, index) => {
+      if (entry.distance > highscore.distance) {
+        pos = index + 1;
+      }
+    }, this);
+
+    this.highscores.splice(pos, 0, highscore);
+    this.highscores = this.highscores.slice(0, 100);
+    this.highscores.map((entry, index) => {
+      this.highscores[index] = new HighscoreEntry(
+        this.gD.canvas.width / 2 - 300, 80 + index * 20, 600, 20, entry, index + 1, "highscoresEntry"
+      );
+    }, this);
+    this.updateSelection(-1, 0);
+    this.vScroll(0);
+    this.scrollBar.refresh(this.highscores.length);
+  };
+  /**
+   * starts the enter name modal and activates the enter name mode
+   * @param {number} index the index of the highscore that should be edited
+   */
+  this.startNewName = function(index) {
+    this.chooseName = true;
+    this.enterNameModal.text = "";
+    this.selectedHighscore = index;
+  };
+  /**
+   * sets the new entered name
+   */
+  this.setNewName = function() {
+    this.highscores[this.selectedHighscore].highscore.name = this.enterNameModal.text;
+    this.chooseName = false;
+  };
+  /**
+   * checks if a key is pressed and executes commands
+   */
+  this.updateKeyPresses = function() {
+    this.gD.newKeys.map((key, index) => {
+      var keyB = this.menu.controls.keyBindings;
+      var rowIndex = this.selectedRowIndex;
+      var columnIndex = this.selectedColumnIndex;
+
+      if (this.chooseName) {
+        if (keyB.get("NameModal_NavRight")[2].includes(key)) {
+          this.enterNameModal.moveCursor(1);
+        } else if (keyB.get("NameModal_NavLeft")[2].includes(key)) {
+          this.enterNameModal.moveCursor(-1);
+        } else if (keyB.get("NameModal_DeleteLeft")[2].includes(key)) {
+          this.enterNameModal.deleteCharacter(-1);
+        } else if (keyB.get("NameModal_DeleteRight")[2].includes(key)) {
+          this.enterNameModal.deleteCharacter(1);
+        } else if (keyB.get("NameModal_Confirm")[2].includes(key)) {
+          this.setNewName();
+        } else if (keyB.get("NameModal_Abort")[2].includes(key)) {
+          this.chooseName = false;
         } else {
-          this.highscores[(i + 1).toString()] = data;
-          break;
+          var event = this.gD.events[index];
+          if (event.key.length === 1) {
+            this.enterNameModal.addCharacter(event.key);
+          }
+        }
+      } else {
+        if (keyB.get("Menu_NavDown")[2].includes(key)) {
+          rowIndex++;
+          if (rowIndex >= this.highscores.length) {
+            this.updateSelection(-1, columnIndex, true);
+          } else {
+            this.updateSelection(rowIndex, columnIndex, true);
+          }
+        } else if (keyB.get("Menu_NavUp")[2].includes(key)) {
+          rowIndex--;
+          if (rowIndex < -1) {
+            this.updateSelection(this.highscores.length - 1, columnIndex, true);
+          } else {
+            this.updateSelection(rowIndex, columnIndex, true);
+          }
+        } else if (keyB.get("Menu_NavLeft")[2].includes(key)) {
+          columnIndex--;
+          if (columnIndex < 0) {
+            this.updateSelection(rowIndex, 0, true);
+          } else {
+            this.updateSelection(rowIndex, columnIndex, true);
+          }
+        } else if (keyB.get("Menu_NavRight")[2].includes(key)) {
+          columnIndex++;
+          if (columnIndex >= 1) {
+            this.updateSelection(rowIndex, 0, true);
+          } else {
+            this.updateSelection(rowIndex, columnIndex, true);
+          }
+        } else if (keyB.get("Menu_Confirm")[2].includes(key)) {
+          if (rowIndex >= 0) {
+            this.startNewName(index);
+          } else {
+            this.gD.currentPage = this.menu;
+          }
+        } else if (keyB.get("Menu_Back")[2].includes(key)) {
+          gD.currentPage = this.menu;
+        } else if (key === "KeyK") {
+          this.addHighscore({
+            name: "test",
+            distance: 2000,
+            cash: 2502
+          });
+        }
+      }
+    }, this);
+  };
+  /**
+   * checks, if the mouse was moved, what the mouse hit 
+   */
+  this.updateMouseMoves = function() {
+    if (this.chooseName) {
+      return;
+    }
+
+    this.highscores.map((entry, index) => {
+      var realHeight = entry.y - this.scrollHeight;
+      if (this.gD.mousePos.x >= entry.x && this.gD.mousePos.x <= entry.x + entry.width &&
+          this.gD.mousePos.y >= realHeight && this.gD.mousePos.y <= realHeight + entry.height) {
+        if (realHeight >= 80 && realHeight < 280) {
+          this.updateSelection(index, this.selectedColumnIndex, false);
+        }
+      }
+    }, this);
+
+    if (this.gD.mousePos.x >= this.backToMenu.x && this.gD.mousePos.x <= this.backToMenu.x + this.backToMenu.width &&
+        this.gD.mousePos.y >= this.backToMenu.y && this.gD.mousePos.y <= this.backToMenu.y + this.backToMenu.height) {
+      this.updateSelection(-1, this.selectedColumnIndex, false);
+    }
+  };
+  /**
+   * checks where a click was executed
+   */
+  this.updateClick = function() {
+    var clickPos = this.gD.clicks.pop();
+    if (!clickPos || this.chooseName) {
+      return;
+    }
+
+    this.highscores.map((entry, index) => {
+      var realHeight = entry.y - this.scrollHeight;
+      if (clickPos.x >= entry.x && clickPos.x <= entry.x + entry.width &&
+          clickPos.y >= realHeight && clickPos.y <= realHeight + entry.height) {
+        if (realHeight >= 80 && realHeight < 280) {
+          this.startNewName(index);
+        }
+      }
+    }, this);
+
+    if (clickPos.x >= this.backToMenu.x && clickPos.x <= this.backToMenu.x + this.backToMenu.width &&
+        clickPos.y >= this.backToMenu.y && clickPos.y <= this.backToMenu.y + this.backToMenu.height) {
+      this.gD.currentPage = this.menu;
+    }
+  };
+  /**
+   * checks if the mouse wheel was moved
+   */
+  this.updateWheelMoves = function() {
+    var wheelMove = this.gD.wheelMovements.pop();
+    if (!wheelMove || this.highscores.length === 0) {
+      return;
+    }
+
+    if (wheelMove < 0) {
+      this.vScroll(Math.max(
+        (this.scrollHeight / 20) - 1, 
+        0
+        ));
+    } else if (wheelMove > 0) {
+      this.vScroll(Math.min(
+        (this.scrollHeight / 20) + 1, 
+        (this.highscores[this.highscores.length - 1].y - 260) / 20
+      ));
+    }
+  };
+  /**
+   * updates moving objects
+   */
+  this.update = function() {
+    /* unused */
+  };
+  /**
+   * draws the objects onto the canvas
+   * @param {float} ghostFactor the part of a physics step since the last physics update
+   */
+  this.draw = function(ghostFactor) {
+    this.gD.context.drawImage(this.menu.backgroundImage, 0, 0);
+    this.title.draw(this.gD);
+    this.headline.draw(gD);
+
+    this.highscores.map(entry => {
+      var realHeight = entry.y - this.scrollHeight;
+      if (realHeight >= 80 && realHeight < 280) {
+        entry.draw(this, this.gD);
+      }
+    }, this);
+
+    this.scrollBar.draw(this.gD);
+    this.highscoreDetails.draw(this.gD);
+
+    this.backToMenu.draw(this.gD);
+
+    if (this.chooseName) {
+      this.enterNameModal.draw(this.gD);
+    }
+  };
+  /**
+   * updates the selected object and deselects the old object
+   * @param {number} rowIndex    the row of the new selected object
+   * @param {number} columnIndex the column of the new selected object
+   * @param {bool}   scroll      if the action should influence scrolling
+   */
+  this.updateSelection = function(rowIndex, columnIndex, scroll) {
+    if (this.selectedRowIndex !== undefined && this.selectedColumnIndex !== undefined) {
+      if (this.selectedRowIndex === -1) {
+        this.backToMenu.deselect();
+      } else {
+        this.highscores[this.selectedRowIndex].deselect();
+        this.highscoreDetails.setHighscore(null);
+      }
+    }
+
+    if (rowIndex === -1) {
+      this.backToMenu.select();
+    } else {
+      var entry = this.highscores[rowIndex];
+      entry.select();
+      this.highscoreDetails.setHighscore(entry.highscore);
+      if (scroll) {
+        if (entry.y - this.scrollHeight >= 240) {
+          this.vScroll(Math.min(
+            (this.highscores[this.highscores.length - 1].y - 260) / 20, 
+            (entry.y - 220) / 20
+          ));
+        } else if (entry.y - this.scrollHeight < 120) {
+          this.vScroll(Math.max(
+            (entry.y - 120) / 20, 
+            0
+          ));
         }
       }
     }
+    this.selectedRowIndex = rowIndex;
+    this.selectedColumnIndex = columnIndex;
   };
-  this.clear = function() {
-    this.gD.context.clearRect(0, 0, this.gD.canvas.width, this.gD.canvas.height);
-  };
-  this.show = function() {
-    this.visible = true;
-    drawHighscores(this);
-  };
-  this.stop = function() {
-    this.visible = false;
+  /**
+   * scrolls the page with a defined number of objects
+   * @param  {number} elementsScrolled the number of objects that should be scrolled
+   */
+  this.vScroll = function(elementsScrolled) {
+    this.scrollHeight = elementsScrolled * 20;
+    this.scrollBar.scroll(elementsScrolled);
   };
 }
 
-function HighscoreList(x, y, width, height, color, bordersize) {
+/**
+ * a headline for highscores
+ * @param {number} x        x-coordinate of the top-left corner of the headline on the canvas
+ * @param {number} y        y-coordinate of the top-left corner of the headline on the canvas
+ * @param {number} width    width of the headline on the canvas
+ * @param {number} height   height of the headline on the canvas
+ * @param {string} text     the text to write as the headline
+ * @param {string} styleKey the design to use for the headline
+ */
+function HighscoreHeadline(x, y, width, height, text, styleKey) {
   this.x = x;
   this.y = y;
   this.width = width;
   this.height = height;
-  this.color = color;
-  this.bordersize = bordersize;
-  this.highscores = [];
-  this.shiftFactor = 0;
-  this.vShift = function(shiftFactor) {
-    for (var i = 0; i < this.highscores.length; i++) {
-      this.highscores[i].y -= shiftFactor * this.height;
-      for (var j = 0; j < this.highscores[i].fields.length; j++) {
-        this.highscores[i].fields[j].y -= shiftFactor * this.height;
-      }
-    }
-    this.shiftFactor += shiftFactor;
-  };
-  this.draw = function(highscores, gD) {
-    for (var i = this.highscores.length; i < Math.min(Object.keys(highscores.highscores).length, 100); i++) {
-      if (i == 0) {
-        this.highscores.push(new Highscore(this.x, this.y + this.height + (i * this.height), this.width, this.height, this.color, (i + 1), this.bordersize));
-      } else {
-        this.highscores.push(new Highscore(this.x, this.highscores[i - 1].y + this.height, this.width, this.height, this.color, (i + 1), this.bordersize));
-      }
-    }
-    gD.context.fillStyle = "rgba(50, 200, 80, 1)";
-    gD.context.fillRect(this.x, this.y, this.width, this.height);
-    gD.context.textAlign = "center";
-    gD.context.textBaseline = "middle";
-    gD.context.font = "bold 12pt Consolas";
-    gD.context.fillStyle = "rgba(0, 0, 0, 1)";
-    gD.context.fillText("Highscores", this.x + (this.width / 2), this.y + (this.height / 2));
-    gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
-    gD.context.lineWidth = this.bordersize;
-    gD.context.strokeRect(this.x, this.y, this.width, this.height);
-    for (var i = 0; i < this.highscores.length; i++) {
-      if (this.highscores[i].y >= 80 && this.highscores[i].y < 280) {
-        this.highscores[i].draw(highscores, gD);
-      }
-    }
+  this.text = text;
+  this.styleKey = styleKey;
+  /**
+   * draws the objects onto the canvas
+   * @param {GlobalDict} gD the global dictionary
+   */
+  this.draw = function(gD) {
+    var design = gD.design.elements[this.styleKey];
+    drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey, gD);
+    drawCanvasText(
+      this.x + (this.width / 2), this.y + (this.height / 2), this.text, design.textKey, gD
+    );
+    drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
   };
 }
 
-function Highscore(x, y, width, height, color, highscoreNr, bordersize) {
+/**
+ * an entry for highscores
+ * @param {number} x         x-coordinate of the top-left corner of the entry on the canvas
+ * @param {number} y         y-coordinate of the top-left corner of the entry on the canvas
+ * @param {number} width     width of the entry on the canvas
+ * @param {number} height    height of the entry on the canvas
+ * @param {Object} highscore the highscore object this entry should use
+ * @param {number} place     the placement of the highscore
+ * @param {string} styleKey  the design to use for the entry
+ */
+function HighscoreEntry(x, y, width, height, highscore, place, styleKey) {
   this.x = x;
   this.y = y;
   this.width = width;
   this.height = height;
-  this.color = color;
-  this.highscoreNr = highscoreNr;
-  this.bordersize = bordersize;
-  this.fields = [];
-  this.fields.push(new HighscoreName(this.x + 50, this.y, this.width - 250, this.height, this.color, this.highscoreNr, this.bordersize));
-  this.fields.push(new HighscoreField(this.x + this.width - 200, this.y, 70, this.height, this.color, this.highscoreNr, 1, this.bordersize));
-  this.fields.push(new HighscoreField(this.x + this.width - 130, this.y, 130, this.height, this.color, this.highscoreNr, 2, this.bordersize));
-  this.draw = function(highscores, gD) {
-    gD.context.fillStyle = this.color;
-    gD.context.fillRect(this.x, this.y, 50, this.height);
-    gD.context.textAlign = "end";
-    gD.context.textBaseline = "bottom";
-    gD.context.font = "12pt Consolas";
-    gD.context.fillStyle = "rgba(0, 0, 0, 1)";
-    gD.context.fillText(this.highscoreNr.toString(), this.x + 45, this.y + this.height - 2);
-    gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
-    gD.context.lineWidth = this.bordersize;
-    gD.context.strokeRect(this.x, this.y, 50, this.height);
-
-    for (var i = 0; i < this.fields.length; i++) {
-      this.fields[i].draw(highscores, gD);
-    }
-  };
-}
-
-function HighscoreName(x, y, width, height, color, highscoreNr, bordersize) {
-  this.x = x;
-  this.y = y;
-  this.width = width;
-  this.height = height;
-  this.color = color;
-  this.highscoreNr = highscoreNr;
-  this.bordersize = bordersize;
+  this.highscore = highscore;
+  this.place = place;
+  this.styleKey = styleKey;
   this.selected = false;
-  this.cursorPosition = 0;
+  /**
+   * selects this entry
+   */
   this.select = function() {
     this.selected = true;
   };
+  /**
+   * deselects this entry
+   */
   this.deselect = function() {
     this.selected = false;
   };
-  this.moveCursor = function(highscores, distance) {
-    if (distance < 0 && this.cursorPosition + distance >= 0) {
-      this.cursorPosition += distance;
-    } else if (distance > 0 && this.cursorPosition + distance <= highscores.highscores[this.highscoreNr.toString()][0].length) {
-      this.cursorPosition += distance;
-    }
-  };
-  this.addCharacter = function(highscores, character) {
-    var name = highscores.highscores[this.highscoreNr.toString()][0];
-    name = name.slice(0, this.cursorPosition) + character + name.slice(this.cursorPosition, name.length);
-    highscores.highscores[this.highscoreNr.toString()][0] = name.slice(0, 39);
-    this.moveCursor(highscores, 1);
-  };
-  this.deleteCharacter = function(highscores, position) {
-    var name = highscores.highscores[this.highscoreNr.toString()][0];
-    if (position == -1 && this.cursorPosition > 0) {
-      name = name.slice(0, this.cursorPosition - 1) + name.slice(this.cursorPosition, name.length);
-      this.moveCursor(highscores, -1);
-    } else if (position == 1 && this.cursorPosition < name.length) {
-      name = name.slice(0, this.cursorPosition) + name.slice(this.cursorPosition + 1, name.length);
-    }
-    highscores.highscores[this.highscoreNr.toString()][0] = name;
-  };
+  /**
+   * draws the objects onto the canvas
+   * @param {Highscores} highscores the controls object
+   * @param {GlobalDict} gD         the global dictionary
+   */
   this.draw = function(highscores, gD) {
-    if (highscores.editingMode && highscores.selected + 1 == this.highscoreNr) {
-      gD.context.fillStyle = "rgba(230, 100, 100, 1)";
-    } else if (this.selected) {
-      gD.context.fillStyle = "rgba(180, 50, 50, 1)";
+    var design = gD.design.elements[this.styleKey];
+    if (this.selected) {
+      drawCanvasRect(this.x, this.y - highscores.scrollHeight, this.width, this.height, design.rectKey.selected, gD);
     } else {
-      gD.context.fillStyle = this.color;
+      drawCanvasRect(this.x, this.y - highscores.scrollHeight, this.width, this.height, design.rectKey.standard, gD);
     }
-    gD.context.fillRect(this.x, this.y, this.width, this.height);
-    gD.context.textAlign = "start";
-    gD.context.textBaseline = "bottom";
-    gD.context.font = "12pt Consolas";
-    gD.context.fillStyle = "rgba(0, 0, 0, 1)";
-    gD.context.fillText(highscores.highscores[this.highscoreNr.toString()][0], this.x + 5, this.y + this.height - 2);
-    gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
-    gD.context.lineWidth = this.bordersize;
-    gD.context.strokeRect(this.x, this.y, this.width, this.height);
-    if (highscores.editingMode && highscores.selected + 1 == this.highscoreNr) {
-      gD.context.lineWidth = 2;
-      gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
-      gD.context.beginPath();
-      gD.context.moveTo(this.x + 4 + (this.cursorPosition * 8.8), this.y + 2);
-      gD.context.lineTo(this.x + 4 + (this.cursorPosition * 8.8), this.y + this.height - 2);
-      gD.context.stroke();
-    }
+    drawCanvasText(this.x + 48, this.y + this.height / 2 - highscores.scrollHeight, this.place, design.textKey.number, gD);
+    drawCanvasText(
+      this.x + 52, this.y + this.height / 2 - highscores.scrollHeight, 
+      this.highscore.name, design.textKey.name, gD
+    );
+    drawCanvasLine(this.x + 50, this.y - highscores.scrollHeight, this.x + 50, this.y + this.height - highscores.scrollHeight, design.borderKey, gD);
+    drawCanvasRectBorder(this.x, this.y - highscores.scrollHeight, this.width, this.height, design.borderKey, gD);
   };
 }
 
-function HighscoreField(x, y, width, height, color, highscoreNr, indexNr, bordersize) {
+/**
+ * shows details of a selected highscore
+ * @param {number} x        x-coordinate of the top-left corner of the details on the canvas
+ * @param {number} y        y-coordinate of the top-left corner of the details on the canvas
+ * @param {number} width    width of the details on the canvas
+ * @param {number} height   height of the details on the canvas
+ * @param {string} styleKey the design to use for the details
+ */
+function HighscoreDetails(x, y, width, height, styleKey) {
   this.x = x;
   this.y = y;
   this.width = width;
   this.height = height;
-  this.color = color;
-  this.highscoreNr = highscoreNr;
-  this.indexNr = indexNr;
-  this.bordersize = bordersize;
-  this.selected = false;
-  this.draw = function(highscores, gD) {
-    if (this.selected) {
-      gD.context.fillStyle = "rgba(180, 50, 50, 1)";
-    } else {
-      gD.context.fillStyle = this.color;
-    }
-    gD.context.fillRect(this.x, this.y, this.width, this.height);
-    gD.context.textAlign = "end";
-    gD.context.textBaseline = "bottom";
-    gD.context.font = "12pt Consolas";
-    gD.context.fillStyle = "rgba(0, 0, 0, 1)";
-    gD.context.fillText(highscores.highscores[this.highscoreNr.toString()][this.indexNr], this.x + this.width - 5, this.y + this.height - 2);
-    gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
-    gD.context.lineWidth = this.bordersize;
-    gD.context.strokeRect(this.x, this.y, this.width, this.height);
+  this.styleKey = styleKey;
+  this.currentHighscore = null;
+  /**
+   * sets a new highscore to get the details from
+   * @param {Object} highscore the highscore object to use
+   */
+  this.setHighscore = function(highscore) {
+    this.currentHighscore = highscore;
   };
-}
-
-function highscoresControlDown(highscores, event) {
-  if (!highscores.editingMode) {
-    if (highscores.menu.controls.keyBindings["Highscores1"][2].includes(event.keyCode) && highscores.highscoreList.highscores.length > 0) {                               //navigation down
-      if (highscores.selected == -1) {
-        highscores.backToMenu.deselect();
-        highscores.highscoreList.highscores[0].fields[0].select();
-        highscores.selected = 0;
-        if (highscores.highscoreList.highscores.length > 10) {
-          highscores.highscoreList.vShift(-highscores.highscoreList.shiftFactor);
-        }
-      } else if (highscores.selected == highscores.highscoreList.highscores.length - 1) {
-        highscores.highscoreList.highscores[highscores.selected].fields[0].deselect();
-        highscores.backToMenu.select();
-        highscores.selected = -1;
-      } else {
-        highscores.highscoreList.highscores[highscores.selected].fields[0].deselect();
-        highscores.highscoreList.highscores[highscores.selected + 1].fields[0].select();
-        if (highscores.highscoreList.highscores[highscores.highscoreList.highscores.length - 1].y > 260 && highscores.highscoreList.highscores[highscores.selected + 1].y > 220) {
-          highscores.highscoreList.vShift(1);
-        }
-        highscores.selected += 1;
-      }
-    } else if (highscores.menu.controls.keyBindings["Highscores2"][2].includes(event.keyCode) && highscores.highscoreList.highscores.length > 0) {                        //navigation up
-      if (highscores.selected == -1) {
-        highscores.backToMenu.deselect();
-        highscores.highscoreList.highscores[highscores.highscoreList.highscores.length - 1].fields[0].select();
-        highscores.selected = highscores.highscoreList.highscores.length - 1;
-        if (highscores.highscoreList.highscores.length > 10) {
-          highscores.highscoreList.vShift(-highscores.highscoreList.shiftFactor);
-          highscores.highscoreList.vShift(((highscores.highscoreList.highscores.length * 20) - 200) / 20);
-        }
-      } else if (highscores.selected == 0) {
-        highscores.highscoreList.highscores[0].fields[0].deselect();
-        highscores.backToMenu.select();
-        highscores.selected = -1;
-      } else {
-        highscores.highscoreList.highscores[highscores.selected].fields[0].deselect();
-        highscores.highscoreList.highscores[highscores.selected - 1].fields[0].select();
-        if (highscores.highscoreList.highscores[0].y < 80 && highscores.highscoreList.highscores[highscores.selected - 1].y < 120) {
-          highscores.highscoreList.vShift(-1);
-        }
-        highscores.selected -= 1;
-      }
+  /**
+   * draws the objects onto the canvas
+   * @param {GlobalDict} gD the global dictionary
+   */
+  this.draw = function(gD) {
+    var design = gD.design.elements[this.styleKey];
+    if (this.currentHighscore === null) {
+      return;
     }
 
-    if (highscores.menu.controls.keyBindings["Highscores3"][2].includes(event.keyCode)) {                     //confirm
-      if (highscores.selected == -1) {
-        highscores.menu.show();
-        highscores.stop();
-      } else {
-        highscores.editingMode = true;
-        highscores.oldName = highscores.highscores[(highscores.selected + 1).toString()][0];
-        drawHighscores(highscores);
-      }
-    } else if (highscores.menu.controls.keyBindings["Highscores4"][2].includes(event.keyCode)) {
-      highscores.menu.show();
-      highscores.stop();
-    } else {
-      drawHighscores(highscores);
-    }
-  } else {
-    if (highscores.menu.controls.keyBindings["Highscores5"][2].includes(event.keyCode)) {                     //navigation right
-      highscores.highscoreList.highscores[highscores.selected].fields[0].moveCursor(highscores, 1);
-    } else if (highscores.menu.controls.keyBindings["Highscores6"][2].includes(event.keyCode)) {              //navigation left
-      highscores.highscoreList.highscores[highscores.selected].fields[0].moveCursor(highscores, -1);
-    } else if (highscores.menu.controls.keyBindings["Highscores7"][2].includes(event.keyCode)) {              //delete character left
-      highscores.highscoreList.highscores[highscores.selected].fields[0].deleteCharacter(highscores, -1);
-    } else if (highscores.menu.controls.keyBindings["Highscores8"][2].includes(event.keyCode)) {              //delete character right
-      highscores.highscoreList.highscores[highscores.selected].fields[0].deleteCharacter(highscores, 1);
-    } else if (highscores.menu.controls.keyBindings["Highscores3"][2].includes(event.keyCode)) {              //confirm
-      highscores.editingMode = false;
-      highscores.highscoreList.highscores[highscores.selected].fields[0].moveCursor(highscores, -highscores.highscoreList.highscores[highscores.selected].fields[0].cursorPosition);
-    } else if (highscores.menu.controls.keyBindings["Highscores9"][2].includes(event.keyCode)) {              //abort
-      highscores.editingMode = false;
-      highscores.highscoreList.highscores[highscores.selected].fields[0].moveCursor(highscores, -highscores.highscoreList.highscores[highscores.selected].fields[0].cursorPosition);
-      highscores.highscores[(highscores.selected + 1).toString()][0] = highscores.oldName;
-    } else if (event.key.length == 1) {                                                                                                  //add character
-      highscores.highscoreList.highscores[highscores.selected].fields[0].addCharacter(highscores, event.key);
-    }
-    drawHighscores(highscores);
-  }
-}
-
-function highscoresControlUp(highscores, key) {
-
-}
-
-function highscoresMouseMove(highscores) {
-  if (!highscores.editingMode) {
-    for (var i = highscores.highscoreList.shiftFactor; i < Math.min(10 + highscores.highscoreList.shiftFactor, highscores.highscoreList.highscores.length); i++) {
-      if (highscores.gD.mousePos.x >= highscores.highscoreList.highscores[i].fields[0].x && highscores.gD.mousePos.x <= highscores.highscoreList.highscores[i].fields[0].x + highscores.highscoreList.highscores[i].fields[0].width &&
-          highscores.gD.mousePos.y >= highscores.highscoreList.highscores[i].fields[0].y && highscores.gD.mousePos.y <= highscores.highscoreList.highscores[i].fields[0].y + highscores.highscoreList.highscores[i].fields[0].height) {
-        if (highscores.selected == -1) {
-          highscores.backToMenu.deselect();
-        } else {
-          highscores.highscoreList.highscores[highscores.selected].fields[0].deselect();
-        }
-        highscores.highscoreList.highscores[i].fields[0].select();
-        highscores.selected = i;
-        break;
-      }
-    }
-    if (highscores.gD.mousePos.x >= highscores.backToMenu.x && highscores.gD.mousePos.x <= highscores.backToMenu.x + highscores.backToMenu.width &&
-        highscores.gD.mousePos.y >= highscores.backToMenu.y && highscores.gD.mousePos.y <= highscores.backToMenu.y + highscores.backToMenu.height) {
-      if (highscores.selected == -1) {
-        highscores.backToMenu.deselect();
-      } else {
-        highscores.highscoreList.highscores[highscores.selected].fields[0].deselect();
-      }
-      highscores.backToMenu.select();
-      highscores.selected = -1;
-    }
-    drawHighscores(highscores);
-  }
-}
-
-function highscoresClick(highscores) {
-  if (!highscores.editingMode) {
-    if (highscores.selected == -1) {
-      if (highscores.gD.mousePos.x >= highscores.backToMenu.x && highscores.gD.mousePos.x <= highscores.backToMenu.x + highscores.backToMenu.width &&
-          highscores.gD.mousePos.y >= highscores.backToMenu.y && highscores.gD.mousePos.y <= highscores.backToMenu.y + highscores.backToMenu.height) {
-        highscores.menu.show();
-        highscores.stop();
-      }
-    } else {
-      if (highscores.gD.mousePos.x >= highscores.highscoreList.highscores[highscores.selected].fields[0].x && highscores.gD.mousePos.x <= highscores.highscoreList.highscores[highscores.selected].fields[0].x + highscores.highscoreList.highscores[highscores.selected].fields[0].width &&
-          highscores.gD.mousePos.y >= highscores.highscoreList.highscores[highscores.selected].fields[0].y && highscores.gD.mousePos.y <= highscores.highscoreList.highscores[highscores.selected].fields[0].y + highscores.highscoreList.highscores[highscores.selected].fields[0].height) {
-        highscores.editingMode = true;
-        highscores.oldName = highscores.highscores[(highscores.selected + 1).toString()][0];
-        drawHighscores(highscores);
-      }
-    }
-  } else {
-    if (highscores.gD.mousePos.x < highscores.highscoreList.highscores[highscores.selected].fields[0].x || highscores.gD.mousePos.x > highscores.highscoreList.highscores[highscores.selected].fields[0].x + highscores.highscoreList.highscores[highscores.selected].fields[0].width ||
-        highscores.gD.mousePos.y < highscores.highscoreList.highscores[highscores.selected].fields[0].y || highscores.gD.mousePos.y > highscores.highscoreList.highscores[highscores.selected].fields[0].y + highscores.highscoreList.highscores[highscores.selected].fields[0].height) {
-      highscores.editingMode = false;
-      highscores.highscoreList.highscores[highscores.selected].fields[0].moveCursor(highscores, -highscores.highscoreList.highscores[highscores.selected].fields[0].cursorPosition);
-      drawHighscores(highscores);
-    }
-  }
-}
-
-function highscoresWheel(highscores, event) {
-  if (highscores.selected >= 0) {
-    if (event.deltaY > 0) {
-      if (highscores.selected + 1 < highscores.highscoreList.highscores.length) {
-        highscores.highscoreList.highscores[highscores.selected].fields[0].deselect();
-        highscores.highscoreList.highscores[highscores.selected + 1].fields[0].select();
-        if (highscores.highscoreList.highscores[highscores.highscoreList.highscores.length - 1].y > 260 && highscores.highscoreList.highscores[highscores.selected + 1].y > 220) {
-          highscores.highscoreList.vShift(1);
-        }
-        highscores.selected += 1;
-      }
-    } else {
-      if (highscores.selected - 1 >= 0) {
-        highscores.highscoreList.highscores[highscores.selected].fields[0].deselect();
-        highscores.highscoreList.highscores[highscores.selected - 1].fields[0].select();
-        if (highscores.highscoreList.highscores[0].y < 80 && highscores.highscoreList.highscores[highscores.selected - 1].y < 120) {
-          highscores.highscoreList.vShift(-1);
-        }
-        highscores.selected -= 1;
-      }
-    }
-    drawHighscores(highscores);
-  }
-}
-
-function drawHighscores(highscores) {
-  highscores.clear();
-
-  highscores.gD.context.drawImage(highscores.backgroundImage, 0, 0);
-
-  highscores.title.draw(highscores.gD);
-
-  highscores.highscoreList.draw(highscores, highscores.gD);
-
-  highscores.backToMenu.draw(highscores.gD);
-
-  if (highscores.highscoreList.highscores.length > 10) {
-    highscores.gD.context.lineWidth = 4;
-    highscores.gD.context.strokeStyle = "rgba(255, 255, 255, 1)";
-    highscores.gD.context.beginPath();
-    highscores.gD.context.moveTo(highscores.gD.canvas.width - 165, 60 + ((highscores.highscoreList.shiftFactor / highscores.highscoreList.highscores.length) * 220));
-    highscores.gD.context.lineTo(highscores.gD.canvas.width - 165, 60 + ((Math.min(10 + highscores.highscoreList.shiftFactor, highscores.highscoreList.highscores.length) / highscores.highscoreList.highscores.length) * 220));
-    highscores.gD.context.stroke();
-    highscores.gD.context.lineWidth = 1;
-    highscores.gD.context.beginPath();
-    highscores.gD.context.moveTo(highscores.gD.canvas.width - 165, 60);
-    highscores.gD.context.lineTo(highscores.gD.canvas.width - 165, 280);
-    highscores.gD.context.stroke();
-  }
+    drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey, gD);
+    drawCanvasText(this.x + 6, this.y + 12, "Name: " + this.currentHighscore.name, design.textKey, gD);
+    drawCanvasText(this.x + 6, this.y + 24, "Distance: " + this.currentHighscore.distance, design.textKey, gD);
+    drawCanvasText(this.x + 6, this.y + 36, "Cash: " + this.currentHighscore.cash, design.textKey, gD);
+    drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
+  };
 }
