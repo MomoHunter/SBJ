@@ -136,7 +136,7 @@ function Highscores(menu, gD) {
         } else if (key === "KeyK") {
           this.addHighscore({
             name: "test",
-            distance: 2000,
+            distance: 2000000,
             cash: 2502
           });
         }
@@ -364,12 +364,26 @@ function HighscoreEntry(x, y, width, height, highscore, place, styleKey) {
     } else {
       drawCanvasRect(this.x, this.y - highscores.scrollHeight, this.width, this.height, design.rectKey.standard, gD);
     }
-    drawCanvasText(this.x + 48, this.y + this.height / 2 - highscores.scrollHeight, this.place, design.textKey.number, gD);
+    drawCanvasText(
+      this.x + 48, this.y + this.height / 2 - highscores.scrollHeight,
+      this.place, design.textKey.number, gD
+    );
     drawCanvasText(
       this.x + 52, this.y + this.height / 2 - highscores.scrollHeight, 
       this.highscore.name, design.textKey.name, gD
     );
-    drawCanvasLine(this.x + 50, this.y - highscores.scrollHeight, this.x + 50, this.y + this.height - highscores.scrollHeight, design.borderKey, gD);
+    drawCanvasText(
+      this.x + this.width - 2, this.y + this.height / 2 - highscores.scrollHeight, 
+      this.highscore.distance + "m", design.textKey.number, gD
+    );
+    drawCanvasLine(
+      this.x + 50, this.y - highscores.scrollHeight, this.x + 50,
+      this.y + this.height - highscores.scrollHeight, design.borderKey, gD
+    );
+    drawCanvasLine(
+      this.x + this.width - 100, this.y - highscores.scrollHeight, this.x + this.width - 100,
+      this.y + this.height - highscores.scrollHeight, design.borderKey, gD
+    );
     drawCanvasRectBorder(this.x, this.y - highscores.scrollHeight, this.width, this.height, design.borderKey, gD);
   };
 }
