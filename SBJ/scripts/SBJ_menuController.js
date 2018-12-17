@@ -46,7 +46,7 @@ function MenuController(menu) {
     this.updateNGSelection(rowIndex, columnIndex);
 
     if (keyB.get("Menu_Confirm")[2].includes(key)) {
-      this.getSelectedButtons()[0].action(this.gD);
+      this.getSelectedButtons()[0].action(gD);
     } else if (keyB.get("Menu_Back")[2].includes(key)) {
       gD.currentPage = this.menu;
     } else if (keyB.get("Mute_All")[2].includes(key)) {
