@@ -6,34 +6,34 @@
    */
   this.init = function() {
     this.newKeyMode = false;
-    this.keyBindings = new Map([   //Definition, representation, code
-      ["Menu_NavDown", ["Navigation runter", ["S", String.fromCharCode(8595)], ["KeyS", "ArrowDown"]]],
-      ["Menu_NavUp", ["Navigation hoch", ["W", String.fromCharCode(8593)], ["KeyW", "ArrowUp"]]],
-      ["Menu_NavRight", ["Navigation rechts", ["D", String.fromCharCode(8594)], ["KeyD", "ArrowRight"]]],
-      ["Menu_NavLeft", ["Navigation links", ["A", String.fromCharCode(8592)], ["KeyA", "ArrowLeft"]]],
-      ["Menu_Confirm", ["Bestätigen", ["Enter", "Space"], ["Enter", "Space"]]],
-      ["Menu_Back", ["zur vorherigen Seite gehen", ["Escape"], ["Escape"]]],
-      ["Menu_Abort", ["Tätigkeit abbrechen", ["Escape"], ["Escape"]]],
-      ["Menu_Refresh", ["Daten neu laden", ["R"], ["KeyR"]]],
-      ["NameModal_NavRight", ["Navigation rechts", [String.fromCharCode(8594)], ["ArrowRight"]]],
-      ["NameModal_NavLeft", ["Navigation links", [String.fromCharCode(8592)], ["ArrowLeft"]]],
-      ["NameModal_DeleteLeft", ["Linkes Zeichen löschen", [" " + String.fromCharCode(8612) + " "], ["Backspace"]]],
-      ["NameModal_DeleteRight", ["Rechtes Zeichen löschen", ["Delete"], ["Delete"]]],
-      ["NameModal_Confirm", ["Bestätigen", ["Enter"], ["Enter"]]],
-      ["NameModal_Abort", ["Tätigkeit abbrechen", ["Escape"], ["Escape"]]],
-      ["Controls_DeleteKey", ["Tastenzuweisung löschen", ["Delete"], ["Delete"]]],
-      ["Game_Pause", ["Spiel pausieren", ["Escape"], ["Escape"]]],
-      ["Game_MoveRight", ["Vorwärts bewegen", ["D", String.fromCharCode(8594)], ["KeyD", "ArrowRight"]]],
-      ["Game_MoveLeft", ["Rückwärts bewegen", ["A", String.fromCharCode(8592)], ["KeyA", "ArrowLeft"]]],
-      ["Game_JumpFromPlatform", ["Von der Plattform runterspringen", ["S", String.fromCharCode(8595)], ["KeyS", "ArrowDown"]]],
-      ["Game_Jump", ["Springen", ["Space"], ["Space"]]],
-      ["Game_ItemStopwatch", ["Stoppuhr benutzen", ["1"], ["Digit1"]]],
-      ["Game_ItemStar", ["Stern benutzen", ["2"], ["Digit2"]]],
-      ["Game_ItemFeather", ["Feder benutzen", ["3"], ["Digit3"]]],
-      ["Game_ItemTreasure", ["Schatztruhe benutzen", ["4"], ["Digit4"]]],
-      ["Game_ItemMagnet", ["Magnet benutzen", ["5"], ["Digit5"]]],
-      ["Game_ItemRocket", ["Rakete benutzen", ["6"], ["Digit6"]]],
-      ["Mute_All", ["Alles muten", ["M"], ["KeyM"]]]
+    this.keyBindings = new Map([   //Headline, Definition, representation, code
+      ["Menu_NavDown", ["Menü", "Navigation runter", ["S", String.fromCharCode(8595)], ["KeyS", "ArrowDown"]]],
+      ["Menu_NavUp", ["Menü", "Navigation hoch", ["W", String.fromCharCode(8593)], ["KeyW", "ArrowUp"]]],
+      ["Menu_NavRight", ["Menü", "Navigation rechts", ["D", String.fromCharCode(8594)], ["KeyD", "ArrowRight"]]],
+      ["Menu_NavLeft", ["Menü", "Navigation links", ["A", String.fromCharCode(8592)], ["KeyA", "ArrowLeft"]]],
+      ["Menu_Confirm", ["Menü", "Bestätigen", ["Enter", "Space"], ["Enter", "Space"]]],
+      ["Menu_Back", ["Menü", "zur vorherigen Seite gehen", ["Escape"], ["Escape"]]],
+      ["Menu_Abort", ["Menü", "Tätigkeit abbrechen", ["Escape"], ["Escape"]]],
+      ["Menu_Refresh", ["Menü", "Daten neu laden", ["R"], ["KeyR"]]],
+      ["NameModal_NavRight", ["Namen Modal", "Navigation rechts", [String.fromCharCode(8594)], ["ArrowRight"]]],
+      ["NameModal_NavLeft", ["Namen Modal", "Navigation links", [String.fromCharCode(8592)], ["ArrowLeft"]]],
+      ["NameModal_DeleteLeft", ["Namen Modal", "Linkes Zeichen löschen", [" " + String.fromCharCode(8612) + " "], ["Backspace"]]],
+      ["NameModal_DeleteRight", ["Namen Modal", "Rechtes Zeichen löschen", ["Delete"], ["Delete"]]],
+      ["NameModal_Confirm", ["Namen Modal", "Bestätigen", ["Enter"], ["Enter"]]],
+      ["NameModal_Abort", ["Namen Modal", "Tätigkeit abbrechen", ["Escape"], ["Escape"]]],
+      ["Controls_DeleteKey", ["Steuerung", "Tastenzuweisung löschen", ["Delete"], ["Delete"]]],
+      ["Game_Pause", ["Spiel", "Spiel pausieren", ["Escape"], ["Escape"]]],
+      ["Game_MoveRight", ["Spiel", "Vorwärts bewegen", ["D", String.fromCharCode(8594)], ["KeyD", "ArrowRight"]]],
+      ["Game_MoveLeft", ["Spiel", "Rückwärts bewegen", ["A", String.fromCharCode(8592)], ["KeyA", "ArrowLeft"]]],
+      ["Game_JumpFromPlatform", ["Spiel", "Von der Plattform runterspringen", ["S", String.fromCharCode(8595)], ["KeyS", "ArrowDown"]]],
+      ["Game_Jump", ["Spiel", "Springen", ["Space"], ["Space"]]],
+      ["Game_ItemStopwatch", ["Spiel", "Stoppuhr benutzen", ["1"], ["Digit1"]]],
+      ["Game_ItemStar", ["Spiel", "Stern benutzen", ["2"], ["Digit2"]]],
+      ["Game_ItemFeather", ["Spiel", "Feder benutzen", ["3"], ["Digit3"]]],
+      ["Game_ItemTreasure", ["Spiel", "Schatztruhe benutzen", ["4"], ["Digit4"]]],
+      ["Game_ItemMagnet", ["Spiel", "Magnet benutzen", ["5"], ["Digit5"]]],
+      ["Game_ItemRocket", ["Spiel", "Rakete benutzen", ["6"], ["Digit6"]]],
+      ["Mute_All", ["Stumm schalten", "Alles muten", ["M"], ["KeyM"]]]
     ]);
 
     this.visualKeys = {
@@ -73,8 +73,9 @@
     var headline = "";
 
     for (var key of this.keyBindings.keys()) {
-      if (key.split("_")[0] !== headline) {
-        headline = key.split("_")[0];
+      var keyHeadline = this.keyBindings.get(key)[0];
+      if (keyHeadline !== headline) {
+        headline = keyHeadline;
         this.keyEntryHeadlines.push(new ControlEntryHeadline(
           (this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20),
           600, 20, headline, "controlsHeadline"
@@ -104,13 +105,13 @@
       this.newKeyMode = true;
     } else {
       if (this.oldKey === undefined) {
-        delete this.keyBindings.get(this.newKeyEntry[0])[1][this.newKeyEntry[1]];
+        delete this.keyBindings.get(this.newKeyEntry[0])[2][this.newKeyEntry[1]];
       } else {
-        this.keyBindings.get(this.newKeyEntry[0])[1][this.newKeyEntry[1]] = this.oldKey;
+        this.keyBindings.get(this.newKeyEntry[0])[2][this.newKeyEntry[1]] = this.oldKey;
       }
     }
-    this.oldKey = this.keyBindings.get(selectedEntry.name)[1][this.selectedColumnIndex];
-    this.keyBindings.get(selectedEntry.name)[1][this.selectedColumnIndex] = "...";
+    this.oldKey = this.keyBindings.get(selectedEntry.name)[2][this.selectedColumnIndex];
+    this.keyBindings.get(selectedEntry.name)[2][this.selectedColumnIndex] = "...";
     this.newKeyEntry = [selectedEntry.name, this.selectedColumnIndex];
   };
   /**
@@ -119,15 +120,15 @@
    */
   this.setNewKey = function(key) {
     if (key.startsWith('Key') || key.startsWith('Digit')) {
-      this.keyBindings.get(this.newKeyEntry[0])[1][this.newKeyEntry[1]] = key.slice(-1);
+      this.keyBindings.get(this.newKeyEntry[0])[2][this.newKeyEntry[1]] = key.slice(-1);
     } else {
       if (this.visualKeys[key] !== undefined) {
-        this.keyBindings.get(this.newKeyEntry[0])[1][this.newKeyEntry[1]] = this.visualKeys[key];
+        this.keyBindings.get(this.newKeyEntry[0])[2][this.newKeyEntry[1]] = this.visualKeys[key];
       } else {
-        this.keyBindings.get(this.newKeyEntry[0])[1][this.newKeyEntry[1]] = key;
+        this.keyBindings.get(this.newKeyEntry[0])[2][this.newKeyEntry[1]] = key;
       }
     }
-    this.keyBindings.get(this.newKeyEntry[0])[2][this.newKeyEntry[1]] = key;
+    this.keyBindings.get(this.newKeyEntry[0])[3][this.newKeyEntry[1]] = key;
     this.newKeyMode = false;
     this.gD.save.keyBindings = Array.from(this.keyBindings.entries());
   };
@@ -145,45 +146,45 @@
       var rowIndex = this.selectedRowIndex;
       var columnIndex = this.selectedColumnIndex;
 
-      if (keyB.get("Menu_NavDown")[2].includes(key)) {
+      if (keyB.get("Menu_NavDown")[3].includes(key)) {
         rowIndex++;
         if (rowIndex >= this.keyEntries.length) {
           this.updateSelection(-1, columnIndex, true);
         } else {
           this.updateSelection(rowIndex, columnIndex, true);
         }
-      } else if (keyB.get("Menu_NavUp")[2].includes(key)) {
+      } else if (keyB.get("Menu_NavUp")[3].includes(key)) {
         rowIndex--;
         if (rowIndex < -1) {
           this.updateSelection(this.keyEntries.length - 1, columnIndex, true);
         } else {
           this.updateSelection(rowIndex, columnIndex, true);
         }
-      } else if (keyB.get("Menu_NavLeft")[2].includes(key)) {
+      } else if (keyB.get("Menu_NavLeft")[3].includes(key)) {
         columnIndex--;
         if (columnIndex < 0) {
           this.updateSelection(rowIndex, this.keyEntries[0].keys.length - 1, true);
         } else {
           this.updateSelection(rowIndex, columnIndex, true);
         }
-      } else if (keyB.get("Menu_NavRight")[2].includes(key)) {
+      } else if (keyB.get("Menu_NavRight")[3].includes(key)) {
         columnIndex++;
         if (columnIndex >= this.keyEntries[0].keys.length) {
           this.updateSelection(rowIndex, 0, true);
         } else {
           this.updateSelection(rowIndex, columnIndex, true);
         }
-      } else if (keyB.get("Menu_Confirm")[2].includes(key)) {
+      } else if (keyB.get("Menu_Confirm")[3].includes(key)) {
         if (rowIndex >= 0) {
           this.activateNewKeyMode();
         } else {
           this.gD.currentPage = this.menu;
         }
-      } else if (keyB.get("Menu_Back")[2].includes(key)) {
+      } else if (keyB.get("Menu_Back")[3].includes(key)) {
         gD.currentPage = this.menu;
-      } else if (keyB.get("Controls_DeleteKey")[2].includes(key)) {
-        keyB.get(this.keyEntries[rowIndex].name)[1].splice(columnIndex, 1);
+      } else if (keyB.get("Controls_DeleteKey")[3].includes(key)) {
         keyB.get(this.keyEntries[rowIndex].name)[2].splice(columnIndex, 1);
+        keyB.get(this.keyEntries[rowIndex].name)[3].splice(columnIndex, 1);
       }
     }, this);
   };
@@ -417,7 +418,7 @@ function ControlEntry(x, y, width, height, name, styleKey) {
     drawCanvasRect(this.x, this.y - controls.scrollHeight, this.width - 200, this.height, design.rectKey.standard, gD);
     drawCanvasText(
       this.x + 5, this.y - controls.scrollHeight + (this.height / 2), 
-      controls.keyBindings.get(this.name)[0], design.textKey.name, gD
+      controls.keyBindings.get(this.name)[1], design.textKey.name, gD
     );
     this.keys.map(key => {
       key.draw(controls, gD);
@@ -462,7 +463,7 @@ function ControlKey(x, y, width, height, name, keyNr, styleKey) {
    * @param {GlobalDict} gD       the global dictionary
    */
   this.draw = function(controls, gD) {
-    var keyRef = controls.keyBindings.get(this.name)[1][this.keyNr];
+    var keyRef = controls.keyBindings.get(this.name)[2][this.keyNr];
     var design = gD.design.elements[this.styleKey];
 
     if (this.selected) {
