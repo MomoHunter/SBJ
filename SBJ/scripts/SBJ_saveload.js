@@ -166,12 +166,12 @@ function SaveLoad(menu, gD) {
       var columnIndex = this.selectedColumnIndex;
 
       if (this.loaded) {
-        if (keyB.get("Menu_Confirm")[2].includes(key)) {
+        if (keyB.get("Menu_Confirm")[3].includes(key)) {
           this.loaded = false;
         }
       } else if (this.choosePicture) {
         this.choosePictureModal.updateKeyPresses(keyB, key);
-        if (keyB.get("Menu_Confirm")[2].includes(key)) {
+        if (keyB.get("Menu_Confirm")[3].includes(key)) {
           var button = this.choosePictureModal.getSelectedButton();
           if (this.enterNameModal.text === "") {
             var date = new Date();
@@ -181,22 +181,22 @@ function SaveLoad(menu, gD) {
           }
           this.enterName = false;
           this.choosePicture = false;
-        } else if (keyB.get("Menu_Abort")[2].includes(key)) {
+        } else if (keyB.get("Menu_Abort")[3].includes(key)) {
           this.enterName = false;
           this.choosePicture = false;
         }
       } else if (this.enterName) {
-        if (keyB.get("NameModal_NavRight")[2].includes(key)) {
+        if (keyB.get("NameModal_NavRight")[3].includes(key)) {
           this.enterNameModal.moveCursor(1);
-        } else if (keyB.get("NameModal_NavLeft")[2].includes(key)) {
+        } else if (keyB.get("NameModal_NavLeft")[3].includes(key)) {
           this.enterNameModal.moveCursor(-1);
-        } else if (keyB.get("NameModal_DeleteLeft")[2].includes(key)) {
+        } else if (keyB.get("NameModal_DeleteLeft")[3].includes(key)) {
           this.enterNameModal.deleteCharacter(-1);
-        } else if (keyB.get("NameModal_DeleteRight")[2].includes(key)) {
+        } else if (keyB.get("NameModal_DeleteRight")[3].includes(key)) {
           this.enterNameModal.deleteCharacter(1);
-        } else if (keyB.get("NameModal_Confirm")[2].includes(key)) {
+        } else if (keyB.get("NameModal_Confirm")[3].includes(key)) {
           this.choosePicture = true;
-        } else if (keyB.get("NameModal_Abort")[2].includes(key)) {
+        } else if (keyB.get("NameModal_Abort")[3].includes(key)) {
           this.enterName = false;
         } else {
           var event = this.gD.events[index];
@@ -204,35 +204,35 @@ function SaveLoad(menu, gD) {
             this.enterNameModal.addCharacter(event.key);
           }
         }
-      } else if (keyB.get("Menu_NavDown")[2].includes(key)) {
+      } else if (keyB.get("Menu_NavDown")[3].includes(key)) {
         rowIndex++;
         if (rowIndex >= this.savestates.length) {
           this.updateSelection(-1, columnIndex, true);
         } else {
           this.updateSelection(rowIndex, columnIndex, true);
         }
-      } else if (keyB.get("Menu_NavUp")[2].includes(key)) {
+      } else if (keyB.get("Menu_NavUp")[3].includes(key)) {
         rowIndex--;
         if (rowIndex < -1) {
           this.updateSelection(this.savestates.length - 1, columnIndex, true);
         } else {
           this.updateSelection(rowIndex, columnIndex, true);
         }
-      } else if (keyB.get("Menu_NavLeft")[2].includes(key)) {
+      } else if (keyB.get("Menu_NavLeft")[3].includes(key)) {
         columnIndex--;
         if (columnIndex < 0) {
           this.updateSelection(rowIndex, this.buttons.length - 1, true);
         } else {
           this.updateSelection(rowIndex, columnIndex, true);
         }
-      } else if (keyB.get("Menu_NavRight")[2].includes(key)) {
+      } else if (keyB.get("Menu_NavRight")[3].includes(key)) {
         columnIndex++;
         if (columnIndex >= this.buttons.length) {
           this.updateSelection(rowIndex, 0, true);
         } else {
           this.updateSelection(rowIndex, columnIndex, true);
         }
-      } else if (keyB.get("Menu_Confirm")[2].includes(key)) {
+      } else if (keyB.get("Menu_Confirm")[3].includes(key)) {
         if (rowIndex >= 0) {
           this.markSavestate(rowIndex);
         } else {
@@ -249,7 +249,7 @@ function SaveLoad(menu, gD) {
               break;
           }
         }
-      } else if (keyB.get("Menu_Refresh")[2].includes(key)) {
+      } else if (keyB.get("Menu_Refresh")[3].includes(key)) {
         this.reloadSavestates();
       }
     }, this);

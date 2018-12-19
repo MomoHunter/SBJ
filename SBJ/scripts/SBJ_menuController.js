@@ -21,12 +21,12 @@ function MenuController(menu) {
     var rowIndex = this.selectedNGRowIndex;
     var columnIndex = this.selectedNGColumnIndex;
 
-    if (keyB.get("Menu_NavDown")[2].includes(key)) {
+    if (keyB.get("Menu_NavDown")[3].includes(key)) {
       rowIndex = (rowIndex + 1) % this.nG.length;
       if (this.nG[rowIndex].length - 1 < columnIndex) {
         columnIndex = this.nG[rowIndex].length - 1;
       }
-    } else if (keyB.get("Menu_NavUp")[2].includes(key)) {
+    } else if (keyB.get("Menu_NavUp")[3].includes(key)) {
       rowIndex -= 1;
       if (rowIndex < 0) {
         rowIndex = this.nG.length - 1;
@@ -34,9 +34,9 @@ function MenuController(menu) {
       if (this.nG[rowIndex].length - 1 < columnIndex) {
         columnIndex = this.nG[rowIndex].length - 1;
       }
-    } else if (keyB.get("Menu_NavRight")[2].includes(key)) {
+    } else if (keyB.get("Menu_NavRight")[3].includes(key)) {
       columnIndex = (columnIndex + 1) % this.nG[rowIndex].length;
-    } else if (keyB.get("Menu_NavLeft")[2].includes(key)) {
+    } else if (keyB.get("Menu_NavLeft")[3].includes(key)) {
       columnIndex -= 1;
       if (columnIndex < 0) {
         columnIndex = this.nG[rowIndex].length - 1;
@@ -45,11 +45,11 @@ function MenuController(menu) {
 
     this.updateNGSelection(rowIndex, columnIndex);
 
-    if (keyB.get("Menu_Confirm")[2].includes(key)) {
+    if (keyB.get("Menu_Confirm")[3].includes(key)) {
       this.getSelectedButtons()[0].action(gD);
-    } else if (keyB.get("Menu_Back")[2].includes(key)) {
+    } else if (keyB.get("Menu_Back")[3].includes(key)) {
       gD.currentPage = this.menu;
-    } else if (keyB.get("Mute_All")[2].includes(key)) {
+    } else if (keyB.get("Mute_All")[3].includes(key)) {
       gD.muted = !gD.muted;
     }
   };
