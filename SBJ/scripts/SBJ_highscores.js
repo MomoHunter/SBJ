@@ -78,17 +78,17 @@ function Highscores(menu, gD) {
       var columnIndex = this.selectedColumnIndex;
 
       if (this.chooseName) {
-        if (keyB.get("NameModal_NavRight")[2].includes(key)) {
+        if (keyB.get("NameModal_NavRight")[3].includes(key)) {
           this.enterNameModal.moveCursor(1);
-        } else if (keyB.get("NameModal_NavLeft")[2].includes(key)) {
+        } else if (keyB.get("NameModal_NavLeft")[3].includes(key)) {
           this.enterNameModal.moveCursor(-1);
-        } else if (keyB.get("NameModal_DeleteLeft")[2].includes(key)) {
+        } else if (keyB.get("NameModal_DeleteLeft")[3].includes(key)) {
           this.enterNameModal.deleteCharacter(-1);
-        } else if (keyB.get("NameModal_DeleteRight")[2].includes(key)) {
+        } else if (keyB.get("NameModal_DeleteRight")[3].includes(key)) {
           this.enterNameModal.deleteCharacter(1);
-        } else if (keyB.get("NameModal_Confirm")[2].includes(key)) {
+        } else if (keyB.get("NameModal_Confirm")[3].includes(key)) {
           this.setNewName();
-        } else if (keyB.get("NameModal_Abort")[2].includes(key)) {
+        } else if (keyB.get("NameModal_Abort")[3].includes(key)) {
           this.chooseName = false;
         } else {
           var event = this.gD.events[index];
@@ -97,41 +97,41 @@ function Highscores(menu, gD) {
           }
         }
       } else {
-        if (keyB.get("Menu_NavDown")[2].includes(key)) {
+        if (keyB.get("Menu_NavDown")[3].includes(key)) {
           rowIndex++;
           if (rowIndex >= this.highscores.length) {
             this.updateSelection(-1, columnIndex, true);
           } else {
             this.updateSelection(rowIndex, columnIndex, true);
           }
-        } else if (keyB.get("Menu_NavUp")[2].includes(key)) {
+        } else if (keyB.get("Menu_NavUp")[3].includes(key)) {
           rowIndex--;
           if (rowIndex < -1) {
             this.updateSelection(this.highscores.length - 1, columnIndex, true);
           } else {
             this.updateSelection(rowIndex, columnIndex, true);
           }
-        } else if (keyB.get("Menu_NavLeft")[2].includes(key)) {
+        } else if (keyB.get("Menu_NavLeft")[3].includes(key)) {
           columnIndex--;
           if (columnIndex < 0) {
             this.updateSelection(rowIndex, 0, true);
           } else {
             this.updateSelection(rowIndex, columnIndex, true);
           }
-        } else if (keyB.get("Menu_NavRight")[2].includes(key)) {
+        } else if (keyB.get("Menu_NavRight")[3].includes(key)) {
           columnIndex++;
           if (columnIndex >= 1) {
             this.updateSelection(rowIndex, 0, true);
           } else {
             this.updateSelection(rowIndex, columnIndex, true);
           }
-        } else if (keyB.get("Menu_Confirm")[2].includes(key)) {
+        } else if (keyB.get("Menu_Confirm")[3].includes(key)) {
           if (rowIndex >= 0) {
             this.startNewName(index);
           } else {
             this.gD.currentPage = this.menu;
           }
-        } else if (keyB.get("Menu_Back")[2].includes(key)) {
+        } else if (keyB.get("Menu_Back")[3].includes(key)) {
           gD.currentPage = this.menu;
         } else if (key === "KeyK") {
           this.addHighscore({
