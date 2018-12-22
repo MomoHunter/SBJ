@@ -210,13 +210,23 @@ function CanvasImageButton(x, y, width, height, spriteKey, styleKey) {
   };
   this.draw = function(gD) {
     var design = gD.design.button[this.styleKey];
-    var [spriteX, spriteY, spriteWidth, spriteHeight] = gD.spriteDict[this.spriteKey];
+    var spriteWidth, spriteHeight;
+    var spriteData = gD.spriteDict[this.spriteKey];
+    if (spriteData) {
+      [, , spriteWidth, spriteHeight] = spriteData;
+    } else {
+      spriteWidth = spriteHeight = 40; // size of placeholder-image
+    }
     if (this.selected) {
       drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.selected, gD);
     } else {
       drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.standard, gD);
     }
-    drawCanvasImage(this.x + Math.floor((this.width - spriteWidth) / 2), this.y + Math.floor((this.height - spriteHeight) / 2), this.spriteKey, gD);
+    drawCanvasImage(
+      this.x + Math.floor((this.width - spriteWidth) / 2),
+      this.y + Math.floor((this.height - spriteHeight) / 2),
+      this.spriteKey, gD
+    );
     drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
   };
 }
