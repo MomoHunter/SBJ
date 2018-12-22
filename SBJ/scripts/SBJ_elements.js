@@ -26,7 +26,7 @@ function CanvasImage(x, y, spriteKey = null) {
   this.y = y;
   this.spriteKey = spriteKey;
   this.draw = function(gD) {
-    drawCanvasImage(this.x, this.y, this.spriteKey, this.gD);
+    drawCanvasImage(this.x, this.y, this.spriteKey, gD);
   };
 }
 
@@ -45,7 +45,7 @@ function CanvasRect(x, y, width, height, styleKey) {
   this.height = height;
   this.styleKey = styleKey;
   this.draw = function(gD) {
-    drawCanvasRect(this.x, this.y, this.width, this.height, this.styleKey, this.gD);
+    drawCanvasRect(this.x, this.y, this.width, this.height, this.styleKey, gD);
   };
 }
 
@@ -64,7 +64,7 @@ function CanvasBorder(x, y, width, height, styleKey) {
   this.height = height;
   this.styleKey = styleKey;
   this.draw = function(gD) {
-    drawCanvasRectBorder(this.x, this.y, this.width, this.height, this.styleKey, this.gD);
+    drawCanvasRectBorder(this.x, this.y, this.width, this.height, this.styleKey, gD);
   }
 }
 
