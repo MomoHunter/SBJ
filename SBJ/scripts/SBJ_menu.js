@@ -8,8 +8,8 @@ function Menu(gD) {
     this.extraMC = new MenuController(this);
     this.backgroundImage = new Image();
     this.setNewBackground();
-    /*this.achievements = new Achievements(this, this.gD, this.mC);
-    this.achievements.init();*/
+    this.achievements = new Achievements(this, this.gD);
+    this.achievements.init();
     this.highscores = new Highscores(this, this.gD);
     this.highscores.init();
     this.controls = new Controls(this, this.gD);
@@ -71,7 +71,7 @@ function Menu(gD) {
   this.setNewBackground = function() {
     var backgrounds = ["img/Titlescreen.png"];
     this.backgroundImage.src = backgrounds[Math.floor(Math.random() * backgrounds.length)];
-  }
+  };
   /**
    * checks if a key is pressed and executes commands
    */
