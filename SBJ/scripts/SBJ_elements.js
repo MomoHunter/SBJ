@@ -448,3 +448,13 @@ function CanvasChoosePictureModal(x, y, width, height, styleKey) {
     drawCanvasRectBorder(this.x + 275, this.y + 35, this.width - 550, this.height - 70, design.borderKey.background, gD);
   };
 }
+
+function CanvasCircle(centerX, centerY, radius, styleKey) {
+  this.centerX = centerX;
+  this.centerY = centerY;
+  this.radius = radius;
+  this.styleKey = styleKey;
+  this.draw = function(gD) {
+    drawCanvasCircle(this.centerX, this.centerY, this.radius, this.styleKey, gD);
+  };
+}

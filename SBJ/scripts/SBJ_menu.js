@@ -14,6 +14,8 @@ function Menu(gD) {
     this.highscores.init();
     this.controls = new Controls(this, this.gD);
     this.controls.init();
+    this.statistics = new Statistics(this, this.gD);
+    this.statistics.init();
     this.saveLoad = new SaveLoad(this, this.gD);
     this.saveLoad.init();
 
@@ -40,7 +42,7 @@ function Menu(gD) {
     this.mainNavigationGrid.map((buttonRow, rowIndex) => {
       buttonRow.map((buttonObject, columnIndex) => {
         buttonObject.button = new CanvasButton(
-          this.gD.canvas.width / 2 - 100, 150 + 36 * rowIndex, 200, 30, buttonObject.button, "menu"
+          this.gD.canvas.width / 2 - 100, 150 + 37 * rowIndex, 200, 30, buttonObject.button, "menu"
         );
       }, this);
     }, this);
@@ -48,7 +50,7 @@ function Menu(gD) {
     this.extraNavigationGrid.map((buttonRow, rowIndex) => {
       buttonRow.map((buttonObject, columnIndex) => {
         buttonObject.button = new CanvasButton(
-          this.gD.canvas.width / 2 - 100, 150 + 36 * rowIndex, 200, 30, buttonObject.button, "menu"
+          this.gD.canvas.width / 2 - 100, 150 + 37 * rowIndex, 200, 30, buttonObject.button, "menu"
         );
       }, this);
     }, this);
