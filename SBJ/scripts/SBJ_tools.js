@@ -85,7 +85,7 @@ function drawCanvasRectBorder(x, y, width, height, styleKey, gD) {
   gD.context.strokeRect(x, y, width, height);
 }
 
-function drawCanvasLine(startX, startY, endX, endY, styleKey, gD) {
+function drawCanvasLine(startX, startY, styleKey, gD, ...points) {
   var design = gD.design.border[styleKey];
   gD.context.strokeStyle = `rgba(${design.borderColor})`;
   gD.context.lineWidth = design.borderSize;
@@ -93,4 +93,8 @@ function drawCanvasLine(startX, startY, endX, endY, styleKey, gD) {
   gD.context.moveTo(startX, startY);
   gD.context.lineTo(endX, endY);
   gD.context.stroke();
+}
+
+function drawCanvasCircle(centerX, centerY, radius, styleKey, gD) {
+  var design = gD.design.circle[styleKey];
 }
