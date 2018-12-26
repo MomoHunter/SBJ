@@ -97,11 +97,11 @@ function CanvasScrollBar(x, y, height, elementHeight, elementsCount, styleKey) {
     }
     
     var design = gD.design.elements[this.styleKey];
-    drawCanvasLine(this.x, this.y, this.x, this.y + this.height, design.lineKey, gD);
+    drawCanvasLine(this.x, this.y, design.lineKey, gD, this.x, this.y + this.height);
     drawCanvasLine(
       this.x, this.y + ((this.currentElementIndex / this.elementsCount) * this.height),
-      this.x, this.y + (((this.height / this.elementHeight) + this.currentElementIndex) / this.elementsCount) * this.height,
-      design.barKey, gD
+      design.barKey, gD,
+      this.x, this.y + (((this.height / this.elementHeight) + this.currentElementIndex) / this.elementsCount) * this.height
     );
   };
 }
@@ -319,8 +319,8 @@ function CanvasEnterNameModal(x, y, width, height, styleKey) {
       }
       drawCanvasLine(
         this.x + (this.width - (this.width / 3)) / 2 + 8 + addCharLength, this.y + this.height / 2 + 22,
-        this.x + (this.width - (this.width / 3)) / 2 + 8 + addCharLength, this.y + this.height / 2 + 38,
-        design.cursorKey, gD
+        design.cursorKey, gD,
+        this.x + (this.width - (this.width / 3)) / 2 + 8 + addCharLength, this.y + this.height / 2 + 38
       );
     }
   };

@@ -377,12 +377,12 @@ function HighscoreEntry(x, y, width, height, highscore, place, styleKey) {
       this.highscore.distance + "m", design.textKey.number, gD
     );
     drawCanvasLine(
-      this.x + 50, this.y - highscores.scrollHeight, this.x + 50,
-      this.y + this.height - highscores.scrollHeight, design.borderKey, gD
+      this.x + 50, this.y - highscores.scrollHeight, design.borderKey, 
+      gD, this.x + 50, this.y + this.height - highscores.scrollHeight
     );
     drawCanvasLine(
-      this.x + this.width - 100, this.y - highscores.scrollHeight, this.x + this.width - 100,
-      this.y + this.height - highscores.scrollHeight, design.borderKey, gD
+      this.x + this.width - 100, this.y - highscores.scrollHeight, design.borderKey, 
+      gD, this.x + this.width - 100, this.y + this.height - highscores.scrollHeight
     );
     drawCanvasRectBorder(this.x, this.y - highscores.scrollHeight, this.width, this.height, design.borderKey, gD);
   };

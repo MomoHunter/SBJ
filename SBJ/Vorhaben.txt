@@ -25,3 +25,7 @@ Im Wasser-Level die Blasen-Ströme funktional machen
 {"achievementValues":[1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000],"cash":0,"highscores":{"1":["Sat May 26 2018 00:12:03","17m","0"]}}
  
 {"playerUnlocked":[true,true,true,true,true,true],"level":[10,10,0,10,10,10],"stagesUnlocked":[true,true,true,true,true]}
+
+Online Modus neuer Modus mit der Möglichkeit andere Spieler zu beeinflussen (Geld klauen, Items stehlen, Einfrieren, Stacheln unter dem Gegner, etc.)
+
+Kleine Map für Multiplayer

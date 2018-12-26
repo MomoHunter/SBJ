@@ -85,17 +85,57 @@ function drawCanvasRectBorder(x, y, width, height, styleKey, gD) {
   gD.context.strokeRect(x, y, width, height);
 }
 
-function drawCanvasLine(startX, startY, endX, endY, styleKey, gD) {
+function drawCanvasLine(startX, startY, styleKey, gD, ...points) {
   var design = gD.design.border[styleKey];
   gD.context.strokeStyle = `rgba(${design.borderColor})`;
   gD.context.lineWidth = design.borderSize;
   gD.context.beginPath();
   gD.context.moveTo(startX, startY);
-  gD.context.lineTo(endX, endY);
+  for (var i = 0; i < points.length / 2; i++) {
+    if (points[i * 2] !== undefined && points[i * 2 + 1] !== undefined) {
+      gD.context.lineTo(points[i * 2], points[i * 2 + 1]);
+    } else {
+      break;
+    }
+  }
   gD.context.stroke();
 }
 
 function drawCanvasCircle(centerX, centerY, radius, styleKey, gD) {
   var design = gD.design.circle[styleKey];
+  gD.context.beginPath();
+  gD.context.fillStyle = `rgba(${design.backgroundColor})`;
+  gD.context.arc(centerX, centerY, radius, 0, Math.PI * 2);
+  gD.context.fill();
+}
+
+function drawCanvasBorder(centerX, centerY, radius, styleKey, gD) {
+  var design = gD.design.border[styleKey];
+  gD.context.beginPath();
+  gD.context.strokeStyle = `rgba(${design.borderColor})`;
+  gD.context.lineWidth = design.borderSize;
+  gD.context.arc(centerX, centerY, radius, 0, Math.PI * 2);
+  gD.context.stroke();
+}
+
+function drawCanvasCirclePart(centerX, centerY, radius, startAngle, endAngle, styleKey, gD) {
+  var design = gD.design.circle[styleKey];
+  gD.context.beginPath();
+  gD.context.fillStyle = `rgba(${design.backgroundColor})`;
+  gD.context.arc(centerX, centerY, radius, startAngle, endAngle);
+  gD.context.lineTo(centerX, centerY);
+  gD.context.closePath();
+  gD.context.fill();
+}
+
+function drawCanvasCirclePartBorder(centerX, centerY, radius, startAngle, endAngle, styleKey, gD) {
+  var design = gD.design.border[styleKey];
+  gD.context.beginPath();
+  gD.context.strokeStyle = `rgba(${design.borderColor})`;
+  gD.context.lineWidth = design.borderSize;
+  gD.context.arc(centerX, centerY, radius, startAngle, endAngle);
+  gD.context.lineTo(centerX, centerY);
+  gD.context.closePath();
+  gD.context.stroke();
 }
 // endregion

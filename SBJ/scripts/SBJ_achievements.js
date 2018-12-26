@@ -1,8 +1,6 @@
 ﻿function Achievements(menu, gD) {
   this.menu = menu;
   this.gD = gD;
-  this.backgroundImage = new Image();
-  this.backgroundImage.src = "img/Titlescreen.png";
   this.achievementList = [
     new AchievementData(
       "Haste mal n Hype?", ["Sammle den ersten Hype", ""],
@@ -185,12 +183,12 @@
       button: new CanvasButton(
         (this.gD.canvas.width - backToMenuWidth) / 2, this.gD.canvas.height - 10 - backToMenuHeight,
         backToMenuWidth, backToMenuHeight,
-        "main menu", "menu"
+        "Main Menu", "menu"
       ),
       action: gD => {gD.currentPage = this.menu}
     };
 
-    this.menuController = new MenuController();
+    this.menuController = new MenuController(this.menu);
     this.menuController.setNewGrids(buttons, [[backButton]]);
   };
   /**
@@ -232,7 +230,7 @@
    * draws the screen onto the canvas
    */
   this.draw = function(ghostFactor) {
-    this.gD.context.drawImage(this.backgroundImage, 0, 0);
+    this.gD.context.drawImage(this.menu.backgroundImage, 0, 0);
     this.title.draw(this.gD);
     this.menuController.draw(this.gD);
     this.achievementBox.draw(this.gD);
@@ -252,6 +250,7 @@
    */
   this.handleEvent = function(eventKey, addedValue = 1) {
     this.achievementList.map(achievement => achievement.handleEvent(eventKey, addedValue));
+    this.gD.save.achievements = this.getSaveData();
   };
 
   /**

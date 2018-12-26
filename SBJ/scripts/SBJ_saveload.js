@@ -107,6 +107,9 @@ function SaveLoad(menu, gD) {
       if (this.gD.save.keyBindings) {
         this.menu.controls.keyBindings = new Map(this.gD.save.keyBindings);
       }
+      if (this.gD.save.achievements) {
+        this.menu.achievements.setSaveData(this.gD.save.achievements);
+      }
       this.infoText.text = "Erfolgreich geladen!";
       console.log("Erfolgreich geladen!");
     } catch (e) {
@@ -551,7 +554,7 @@ function SLSavestate(x, y, width, height, styleKey, savestate) {
     drawCanvasText(this.x + 60, this.y + 7 - saveLoad.scrollHeight, "Name: " + this.savestate.name, design.textKey, gD);
     drawCanvasText(this.x + 60, this.y + 19 - saveLoad.scrollHeight, "Date: " + date, design.textKey, gD);
     drawCanvasText(this.x + 60, this.y + 31 - saveLoad.scrollHeight, "Version: " + this.savestate.version, design.textKey, gD);
-    drawCanvasLine(this.x + 55, this.y, this.x + 55, this.y + this.height, design.borderKey, gD);
+    drawCanvasLine(this.x + 55, this.y, design.borderKey, gD, this.x + 55, this.y + this.height);
     drawCanvasRectBorder(this.x, this.y - saveLoad.scrollHeight, this.width, this.height, design.borderKey, gD);
   };
 }

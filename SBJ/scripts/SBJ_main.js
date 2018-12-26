@@ -1,5 +1,5 @@
 ﻿function main() {
-  var globalDict = new GlobalDict();
+  var globalDict = new GlobalDict(new EventHandler());
   var menu = new Menu(globalDict);
   window.addEventListener('keydown', event => keydownEvent(event, globalDict));
   window.addEventListener('keyup', event => keyupEvent(event, globalDict));
@@ -72,7 +72,8 @@ function wheelEvent(event, gD) {
   gD.wheelMovements.push(event.deltaY);
 }
 
-function GlobalDict() {
+function GlobalDict(eventHandler) {
+  this.eventHandler = eventHandler;
   this.canvas = document.getElementById("gamearea");
   this.context = this.canvas.getContext("2d");
   this.keys = {};
@@ -430,6 +431,25 @@ function GlobalDict() {
       scrollBarStandard: {
         lineKey: "smallWhite",
         barKey: "bigWhite"
+      },
+      statisticsTab: {
+        rectKey: {
+          tab: "standard",
+          background: "standard",
+          inactive: "modal"
+        },
+        borderKey: "standard"
+      },
+      moneyCircle: {
+        circleKey: {
+          background: "standard",
+          money1: "money1",
+          money10: "money10",
+          money100: "money100",
+          money1000: "money1000",
+          bonus: "bonus"
+        },
+        borderKey: "standard"
       }
     },
     button: {
@@ -470,6 +490,26 @@ function GlobalDict() {
       },
       progress: {
         backgroundColor: "0, 129, 57, 0.9"
+      }
+    },
+    circle: {
+      standard: {
+        backgroundColor: "0, 255, 255, 1"
+      },
+      money1: {
+        backgroundColor: "255, 127, 39, 1"
+      },
+      money10: {
+        backgroundColor: "184, 61, 186, 1"
+      },
+      money100: {
+        backgroundColor: "14, 209, 69, 1"
+      },
+      money1000: {
+        backgroundColor: "255, 242, 0, 1"
+      },
+      bonus: {
+        backgroundColor: "30, 180, 198, 1"
       }
     },
     border: {
