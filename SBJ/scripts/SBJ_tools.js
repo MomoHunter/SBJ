@@ -1,3 +1,4 @@
+// region general Helper
 /**
  * @param  {number} n1 smaller number
  * @param  {number} n2 bigger number
@@ -9,7 +10,7 @@ function randomBetween(n1, n2) {
 
 /**
  * @param  {object} object the object that should be copied
- * @return {object} the copied object
+ * @return {object | undefined} a deep copy of the given object or undefined if the object is not supported
  */
 function copy(object) {
   var result;
@@ -39,7 +40,10 @@ function copy(object) {
     return result;
   }
 }
+// endregion
 
+
+// region Canvas-Helper
 function drawCanvasText(x, y, text, styleKey, gD) {
   var design = gD.design.text[styleKey];
   gD.context.textAlign = design.align;
@@ -59,14 +63,23 @@ function drawCanvasTextBorder(x, y, text, styleKey, gD) {
   gD.context.strokeText(text, x, y);
 }
 
-function drawCanvasImage(x, y, spriteKey = null, gD) {
+function drawCanvasImage(x, y, spriteKey, gD) {
   if (spriteKey === null) {
     return;
   }
 
-  var [spriteX, spriteY, spriteWidth, spriteHeight] = gD.spriteDict[spriteKey];
+  var spriteData = gD.spriteDict[spriteKey];
+  if (!spriteData) {
+    var fallbackSpriteKey = "Special_Placeholder";
+    if (spriteKey.includes("_B_") || spriteKey.endsWith("_B")) {
+      fallbackSpriteKey += "_B";
+    }
+    return drawCanvasImage(x, y, fallbackSpriteKey, gD);
+  }
+
+  var [spriteX, spriteY, spriteWidth, spriteHeight] = spriteData;
   gD.context.drawImage(
-    gD.spritesheet, 
+    gD.spritesheet,
     spriteX, spriteY, spriteWidth, spriteHeight,
     x, y, spriteWidth, spriteHeight
   );
@@ -79,7 +92,7 @@ function drawCanvasRect(x, y, width, height, styleKey, gD) {
 }
 
 function drawCanvasRectBorder(x, y, width, height, styleKey, gD) {
-  var design = gD.design.border[styleKey]
+  var design = gD.design.border[styleKey];
   gD.context.strokeStyle = `rgba(${design.borderColor})`;
   gD.context.lineWidth = design.borderSize;
   gD.context.strokeRect(x, y, width, height);
