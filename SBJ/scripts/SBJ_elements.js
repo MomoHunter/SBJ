@@ -362,7 +362,7 @@ function CanvasChoosePictureModal(x, y, width, height, styleKey) {
     "Enemy_Fish_1",
     "Enemy_Fish_2",
     "Enemy_Fish_3",
-    "Enemy_Bird_0_0",
+    "Enemy_Bird_Left_0",
     "Enemy_Asteroid_0",
     "Enemy_Asteroid_1",
     "Enemy_Asteroid_2",
