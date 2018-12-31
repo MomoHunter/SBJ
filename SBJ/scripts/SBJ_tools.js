@@ -44,6 +44,15 @@ function copy(object) {
 
 
 // region Canvas-Helper
+/**
+ * Draw text onto the used canvas.
+ * Its positioning is affected by the attributes saved inside the used Style-Key.
+ * @param {number} x x-coordinate for the positioning point
+ * @param {number} y y-coordinate for the positioning point
+ * @param {string} text text to be written
+ * @param {string} styleKey defines the appearance of the text
+ * @param {GlobalDict} gD
+ */
 function drawCanvasText(x, y, text, styleKey, gD) {
   var design = gD.design.text[styleKey];
   gD.context.textAlign = design.align;
@@ -56,6 +65,15 @@ function drawCanvasText(x, y, text, styleKey, gD) {
   }
 }
 
+/**
+ * Draw a border for text onto the used canvas.
+ * Its positioning is affected by the attributes saved inside the used Style-Key.
+ * @param {number} x x-coordinate for the positioning point
+ * @param {number} y y-coordinate for the positioning point
+ * @param {string} text text for witch the outline should be drawn
+ * @param {string} styleKey defines the appearance of the text
+ * @param {GlobalDict} gD
+ */
 function drawCanvasTextBorder(x, y, text, styleKey, gD) {
   var design = gD.design.border[styleKey];
   gD.context.strokeStyle = `rgba(${design.borderColor})`;
@@ -63,6 +81,14 @@ function drawCanvasTextBorder(x, y, text, styleKey, gD) {
   gD.context.strokeText(text, x, y);
 }
 
+/**
+ * Draw a Sprite-Image onto the used canvas.
+ * Its size is determined by the defined data of the given Sprite.
+ * @param {width} x x-coordinate of the top-left corner
+ * @param {width} y y-coordinate of the top-left corner
+ * @param {string} spriteKey defines which sprite should be drawn
+ * @param {GlobalDict} gD
+ */
 function drawCanvasImage(x, y, spriteKey, gD) {
   if (spriteKey === null) {
     return;
@@ -85,18 +111,37 @@ function drawCanvasImage(x, y, spriteKey, gD) {
   );
 }
 
+/**
+ * Draws a filled rectangle onto the used canvas.
+ * @param {number} x x-coordinate of the rectangle's top-left corner
+ * @param {number} y y-coordinate of the rectangle's top-left corner
+ * @param {number} width
+ * @param {number} height
+ * @param {string} styleKey defines the appearance of the rectangle
+ * @param {GlobalDict} gD
+ */
 function drawCanvasRect(x, y, width, height, styleKey, gD) {
   var design = gD.design.rect[styleKey];
   gD.context.fillStyle = `rgba(${design.backgroundColor})`;
   gD.context.fillRect(x, y, width, height);
 }
 
+/**
+ * Draws a border for a rectangle onto the used canvas.
+ * @param {number} x x-coordinate of the rectangle's top-left corner
+ * @param {number} y y-coordinate of the rectangle's top-left corner
+ * @param {number} width
+ * @param {number} height
+ * @param {string} styleKey defines the appearance of the rectangle
+ * @param {GlobalDict} gD
+ */
 function drawCanvasRectBorder(x, y, width, height, styleKey, gD) {
   var design = gD.design.border[styleKey];
   gD.context.strokeStyle = `rgba(${design.borderColor})`;
   gD.context.lineWidth = design.borderSize;
   gD.context.strokeRect(x, y, width, height);
 }
+
 
 function drawCanvasLine(startX, startY, styleKey, gD, ...points) {
   var design = gD.design.border[styleKey];
@@ -122,7 +167,7 @@ function drawCanvasCircle(centerX, centerY, radius, styleKey, gD) {
   gD.context.fill();
 }
 
-function drawCanvasBorder(centerX, centerY, radius, styleKey, gD) {
+function drawCanvasCircleBorder(centerX, centerY, radius, styleKey, gD) {
   var design = gD.design.border[styleKey];
   gD.context.beginPath();
   gD.context.strokeStyle = `rgba(${design.borderColor})`;
