@@ -47,12 +47,13 @@ function Statistics(menu, gD) {
     this.title = new CanvasText(this.gD.canvas.width / 2, 30, "Statistics", "pageTitle");
 
     this.tabs = ["Deco_Bubble_0", "Deco_Bubble_0", "Money_1000_0", "Deco_Bubble_0"];
-    this.tabs.map((tab, index) => {
+    this.tabs.map((icon, index) => {
       this.tabs[index] = new StatisticsTab(
-        this.gD.canvas.width / 2 - 310, 60, 620, 220, index, tab, "statisticsTab"
+        this.gD.canvas.width / 2 - 310, 60, 620, 220, index, icon, "statisticsTab"
       );
     }, this);
-    this.tabs[2].objects.push(new StatisticsMoneyCircle(this.gD.canvas.width / 2, this.gD.canvas.height / 2, 80, this.statistics, "moneyCircle"));
+    this.tabs[2].objects.push(new StatisticsMoneyBar(255, 170, 545, 100, this.statistics, "moneyBar"));
+    this.tabs[2].objects.push(new CanvasRainbowText(400, 150, "Bonus", "rainbow"));
     this.tabs[2].select();
 
     this.backToMenu = new CanvasButton(this.gD.canvas.width / 2 - 100, this.gD.canvas.height - 50, 200, 30, "Main Menu", "menu");
@@ -85,7 +86,9 @@ function Statistics(menu, gD) {
 
   };
   this.update = function() {
-
+    this.tabs.map(tab => {
+      tab.update();
+    }, this);
   };
   this.draw = function(ghostFactor) {
     this.gD.context.drawImage(this.menu.backgroundImage, 0, 0);
@@ -151,6 +154,13 @@ function StatisticsTab(x, y, width, height, tabNr, spriteKey, styleKey) {
   this.deselect = function() {
     this.selected = false;
   };
+  this.update = function() {
+    this.objects.map(object => {
+      if (object.update !== undefined) {
+        object.update();
+      }
+    }, this);
+  };
   this.draw = function(gD) {
     var design = gD.design.elements[this.styleKey];
     var borderSize = gD.design.border[design.borderKey].borderSize;
@@ -161,7 +171,7 @@ function StatisticsTab(x, y, width, height, tabNr, spriteKey, styleKey) {
         this.x + Math.floor((55 - spriteWidth) / 2), 
         this.y + 55 * this.tabNr + Math.floor((55 - spriteHeight) / 2), this.spriteKey, gD
       );
-      drawCanvasRect(this.x, this.y + 55 * this.tabNr, 55, 55, design.rectKey.inactive, gD)
+      drawCanvasRect(this.x, this.y + 55 * this.tabNr, 55, 55, design.rectKey.inactive, gD);
       drawCanvasRectBorder(this.x, this.y + 55 * this.tabNr, 55, 55, design.borderKey, gD);
     } else {
       drawCanvasRectBorder(this.x, this.y + 55 * this.tabNr, 55, 55, design.borderKey, gD);
@@ -181,6 +191,45 @@ function StatisticsTab(x, y, width, height, tabNr, spriteKey, styleKey) {
     }
   };
 }
+
+function StatisticsMoneyBar(x, y, width, height, stats, styleKey) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.stats = stats;
+  this.styleKey = styleKey;
+  this.widths = [
+    this.stats.money_1_collected / this.stats.money_collected * this.width,
+    (this.stats.money_10_collected * 10) / this.stats.money_collected * this.width,
+    (this.stats.money_100_collected * 100) / this.stats.money_collected * this.width,
+    (this.stats.money_1000_collected * 1000) / this.stats.money_collected * this.width,
+    this.stats.money_bonus / this.stats.money_collected * this.width
+  ];
+  this.refresh = function() {
+    this.widths = [
+      this.stats.money_1_collected / this.stats.money_collected * this.width,
+      (this.stats.money_10_collected * 10) / this.stats.money_collected * this.width,
+      (this.stats.money_100_collected * 100) / this.stats.money_collected * this.width,
+      (this.stats.money_1000_collected * 1000) / this.stats.money_collected * this.width,
+      this.stats.money_bonus / this.stats.money_collected * this.width
+    ];
+  };
+  this.draw = function(gD) {
+    var design = gD.design.elements[this.styleKey];
+    var designKeys = ["money1","money10","money100","money1000","bonus"];
+    var newX = this.x;
+
+    this.widths.map((width, index) => {
+      drawCanvasRect(newX, this.y, width, this.height, design.rectKey[designKeys[index]], gD);
+      drawCanvasText(newX + width / 2, this.y + this.height / 2, (width / this.width * 100).toFixed(2) + "%", design.textKey, gD);
+      drawCanvasRectBorder(newX, this.y, width, this.height, design.borderKey, gD);
+      newX += width;
+    }, this);
+  };
+}
+
+function StatisticsMoneyBarLegend(x, y, width, height, stats) {}
 
 function StatisticsMoneyCircle(centerX, centerY, radius, stats, styleKey) {
   this.centerX = centerX;
