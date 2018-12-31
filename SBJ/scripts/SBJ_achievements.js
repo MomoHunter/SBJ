@@ -331,7 +331,7 @@ function AchievementData(name, descriptionLines, neededCount, eventKey, isResetP
 
   this.getSpriteKey = function() {
     return this.isUnlocked ? this.spriteKey : "locked";
-  }
+  };
 }
 
 
