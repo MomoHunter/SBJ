@@ -86,6 +86,9 @@ function Menu(gD) {
       this.gD.newKeys.map(key => {
         if (this.showExtras) {
           this.extraMC.updateKeyPresses(key, this.gD);
+          if (this.controls.keyBindings.get("Menu_Abort")[3].includes(key)) {
+            this.showExtras = false;
+          }
         } else {
           this.mainMC.updateKeyPresses(key, this.gD);
         }
