@@ -16,6 +16,51 @@ function CanvasText(x, y, text, styleKey) {
 }
 
 /**
+ * A rainbow text object on the canvas
+ * @param {number} x        x-coordinate of the top-left corner of the text on the canvas
+ * @param {number} y        y-coordinate of the top-left corner of the text on the canvas
+ * @param {string} text     the text to write
+ * @param {string} styleKey the design to use for the text
+ */
+function CanvasRainbowText(x, y, text, styleKey) {
+  this.x = x;
+  this.y = y;
+  this.text = text;
+  this.styleKey = styleKey;
+  this.counter = 0;
+  this.index = 0;
+  this.update = function() {
+    this.counter++;
+    this.index = Math.floor(this.counter / 8);
+  };
+  this.draw = function(gD) {
+    var design = gD.design.text[this.styleKey];
+    var x = this.x;
+
+    gD.context.textAlign = "left";
+    gD.context.textBaseline = design.baseline;
+    gD.context.font = design.font;
+
+    switch (design.align) {
+      case "center":
+        x -= gD.context.measureText(this.text).width / 2;
+        break;
+      case "right":
+        x -= gD.context.measureText(this.text).width;
+        break;
+      default:
+    }
+    this.text.split("").map((letter, index) => {
+      gD.context.fillStyle = `rgba(${design.color[(this.index + index) % 12]})`;
+      gD.context.fillText(letter, x + gD.context.measureText(this.text.substring(0, index)).width, y);
+      if (design.borderKey !== "") {
+        drawCanvasTextBorder(this.x, this.y, this.text, design.borderKey, gD);
+      }
+    }, this);
+  };
+}
+
+/**
  * An image object on the canvas
  * @param {number} x         x-coordinate of the top-left corner of the image on the canvas
  * @param {number} y         y-coordinate of the top-left corner of the image on the canvas
