@@ -143,17 +143,17 @@
   this.init = function() {
     this.title = new CanvasText(this.gD.canvas.width / 2, 30, "Achievements", "pageTitle");
 
-    this.buttonStartTop = 70;
+    this.buttonStartTop = 60;
     this.buttonStartLeft = 20;
-    this.buttonHeight = 50;
+    this.buttonHeight = 46;
     this.buttonWidth = 50;
-    this.buttonPadding = 10;
+    this.buttonPadding = 12;
     this.buttonsPerRow = 10;
     this.bigAchievementBoxLeft = this.buttonStartLeft + (this.buttonWidth + this.buttonPadding) * this.buttonsPerRow;
 
     this.achievementBox = new AchievementBox(
-      this.bigAchievementBoxLeft, 70,
-      this.gD.canvas.width - this.bigAchievementBoxLeft - this.buttonStartLeft, 230,
+      this.bigAchievementBoxLeft, this.buttonStartTop,
+      this.gD.canvas.width - this.bigAchievementBoxLeft - this.buttonStartLeft, 220,
       20, 75, 30
     );
 
@@ -178,18 +178,17 @@
     ;
 
     var backToMenuWidth = 200;
-    var backToMenuHeight = 30;
-    var backButton = {
+    buttons.push([{
       button: new CanvasButton(
-        (this.gD.canvas.width - backToMenuWidth) / 2, this.gD.canvas.height - 10 - backToMenuHeight,
-        backToMenuWidth, backToMenuHeight,
+        (this.gD.canvas.width - backToMenuWidth) / 2, this.gD.canvas.height - 50,
+        backToMenuWidth, 30,
         "Main Menu", "menu"
       ),
       action: gD => {gD.currentPage = this.menu}
-    };
+    }]);
 
     this.menuController = new MenuController(this.menu);
-    this.menuController.setNewGrids(buttons, [[backButton]]);
+    this.menuController.setNewGrids(buttons, []);
   };
   /**
    * checks if a button is pressed
@@ -336,65 +335,73 @@ function AchievementData(name, descriptionLines, neededCount, eventKey, isResetP
 
 
 function AchievementBox(x, y, width, height, padding, imageSize, progressHeight) {
-  var centerX = x + width / 2;
-  this.backgroundRect = new CanvasRect(x, y, width, height, "standard");
-  this.border = new CanvasBorder(x, y, width, height, "standard");
-  this.image = new CanvasImage(
-    x + (width - imageSize) / 2, y + padding,
-    "Special_PlaceHolder_B"
-  );
-  this.name = new CanvasText(
-    centerX, y + imageSize + padding * 2,
-    "", "normal"
-  );
-  this.descriptionLine1 = new CanvasText(
-    centerX, y + imageSize + 7 + padding * 3,
-    "", "small"
-  );
-  this.descriptionLine2 = new CanvasText(
-    centerX, y + imageSize + 7 + 14 + padding * 3,
-    "", "small"
-  );
+  this.x = x;
+  this.centerX = x + width / 2;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.padding = padding;
+  this.imageSize = imageSize;
   this.progress = new ProgressBar(
-    x + padding, y + height - padding - progressHeight,
-    width - padding * 2, progressHeight
+      x + padding, y + height - padding - progressHeight,
+      width - padding * 2, progressHeight
   );
+  this.data = {
+    name: "Placeholder",
+    getSpriteKey: () => "Placeholder",
+    descriptionLines: ["???", "???"],
+    currentCount: 0,
+    neededCount: 1,
+  };
+
   /**
    * @param {AchievementData} data
    */
   this.setData = function(data) {
-    this.image.spriteKey = "Reward_B_" + data.getSpriteKey();
-    this.name.text = data.name;
-    this.descriptionLine1.text = data.descriptionLines[0];
-    this.descriptionLine2.text = data.descriptionLines[1];
-    this.progress.current = data.currentCount;
-    this.progress.goal = data.neededCount;
+    this.data = data;
   };
-
   this.draw = function(gD) {
-    this.backgroundRect.draw(gD);
-    this.image.draw(gD);
-    this.name.draw(gD);
-    this.descriptionLine1.draw(gD);
-    this.descriptionLine2.draw(gD);
+    drawCanvasRect(this.x, this.y, this.width, this.height, "standard", gD);
+    drawCanvasImage(
+        this.x + (this.width - this.imageSize) / 2, this.y + this.padding,
+        "Reward_B_" + this.data.getSpriteKey(),
+        gD
+    );
+    drawCanvasText(
+        this.centerX, this.y + this.imageSize + this.padding * 2,
+        this.data.name,
+        "normal", gD
+    );
+    drawCanvasText(
+        this.centerX, this.y + this.imageSize + 7 + this.padding * 3,
+        this.data.descriptionLines[0],
+        "small", gD
+    );
+    drawCanvasText(
+        this.centerX, this.y + this.imageSize + 7 + 14 + this.padding * 3,
+        this.data.descriptionLines[1],
+        "small", gD
+    );
     this.progress.draw(gD);
-    this.border.draw(gD);
+    this.border = new CanvasBorder(this.x, this.y, this.width, this.height, "standard", gD);
   };
 }
 
-function ProgressBar(x, y, width, height, fontSize, fontFamily, goal) {
+function ProgressBar(x, y, width, height, goal = 0, current = 0) {
+  this.x = x;
+  this.y = y;
   this.width = width;
+  this.height = height;
   this.goal = goal;
-  this.current = 0;
-  this.text = new CanvasText(x + width / 2, y + height / 2, "", "normal");
-  this.backgroundRect = new CanvasRect(x, y, width, height, "modal");
-  this.foregroundRect = new CanvasRect(x, y, 0, height, "progress");
+  this.current = current;
 
   this.draw = function(gD) {
-    this.text.text = `${this.current} / ${this.goal}`;
-    this.foregroundRect.width = width * (this.current / this.goal);
-    this.backgroundRect.draw(gD);
-    this.foregroundRect.draw(gD);
-    this.text.draw(gD);
+    drawCanvasRect(this.x, this.y, this.width, this.height, "modal", gD);
+    drawCanvasRect(this.x, this.y, this.width * (this.current / this.goal), this.height, "progress", gD);
+    drawCanvasText(
+        this.x + this.width / 2, this.y + this.height / 2,
+        `${this.current} / ${this.goal}`,
+        "normal", gD
+    );
   };
 }
