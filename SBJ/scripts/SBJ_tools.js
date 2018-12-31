@@ -109,7 +109,7 @@ function drawCanvasCircle(centerX, centerY, radius, styleKey, gD) {
   gD.context.fill();
 }
 
-function drawCanvasBorder(centerX, centerY, radius, styleKey, gD) {
+function drawCanvasCircleBorder(centerX, centerY, radius, styleKey, gD) {
   var design = gD.design.border[styleKey];
   gD.context.beginPath();
   gD.context.strokeStyle = `rgba(${design.borderColor})`;
