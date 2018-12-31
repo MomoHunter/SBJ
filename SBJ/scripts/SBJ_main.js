@@ -440,8 +440,8 @@ function GlobalDict(eventHandler) {
         },
         borderKey: "standard"
       },
-      moneyCircle: {
-        circleKey: {
+      moneyBar: {
+        rectKey: {
           background: "standard",
           money1: "money1",
           money10: "money10",
@@ -449,6 +449,7 @@ function GlobalDict(eventHandler) {
           money1000: "money1000",
           bonus: "bonus"
         },
+        textKey: "small",
         borderKey: "standard"
       }
     },
@@ -490,6 +491,21 @@ function GlobalDict(eventHandler) {
       },
       progress: {
         backgroundColor: "0, 129, 57, 0.9"
+      },
+      money1: {
+        backgroundColor: "255, 127, 39, 1"
+      },
+      money10: {
+        backgroundColor: "184, 61, 186, 1"
+      },
+      money100: {
+        backgroundColor: "14, 209, 69, 1"
+      },
+      money1000: {
+        backgroundColor: "255, 242, 0, 1"
+      },
+      bonus: {
+        backgroundColor: "30, 180, 198, 1"
       }
     },
     circle: {
@@ -614,6 +630,26 @@ function GlobalDict(eventHandler) {
         color: "255, 255, 255, 1",
         align: "right",
         baseline: "alphabetic",
+        borderKey: ""
+      },
+      rainbow: {
+        font: "12pt Arial",
+        color: [
+          "200, 0, 0, 1",
+          "200, 100, 0, 1",
+          "200, 200, 0, 1",
+          "100, 200, 0, 1",
+          "0, 200, 0, 1",
+          "0, 200, 100, 1",
+          "0, 200, 200, 1",
+          "0, 100, 200, 1",
+          "0, 0, 200, 1",
+          "100, 0, 200, 1",
+          "200, 0, 200, 1",
+          "200, 0, 100, 1"
+        ],
+        align: "center",
+        baseline: "middle",
         borderKey: ""
       }
     }
