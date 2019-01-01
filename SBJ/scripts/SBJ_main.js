@@ -254,61 +254,65 @@ function GlobalDict(eventHandler) {
     "Money_1000_4": [203, 475, 30, 18],
     "Money_1000_5": [203, 494, 30, 18],
     "Money_1000_6": [203, 513, 30, 18],
-    "Player_Afroman": [234, 0, 24, 23],
-    "Player_Disgusty": [234, 24, 25, 23],
-    "Player_Longjohn": [234, 48, 14, 26],
-    "Player_Magician": [234, 75, 24, 14],
-    "Player_Speedy": [234, 90, 14, 14],
-    "Player_Standard": [234, 105, 20, 20],
-    "Player_Strooper": [234, 126, 20, 20],
-    "Player_B_Afroman": [260, 0, 48, 46],
-    "Player_B_Disgusty": [260, 47, 50, 46],
-    "Player_B_Longjohn": [260, 94, 28, 52],
-    "Player_B_Magician": [260, 147, 48, 28],
-    "Player_B_Speedy": [260, 176, 28, 28],
-    "Player_B_Standard": [260, 205, 40, 40],
-    "Player_B_Strooper": [260, 246, 40, 40],
-    "Reward_100_jumps_out_of_bounds": [311, 0, 40, 40],
-    "Reward_collect_100_golden_shamrocks": [311, 41, 40, 40],
-    "Reward_collect_24000_hype": [311, 82, 40, 40],
-    "Reward_collect_first_1000_hype": [311, 123, 40, 40],
-    "Reward_collect_first_golden_shamrock": [311, 164, 40, 40],
-    "Reward_collect_first_hype": [311, 205, 40, 40],
-    "Reward_collect_first_treasure": [311, 246, 40, 40],
-    "Reward_die_1000": [311, 287, 40, 40],
-    "Reward_locked": [311, 328, 40, 40],
-    "Reward_B_100_jumps_out_of_bounds": [352, 0, 80, 80],
-    "Reward_B_collect_100_golden_shamrocks": [352, 81, 80, 80],
-    "Reward_B_collect_24000_hype": [352, 162, 80, 80],
-    "Reward_B_collect_first_1000_hype": [352, 243, 80, 80],
-    "Reward_B_collect_first_golden_shamrock": [352, 324, 80, 80],
-    "Reward_B_collect_first_hype": [352, 405, 80, 80],
-    "Reward_B_collect_first_treasure": [352, 486, 80, 80],
-    "Reward_B_die_1000": [352, 567, 80, 80],
-    "Reward_B_locked": [352, 648, 80, 80],
-    "Special_Placeholder": [433, 0, 40, 40],
-    "Special_Placeholder_B": [433, 41, 80, 80],
-    "Special_Pointer": [433, 122, 10, 6],
-    "Special_GoldenShamrock_0": [433, 129, 15, 19],
-    "Special_GoldenShamrock_1": [433, 149, 15, 19],
-    "Special_GoldenShamrock_2": [433, 169, 15, 19],
-    "Special_GoldenShamrock_3": [433, 189, 15, 19],
-    "Special_GoldenShamrock_4": [433, 209, 15, 19],
-    "Special_GoldenShamrock_5": [433, 229, 15, 19],
-    "Special_GoldenShamrock_6": [433, 249, 15, 19],
-    "Special_GoldenShamrock_7": [433, 269, 15, 19],
-    "Stagepreview_Air": [514, 0, 56, 26],
-    "Stagepreview_Forest": [514, 27, 56, 26],
-    "Stagepreview_Fortress": [514, 54, 56, 26],
-    "Stagepreview_Standard": [514, 81, 56, 26],
-    "Stagepreview_Universe": [514, 108, 56, 26],
-    "Stagepreview_Water": [514, 135, 56, 26],
-    "Stagepreview_B_Air": [571, 0, 112, 52],
-    "Stagepreview_B_Forest": [571, 53, 112, 52],
-    "Stagepreview_B_Fortress": [571, 106, 112, 52],
-    "Stagepreview_B_Standard": [571, 159, 112, 52],
-    "Stagepreview_B_Universe": [571, 212, 112, 52],
-    "Stagepreview_B_Water": [571, 265, 112, 52]
+    "Money_S_1": [234, 0, 15, 9],
+    "Money_S_10": [234, 10, 15, 9],
+    "Money_S_100": [234, 20, 15, 9],
+    "Money_S_1000": [234, 30, 15, 9],
+    "Player_Afroman": [250, 0, 24, 23],
+    "Player_Disgusty": [250, 24, 25, 23],
+    "Player_Longjohn": [250, 48, 14, 26],
+    "Player_Magician": [250, 75, 24, 14],
+    "Player_Speedy": [250, 90, 14, 14],
+    "Player_Standard": [250, 105, 20, 20],
+    "Player_Strooper": [250, 126, 20, 20],
+    "Player_B_Afroman": [276, 0, 48, 46],
+    "Player_B_Disgusty": [276, 47, 50, 46],
+    "Player_B_Longjohn": [276, 94, 28, 52],
+    "Player_B_Magician": [276, 147, 48, 28],
+    "Player_B_Speedy": [276, 176, 28, 28],
+    "Player_B_Standard": [276, 205, 40, 40],
+    "Player_B_Strooper": [276, 246, 40, 40],
+    "Reward_100_jumps_out_of_bounds": [327, 0, 40, 40],
+    "Reward_collect_100_golden_shamrocks": [327, 41, 40, 40],
+    "Reward_collect_24000_hype": [327, 82, 40, 40],
+    "Reward_collect_first_1000_hype": [327, 123, 40, 40],
+    "Reward_collect_first_golden_shamrock": [327, 164, 40, 40],
+    "Reward_collect_first_hype": [327, 205, 40, 40],
+    "Reward_collect_first_treasure": [327, 246, 40, 40],
+    "Reward_die_1000": [327, 287, 40, 40],
+    "Reward_locked": [327, 328, 40, 40],
+    "Reward_B_100_jumps_out_of_bounds": [368, 0, 80, 80],
+    "Reward_B_collect_100_golden_shamrocks": [368, 81, 80, 80],
+    "Reward_B_collect_24000_hype": [368, 162, 80, 80],
+    "Reward_B_collect_first_1000_hype": [368, 243, 80, 80],
+    "Reward_B_collect_first_golden_shamrock": [368, 324, 80, 80],
+    "Reward_B_collect_first_hype": [368, 405, 80, 80],
+    "Reward_B_collect_first_treasure": [368, 486, 80, 80],
+    "Reward_B_die_1000": [368, 567, 80, 80],
+    "Reward_B_locked": [368, 648, 80, 80],
+    "Special_Placeholder": [449, 0, 40, 40],
+    "Special_Placeholder_B": [449, 41, 80, 80],
+    "Special_Pointer": [449, 122, 10, 6],
+    "Special_GoldenShamrock_0": [449, 129, 15, 19],
+    "Special_GoldenShamrock_1": [449, 149, 15, 19],
+    "Special_GoldenShamrock_2": [449, 169, 15, 19],
+    "Special_GoldenShamrock_3": [449, 189, 15, 19],
+    "Special_GoldenShamrock_4": [449, 209, 15, 19],
+    "Special_GoldenShamrock_5": [449, 229, 15, 19],
+    "Special_GoldenShamrock_6": [449, 249, 15, 19],
+    "Special_GoldenShamrock_7": [449, 269, 15, 19],
+    "Stagepreview_Air": [530, 0, 56, 26],
+    "Stagepreview_Forest": [530, 27, 56, 26],
+    "Stagepreview_Fortress": [530, 54, 56, 26],
+    "Stagepreview_Standard": [530, 81, 56, 26],
+    "Stagepreview_Universe": [530, 108, 56, 26],
+    "Stagepreview_Water": [530, 135, 56, 26],
+    "Stagepreview_B_Air": [587, 0, 112, 52],
+    "Stagepreview_B_Forest": [587, 53, 112, 52],
+    "Stagepreview_B_Fortress": [587, 106, 112, 52],
+    "Stagepreview_B_Standard": [587, 159, 112, 52],
+    "Stagepreview_B_Universe": [587, 212, 112, 52],
+    "Stagepreview_B_Water": [587, 265, 112, 52]
   };
   // end spriteDict
   this.player = {                    //The data for the different playermodels with: jumps, jumpstrength, movementspeed right, movementspeed left, weight, unlocked
@@ -434,8 +438,8 @@ function GlobalDict(eventHandler) {
       },
       statisticsTab: {
         rectKey: {
-          tab: "standard",
-          background: "standard",
+          tab: "blur",
+          background: "blur",
           inactive: "modal"
         },
         borderKey: "standard"
@@ -449,7 +453,7 @@ function GlobalDict(eventHandler) {
           money1000: "money1000",
           bonus: "bonus"
         },
-        textKey: "small",
+        textKey: "value",
         borderKey: "standard"
       },
       moneyPositive: {
@@ -462,6 +466,46 @@ function GlobalDict(eventHandler) {
       },
       moneyNegative: {
         rectKey: "moneyNegative",
+        textKey: {
+          label: "enterNameModal",
+          number: "value"
+        },
+        borderKey: "standard"
+      },
+      statisticsMoney1: {
+        rectKey: "money1",
+        textKey: {
+          label: "enterNameModal",
+          number: "value"
+        },
+        borderKey: "standard"
+      },
+      statisticsMoney10: {
+        rectKey: "money10",
+        textKey: {
+          label: "enterNameModal",
+          number: "value"
+        },
+        borderKey: "standard"
+      },
+      statisticsMoney100: {
+        rectKey: "money100",
+        textKey: {
+          label: "enterNameModal",
+          number: "value"
+        },
+        borderKey: "standard"
+      },
+      statisticsMoney1000: {
+        rectKey: "money1000",
+        textKey: {
+          label: "enterNameModal",
+          number: "value"
+        },
+        borderKey: "standard"
+      },
+      statisticsMoneyBonus: {
+        rectKey: "bonus",
         textKey: {
           label: "enterNameModal",
           number: "value"
@@ -562,6 +606,10 @@ function GlobalDict(eventHandler) {
       small: {
         borderColor: "0, 0, 0, 1",
         borderSize: 1.5
+      },
+      verySmall: {
+        borderColor: "0, 0, 0, 1",
+        borderSize: 0.5
       },
       big: {
         borderColor: "0, 0, 0, 1",
@@ -692,6 +740,26 @@ function GlobalDict(eventHandler) {
           "200, 0, 100, 1"
         ],
         align: "center",
+        baseline: "middle",
+        borderKey: ""
+      },
+      rainbowLeft: {
+        font: "12pt Consolas",
+        color: [
+          "200, 0, 0, 1",
+          "200, 100, 0, 1",
+          "200, 200, 0, 1",
+          "100, 200, 0, 1",
+          "0, 200, 0, 1",
+          "0, 200, 100, 1",
+          "0, 200, 200, 1",
+          "0, 100, 200, 1",
+          "0, 0, 200, 1",
+          "100, 0, 200, 1",
+          "200, 0, 200, 1",
+          "200, 0, 100, 1"
+        ],
+        align: "left",
         baseline: "middle",
         borderKey: ""
       }
