@@ -1,4 +1,4 @@
-﻿function Achievements(menu, gD) {
+function Achievements(menu, gD) {
   this.menu = menu;
   this.gD = gD;
   this.achievementList = [
@@ -346,40 +346,40 @@ function AchievementBox(x, y, width, height, padding, imageSize, progressHeight)
       x + padding, y + height - padding - progressHeight,
       width - padding * 2, progressHeight
   );
-  this.data = {
-    name: "Placeholder",
-    getSpriteKey: () => "Placeholder",
-    descriptionLines: ["???", "???"],
-    currentCount: 0,
-    neededCount: 1,
-  };
+  this.currentName = "Placeholder";
+  this.currentSpriteKey = "Placeholder";
+  this.currentDescriptionLines = ["???", "???"];
 
   /**
    * @param {AchievementData} data
    */
   this.setData = function(data) {
-    this.data = data;
+    this.currentName = data.name;
+    this.currentSpriteKey = data.getSpriteKey();
+    this.currentDescriptionLines = data.descriptionLines;
+    this.progress.current = data.currentCount;
+    this.progress.goal = data.neededCount;
   };
   this.draw = function(gD) {
     drawCanvasRect(this.x, this.y, this.width, this.height, "standard", gD);
     drawCanvasImage(
         this.x + (this.width - this.imageSize) / 2, this.y + this.padding,
-        "Reward_B_" + this.data.getSpriteKey(),
+        "Reward_B_" + this.currentSpriteKey,
         gD
     );
     drawCanvasText(
         this.centerX, this.y + this.imageSize + this.padding * 2,
-        this.data.name,
+        this.currentName,
         "normal", gD
     );
     drawCanvasText(
         this.centerX, this.y + this.imageSize + 7 + this.padding * 3,
-        this.data.descriptionLines[0],
+        this.currentDescriptionLines[0],
         "small", gD
     );
     drawCanvasText(
         this.centerX, this.y + this.imageSize + 7 + 14 + this.padding * 3,
-        this.data.descriptionLines[1],
+        this.currentDescriptionLines[1],
         "small", gD
     );
     this.progress.draw(gD);
