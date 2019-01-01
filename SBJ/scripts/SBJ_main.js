@@ -367,7 +367,7 @@ function GlobalDict(eventHandler) {
         },
         textKey: {
           name: "enterNameModal",
-          key: "small"
+          key: "verySmall"
         }
       },
       savestate: {
@@ -447,13 +447,15 @@ function GlobalDict(eventHandler) {
       moneyBar: {
         rectKey: {
           background: "standard",
+          moneyPositive: "moneyPositive",
+          moneyNegative: "moneyNegative",
           money1: "money1",
           money10: "money10",
           money100: "money100",
           money1000: "money1000",
           bonus: "bonus"
         },
-        textKey: "value",
+        textKey: "small",
         borderKey: "standard"
       },
       moneyPositive: {
@@ -668,6 +670,13 @@ function GlobalDict(eventHandler) {
         borderKey: ""
       },
       small: {
+        font: "10pt Consolas",
+        color: "0, 0, 0, 1",
+        align: "center",
+        baseline: "middle",
+        borderKey: ""
+      },
+      verySmall: {
         font: "9pt Consolas",
         color: "0, 0, 0, 1",
         align: "center",
@@ -692,6 +701,13 @@ function GlobalDict(eventHandler) {
         font: "15pt Consolas",
         color: "0, 0, 0, 1",
         align: "left",
+        baseline: "middle",
+        borderKey: ""
+      },
+      percent: {
+        font: "10pt Consolas",
+        color: "0, 0, 0, 1",
+        align: "right",
         baseline: "middle",
         borderKey: ""
       },
