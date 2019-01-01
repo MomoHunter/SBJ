@@ -39,6 +39,18 @@ function Menu(gD) {
       [{ button: "Back",         action: (gD) => { this.showExtras = false } }]
     ];
 
+    var actionToDo;
+    if (window.location.hash) {
+      var hashLocation = decodeURIComponent(window.location.hash.substring(1)); // remove leading #
+      [...this.mainNavigationGrid, ...this.extraNavigationGrid].map(dataRow => {
+        dataRow.map(data => {
+          if (data.button === hashLocation) {
+            actionToDo = data.action;
+          }
+        })
+      })
+    }
+
     this.mainNavigationGrid.map((buttonRow, rowIndex) => {
       buttonRow.map((buttonObject, columnIndex) => {
         buttonObject.button = new CanvasButton(
@@ -66,6 +78,10 @@ function Menu(gD) {
     this.extraMC.setNewGrids(this.extraNavigationGrid, this.additionalGrid);
 
     this.closedTitlescreen = false;        // if a key was pressed at start to close the tile-screen
+
+    if (actionToDo) {
+      actionToDo(this.gD);
+    }
   };
   /**
    * sets a new background at random
