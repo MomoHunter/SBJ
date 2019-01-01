@@ -451,6 +451,22 @@ function GlobalDict(eventHandler) {
         },
         textKey: "small",
         borderKey: "standard"
+      },
+      moneyPositive: {
+        rectKey: "moneyPositive",
+        textKey: {
+          label: "enterNameModal",
+          number: "value"
+        },
+        borderKey: "standard"
+      },
+      moneyNegative: {
+        rectKey: "moneyNegative",
+        textKey: {
+          label: "enterNameModal",
+          number: "value"
+        },
+        borderKey: "standard"
       }
     },
     button: {
@@ -506,6 +522,12 @@ function GlobalDict(eventHandler) {
       },
       bonus: {
         backgroundColor: "30, 180, 198, 1"
+      },
+      moneyPositive: {
+        backgroundColor: "150, 230, 150, 1"
+      },
+      moneyNegative: {
+        backgroundColor: "230, 150, 150, 1"
       }
     },
     circle: {
@@ -601,6 +623,27 @@ function GlobalDict(eventHandler) {
         font: "9pt Consolas",
         color: "0, 0, 0, 1",
         align: "center",
+        baseline: "middle",
+        borderKey: ""
+      },
+      value: {
+        font: "10pt Consolas",
+        color: "0, 0, 0, 1",
+        align: "right",
+        baseline: "alphabetic",
+        borderKey: ""
+      },
+      valueBig: {
+        font: "15pt Consolas",
+        color: "0, 0, 0, 1",
+        align: "right",
+        baseline: "alphabetic",
+        borderKey: ""
+      },
+      big: {
+        font: "15pt Consolas",
+        color: "0, 0, 0, 1",
+        align: "left",
         baseline: "middle",
         borderKey: ""
       },

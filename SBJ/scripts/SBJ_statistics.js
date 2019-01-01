@@ -2,47 +2,86 @@ function Statistics(menu, gD) {
   this.menu = menu;
   this.gD = gD;
   this.init = function() {
-    this.statistics = [
-      new StatisticsData("Zeit gespielt", Events.TIME_PLAYED, false),
-      new StatisticsData("Geld gesammelt", Events.COLLECT_HYPE, false)
+    this.statistics = new Map([
+      ["time_played", new StatisticsData("Zeit gespielt", Events.TIME_PLAYED, false)],
+      ["money_collected", new StatisticsData("Geld gesammelt", Events.COLLECT_HYPE, false)],
+      ["money_1000_collected", new StatisticsData("1000er Scheine gesammelt", Events.COLLECT_1000_HYPE, false)],
+      ["money_100_collected", new StatisticsData("100er Scheine gesammelt", Events.COLLECT_100_HYPE, false)],
+      ["money_10_collected", new StatisticsData("10er Scheine gesammelt", Events.COLLECT_10_HYPE, false)],
+      ["money_1_collected", new StatisticsData("1er Scheine gesammelt", Events.COLLECT_1_HYPE, false)],
+      ["money_bonus", new StatisticsData("Bonus bekommen", Events.COLLECT_BONUS, false)],
+      ["money_spent", new StatisticsData("Geld ausgegeben", Events.MONEY_SPENT, false)],
+      ["items_stopwatch_collected", new StatisticsData("Stoppuhren gesammelt", Events.COLLECT_STOPWATCH, false)],
+      ["items_star_collected", new StatisticsData("Sterne gesammelt", Events.COLLECT_STAR, false)],
+      ["items_feather_collected", new StatisticsData("Federn gesammelt", Events.COLLECT_FEATHER, false)],
+      ["items_treasure_collected", new StatisticsData("Schatztruhen gesammelt", Events.COLLECT_TREASURE, false)],
+      ["items_magnet_collected", new StatisticsData("Magneten gesammelt", Events.COLLECT_MAGNET, false)],
+      ["items_rocket_collected", new StatisticsData("Raketen gesammelt", Events.COLLECT_ROCKET, false)],
+      ["items_stopwatch_used", new StatisticsData("Stoppuhren benutzt", Events.USE_STOPWATCH, false)],
+      ["items_star_used", new StatisticsData("Sterne benutzt", Events.USE_STAR, false)],
+      ["items_feather_used", new StatisticsData("Federn benutzt", Events.USE_FEATHER, false)],
+      ["items_treasure_used", new StatisticsData("Schatztruhen benutzt", Events.USE_TREASURE, false)],
+      ["items_magnet_used", new StatisticsData("Magneten benutzt", Events.USE_MAGNET, false)],
+      ["items_rocket_used", new StatisticsData("Raketen benutzt", Events.USE_ROCKET, false)],
+      ["player_deaths", new StatisticsData("Tode", Events.DEATH, false)],
+      ["items_goldenShamrock_collected", new StatisticsData("Goldene Kleeblätter gesammelt", Events.COLLECT_GOLDEN_SHAMROCK, false)],
+      ["game_meter_travelled", new StatisticsData("Insgesamte Meter zurückgelegt", Events.END_OF_ROUND_TOTAL_TRAVELLED_DISTANCE, false)],
+      ["highscore_money_collected", new StatisticsData("Höchste gesammelte Geldmenge", Events.HIGHSCORE_COLLECTED_HYPE, true)],
+      ["highscore_meter_travelled", new StatisticsData("Höchste zurückgelegte Distanz", Events.HIGHSCORE_TRAVELLED_DISTANCE, true)],
+      ["player_hats_collected", new StatisticsData("Hüte gesammelt", Events.COLLECT_HAT, false)],
+      ["player_beards_collected", new StatisticsData("Bärte gesammelt", Events.COLLECT_BEARD, false)],
+      ["player_glasses_collected", new StatisticsData("Brillen gesammelt", Events.COLLECT_GLASSES, false)],
+      ["player_skins_collected", new StatisticsData("Skins gesammelt", Events.COLLECT_SKIN, false)],
+      ["game_keys_collected", new StatisticsData("Schlüssel gesammelt", Events.COLLECT_KEY, false)],
+      ["game_minigames_won", new StatisticsData("Minispiele gewonnen", Events.MINIGAME_WON, false)],
+      ["game_minigames_lost", new StatisticsData("Minispiele verloren", Events.MINIGAME_LOST, false)],
+      ["game_minigames_activated", new StatisticsData("Minispiele aktiviert", Events.MINIGAME_ACTIVATED, false)],
+      ["player_jumps", new StatisticsData("Sprünge", Events.DO_JUMP, false)],
+      ["savestates_created", new StatisticsData("Speicherstände erstellt", Events.CREATE_SAVESTATE, false)]
+    ]);
+    this.statisticsData = [
+      20000,             //in seconds
+      30000,
+      6,
+      80,
+      320,
+      2800,
+      10000,
+      5000,
+      50,
+      20,
+      0,
+      0,
+      0,
+      0,
+      50,
+      20,
+      0,
+      0,
+      0,
+      0,
+      30000000,
+      3,
+      4444000,
+      40,
+      3000,
+      40,
+      20,
+      2,
+      55,
+      5,
+      4,
+      40,
+      44,
+      94652374489,
+      2
     ];
-    this.statistics = {
-      "time_played": 20000,             //in seconds
-      "money_collected": 30000,
-      "money_1000_collected": 6,
-      "money_100_collected": 80,
-      "money_10_collected": 320,
-      "money_1_collected": 2800,
-      "money_bonus": 10000,
-      "money_spent": 5000,
-      "items_rocket_collected": 50,
-      "items_stopwatch_collected": 20,
-      "items_magnet_collected": 0,
-      "items_treasure_collected": 0,
-      "items_star_collected": 0,
-      "items_feather_collected": 0,
-      "items_rocket_used": 50,
-      "items_stopwatch_used": 20,
-      "items_magnet_used": 0,
-      "items_treasure_used": 0,
-      "items_star_used": 0,
-      "items_feather_used": 0,
-      "player_deaths": 30000000,
-      "items_goldenShamrock_collected": 3,
-      "game_meter_travelled": 4444000,
-      "highscore_money_collected": 40,
-      "highscore_meter_travelled": 3000,
-      "player_hats_collected": 40,
-      "player_beards_collected": 20,
-      "player_glasses_collected":2,
-      "player_skins_collected": 55,
-      "game_keys_collected": 5,
-      "game_minigames_won": 4,
-      "game_minigames_lost":40,
-      "game_minigames_activated": 44,
-      "player_jumps": 94652374489,
-      "savestate_created": 2
-    };
+
+    let temp = 0;
+    for (var entry of this.statistics.values()) {
+      entry.currentCount = this.statisticsData[temp];
+      temp++;
+    }
 
     this.title = new CanvasText(this.gD.canvas.width / 2, 30, "Statistics", "pageTitle");
 
@@ -52,7 +91,9 @@ function Statistics(menu, gD) {
         this.gD.canvas.width / 2 - 310, 60, 620, 220, index, icon, "statisticsTab"
       );
     }, this);
-    this.tabs[2].objects.push(new StatisticsMoneyBar(255, 170, 545, 100, this.statistics, "moneyBar"));
+    this.tabs[2].objects.push(new StatisticsMoneyField(this.gD.canvas.width / 2 - 245, 70, 545, 13, "money_collected", "moneyPositive"));
+    this.tabs[2].objects.push(new StatisticsMoneyField(this.gD.canvas.width / 2 - 245, 93, 545, 13, "money_spent", "moneyNegative"));
+    this.tabs[2].objects.push(new StatisticsMoneyBar(255, 170, 545, 100, "moneyBar"));
     this.tabs[2].objects.push(new CanvasRainbowText(400, 150, "Bonus", "rainbow"));
     this.tabs[2].select();
 
@@ -87,7 +128,7 @@ function Statistics(menu, gD) {
   };
   this.update = function() {
     this.tabs.map(tab => {
-      tab.update();
+      tab.update(this.statistics);
     }, this);
   };
   this.draw = function(ghostFactor) {
@@ -95,7 +136,7 @@ function Statistics(menu, gD) {
 
     this.title.draw(this.gD);
     this.tabs.map(tab => {
-      tab.draw(this.gD);
+      tab.draw(this.gD, this.statistics);
     }, this);
     this.backToMenu.draw(this.gD);
   };
@@ -154,14 +195,14 @@ function StatisticsTab(x, y, width, height, tabNr, spriteKey, styleKey) {
   this.deselect = function() {
     this.selected = false;
   };
-  this.update = function() {
+  this.update = function(statistics) {
     this.objects.map(object => {
       if (object.update !== undefined) {
-        object.update();
+        object.update(statistics);
       }
     }, this);
   };
-  this.draw = function(gD) {
+  this.draw = function(gD, statistics) {
     var design = gD.design.elements[this.styleKey];
     var borderSize = gD.design.border[design.borderKey].borderSize;
     var [spriteX, spriteY, spriteWidth, spriteHeight] = gD.spriteDict[this.spriteKey];
@@ -185,51 +226,75 @@ function StatisticsTab(x, y, width, height, tabNr, spriteKey, styleKey) {
       );
       drawCanvasRect(this.x + 55 + borderSize / 2, this.y, this.width - 55, this.height, design.rectKey.background, gD);
       this.objects.map(object => {
-        object.draw(gD);
+        object.draw(gD, statistics);
       }, this);
       drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
     }
   };
 }
 
-function StatisticsMoneyBar(x, y, width, height, stats, styleKey) {
+function StatisticsMoneyField(x, y, width, height, key, styleKey) {
   this.x = x;
   this.y = y;
   this.width = width;
   this.height = height;
-  this.stats = stats;
+  this.key = key;
   this.styleKey = styleKey;
-  this.widths = [
-    this.stats.money_1_collected / this.stats.money_collected * this.width,
-    (this.stats.money_10_collected * 10) / this.stats.money_collected * this.width,
-    (this.stats.money_100_collected * 100) / this.stats.money_collected * this.width,
-    (this.stats.money_1000_collected * 1000) / this.stats.money_collected * this.width,
-    this.stats.money_bonus / this.stats.money_collected * this.width
-  ];
-  this.refresh = function() {
+  this.draw = function(gD, statistics) {
+    let design = gD.design.elements[this.styleKey];
+    let [spriteX, spriteY, spriteWidth, spriteHeight] = gD.spriteDict["Currency_1"];
+    let data = statistics.get(this.key);
+
+    drawCanvasText(this.x + 3, this.y + this.height / 2, data.name, design.textKey.label, gD);
+    drawCanvasRect(this.x + this.width - 220, this.y, 220, this.height, design.rectKey, gD);
+    drawCanvasText(
+      this.x + this.width - 3, this.y + this.height - 3,
+      data.currentCount.toString().replace(/\d(?=(\d{3})+($|\.))/g, '$&.'), design.textKey.number, gD
+    );
+    drawCanvasImage(this.x + this.width - 218, this.y + (this.height - spriteHeight) / 2, "Currency_1", gD);
+    drawCanvasRectBorder(this.x + this.width - 220, this.y, 220, this.height, design.borderKey, gD);
+    drawCanvasLine(this.x, this.y + this.height / 2, design.borderKey, gD, this.x, this.y + this.height, this.x + this.width, this.y + this.height);
+  };
+}
+
+function StatisticsMoneyBar(x, y, width, height, styleKey) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.styleKey = styleKey;
+  this.widths = [];
+  this.update = function(statistics) {
     this.widths = [
-      this.stats.money_1_collected / this.stats.money_collected * this.width,
-      (this.stats.money_10_collected * 10) / this.stats.money_collected * this.width,
-      (this.stats.money_100_collected * 100) / this.stats.money_collected * this.width,
-      (this.stats.money_1000_collected * 1000) / this.stats.money_collected * this.width,
-      this.stats.money_bonus / this.stats.money_collected * this.width
+      statistics.get("money_1_collected").currentCount / statistics.get("money_collected").currentCount * this.width,
+      statistics.get("money_10_collected").currentCount * 10 / statistics.get("money_collected").currentCount * this.width,
+      statistics.get("money_100_collected").currentCount * 100 / statistics.get("money_collected").currentCount * this.width,
+      statistics.get("money_1000_collected").currentCount * 1000 / statistics.get("money_collected").currentCount * this.width,
+      statistics.get("money_bonus").currentCount / statistics.get("money_collected").currentCount * this.width
     ];
   };
   this.draw = function(gD) {
-    var design = gD.design.elements[this.styleKey];
-    var designKeys = ["money1","money10","money100","money1000","bonus"];
-    var newX = this.x;
+    let design = gD.design.elements[this.styleKey];
+    let designKeys = ["money1","money10","money100","money1000","bonus"];
+    let newX = this.x;
 
     this.widths.map((width, index) => {
       drawCanvasRect(newX, this.y, width, this.height, design.rectKey[designKeys[index]], gD);
-      drawCanvasText(newX + width / 2, this.y + this.height / 2, (width / this.width * 100).toFixed(2) + "%", design.textKey, gD);
       drawCanvasRectBorder(newX, this.y, width, this.height, design.borderKey, gD);
       newX += width;
     }, this);
   };
 }
 
-function StatisticsMoneyBarLegend(x, y, width, height, stats) {}
+function StatisticsMoneyBarLegend(x, y, width, height) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.draw = function(gD, statistics) {
+    
+  };
+}
 
 function StatisticsMoneyCircle(centerX, centerY, radius, stats, styleKey) {
   this.centerX = centerX;
@@ -238,8 +303,8 @@ function StatisticsMoneyCircle(centerX, centerY, radius, stats, styleKey) {
   this.stats = stats;
   this.styleKey = styleKey;
   this.draw = function(gD) {
-    var design = gD.design.elements[this.styleKey];
-    var money = 0;
+    let design = gD.design.elements[this.styleKey];
+    let money = 0;
     drawCanvasCircle(this.centerX, this.centerY, this.radius, design.circleKey.background, gD);
     drawCanvasCirclePart(
       this.centerX, this.centerY, this.radius, -Math.PI / 2, 
