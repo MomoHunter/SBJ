@@ -1,4 +1,4 @@
-﻿function main() {
+function main() {
   var globalDict = new GlobalDict(new EventHandler());
   var menu = new Menu(globalDict);
   window.addEventListener('keydown', event => keydownEvent(event, globalDict));
@@ -6,8 +6,8 @@
   window.addEventListener('mousemove', event => mousemoveEvent(event, globalDict));
   window.addEventListener('click', event => clickEvent(event, globalDict));
   window.addEventListener('wheel', event => wheelEvent(event, globalDict));
-  menu.init();
   globalDict.currentPage = menu;
+  menu.init();
   globalDict.raf = requestAnimationFrame(timestamp => gameloop(globalDict, timestamp));
 }
 
