@@ -41,10 +41,10 @@ function Menu(gD) {
 
     var actionToDo;
     if (window.location.hash) {
-      var hashLocation = decodeURIComponent(window.location.hash.substring(1)); // remove leading #
+      var hashLocation = decodeURIComponent(window.location.hash.substring(1)).toLowerCase(); // remove leading #
       [...this.mainNavigationGrid, ...this.extraNavigationGrid].map(dataRow => {
         dataRow.map(data => {
-          if (data.button === hashLocation) {
+          if (data.button.toLowerCase() === hashLocation) {
             actionToDo = data.action;
           }
         })
