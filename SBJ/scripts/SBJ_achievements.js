@@ -1,4 +1,4 @@
-function Achievements(menu, gD) {
+﻿function Achievements(menu, gD) {
   this.menu = menu;
   this.gD = gD;
   this.achievementList = [
@@ -7,16 +7,16 @@ function Achievements(menu, gD) {
       1, AchievementEventKeys.COLLECT_HYPE, false, "collect_first_hype"
     ),
     new AchievementData(
-      "Gold!? Ich bin reich!!!", ["Sammle die erste Schatztruhe", ""],
-      1, AchievementEventKeys.COLLECT_TREASURE, false, "collect_first_treasure"
-    ),
-    new AchievementData(
-      "Er kann fliegen", ["Entdecke den Doppelsprung", ""],
-      1, AchievementEventKeys.DO_DOUBLE_JUMP, false, "use_first_double_jump"
-    ),
-    new AchievementData(
       "$$$$", ["Sammle den ersten 1000 Hype Schein", ""],
       1, AchievementEventKeys.COLLECT_1000_HYPE, false, "collect_first_1000_hype"
+    ),
+    new AchievementData(
+        "Er kann fliegen", ["Entdecke den Doppelsprung", ""],
+        1, AchievementEventKeys.DO_DOUBLE_JUMP, false, "use_first_double_jump"
+    ),
+    new AchievementData(
+        "Gold!? Ich bin reich!!!", ["Sammle die erste Schatztruhe", ""],
+        1, AchievementEventKeys.COLLECT_TREASURE, false, "collect_first_treasure"
     ),
     new AchievementData(
       "Matrix", ["Benutze 5 Stoppuhren in einer Runde", ""],
@@ -67,7 +67,7 @@ function Achievements(menu, gD) {
       9001, AchievementEventKeys.COLLECT_HYPE, true, "collect_9001_hype"
     ),
     new AchievementData(
-      "24K Magic", ["Sammle 24.000 Hype in einer Runde", ""],
+      "24kt Magic", ["Sammle 24.000 Hype in einer Runde", ""],
       24000, AchievementEventKeys.COLLECT_HYPE, true, "collect_24000_hype"
     ),
     new AchievementData(
@@ -145,11 +145,10 @@ function Achievements(menu, gD) {
 
     this.buttonStartTop = 60;
     this.buttonStartLeft = 20;
-    this.buttonHeight = 46;
-    this.buttonWidth = 50;
+    this.buttonSize = 46;
     this.buttonPadding = 12;
     this.buttonsPerRow = 10;
-    this.bigAchievementBoxLeft = this.buttonStartLeft + (this.buttonWidth + this.buttonPadding) * this.buttonsPerRow;
+    this.bigAchievementBoxLeft = this.buttonStartLeft + (this.buttonSize + this.buttonPadding) * this.buttonsPerRow;
 
     this.achievementBox = new AchievementBox(
       this.bigAchievementBoxLeft, this.buttonStartTop,
@@ -166,9 +165,9 @@ function Achievements(menu, gD) {
         return rowButtons.map((achievementData, columnIndex) => {
           return {
             button: new CanvasImageButton(
-              this.buttonStartLeft + (this.buttonWidth + this.buttonPadding) * columnIndex,
-              this.buttonStartTop + (this.buttonHeight + this.buttonPadding) * rowIndex,
-              this.buttonWidth, this.buttonHeight,
+              this.buttonStartLeft + (this.buttonSize + this.buttonPadding) * columnIndex,
+              this.buttonStartTop + (this.buttonSize + this.buttonPadding) * rowIndex,
+              this.buttonSize, this.buttonSize,
               "Reward_" + achievementData.getSpriteKey(), "menu"
             ),
             selected: (gD) => {this.achievementBox.setData(achievementData)}
@@ -305,7 +304,7 @@ function AchievementData(name, descriptionLines, neededCount, eventKey, isResetP
   this.isResetPerRound = isResetPerRound;
   this.spriteKey = spriteKey;
   this.currentCount = 0;
-  this.isUnlocked = false;
+  this.isUnlocked = true;
 
   this.resetAtRoundStart = function() {
     if (this.isResetPerRound) {
