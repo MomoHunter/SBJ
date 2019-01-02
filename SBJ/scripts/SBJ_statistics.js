@@ -41,13 +41,13 @@ function Statistics(menu, gD) {
     ]);
     this.statisticsData = [
       20000,             //in seconds
-      30000,
-      6,
-      80,
-      320,
-      2800,
-      10000,
-      5000,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
       50,
       20,
       0,
@@ -266,9 +266,15 @@ function StatisticsMoneyField(x, y, width, height, spriteKey, key, styleKey) {
         break;
       default:
     }
+    value = value / statistics.get("money_collected").currentCount * 100;
+    if (isNaN(value)) {
+      value = 0;
+    }
 
     drawCanvasText(this.x + 3, this.y + this.height / 2, data.name, design.textKey.label, gD);
-    drawCanvasText(this.x + this.width - 225, this.y + this.height - 3, (value / statistics.get("money_collected").currentCount * 100).toFixed(2) + "%", design.textKey.number, gD);
+    drawCanvasText(
+      this.x + this.width - 225, this.y + this.height - 3, value.toFixed(2) + "%", design.textKey.number, gD
+    );
     drawCanvasRect(this.x + this.width - 220, this.y, 220, this.height, design.rectKey, gD);
     drawCanvasText(
       this.x + this.width - 3, this.y + this.height - 3,
@@ -276,8 +282,14 @@ function StatisticsMoneyField(x, y, width, height, spriteKey, key, styleKey) {
     );
     drawCanvasImage(this.x + this.width - 218, this.y + (this.height - spriteHeight) / 2, this.spriteKey, gD);
     drawCanvasRectBorder(this.x + this.width - 220, this.y, 220, this.height, design.borderKey, gD);
-    drawCanvasLine(this.x, this.y + this.height / 2, design.borderKey, gD, this.x, this.y + this.height, this.x + this.width, this.y + this.height);
-    drawCanvasLine(this.x + this.width - 279, this.y + this.height / 2, design.borderKey, gD, this.x + this.width - 279, this.y + this.height);
+    drawCanvasLine(
+      this.x, this.y + this.height / 2, design.borderKey, gD,
+      this.x, this.y + this.height, this.x + this.width, this.y + this.height
+    );
+    drawCanvasLine(
+      this.x + this.width - 279, this.y + this.height / 2, design.borderKey, gD,
+      this.x + this.width - 279, this.y + this.height
+    );
   };
 }
 
@@ -291,7 +303,9 @@ function StatisticsMoneyRainbowField(x, y, width, height, spriteKey, key, styleK
   this.styleKey = styleKey;
   this.rainbowText = null;
   this.init = function(statistics) {
-    this.rainbowText = new CanvasRainbowText(this.x + 3, this.y + this.height / 2, statistics.get(this.key).name, "rainbowLeft");
+    this.rainbowText = new CanvasRainbowText(
+      this.x + 3, this.y + this.height / 2, statistics.get(this.key).name, "rainbowLeft"
+    );
   };
   this.update = function() {
     this.rainbowText.update();
@@ -300,9 +314,15 @@ function StatisticsMoneyRainbowField(x, y, width, height, spriteKey, key, styleK
     let design = gD.design.elements[this.styleKey];
     let [spriteX, spriteY, spriteWidth, spriteHeight] = gD.spriteDict[this.spriteKey];
     let data = statistics.get(this.key);
+    let value = data.currentCount / statistics.get("money_collected").currentCount * 100;
+    if (isNaN(value)) {
+      value = 0;
+    }
 
     this.rainbowText.draw(gD);
-    drawCanvasText(this.x + this.width - 225, this.y + this.height - 3, (data.currentCount / statistics.get("money_collected").currentCount * 100).toFixed(2) + "%", design.textKey.number, gD);
+    drawCanvasText(
+      this.x + this.width - 225, this.y + this.height - 3, value.toFixed(2) + "%", design.textKey.number, gD
+    );
     drawCanvasRect(this.x + this.width - 220, this.y, 220, this.height, design.rectKey, gD);
     drawCanvasText(
       this.x + this.width - 3, this.y + this.height - 3,
@@ -310,8 +330,14 @@ function StatisticsMoneyRainbowField(x, y, width, height, spriteKey, key, styleK
     );
     drawCanvasImage(this.x + this.width - 218, this.y + (this.height - spriteHeight) / 2, this.spriteKey, gD);
     drawCanvasRectBorder(this.x + this.width - 220, this.y, 220, this.height, design.borderKey, gD);
-    drawCanvasLine(this.x, this.y + this.height / 2, design.borderKey, gD, this.x, this.y + this.height, this.x + this.width, this.y + this.height);
-    drawCanvasLine(this.x + this.width - 279, this.y + this.height / 2, design.borderKey, gD, this.x + this.width - 279, this.y + this.height);
+    drawCanvasLine(
+      this.x, this.y + this.height / 2, design.borderKey, gD,
+      this.x, this.y + this.height, this.x + this.width, this.y + this.height
+    );
+    drawCanvasLine(
+      this.x + this.width - 279, this.y + this.height / 2, design.borderKey, gD,
+      this.x + this.width - 279, this.y + this.height
+    );
   };
 }
 
@@ -337,8 +363,10 @@ function StatisticsMoneyBar(x, y, width, height, styleKey) {
     let newX = this.x;
 
     this.widths.map((width, index) => {
+      if (!isNaN(width)) {
         drawCanvasRect(newX, this.y, width, this.height, design.rectKey[designKeys[index]], gD);
         newX += width;
+      }
     }, this);
     drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
   };
