@@ -27,15 +27,15 @@ function CanvasRainbowText(x, y, text, styleKey) {
   this.y = y;
   this.text = text;
   this.styleKey = styleKey;
-  this.counter = 0;
+  this.counter = text.length * 8;
   this.index = 0;
   this.update = function() {
     this.counter++;
     this.index = Math.floor(this.counter / 8);
   };
   this.draw = function(gD) {
-    var design = gD.design.text[this.styleKey];
-    var x = this.x;
+    let design = gD.design.text[this.styleKey];
+    let x = this.x;
 
     gD.context.textAlign = "left";
     gD.context.textBaseline = design.baseline;
@@ -51,12 +51,13 @@ function CanvasRainbowText(x, y, text, styleKey) {
       default:
     }
     this.text.split("").map((letter, index) => {
-      gD.context.fillStyle = `rgba(${design.color[(this.index + index) % 12]})`;
-      gD.context.fillText(letter, x + gD.context.measureText(this.text.substring(0, index)).width, y);
+      gD.context.fillStyle = `rgba(${design.color[(this.index - index) % 12]})`;
+      gD.context.fillText(letter, x + gD.context.measureText(this.text.substring(0, index)).width, this.y);
       if (design.borderKey !== "") {
         drawCanvasTextBorder(this.x, this.y, this.text, design.borderKey, gD);
       }
     }, this);
+
   };
 }
 
