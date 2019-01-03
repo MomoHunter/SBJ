@@ -85,19 +85,19 @@ function Statistics(menu, gD) {
 
     this.title = new CanvasText(this.gD.canvas.width / 2, 30, "Statistics", "pageTitle");
 
-    this.tabs = ["Deco_Bubble_0", "Deco_Bubble_0", "Currency_3", "Deco_Bubble_0"];
+    this.tabs = ["Deco_Bubble_M", "Deco_Bubble_M", "Currency_M", "Deco_Bubble_M"];
     this.tabs.map((icon, index) => {
       this.tabs[index] = new StatisticsTab(
         this.gD.canvas.width / 2 - 310, 60, 620, 220, index, icon, "statisticsTab"
       );
     }, this);
-    this.tabs[2].objects.push(new StatisticsMoneyField(this.gD.canvas.width / 2 - 245, 70, 545, 13, "Currency_1", "money_collected", "moneyPositive"));
-    this.tabs[2].objects.push(new StatisticsMoneyField(this.gD.canvas.width / 2 - 245, 93, 545, 13, "Currency_1", "money_spent", "moneyNegative"));
+    this.tabs[2].objects.push(new StatisticsMoneyField(this.gD.canvas.width / 2 - 245, 70, 545, 13, "Currency_XS", "money_collected", "moneyPositive"));
+    this.tabs[2].objects.push(new StatisticsMoneyField(this.gD.canvas.width / 2 - 245, 93, 545, 13, "Currency_XS", "money_spent", "moneyNegative"));
     this.tabs[2].objects.push(new StatisticsMoneyField(this.gD.canvas.width / 2 - 245, 116, 545, 13, "Money_S_1", "money_1_collected", "statisticsMoney1"));
     this.tabs[2].objects.push(new StatisticsMoneyField(this.gD.canvas.width / 2 - 245, 139, 545, 13, "Money_S_10", "money_10_collected", "statisticsMoney10"));
     this.tabs[2].objects.push(new StatisticsMoneyField(this.gD.canvas.width / 2 - 245, 162, 545, 13, "Money_S_100", "money_100_collected", "statisticsMoney100"));
     this.tabs[2].objects.push(new StatisticsMoneyField(this.gD.canvas.width / 2 - 245, 185, 545, 13, "Money_S_1000", "money_1000_collected", "statisticsMoney1000"));
-    let bonus = new StatisticsMoneyRainbowField(this.gD.canvas.width / 2 - 245, 208, 545, 13, "Currency_1", "money_bonus", "statisticsMoneyBonus");
+    let bonus = new StatisticsMoneyRainbowField(this.gD.canvas.width / 2 - 245, 208, 545, 13, "Currency_XS", "money_bonus", "statisticsMoneyBonus");
     bonus.init(this.statistics);
     this.tabs[2].objects.push(bonus);
     this.tabs[2].objects.push(new StatisticsMoneyBar(255, 231, 545, 39, "moneyBar"));
