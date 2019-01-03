@@ -210,7 +210,7 @@ function StatisticsTab(x, y, width, height, tabNr, spriteKey, styleKey) {
   };
   this.draw = function(gD, statistics) {
     let design = gD.design.elements[this.styleKey];
-    let [spriteX, spriteY, spriteWidth, spriteHeight] = gD.spriteDict[this.spriteKey];
+    let {spriteWidth, spriteHeight} = getSpriteData(this.spriteKey, gD);
     if (!this.selected) {
       drawCanvasRect(this.x, this.y + 55 * this.tabNr, 55, 55, design.rectKey.tab, gD);
       drawCanvasImage(
@@ -250,7 +250,7 @@ function StatisticsMoneyField(x, y, width, height, spriteKey, key, styleKey) {
   this.styleKey = styleKey;
   this.draw = function(gD, statistics) {
     let design = gD.design.elements[this.styleKey];
-    let [spriteX, spriteY, spriteWidth, spriteHeight] = gD.spriteDict[this.spriteKey];
+    let {spriteHeight} = getSpriteData(this.spriteKey, gD);
     let data = statistics.get(this.key);
     let value = data.currentCount;
 
@@ -312,7 +312,7 @@ function StatisticsMoneyRainbowField(x, y, width, height, spriteKey, key, styleK
   };
   this.draw = function(gD, statistics) {
     let design = gD.design.elements[this.styleKey];
-    let [spriteX, spriteY, spriteWidth, spriteHeight] = gD.spriteDict[this.spriteKey];
+    let {spriteHeight} = getSpriteData(this.spriteKey, gD);
     let data = statistics.get(this.key);
     let value = data.currentCount / statistics.get("money_collected").currentCount * 100;
     if (isNaN(value)) {

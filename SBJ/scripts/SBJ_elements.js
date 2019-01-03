@@ -256,13 +256,7 @@ function CanvasImageButton(x, y, width, height, spriteKey, styleKey) {
   };
   this.draw = function(gD) {
     var design = gD.design.button[this.styleKey];
-    var spriteWidth, spriteHeight;
-    var spriteData = gD.spriteDict[this.spriteKey];
-    if (spriteData) {
-      [, , spriteWidth, spriteHeight] = spriteData;
-    } else {
-      spriteWidth = spriteHeight = 40; // size of placeholder-image
-    }
+    var {spriteWidth, spriteHeight} = getSpriteData(this.spriteKey, gD);
     if (this.selected) {
       drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.selected, gD);
     } else {
@@ -387,28 +381,28 @@ function CanvasChoosePictureModal(x, y, width, height, styleKey) {
   this.height = height;
   this.styleKey = styleKey;
   this.pictures = [
-    "Item_Stopwatch_0",
-    "Item_Star_0",
-    "Item_Feather_0",
-    "Item_Treasure_3",
-    "Item_Magnet_0",
-    "Item_Rocket_0",
-    "Special_GoldenShamrock_0",
-    "Money_1_0",
-    "Money_10_0",
-    "Money_100_0",
-    "Money_1000_0",
+    "Item_Stopwatch",
+    "Item_Star",
+    "Item_Feather",
+    "Item_Treasure",
+    "Item_Magnet",
+    "Item_Rocket",
+    "Special_GoldenShamrock",
+    "Money_1",
+    "Money_10",
+    "Money_100",
+    "Money_1000",
     "Enemy_Fireball",
     "Enemy_Airplane_Red",
     "Enemy_Airplane_Green",
     "Enemy_Airplane_Blue",
     "Enemy_Airplane_Purple",
-    "Enemy_Rocket_0",
+    "Enemy_Rocket",
     "Enemy_Fish_Green",
     "Enemy_Fish_Blue",
     "Enemy_Fish_Nemo",
     "Enemy_Fish_Red",
-    "Enemy_Bird_Left_0",
+    "Enemy_Bird_Left",
     "Enemy_Asteroid_Lava",
     "Enemy_Asteroid_Stone",
     "Enemy_Asteroid_Ice",

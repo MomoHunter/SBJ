@@ -25,6 +25,8 @@ function gameloop(gD, timestamp) {
       gD.currentPage.updateWheelMoves();
       gD.currentPage.update();
 
+      gD.frameNo++;
+
       gD.newKeys = [];
       gD.events = [];
       gD.clicks = [];
@@ -88,6 +90,7 @@ function GlobalDict(eventHandler) {
   this.lag = 0;
   this.timeDiff = 0;
   this.refreshrate = 1000 / 60;
+  this.frameNo = 0;
   this.muted = true;
   this.save = {};
   this.spritesheet = new Image();

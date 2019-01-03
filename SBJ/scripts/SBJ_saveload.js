@@ -536,7 +536,7 @@ function SLSavestate(x, y, width, height, styleKey, savestate) {
     var design = gD.design.elements[this.styleKey];
     var date = new Date(this.savestate.date);
     date = date.toLocaleString('de-DE', {weekday: 'short'}) + " " + date.toLocaleString('de-DE');
-    var [spriteX, spriteY, spriteWidth, spriteHeight] = gD.spriteDict[this.savestate.spriteKey];
+    var {spriteWidth, spriteHeight} = getSpriteData(this.savestate.spriteKey, gD);
 
     if (this.selected) {
       drawCanvasRect(this.x, this.y - saveLoad.scrollHeight, this.width, this.height, design.rectKey.selected, gD);
@@ -583,7 +583,7 @@ function SLSavestateDetails(x, y, width, height, styleKey) {
   };
   /**
    * draws the savestate details onto the canvas
-   * @param  {globalDict} gD the global dictionary
+   * @param  {GlobalDict} gD the global dictionary
    */
   this.draw = function(gD) {
     if (this.currentSavestate === null) {
@@ -591,12 +591,28 @@ function SLSavestateDetails(x, y, width, height, styleKey) {
     }
 
     var design = gD.design.elements[this.styleKey];
-    var [spriteX, spriteY, spriteWidth, spriteHeight] = gD.spriteDict[this.currentSavestate.spriteKey];
+    var {spriteWidth, spriteHeight} = getSpriteData(this.currentSavestate.spriteKey, gD);
+
     drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey, gD);
-    drawCanvasImage(this.x + Math.floor((this.width - spriteWidth) / 2), this.y + Math.floor((55 - spriteHeight) / 2), this.currentSavestate.spriteKey, gD);
-    drawCanvasText(this.x + 6, this.y + 60, "Name: " + this.currentSavestate.name.slice(0, 11) + "...", design.textKey, gD);
-    drawCanvasText(this.x + 6, this.y + 72, "Date: " + this.currentSavestate.date, design.textKey, gD);
-    drawCanvasText(this.x + 6, this.y + 84, "Version: " + this.currentSavestate.version, design.textKey, gD);
+    drawCanvasImage(
+        this.x + Math.floor((this.width - spriteWidth) / 2), this.y + Math.floor((55 - spriteHeight) / 2),
+        this.currentSavestate.spriteKey, gD
+    );
+    drawCanvasText(
+        this.x + 6, this.y + 60,
+        "Name: " + this.currentSavestate.name.slice(0, 11) + "...",
+        design.textKey, gD
+    );
+    drawCanvasText(
+        this.x + 6, this.y + 72,
+        "Date: " + this.currentSavestate.date,
+        design.textKey, gD
+    );
+    drawCanvasText(
+        this.x + 6, this.y + 84,
+        "Version: " + this.currentSavestate.version,
+        design.textKey, gD
+    );
     drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
   };
 }

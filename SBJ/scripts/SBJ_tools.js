@@ -40,6 +40,25 @@ function copy(object) {
     return result;
   }
 }
+
+/**
+ * Retrieves sprite information, falling back to the placeholder image if needed.
+ * @param {string} spriteKey
+ * @param {GlobalDict} gD
+ * @return {{spriteWidth: number, spriteHeight: number, full: Array}}
+ */
+function getSpriteData(spriteKey, gD) {
+  var spriteData = gD.spriteDict[spriteKey];
+  if (!spriteData) {
+    var fallbackSpriteKey = "Special_Placeholder";
+    if (spriteKey.includes("_B_") || spriteKey.endsWith("_B")) {
+      fallbackSpriteKey += "_B";
+    }
+    return getSpriteData(fallbackSpriteKey, gD);
+  } else {
+    return {spriteWidth: spriteData[3], spriteHeight: spriteData[4], full: spriteData}
+  }
+}
 // endregion
 
 
@@ -94,16 +113,14 @@ function drawCanvasImage(x, y, spriteKey, gD) {
     return;
   }
 
-  var spriteData = gD.spriteDict[spriteKey];
-  if (!spriteData) {
-    var fallbackSpriteKey = "Special_Placeholder";
-    if (spriteKey.includes("_B_") || spriteKey.endsWith("_B")) {
-      fallbackSpriteKey += "_B";
-    }
-    return drawCanvasImage(x, y, fallbackSpriteKey, gD);
+  var {full: spriteData} = getSpriteData(spriteKey, gD);
+  var [isAnim, spriteX, spriteY, spriteWidth, spriteHeight] = spriteData;
+
+  if (isAnim) {
+    var frameNo = Math.floor(gD.frameNo / 10) % spriteY.length;
+    spriteY = spriteY[frameNo];
   }
 
-  var [spriteX, spriteY, spriteWidth, spriteHeight] = spriteData;
   gD.context.drawImage(
     gD.spritesheet,
     spriteX, spriteY, spriteWidth, spriteHeight,
