@@ -117,7 +117,7 @@ function drawCanvasImage(x, y, spriteKey, gD) {
   var [isAnim, spriteX, spriteY, spriteWidth, spriteHeight] = spriteData;
 
   if (isAnim) {
-    var frameNo = Math.floor(gD.frameNo / 10) % spriteY.length;
+    var frameNo = Math.floor(gD.frameNo / 8) % spriteY.length;
     spriteY = spriteY[frameNo];
   }
 
