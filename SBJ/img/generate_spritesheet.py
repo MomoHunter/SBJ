@@ -31,10 +31,10 @@ for path, _, filenames in os.walk('sprites'):
     if sub_path:
         sub_path += '/'
 
-    file_names = [os.path.splitext(sub_path + name) for name in filenames if name.endswith(('.png', '.webp'))]
+    file_names = [os.path.splitext(sub_path + name) for name in filenames if name.endswith(('.png', '.gif'))]
     for name, ext in file_names:
         new_img_data = {
-            'is_anim': ext == '.webp',
+            'is_anim': ext == '.gif',
             'full_name': category + '_' + name.replace('/', '_')
         }
 
