@@ -460,16 +460,39 @@ function GlobalDict(eventHandler) {
         },
         borderKey: "standard"
       },
+      statisticsHeadline: {
+        textKey: {
+          headline: "normalBold",
+          label: "savestate",
+          value: "value"
+        },
+        borderKey: "standard"
+      },
+      itemStandard: {
+        textKey: {
+          number: "value",
+          label: "savestate"
+        },
+        borderKey: "standard"
+      },
+      itemBar: {
+        rectKey: {
+          "0": "stopwatch",
+          "1": "star",
+          "2": "feather",
+          "3": "treasure",
+          "4": "magnet",
+          "5": "rocket"
+        },
+        borderKey: "standard"
+      },
       moneyBar: {
         rectKey: {
-          background: "standard",
-          moneyPositive: "moneyPositive",
-          moneyNegative: "moneyNegative",
-          money1: "money1",
-          money10: "money10",
-          money100: "money100",
-          money1000: "money1000",
-          bonus: "bonus"
+          "0": "money1",
+          "1": "money10",
+          "2": "money100",
+          "3": "money1000",
+          "4": "bonus"
         },
         textKey: "small",
         borderKey: "standard"
@@ -590,6 +613,24 @@ function GlobalDict(eventHandler) {
       },
       moneyNegative: {
         backgroundColor: "230, 150, 150, 1"
+      },
+      stopwatch: {
+        backgroundColor: "222, 222, 222, 1"
+      },
+      star: {
+        backgroundColor: "223, 223, 29, 1"
+      },
+      feather: {
+        backgroundColor: "240, 140, 0, 1"
+      },
+      treasure: {
+        backgroundColor: "137, 100, 73, 1"
+      },
+      magnet: {
+        backgroundColor: "142, 139, 139, 1"
+      },
+      rocket: {
+        backgroundColor: "0, 0, 0, 1"
       }
     },
     circle: {

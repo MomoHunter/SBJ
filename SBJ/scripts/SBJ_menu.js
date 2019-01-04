@@ -21,7 +21,7 @@ function Menu(gD) {
 
     this.title = new CanvasText(this.gD.canvas.width / 2, 100, "Super Block Jump", "title");
     this.version = new CanvasText(this.gD.canvas.width - 5, this.gD.canvas.height - 5, "v3.0.0", "version");
-    this.pressButton = new CanvasText(this.gD.canvas.width / 2, 280, "Dr" + String.fromCharCode(220) + "cke eine beliebige Taste", "instruction");
+    this.pressButton = new CanvasText(this.gD.canvas.width / 2, 280, "Drücke eine beliebige Taste", "instruction");
 
     this.mainNavigationGrid = [
       [{ button: "Play",        action: (gD) => { gD.currentPage = this.selectionScreen } }],
