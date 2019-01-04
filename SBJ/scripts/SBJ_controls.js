@@ -477,7 +477,7 @@ function ControlKey(x, y, width, height, name, keyNr, styleKey) {
         spriteKey = "Icon_KeyLong";
       }
 
-      var [spriteX, spriteY, spriteWidth, spriteHeight] = gD.spriteDict[spriteKey];
+      var {spriteWidth, spriteHeight} = getSpriteData(spriteKey, gD);
       drawCanvasImage(
         this.x + (this.width - spriteWidth) / 2, this.y - controls.scrollHeight + (this.height - spriteHeight) / 2,
         spriteKey, gD

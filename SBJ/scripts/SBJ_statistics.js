@@ -92,7 +92,8 @@ function Statistics(menu, gD) {
 
     this.title = new CanvasText(this.gD.canvas.width / 2, 30, "Statistics", "pageTitle");
 
-    this.tabs = ["Deco_Bubble_0", "Item_B_Questionmark_0", "Currency_3", "Deco_Bubble_0"];
+
+    this.tabs = ["Deco_Bubble_M", "Deco_Bubble_M", "Currency_M", "Deco_Bubble_M"];
     this.tabs.map((icon, index) => {
       this.tabs[index] = new StatisticsTab(
         this.gD.canvas.width / 2 - 310, 60, 620, 220, index, icon, "statisticsTab"
@@ -123,13 +124,13 @@ function Statistics(menu, gD) {
     this.tabs[1].objects.push(new StatisticsItemField(this.gD.canvas.width / 2 + 60, 220, 240, 22, "items_magnet_used", "itemStandard", "Item_Magnet"));
     this.tabs[1].objects.push(new StatisticsItemField(this.gD.canvas.width / 2 + 60, 248, 240, 22, "items_rocket_used", "itemStandard", "Item_Rocket"));
 
-    this.tabs[2].objects.push(new StatisticsMoneyField(this.gD.canvas.width / 2 - 245, 70, 545, 13, "Currency_1", "money_collected", "moneyPositive"));
-    this.tabs[2].objects.push(new StatisticsMoneyField(this.gD.canvas.width / 2 - 245, 93, 545, 13, "Currency_1", "money_spent", "moneyNegative"));
+    this.tabs[2].objects.push(new StatisticsMoneyField(this.gD.canvas.width / 2 - 245, 70, 545, 13, "Currency_XS", "money_collected", "moneyPositive"));
+    this.tabs[2].objects.push(new StatisticsMoneyField(this.gD.canvas.width / 2 - 245, 93, 545, 13, "Currency_XS", "money_spent", "moneyNegative"));
     this.tabs[2].objects.push(new StatisticsMoneyField(this.gD.canvas.width / 2 - 245, 116, 545, 13, "Money_S_1", "money_1_collected", "statisticsMoney1"));
     this.tabs[2].objects.push(new StatisticsMoneyField(this.gD.canvas.width / 2 - 245, 139, 545, 13, "Money_S_10", "money_10_collected", "statisticsMoney10"));
     this.tabs[2].objects.push(new StatisticsMoneyField(this.gD.canvas.width / 2 - 245, 162, 545, 13, "Money_S_100", "money_100_collected", "statisticsMoney100"));
     this.tabs[2].objects.push(new StatisticsMoneyField(this.gD.canvas.width / 2 - 245, 185, 545, 13, "Money_S_1000", "money_1000_collected", "statisticsMoney1000"));
-    let bonus = new StatisticsMoneyRainbowField(this.gD.canvas.width / 2 - 245, 208, 545, 13, "Currency_1", "money_bonus", "statisticsMoneyBonus");
+    let bonus = new StatisticsMoneyRainbowField(this.gD.canvas.width / 2 - 245, 208, 545, 13, "Currency_XS", "money_bonus", "statisticsMoneyBonus");
     bonus.init(this.statistics);
     this.tabs[2].objects.push(bonus);
     this.tabs[2].objects.push(new StatisticsBar(
@@ -250,7 +251,7 @@ function StatisticsTab(x, y, width, height, tabNr, spriteKey, styleKey) {
   };
   this.draw = function(gD, statistics) {
     let design = gD.design.elements[this.styleKey];
-    let [spriteX, spriteY, spriteWidth, spriteHeight] = gD.spriteDict[this.spriteKey];
+    let {spriteWidth, spriteHeight} = getSpriteData(this.spriteKey, gD);
     if (!this.selected) {
       drawCanvasRect(this.x, this.y + 55 * this.tabNr, 55, 55, design.rectKey.tab, gD);
       drawCanvasImage(
@@ -345,7 +346,7 @@ function StatisticsMoneyField(x, y, width, height, spriteKey, key, styleKey) {
   this.styleKey = styleKey;
   this.draw = function(gD, statistics) {
     let design = gD.design.elements[this.styleKey];
-    let [spriteX, spriteY, spriteWidth, spriteHeight] = gD.spriteDict[this.spriteKey];
+    let {spriteHeight} = getSpriteData(this.spriteKey, gD);
     let data = statistics.get(this.key);
     let value = data.currentCount;
 
@@ -407,7 +408,7 @@ function StatisticsMoneyRainbowField(x, y, width, height, spriteKey, key, styleK
   };
   this.draw = function(gD, statistics) {
     let design = gD.design.elements[this.styleKey];
-    let [spriteX, spriteY, spriteWidth, spriteHeight] = gD.spriteDict[this.spriteKey];
+    let {spriteHeight} = getSpriteData(this.spriteKey, gD);
     let data = statistics.get(this.key);
     let value = data.currentCount / statistics.get("money_collected").currentCount * 100;
     if (isNaN(value)) {
