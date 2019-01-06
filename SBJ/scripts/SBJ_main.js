@@ -127,10 +127,13 @@ function GlobalDict(eventHandler) {
     "Enemy_Fish_Green": [false, 37, 414, 34, 19],
     "Enemy_Fish_Nemo": [false, 37, 434, 34, 19],
     "Enemy_Fish_Red": [false, 37, 454, 34, 19],
-    "Icon_KeyLong": [false, 72, 0, 68, 17],
-    "Icon_KeyShort": [false, 72, 18, 16, 17],
-    "Icon_Mute": [false, 72, 36, 24, 22],
-    "Icon_Refresh": [false, 72, 59, 26, 27],
+    "Icon_Earth": [false, 72, 0, 50, 50],
+    "Icon_KeyLong": [false, 72, 51, 68, 17],
+    "Icon_KeyShort": [false, 72, 69, 16, 17],
+    "Icon_Moon": [false, 72, 87, 35, 35],
+    "Icon_Mute": [false, 72, 123, 24, 22],
+    "Icon_Refresh": [false, 72, 146, 26, 27],
+    "Icon_Statistic": [true, 72, [174, 215, 256, 297, 338, 379, 420, 461, 502], 40, 40],
     "Item_Feather": [true, 141, [0, 21, 42, 63, 84, 105, 126, 147, 168, 189], 16, 20],
     "Item_Magnet": [true, 141, [210, 231, 252, 273, 294, 315, 336, 357], 17, 20],
     "Item_Questionmark": [true, 141, [378, 397, 416, 435, 454, 473, 492, 511, 530, 549, 568, 587, 606, 625, 644, 663, 682, 701, 720, 739, 758, 777], 14, 18],
@@ -446,6 +449,24 @@ function GlobalDict(eventHandler) {
           number: "value"
         },
         borderKey: "standard"
+      },
+      statisticsTime: {
+        textKey: {
+          headline: "normalBold",
+          time: "normal"
+        },
+        borderKey: "standard"
+      },
+      statisticsDistance: {
+        rectKey: "rocket",
+        textKey: {
+          label: "enterNameModal",
+          number: "value"
+        },
+        borderKey: {
+          travel: "travelLine",
+          border: "standard"
+        }
       }
     },
     button: {
@@ -550,31 +571,43 @@ function GlobalDict(eventHandler) {
     border: {
       standard: {
         borderColor: "0, 0, 0, 1",
-        borderSize: 2
+        borderSize: 2,
+        lineDash: []
       },
       selected: {
         borderColor: "180, 50, 50, 1",
-        borderSize: 2
+        borderSize: 2,
+        lineDash: []
       },
       small: {
         borderColor: "0, 0, 0, 1",
-        borderSize: 1.5
+        borderSize: 1.5,
+        lineDash: []
       },
       verySmall: {
         borderColor: "0, 0, 0, 1",
-        borderSize: 0.5
+        borderSize: 0.5,
+        lineDash: []
       },
       big: {
         borderColor: "0, 0, 0, 1",
-        borderSize: 3
+        borderSize: 3,
+        lineDash: []
       },
       smallWhite: {
         borderColor: "255, 255, 255, 1",
-        borderSize: 1
+        borderSize: 1,
+        lineDash: []
       },
       bigWhite: {
         borderColor: "255, 255, 255, 1",
-        borderSize: 4
+        borderSize: 4,
+        lineDash: []
+      },
+      travelLine: {
+        borderColor: "65, 65, 65, 1",
+        borderSize: 1,
+        lineDash: [5,3]
       }
     },
     text: {

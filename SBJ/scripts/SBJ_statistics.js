@@ -28,7 +28,7 @@ function Statistics(menu, gD) {
       ["items_magnet_used", new StatisticsData("Magneten benutzt", Events.USE_MAGNET, false)],
       ["items_rocket_used", new StatisticsData("Raketen benutzt", Events.USE_ROCKET, false)],
       ["player_deaths", new StatisticsData("Tode", Events.DEATH, false)],
-      ["game_meter_travelled", new StatisticsData("Insgesamte Meter zurückgelegt", Events.END_OF_ROUND_TOTAL_TRAVELLED_DISTANCE, false)],
+      ["game_meter_travelled", new StatisticsData("Meter zurückgelegt", Events.END_OF_ROUND_TOTAL_TRAVELLED_DISTANCE, false)],
       ["highscore_money_collected", new StatisticsData("Höchste gesammelte Geldmenge", Events.HIGHSCORE_COLLECTED_HYPE, true)],
       ["highscore_meter_travelled", new StatisticsData("Höchste zurückgelegte Distanz", Events.HIGHSCORE_TRAVELLED_DISTANCE, true)],
       ["player_hats_collected", new StatisticsData("Hüte gesammelt", Events.COLLECT_HAT, false)],
@@ -51,23 +51,24 @@ function Statistics(menu, gD) {
       0,
       0,
       0,
-      5000,
-      2000,
-      500,
-      1000,
-      500,
-      500,
-      500,
-      40,
-      20,
-      30,
-      12,
-      5,
-      3,
-      4,
-      1,
-      5,
-      30000000,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      86000000,
       3,
       4444000,
       40,
@@ -93,12 +94,17 @@ function Statistics(menu, gD) {
     this.title = new CanvasText(this.gD.canvas.width / 2, 30, "Statistics", "pageTitle");
 
 
-    this.tabs = ["Deco_Bubble_M", "Item_B_Questionmark", "Currency_M", "Deco_Bubble_M"];
+    this.tabs = ["Icon_Statistic", "Item_B_Questionmark", "Currency_M", "Deco_Bubble_M"];
     this.tabs.map((icon, index) => {
       this.tabs[index] = new StatisticsTab(
         this.gD.canvas.width / 2 - 310, 60, 620, 220, index, icon, "statisticsTab"
       );
     }, this);
+    this.tabs[0].objects.push(new StatisticsTimeField(this.gD.canvas.width / 2 - 245, 70, 545, 50, "time_played", "statisticsTime"));
+    this.tabs[0].objects.push(new StatisticsDistanceField(this.gD.canvas.width / 2 - 245, 130, 545, 70, "game_meter_travelled", "statisticsDistance"));
+    this.tabs[0].objects.push(new StatisticsItemField(this.gD.canvas.width / 2 - 245, 200, 267, 22, "player_deaths", "itemStandard"));
+    this.tabs[0].objects.push(new StatisticsItemField(this.gD.canvas.width / 2 + 33, 200, 267, 22, "player_jumps", "itemStandard"));
+
     this.tabs[1].objects.push(new StatisticsHeadline(this.gD.canvas.width / 2 - 245, 70, 240, 30, "items_collected", "statisticsHeadline"));
     this.tabs[1].objects.push(new StatisticsItemField(this.gD.canvas.width / 2 - 245, 108, 240, 22, "items_stopwatch_collected", "itemStandard", "Item_Stopwatch"));
     this.tabs[1].objects.push(new StatisticsItemField(this.gD.canvas.width / 2 - 245, 136, 240, 22, "items_star_collected", "itemStandard", "Item_Star"));
@@ -141,7 +147,7 @@ function Statistics(menu, gD) {
 
     this.backToMenu = new CanvasButton(this.gD.canvas.width / 2 - 100, this.gD.canvas.height - 50, 200, 30, "Main Menu", "menu");
 
-    this.updateSelection(-1, 1);
+    this.updateSelection(-1, 0);
   };
   this.updateKeyPresses = function() {
     this.gD.newKeys.map(key => {
@@ -301,6 +307,53 @@ function StatisticsHeadline(x, y, width, height, key, styleKey) {
       this.x + this.width, this.y + this.height,
       this.x + this.width, this.y + this.height / 4 * 3
     );
+  };
+}
+
+function StatisticsTimeField(x, y, width, height, key, styleKey) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.key = key;
+  this.styleKey = styleKey;
+  this.draw = function(gD, statistics) {
+    let design = gD.design.elements[this.styleKey];
+    let data = statistics.get(this.key);
+
+    drawCanvasText(this.x + this.width / 2, this.y + this.height * 0.25, data.name, design.textKey.headline, gD);
+    drawCanvasText(
+      this.x + this.width / 2, this.y + this.height * 0.75,
+      addLeadingZero(Math.floor((data.currentCount % 86400) / 3600)) + ":" +
+      addLeadingZero(Math.floor((data.currentCount % 3600) / 60)) + ":" +
+      addLeadingZero(Math.floor(data.currentCount % 60)), design.textKey.time, gD
+    );
+    drawCanvasLine(this.x, this.y + this.height / 2, design.borderKey, gD, this.x + this.width, this.y + this.height / 2);
+    drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
+  };
+}
+
+function StatisticsDistanceField(x, y, width, height, key, styleKey) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.key = key;
+  this.styleKey = styleKey;
+  this.draw = function(gD, statistics) {
+    let design = gD.design.elements[this.styleKey];
+    let data = statistics.get(this.key);
+    let earth = getSpriteData("Icon_Earth", gD);
+    let moon = getSpriteData("Icon_Moon", gD);
+    let player = getSpriteData("Player_Standard", gD);
+
+    drawCanvasLine(this.x + 25, this.y + 25, design.borderKey.travel, gD, this.x + this.width - 25, this.y + 25);
+    drawCanvasImage(this.x + (50 - earth.spriteWidth) / 2, this.y + (50 - earth.spriteHeight) / 2, "Icon_Earth", gD);
+    drawCanvasImage(this.x + this.width - 50 + (50 - moon.spriteWidth) / 2, this.y + (50 - moon.spriteHeight) / 2, "Icon_Moon", gD);
+    drawCanvasImage(this.x + (50 - player.spriteWidth) / 2 + Math.min(Math.floor((data.currentCount / 384400000) * (this.width - 50)), (this.width - 50)), this.y + (50 - player.spriteHeight) / 2, "Player_Standard", gD);
+    drawCanvasText(this.x + 3, this.y + this.height - 8, data.name, design.textKey.label, gD);
+    drawCanvasText(this.x + this.width - 3, this.y + this.height - 3, data.currentCount.toString().replace(/\d(?=(\d{3})+($|\.))/g, '$&.'), design.textKey.number, gD);
+    drawCanvasLine(this.x, this.y + this.height - 10, design.borderKey.border, gD, this.x, this.y + this.height, this.x + this.width, this.y + this.height, this.x + this.width, this.y + this.height - 10);
   };
 }
 

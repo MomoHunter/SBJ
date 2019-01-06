@@ -9,6 +9,15 @@ function randomBetween(n1, n2) {
 }
 
 /**
+ * adds a zero in front of a number that is less than 10 for better visual appearance
+ * @param   {number} number the number that should get a 0
+ * @returns {string} the converted number as a string
+ */
+function addLeadingZero(number) {
+  return number > 10 ? number.toString() : "0" + number;
+}
+
+/**
  * @param  {object} object the object that should be copied
  * @return {object | undefined} a deep copy of the given object or undefined if the object is not supported
  */
@@ -97,6 +106,7 @@ function drawCanvasTextBorder(x, y, text, styleKey, gD) {
   var design = gD.design.border[styleKey];
   gD.context.strokeStyle = `rgba(${design.borderColor})`;
   gD.context.lineWidth = design.borderSize;
+  gD.context.setLineDash(design.lineDash);
   gD.context.strokeText(text, x, y);
 }
 
@@ -156,6 +166,7 @@ function drawCanvasRectBorder(x, y, width, height, styleKey, gD) {
   var design = gD.design.border[styleKey];
   gD.context.strokeStyle = `rgba(${design.borderColor})`;
   gD.context.lineWidth = design.borderSize;
+  gD.context.setLineDash(design.lineDash);
   gD.context.strokeRect(x, y, width, height);
 }
 
@@ -164,6 +175,7 @@ function drawCanvasLine(startX, startY, styleKey, gD, ...points) {
   var design = gD.design.border[styleKey];
   gD.context.strokeStyle = `rgba(${design.borderColor})`;
   gD.context.lineWidth = design.borderSize;
+  gD.context.setLineDash(design.lineDash);
   gD.context.beginPath();
   gD.context.moveTo(startX, startY);
   for (var i = 0; i < points.length / 2; i++) {
@@ -178,25 +190,26 @@ function drawCanvasLine(startX, startY, styleKey, gD, ...points) {
 
 function drawCanvasCircle(centerX, centerY, radius, styleKey, gD) {
   var design = gD.design.circle[styleKey];
-  gD.context.beginPath();
   gD.context.fillStyle = `rgba(${design.backgroundColor})`;
+  gD.context.beginPath();
   gD.context.arc(centerX, centerY, radius, 0, Math.PI * 2);
   gD.context.fill();
 }
 
 function drawCanvasCircleBorder(centerX, centerY, radius, styleKey, gD) {
   var design = gD.design.border[styleKey];
-  gD.context.beginPath();
   gD.context.strokeStyle = `rgba(${design.borderColor})`;
   gD.context.lineWidth = design.borderSize;
+  gD.context.beginPath();
+  gD.context.setLineDash(design.lineDash);
   gD.context.arc(centerX, centerY, radius, 0, Math.PI * 2);
   gD.context.stroke();
 }
 
 function drawCanvasCirclePart(centerX, centerY, radius, startAngle, endAngle, styleKey, gD) {
   var design = gD.design.circle[styleKey];
-  gD.context.beginPath();
   gD.context.fillStyle = `rgba(${design.backgroundColor})`;
+  gD.context.beginPath();
   gD.context.arc(centerX, centerY, radius, startAngle, endAngle);
   gD.context.lineTo(centerX, centerY);
   gD.context.closePath();
@@ -205,9 +218,10 @@ function drawCanvasCirclePart(centerX, centerY, radius, startAngle, endAngle, st
 
 function drawCanvasCirclePartBorder(centerX, centerY, radius, startAngle, endAngle, styleKey, gD) {
   var design = gD.design.border[styleKey];
-  gD.context.beginPath();
   gD.context.strokeStyle = `rgba(${design.borderColor})`;
   gD.context.lineWidth = design.borderSize;
+  gD.context.setLineDash(design.lineDash);
+  gD.context.beginPath();
   gD.context.arc(centerX, centerY, radius, startAngle, endAngle);
   gD.context.lineTo(centerX, centerY);
   gD.context.closePath();
