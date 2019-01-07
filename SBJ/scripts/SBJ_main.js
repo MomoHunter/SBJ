@@ -210,10 +210,15 @@ function GlobalDict(eventHandler) {
     "Reward_B_use_five_stars": [false, 368, 1377, 80, 80],
     "Reward_B_use_five_stopwatches": [false, 368, 1458, 80, 80],
     "Reward_B_use_five_treasures": [false, 368, 1539, 80, 80],
-    "Special_GoldenShamrock": [true, 449, [0, 20, 40, 60, 80, 100, 120, 140], 15, 19],
-    "Special_Placeholder": [false, 449, 160, 40, 40],
-    "Special_Placeholder_B": [false, 449, 201, 80, 80],
-    "Special_Pointer": [false, 449, 282, 10, 6],
+    "Special_BlueKey": [false, 449, 0, 11, 22],
+    "Special_GoldenShamrock": [true, 449, [23, 43, 63, 83, 103, 123, 143, 163], 15, 19],
+    "Special_GoldenShamrock_B": [true, 449, [183, 222, 261, 300, 339, 378, 417, 456], 30, 38],
+    "Special_GreenKey": [false, 449, 495, 11, 22],
+    "Special_Placeholder": [false, 449, 518, 40, 40],
+    "Special_Placeholder_B": [false, 449, 559, 80, 80],
+    "Special_Pointer": [false, 449, 640, 10, 6],
+    "Special_RedKey": [false, 449, 647, 11, 22],
+    "Special_YellowKey": [false, 449, 670, 11, 22],
     "Stagepreview_Air": [false, 530, 0, 56, 26],
     "Stagepreview_Forest": [false, 530, 27, 56, 26],
     "Stagepreview_Fortress": [false, 530, 54, 56, 26],
@@ -360,7 +365,7 @@ function GlobalDict(eventHandler) {
       statisticsHeadline: {
         textKey: {
           headline: "normalBold",
-          label: "savestate",
+          label: "statisticsLabel",
           value: "value"
         },
         borderKey: "standard"
@@ -368,7 +373,7 @@ function GlobalDict(eventHandler) {
       itemStandard: {
         textKey: {
           number: "value",
-          label: "savestate"
+          label: "statisticsLabel"
         },
         borderKey: "standard"
       },
@@ -397,7 +402,7 @@ function GlobalDict(eventHandler) {
       moneyPositive: {
         rectKey: "moneyPositive",
         textKey: {
-          label: "enterNameModal",
+          label: "statisticsLabel",
           number: "value"
         },
         borderKey: "standard"
@@ -405,7 +410,7 @@ function GlobalDict(eventHandler) {
       moneyNegative: {
         rectKey: "moneyNegative",
         textKey: {
-          label: "enterNameModal",
+          label: "statisticsLabel",
           number: "value"
         },
         borderKey: "standard"
@@ -413,7 +418,7 @@ function GlobalDict(eventHandler) {
       statisticsMoney1: {
         rectKey: "money1",
         textKey: {
-          label: "enterNameModal",
+          label: "statisticsLabel",
           number: "value"
         },
         borderKey: "standard"
@@ -421,7 +426,7 @@ function GlobalDict(eventHandler) {
       statisticsMoney10: {
         rectKey: "money10",
         textKey: {
-          label: "enterNameModal",
+          label: "statisticsLabel",
           number: "value"
         },
         borderKey: "standard"
@@ -429,7 +434,7 @@ function GlobalDict(eventHandler) {
       statisticsMoney100: {
         rectKey: "money100",
         textKey: {
-          label: "enterNameModal",
+          label: "statisticsLabel",
           number: "value"
         },
         borderKey: "standard"
@@ -437,7 +442,7 @@ function GlobalDict(eventHandler) {
       statisticsMoney1000: {
         rectKey: "money1000",
         textKey: {
-          label: "enterNameModal",
+          label: "statisticsLabel",
           number: "value"
         },
         borderKey: "standard"
@@ -445,7 +450,7 @@ function GlobalDict(eventHandler) {
       statisticsMoneyBonus: {
         rectKey: "bonus",
         textKey: {
-          label: "enterNameModal",
+          label: "statisticsLabel",
           number: "value"
         },
         borderKey: "standard"
@@ -460,7 +465,7 @@ function GlobalDict(eventHandler) {
       statisticsDistance: {
         rectKey: "rocket",
         textKey: {
-          label: "enterNameModal",
+          label: "statisticsLabel",
           number: "value"
         },
         borderKey: {
@@ -651,6 +656,13 @@ function GlobalDict(eventHandler) {
         color: "0, 0, 0, 1",
         align: "right",
         baseline: "middle",
+        borderKey: ""
+      },
+      statisticsLabel: {
+        font: "12pt Consolas",
+        color: "0, 0, 0, 1",
+        align: "left",
+        baseline: "alphabetic",
         borderKey: ""
       },
       small: {
