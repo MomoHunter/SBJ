@@ -35,75 +35,32 @@ function Statistics(menu, gD) {
       ["player_beards_collected", new StatisticsData("Bärte gesammelt", Events.COLLECT_BEARD, false)],
       ["player_glasses_collected", new StatisticsData("Brillen gesammelt", Events.COLLECT_GLASSES, false)],
       ["player_skins_collected", new StatisticsData("Skins gesammelt", Events.COLLECT_SKIN, false)],
-      ["game_keys_collected", new StatisticsData("Schlüssel gesammelt", Events.COLLECT_KEY, false)],
+      ["game_bluekeys_collected", new StatisticsData("Schlüssel gesammelt", Events.COLLECT_BLUEKEY, false)],
+      ["game_redkeys_collected", new StatisticsData("Schlüssel gesammelt", Events.COLLECT_REDKEY, false)],
+      ["game_greenkeys_collected", new StatisticsData("Schlüssel gesammelt", Events.COLLECT_GREENKEY, false)],
+      ["game_yellowkeys_collected", new StatisticsData("Schlüssel gesammelt", Events.COLLECT_YELLOWKEY, false)],
       ["game_minigames_won", new StatisticsData("Minispiele gewonnen", Events.MINIGAME_WON, false)],
       ["game_minigames_lost", new StatisticsData("Minispiele verloren", Events.MINIGAME_LOST, false)],
       ["game_minigames_activated", new StatisticsData("Minispiele aktiviert", Events.MINIGAME_ACTIVATED, false)],
       ["player_jumps", new StatisticsData("Sprünge", Events.DO_JUMP, false)],
       ["savestates_created", new StatisticsData("Speicherstände erstellt", Events.CREATE_SAVESTATE, false)]
     ]);
-    this.statisticsData = [
-      20000,             //in seconds
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      86000000,
-      3,
-      4444000,
-      40,
-      3000,
-      40,
-      20,
-      2,
-      55,
-      5,
-      4,
-      40,
-      44,
-      94652374489,
-      2
-    ];
-
-    let temp = 0;
-    for (let entry of this.statistics.values()) {
-      entry.currentCount = this.statisticsData[temp];
-      temp++;
-    }
 
     this.title = new CanvasText(this.gD.canvas.width / 2, 30, "Statistics", "pageTitle");
 
-
-    this.tabs = ["Icon_Statistic", "Item_B_Questionmark", "Currency_M", "Deco_Bubble_M"];
+    this.tabs = ["Icon_Statistic", "Item_B_Questionmark", "Currency_M", "Special_GoldenShamrock_B"];
     this.tabs.map((icon, index) => {
       this.tabs[index] = new StatisticsTab(
         this.gD.canvas.width / 2 - 310, 60, 620, 220, index, icon, "statisticsTab"
       );
     }, this);
+    
     this.tabs[0].objects.push(new StatisticsTimeField(this.gD.canvas.width / 2 - 245, 70, 545, 50, "time_played", "statisticsTime"));
     this.tabs[0].objects.push(new StatisticsDistanceField(this.gD.canvas.width / 2 - 245, 130, 545, 70, "game_meter_travelled", "statisticsDistance"));
     this.tabs[0].objects.push(new StatisticsItemField(this.gD.canvas.width / 2 - 245, 200, 267, 22, "player_deaths", "itemStandard"));
     this.tabs[0].objects.push(new StatisticsItemField(this.gD.canvas.width / 2 + 33, 200, 267, 22, "player_jumps", "itemStandard"));
+    this.tabs[0].objects.push(new StatisticsHeadline(this.gD.canvas.width / 2 - 245, 240, 267, 30, "highscore_money_collected", "statisticsHeadline"));
+    this.tabs[0].objects.push(new StatisticsHeadline(this.gD.canvas.width / 2 + 33, 240, 267, 30, "highscore_meter_travelled", "statisticsHeadline"));
 
     this.tabs[1].objects.push(new StatisticsHeadline(this.gD.canvas.width / 2 - 245, 70, 240, 30, "items_collected", "statisticsHeadline"));
     this.tabs[1].objects.push(new StatisticsItemField(this.gD.canvas.width / 2 - 245, 108, 240, 22, "items_stopwatch_collected", "itemStandard", "Item_Stopwatch"));
@@ -145,9 +102,22 @@ function Statistics(menu, gD) {
       "moneyBar"
     ));
 
+    this.tabs[3].objects.push(new StatisticsItemField(this.gD.canvas.width / 2 - 245, 70, 545, 22, "items_goldenShamrock_collected", "itemStandard", "Special_GoldenShamrock"));
+    this.tabs[3].objects.push(new StatisticsItemField(this.gD.canvas.width / 2 - 245, 96, 267, 22, "game_bluekeys_collected", "itemStandard", "Special_BlueKey"));
+    this.tabs[3].objects.push(new StatisticsItemField(this.gD.canvas.width / 2 + 33, 96, 267, 22, "game_redkeys_collected", "itemStandard", "Special_RedKey"));
+    this.tabs[3].objects.push(new StatisticsItemField(this.gD.canvas.width / 2 - 245, 122, 267, 22, "game_greenkeys_collected", "itemStandard", "Special_GreenKey"));
+    this.tabs[3].objects.push(new StatisticsItemField(this.gD.canvas.width / 2 + 33, 122, 267, 22, "game_yellowkeys_collected", "itemStandard", "Special_YellowKey"));
+    this.tabs[3].objects.push(new StatisticsItemField(this.gD.canvas.width / 2 - 245, 148, 267, 22, "game_minigames_won", "itemStandard"));
+    this.tabs[3].objects.push(new StatisticsItemField(this.gD.canvas.width / 2 + 33, 148, 267, 22, "game_minigames_lost", "itemStandard"));
+    this.tabs[3].objects.push(new StatisticsItemField(this.gD.canvas.width / 2 - 245, 174, 545, 22, "game_minigames_activated", "itemStandard"));
+    this.tabs[3].objects.push(new StatisticsItemField(this.gD.canvas.width / 2 - 245, 200, 267, 22, "player_hats_collected", "itemStandard"));
+    this.tabs[3].objects.push(new StatisticsItemField(this.gD.canvas.width / 2 + 33, 200, 267, 22, "player_beards_collected", "itemStandard"));
+    this.tabs[3].objects.push(new StatisticsItemField(this.gD.canvas.width / 2 - 245, 226, 267, 22, "player_glasses_collected", "itemStandard"));
+    this.tabs[3].objects.push(new StatisticsItemField(this.gD.canvas.width / 2 + 33, 226, 267, 22, "player_skins_collected", "itemStandard"));
+
     this.backToMenu = new CanvasButton(this.gD.canvas.width / 2 - 100, this.gD.canvas.height - 50, 200, 30, "Main Menu", "menu");
 
-    this.updateSelection(-1, 0);
+    this.updateSelection(-1, 3);
   };
   this.updateKeyPresses = function() {
     this.gD.newKeys.map(key => {
@@ -299,7 +269,7 @@ function StatisticsHeadline(x, y, width, height, key, styleKey) {
     let data = statistics.get(this.key);
 
     drawCanvasText(this.x + this.width / 2, this.y + 3, data.name, design.textKey.headline, gD);
-    drawCanvasText(this.x + 3, this.y + this.height - 6, "Gesamt", design.textKey.label, gD);
+    drawCanvasText(this.x + 3, this.y + this.height - 3, "Gesamt", design.textKey.label, gD);
     drawCanvasText(this.x + this.width - 3, this.y + this.height - 3, data.currentCount.toString().replace(/\d(?=(\d{3})+($|\.))/g, '$&.'), design.textKey.value, gD);
     drawCanvasLine(
       this.x, this.y + this.height / 4 * 3, design.borderKey, gD,
@@ -351,7 +321,7 @@ function StatisticsDistanceField(x, y, width, height, key, styleKey) {
     drawCanvasImage(this.x + (50 - earth.spriteWidth) / 2, this.y + (50 - earth.spriteHeight) / 2, "Icon_Earth", gD);
     drawCanvasImage(this.x + this.width - 50 + (50 - moon.spriteWidth) / 2, this.y + (50 - moon.spriteHeight) / 2, "Icon_Moon", gD);
     drawCanvasImage(this.x + (50 - player.spriteWidth) / 2 + Math.min(Math.floor((data.currentCount / 384400000) * (this.width - 50)), (this.width - 50)), this.y + (50 - player.spriteHeight) / 2, "Player_Standard", gD);
-    drawCanvasText(this.x + 3, this.y + this.height - 8, data.name, design.textKey.label, gD);
+    drawCanvasText(this.x + 3, this.y + this.height - 3, data.name, design.textKey.label, gD);
     drawCanvasText(this.x + this.width - 3, this.y + this.height - 3, data.currentCount.toString().replace(/\d(?=(\d{3})+($|\.))/g, '$&.'), design.textKey.number, gD);
     drawCanvasLine(this.x, this.y + this.height - 10, design.borderKey.border, gD, this.x, this.y + this.height, this.x + this.width, this.y + this.height, this.x + this.width, this.y + this.height - 10);
   };
@@ -373,7 +343,7 @@ function StatisticsItemField(x, y, width, height, key, styleKey, spriteKey = nul
       let {spriteHeight} = getSpriteData(this.spriteKey, gD);
       drawCanvasImage(this.x + 3, this.y + Math.floor((this.height - spriteHeight) / 2), this.spriteKey, gD);
     } else {
-      drawCanvasText(this.x + 3, this.y + this.height - 6, data.name, design.textKey.label, gD);
+      drawCanvasText(this.x + 3, this.y + this.height - 3, data.name, design.textKey.label, gD);
     }
     drawCanvasText(this.x + this.width - 3, this.y + this.height - 3, data.currentCount.toString().replace(/\d(?=(\d{3})+($|\.))/g, '$&.'), design.textKey.number, gD);
     drawCanvasLine(this.x, this.y + this.height / 2, design.borderKey, gD, this.x, this.y + this.height, this.x + this.width, this.y + this.height, this.x + this.width, this.y + this.height / 2);
@@ -411,7 +381,7 @@ function StatisticsMoneyField(x, y, width, height, spriteKey, key, styleKey) {
       value = 0;
     }
 
-    drawCanvasText(this.x + 3, this.y + this.height / 2, data.name, design.textKey.label, gD);
+    drawCanvasText(this.x + 3, this.y + this.height - 3, data.name, design.textKey.label, gD);
     drawCanvasText(
       this.x + this.width - 225, this.y + this.height - 3, value.toFixed(2) + "%", design.textKey.number, gD
     );
