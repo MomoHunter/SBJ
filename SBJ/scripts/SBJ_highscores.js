@@ -366,6 +366,7 @@ function HighscoreEntry(x, y, width, height, highscore, place, styleKey) {
    */
   this.draw = function(highscores, gD) {
     let design = gD.design.elements[this.styleKey];
+    let {spriteWidth, spriteHeight} = getSpriteData("Icon_Info", gD);
     if (this.selected) {
       drawCanvasRect(this.x, this.y - highscores.scrollHeight, this.width, this.height, design.rectKey.selected, gD);
     } else {
@@ -383,9 +384,9 @@ function HighscoreEntry(x, y, width, height, highscore, place, styleKey) {
       this.x + this.width - 22, this.y + this.height / 2 - highscores.scrollHeight,
       this.highscore.distance + "m", design.textKey.number, gD
     );
-    drawCanvasText(
-      this.x + this.width - 10, this.y + this.height / 2 - highscores.scrollHeight,
-      "\uf129", design.textKey.info, gD
+    drawCanvasImage(
+      this.x + this.width - spriteWidth - (20 - spriteWidth) / 2, this.y + (this.height - spriteHeight) / 2 - highscores.scrollHeight,
+      "Icon_Info", gD
     );
     drawCanvasLine(
       this.x + 50, this.y - highscores.scrollHeight, design.borderKey, 

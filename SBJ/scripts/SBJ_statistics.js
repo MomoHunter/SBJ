@@ -117,7 +117,7 @@ function Statistics(menu, gD) {
 
     this.backToMenu = new CanvasButton(this.gD.canvas.width / 2 - 100, this.gD.canvas.height - 50, 200, 30, "Main Menu", "menu");
 
-    this.updateSelection(-1, 3);
+    this.updateSelection(-1, 0);
   };
   this.updateKeyPresses = function() {
     this.gD.newKeys.map(key => {

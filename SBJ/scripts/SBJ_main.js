@@ -128,12 +128,13 @@ function GlobalDict(eventHandler) {
     "Enemy_Fish_Nemo": [false, 37, 434, 34, 19],
     "Enemy_Fish_Red": [false, 37, 454, 34, 19],
     "Icon_Earth": [false, 72, 0, 50, 50],
-    "Icon_KeyLong": [false, 72, 51, 68, 17],
-    "Icon_KeyShort": [false, 72, 69, 16, 17],
-    "Icon_Moon": [false, 72, 87, 35, 35],
-    "Icon_Mute": [false, 72, 123, 24, 22],
-    "Icon_Refresh": [false, 72, 146, 26, 27],
-    "Icon_Statistic": [true, 72, [174, 215, 256, 297, 338, 379, 420, 461, 502], 40, 40],
+    "Icon_Info": [false, 72, 51, 5, 16],
+    "Icon_KeyLong": [false, 72, 68, 68, 17],
+    "Icon_KeyShort": [false, 72, 86, 16, 17],
+    "Icon_Moon": [false, 72, 104, 35, 35],
+    "Icon_Mute": [false, 72, 140, 24, 22],
+    "Icon_Refresh": [false, 72, 163, 26, 27],
+    "Icon_Statistic": [true, 72, [191, 232, 273, 314, 355, 396, 437, 478, 519], 40, 40],
     "Item_Feather": [true, 141, [0, 21, 42, 63, 84, 105, 126, 147, 168, 189], 16, 20],
     "Item_Magnet": [true, 141, [210, 231, 252, 273, 294, 315, 336, 357], 17, 20],
     "Item_Questionmark": [true, 141, [378, 397, 416, 435, 454, 473, 492, 511, 530, 549, 568, 587, 606, 625, 644, 663, 682, 701, 720, 739, 758, 777], 14, 18],
@@ -295,8 +296,7 @@ function GlobalDict(eventHandler) {
           marked: "marked"
         },
         textKey: {
-          text: "savestate",
-          info: "fontAwesome"
+          text: "savestate"
         },
         borderKey: "standard"
       },
@@ -325,8 +325,7 @@ function GlobalDict(eventHandler) {
         },
         textKey: {
           number: "highscoreNumber",
-          name: "enterNameModal",
-          info: "fontAwesome"
+          name: "enterNameModal"
         },
         borderKey: "standard"
       },
@@ -758,13 +757,6 @@ function GlobalDict(eventHandler) {
         color: "0, 0, 0, 1",
         align: "left",
         baseline: "alphabetic",
-        borderKey: ""
-      },
-      fontAwesome: {
-        font: "bold 12pt 'Font Awesome 5 Free'",
-        color: "0, 0, 0, 1",
-        align: "center",
-        baseline: "middle",
         borderKey: ""
       },
       rainbow: {
