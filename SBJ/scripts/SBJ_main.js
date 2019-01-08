@@ -294,12 +294,23 @@ function GlobalDict(eventHandler) {
           selected: "selected",
           marked: "marked"
         },
-        textKey: "savestate",
+        textKey: {
+          text: "savestate",
+          info: "fontAwesome"
+        },
         borderKey: "standard"
       },
       savestateDetails: {
-        rectKey: "standard",
-        textKey: "savestate",
+        rectKey: {
+          modal: "modal",
+          background: "standard"
+        },
+        textKey: {
+          headline: "normalBold",
+          text: "enterNameModal",
+          version: "value",
+          date: "date"
+        },
         borderKey: "standard"
       },
       highscoresHeadline: {
@@ -314,13 +325,20 @@ function GlobalDict(eventHandler) {
         },
         textKey: {
           number: "highscoreNumber",
-          name: "enterNameModal"
+          name: "enterNameModal",
+          info: "fontAwesome"
         },
         borderKey: "standard"
       },
       highscoresDetails: {
-        rectKey: "standard",
-        textKey: "savestate",
+        rectKey: {
+          modal: "modal",
+          background: "standard"
+        },
+        textKey: {
+          headline: "normalBold",
+          text: "enterNameModal"
+        },
         borderKey: "standard"
       },
       enterNameModal: {
@@ -733,6 +751,20 @@ function GlobalDict(eventHandler) {
         color: "255, 255, 255, 1",
         align: "right",
         baseline: "alphabetic",
+        borderKey: ""
+      },
+      date: {
+        font: "10pt Consolas",
+        color: "0, 0, 0, 1",
+        align: "left",
+        baseline: "alphabetic",
+        borderKey: ""
+      },
+      fontAwesome: {
+        font: "bold 12pt 'Font Awesome 5 Free'",
+        color: "0, 0, 0, 1",
+        align: "center",
+        baseline: "middle",
         borderKey: ""
       },
       rainbow: {

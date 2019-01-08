@@ -54,7 +54,7 @@ function Statistics(menu, gD) {
         this.gD.canvas.width / 2 - 310, 60, 620, 220, index, icon, "statisticsTab"
       );
     }, this);
-    
+
     this.tabs[0].objects.push(new StatisticsTimeField(this.gD.canvas.width / 2 - 245, 70, 545, 50, "time_played", "statisticsTime"));
     this.tabs[0].objects.push(new StatisticsDistanceField(this.gD.canvas.width / 2 - 245, 130, 545, 70, "game_meter_travelled", "statisticsDistance"));
     this.tabs[0].objects.push(new StatisticsItemField(this.gD.canvas.width / 2 - 245, 200, 267, 22, "player_deaths", "itemStandard"));

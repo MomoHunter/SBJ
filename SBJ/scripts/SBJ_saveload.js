@@ -35,7 +35,7 @@ function SaveLoad(menu, gD) {
 
     this.scrollBar = new CanvasScrollBar(this.gD.canvas.width / 2 + 320, 60, 220, 55, 0, "scrollBarStandard");
 
-    this.savestateDetails = new SLSavestateDetails(this.gD.canvas.width - 170, 60, 160, 220, "savestateDetails");
+    this.savestateDetails = new SLSavestateDetails(0, 0, this.gD.canvas.width, this.gD.canvas.height, "savestateDetails");
 
     this.enterNameModal = new CanvasEnterNameModal(0, 0, this.gD.canvas.width, this.gD.canvas.height, "enterNameModal");
     this.choosePictureModal = new CanvasChoosePictureModal(0, 0, this.gD.canvas.width, this.gD.canvas.height, "choosePictureModal");
@@ -138,12 +138,13 @@ function SaveLoad(menu, gD) {
    * @param  {string} spriteKey a spriteKey for the picture of the savestate
    */
   this.createSavestate = function(name, spriteKey) {
-    var data = [];
-    data[0] = "this.name='" + name + "';";
-    data[1] = "this.spriteKey='" + spriteKey + "';";
-    data[2] = "this.date=" + Date.now() + ";";
-    data[3] = "this.version='" + this.menu.version.text + "';";
-    data[4] = "this.data='" + b64EncodeUnicode(JSON.stringify(this.gD.save)) + "';";
+    let data = [];
+    data.push("this.name='" + name + "';");
+    data.push("this.file='Savestate" + this.filesLoaded + ".txt';");
+    data.push("this.spriteKey='" + spriteKey + "';");
+    data.push("this.date=" + Date.now() + ";");
+    data.push("this.version='" + this.menu.version.text + "';");
+    data.push("this.data='" + b64EncodeUnicode(JSON.stringify(this.gD.save)) + "';");
     this.downloadSavestate(
       "function Savestate" + Date.now() + "(){" + data.join('') + "}"
     );
@@ -202,7 +203,7 @@ function SaveLoad(menu, gD) {
         } else if (keyB.get("NameModal_Abort")[3].includes(key)) {
           this.enterName = false;
         } else {
-          var event = this.gD.events[index];
+          let event = this.gD.events[index];
           if (event.key.length === 1) {
             this.enterNameModal.addCharacter(event.key);
           }
@@ -268,15 +269,25 @@ function SaveLoad(menu, gD) {
     if (this.choosePicture) {
       this.choosePictureModal.updateMouseMoves(this.gD);
     } else {
+      let savestateSelected = false;
       this.savestates.map((state, index) => {
         if (this.gD.mousePos.x >= state.x && this.gD.mousePos.x <= state.x + state.width &&
             this.gD.mousePos.y >= state.y - this.scrollHeight && this.gD.mousePos.y <= state.y + state.height - this.scrollHeight) {
-          var realHeight = state.y - this.scrollHeight;
+          let realHeight = state.y - this.scrollHeight;
           if (realHeight >= 60 && realHeight < 280) {
             this.updateSelection(index, this.selectedColumnIndex, false);
+            if (this.gD.mousePos.x >= state.x + state.width - 20 && this.gD.mousePos.x <= state.x + state.width &&
+                this.gD.mousePos.y >= state.y && this.gD.mousePos.y <= state.y + 20) {
+              this.savestateDetails.setVisible();
+              savestateSelected = true;
+            }
           }
         }
       }, this);
+
+      if (!savestateSelected) {
+        this.savestateDetails.setInvisible();
+      }
 
       this.buttons.map((button, index) => {
         if (this.gD.mousePos.x >= button.x && this.gD.mousePos.x <= button.x + button.width &&
@@ -285,8 +296,8 @@ function SaveLoad(menu, gD) {
         }
       }, this);
 
-      var button = this.refreshButton;
-      var mouseOver = false;
+      let button = this.refreshButton;
+      let mouseOver = false;
 
       if (this.gD.mousePos.x >= button.x && this.gD.mousePos.x <= button.x + button.width &&
           this.gD.mousePos.y >= button.y && this.gD.mousePos.y <= button.y + button.height) {
@@ -303,15 +314,15 @@ function SaveLoad(menu, gD) {
    * checks where a click was executed
    */
   this.updateClick = function() {
-    var clickPos = this.gD.clicks.pop();
+    let clickPos = this.gD.clicks.pop();
     if (!clickPos || (this.enterName && !this.choosePicture)) {
       return;
     }
 
     if (this.choosePicture) {
-      var button = this.choosePictureModal.getSelectedButton();
+      let button = this.choosePictureModal.getSelectedButton();
       if (this.enterNameModal.text === "") {
-        var date = new Date();
+        let date = new Date();
         this.createSavestate(date.toLocaleString('de-DE', {weekday:'short'}) + " " + date.toLocaleString('de-DE'), button.spriteKey);
       } else {
         this.createSavestate(this.enterNameModal.text, button.spriteKey);
@@ -319,7 +330,7 @@ function SaveLoad(menu, gD) {
       this.enterName = false;
       this.choosePicture = false;
     } else if (this.loaded) {
-      var button = this.backButton;
+      let button = this.backButton;
       if (clickPos.x >= button.x && clickPos.x <= button.x + button.width &&
           clickPos.y >= button.y && clickPos.y <= button.y + button.height) {
         this.loaded = false;
@@ -328,7 +339,7 @@ function SaveLoad(menu, gD) {
       this.savestates.map((state, index) => {
         if (clickPos.x >= state.x && clickPos.x <= state.x + state.width &&
             clickPos.y >= state.y - this.scrollHeight && clickPos.y <= state.y + state.height - this.scrollHeight) {
-          var realHeight = state.y - this.scrollHeight;
+          let realHeight = state.y - this.scrollHeight;
           if (realHeight >= 60 && realHeight < 280) {
             this.markSavestate(index);
           }
@@ -353,7 +364,7 @@ function SaveLoad(menu, gD) {
         }
       }, this);
 
-      var button = this.refreshButton;
+      let button = this.refreshButton;
 
       if (gD.mousePos.x >= button.x && gD.mousePos.x <= button.x + button.width &&
           gD.mousePos.y >= button.y && gD.mousePos.y <= button.y + button.height) {
@@ -365,7 +376,7 @@ function SaveLoad(menu, gD) {
    * checks if the mouse wheel was moved
    */
   this.updateWheelMoves = function() {
-    var wheelMove = this.gD.wheelMovements.pop();
+    let wheelMove = this.gD.wheelMovements.pop();
     if (this.loaded || this.enterName || this.choosePicture) {
       return;
     }
@@ -400,10 +411,9 @@ function SaveLoad(menu, gD) {
       this.backButton.draw(this.gD);
     } else {
       this.scrollBar.draw(this.gD);
-      this.savestateDetails.draw(this.gD);
 
       this.savestates.map(state => {
-        var realHeight = state.y - this.scrollHeight;
+        let realHeight = state.y - this.scrollHeight;
         if (realHeight >= 60 && realHeight < 280) {
           state.draw(this, this.gD);
         }
@@ -414,6 +424,7 @@ function SaveLoad(menu, gD) {
       }, this);
 
       this.refreshButton.draw(this.gD);
+      this.savestateDetails.draw(this.gD);
 
       if (this.enterName) {
         this.enterNameModal.draw(this.gD);
@@ -427,7 +438,7 @@ function SaveLoad(menu, gD) {
    * updates the selected object and deselects the old object
    * @param  {number} rowIndex    the row of the new selected object
    * @param  {number} columnIndex the column of the new selected object
-   * @param  {bool}   scroll      if the action should influence scrolling
+   * @param  {boolean}   scroll      if the action should influence scrolling
    */
   this.updateSelection = function(rowIndex, columnIndex, scroll) {
     if (this.selectedRowIndex !== undefined && this.selectedColumnIndex !== undefined) {
@@ -442,7 +453,7 @@ function SaveLoad(menu, gD) {
     if (rowIndex === -1) {
       this.buttons[columnIndex].select();
     } else {
-      var savestate = this.savestates[rowIndex];
+      let savestate = this.savestates[rowIndex];
       savestate.select();
       this.savestateDetails.setSavestate(savestate.savestate);
       if (scroll) {
@@ -533,10 +544,10 @@ function SLSavestate(x, y, width, height, styleKey, savestate) {
    * @param  {GlobalDict} gD       the global dictionary object
    */
   this.draw = function(saveLoad, gD) {
-    var design = gD.design.elements[this.styleKey];
-    var date = new Date(this.savestate.date);
+    let design = gD.design.elements[this.styleKey];
+    let date = new Date(this.savestate.date);
     date = date.toLocaleString('de-DE', {weekday: 'short'}) + " " + date.toLocaleString('de-DE');
-    var {spriteWidth, spriteHeight} = getSpriteData(this.savestate.spriteKey, gD);
+    let {spriteWidth, spriteHeight} = getSpriteData(this.savestate.spriteKey, gD);
 
     if (this.selected) {
       drawCanvasRect(this.x, this.y - saveLoad.scrollHeight, this.width, this.height, design.rectKey.selected, gD);
@@ -551,10 +562,13 @@ function SLSavestate(x, y, width, height, styleKey, savestate) {
       this.x + Math.floor((55 - spriteWidth) / 2),
       this.y + Math.floor((this.height - spriteHeight) / 2) - saveLoad.scrollHeight, this.savestate.spriteKey, gD
     );
-    drawCanvasText(this.x + 60, this.y + 7 - saveLoad.scrollHeight, "Name: " + this.savestate.name, design.textKey, gD);
-    drawCanvasText(this.x + 60, this.y + 19 - saveLoad.scrollHeight, "Date: " + date, design.textKey, gD);
-    drawCanvasText(this.x + 60, this.y + 31 - saveLoad.scrollHeight, "Version: " + this.savestate.version, design.textKey, gD);
+    drawCanvasText(this.x + 60, this.y + 9 - saveLoad.scrollHeight, "Name: " + this.savestate.name, design.textKey.text, gD);
+    drawCanvasText(this.x + 60, this.y + 21 - saveLoad.scrollHeight, "Date: " + date, design.textKey.text, gD);
+    drawCanvasText(this.x + 60, this.y + 34 - saveLoad.scrollHeight, "Datei: " + this.savestate.file, design.textKey.text, gD);
+    drawCanvasText(this.x + 60, this.y + 46 - saveLoad.scrollHeight, "Version: " + this.savestate.version, design.textKey.text, gD);
+    drawCanvasText(this.x + this.width - 10, this.y + 10, "\uf129", design.textKey.info, gD);
     drawCanvasLine(this.x + 55, this.y, design.borderKey, gD, this.x + 55, this.y + this.height);
+    drawCanvasLine(this.x + this.width - 20, this.y, design.borderKey, gD, this.x + this.width - 20, this.y + 20, this.x + this.width, this.y + 20);
     drawCanvasRectBorder(this.x, this.y - saveLoad.scrollHeight, this.width, this.height, design.borderKey, gD);
   };
 }
@@ -573,7 +587,14 @@ function SLSavestateDetails(x, y, width, height, styleKey) {
   this.width = width;
   this.height = height;
   this.styleKey = styleKey;
+  this.visible = false;
   this.currentSavestate = null;
+  this.setVisible = function() {
+    this.visible = true;
+  };
+  this.setInvisible = function() {
+    this.visible = false;
+  };
   /**
    * sets a new savestate
    * param {Savestate} savestate the savestate that should be used
@@ -586,34 +607,30 @@ function SLSavestateDetails(x, y, width, height, styleKey) {
    * @param  {GlobalDict} gD the global dictionary
    */
   this.draw = function(gD) {
-    if (this.currentSavestate === null) {
+    let design = gD.design.elements[this.styleKey];
+    if (this.currentSavestate === null || !this.visible) {
       return;
     }
 
-    var design = gD.design.elements[this.styleKey];
-    var {spriteWidth, spriteHeight} = getSpriteData(this.currentSavestate.spriteKey, gD);
+    let {spriteWidth, spriteHeight} = getSpriteData(this.currentSavestate.spriteKey, gD);
+    let date = new Date(this.currentSavestate.date);
+    date = date.toLocaleString('de-DE', {weekday: 'short'}) + " " + date.toLocaleString('de-DE');
 
-    drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey, gD);
+    drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.modal, gD);
+    drawCanvasRect(this.x + 250, this.y + 85, 500, 180, design.rectKey.background, gD);
+
     drawCanvasImage(
-        this.x + Math.floor((this.width - spriteWidth) / 2), this.y + Math.floor((55 - spriteHeight) / 2),
-        this.currentSavestate.spriteKey, gD
+      this.x + Math.floor((this.width - spriteWidth) / 2), this.y + 85 + Math.floor((55 - spriteHeight) / 2),
+      this.currentSavestate.spriteKey, gD
     );
-    drawCanvasText(
-        this.x + 6, this.y + 60,
-        "Name: " + this.currentSavestate.name.slice(0, 11) + "...",
-        design.textKey, gD
-    );
-    drawCanvasText(
-        this.x + 6, this.y + 72,
-        "Date: " + this.currentSavestate.date,
-        design.textKey, gD
-    );
-    drawCanvasText(
-        this.x + 6, this.y + 84,
-        "Version: " + this.currentSavestate.version,
-        design.textKey, gD
-    );
-    drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
+    drawCanvasText(this.x + 500, this.y + 150, this.currentSavestate.name, design.textKey.headline, gD);
+    drawCanvasText(this.x + 252, this.y + 138, date, design.textKey.date, gD);
+    drawCanvasText(this.x + this.width - 252, this.y + 138, this.currentSavestate.version, design.textKey.version, gD);
+
+    drawCanvasLine(this.x + 250, this.y + 140, design.borderKey, gD, this.x + this.width - 250, this.y + 140);
+    drawCanvasLine(this.x + 250, this.y + 160, design.borderKey, gD, this.x + this.width - 250, this.y + 160);
+    drawCanvasRectBorder(this.x + 250, this.y + 85, 500, 180, design.borderKey, gD);
+
   };
 }
 

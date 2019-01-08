@@ -13,7 +13,7 @@ function Highscores(menu, gD) {
 
     this.headline = new HighscoreHeadline(this.gD.canvas.width / 2 - 300, 60, 600, 20, "Highscores", "highscoresHeadline");
 
-    this.highscoreDetails = new HighscoreDetails(this.gD.canvas.width - 180, 60, 170, 220, "highscoresDetails");
+    this.highscoreDetails = new HighscoreDetails(0, 0, this.gD.canvas.width, this.gD.canvas.height, "highscoresDetails");
 
     this.enterNameModal = new CanvasEnterNameModal(0, 0, this.gD.canvas.width, this.gD.canvas.height, "enterNameModal");
 
@@ -34,7 +34,7 @@ function Highscores(menu, gD) {
       this.highscores[index] = entry.highscore;
     }, this);
 
-    var pos = 0;
+    let pos = 0;
     this.highscores.map((entry, index) => {
       if (entry.distance > highscore.distance) {
         pos = index + 1;
@@ -48,7 +48,7 @@ function Highscores(menu, gD) {
         this.gD.canvas.width / 2 - 300, 80 + index * 20, 600, 20, entry, index + 1, "highscoresEntry"
       );
     }, this);
-    this.updateSelection(-1, 0);
+    this.updateSelection(-1, 0, false);
     this.vScroll(0);
     this.scrollBar.refresh(this.highscores.length);
   };
@@ -73,9 +73,9 @@ function Highscores(menu, gD) {
    */
   this.updateKeyPresses = function() {
     this.gD.newKeys.map((key, index) => {
-      var keyB = this.menu.controls.keyBindings;
-      var rowIndex = this.selectedRowIndex;
-      var columnIndex = this.selectedColumnIndex;
+      let keyB = this.menu.controls.keyBindings;
+      let rowIndex = this.selectedRowIndex;
+      let columnIndex = this.selectedColumnIndex;
 
       if (this.chooseName) {
         if (keyB.get("NameModal_NavRight")[3].includes(key)) {
@@ -91,7 +91,7 @@ function Highscores(menu, gD) {
         } else if (keyB.get("NameModal_Abort")[3].includes(key)) {
           this.chooseName = false;
         } else {
-          var event = this.gD.events[index];
+          let event = this.gD.events[index];
           if (event.key.length === 1) {
             this.enterNameModal.addCharacter(event.key);
           }
@@ -137,7 +137,7 @@ function Highscores(menu, gD) {
           this.addHighscore({
             name: "test",
             distance: 2000000,
-            cash: 2502
+            cash: Math.floor(Math.random() * 50000)
           });
         }
       }
@@ -151,15 +151,23 @@ function Highscores(menu, gD) {
       return;
     }
 
+    let highscoreSelected = false;
     this.highscores.map((entry, index) => {
-      var realHeight = entry.y - this.scrollHeight;
+      let realHeight = entry.y - this.scrollHeight;
       if (this.gD.mousePos.x >= entry.x && this.gD.mousePos.x <= entry.x + entry.width &&
           this.gD.mousePos.y >= realHeight && this.gD.mousePos.y <= realHeight + entry.height) {
         if (realHeight >= 80 && realHeight < 280) {
           this.updateSelection(index, this.selectedColumnIndex, false);
+          if (this.gD.mousePos.x >= entry.x + entry.width - 20 && this.gD.mousePos.x <= entry.x + entry.width) {
+            this.highscoreDetails.setVisible();
+            highscoreSelected = true;
+          }
         }
       }
     }, this);
+    if (!highscoreSelected) {
+      this.highscoreDetails.setInvisible();
+    }
 
     if (this.gD.mousePos.x >= this.backToMenu.x && this.gD.mousePos.x <= this.backToMenu.x + this.backToMenu.width &&
         this.gD.mousePos.y >= this.backToMenu.y && this.gD.mousePos.y <= this.backToMenu.y + this.backToMenu.height) {
@@ -170,13 +178,13 @@ function Highscores(menu, gD) {
    * checks where a click was executed
    */
   this.updateClick = function() {
-    var clickPos = this.gD.clicks.pop();
+    let clickPos = this.gD.clicks.pop();
     if (!clickPos || this.chooseName) {
       return;
     }
 
     this.highscores.map((entry, index) => {
-      var realHeight = entry.y - this.scrollHeight;
+      let realHeight = entry.y - this.scrollHeight;
       if (clickPos.x >= entry.x && clickPos.x <= entry.x + entry.width &&
           clickPos.y >= realHeight && clickPos.y <= realHeight + entry.height) {
         if (realHeight >= 80 && realHeight < 280) {
@@ -194,7 +202,7 @@ function Highscores(menu, gD) {
    * checks if the mouse wheel was moved
    */
   this.updateWheelMoves = function() {
-    var wheelMove = this.gD.wheelMovements.pop();
+    let wheelMove = this.gD.wheelMovements.pop();
     if (!wheelMove || this.highscores.length === 0) {
       return;
     }
@@ -227,16 +235,15 @@ function Highscores(menu, gD) {
     this.headline.draw(gD);
 
     this.highscores.map(entry => {
-      var realHeight = entry.y - this.scrollHeight;
+      let realHeight = entry.y - this.scrollHeight;
       if (realHeight >= 80 && realHeight < 280) {
         entry.draw(this, this.gD);
       }
     }, this);
 
     this.scrollBar.draw(this.gD);
-    this.highscoreDetails.draw(this.gD);
-
     this.backToMenu.draw(this.gD);
+    this.highscoreDetails.draw(this.gD);
 
     if (this.chooseName) {
       this.enterNameModal.draw(this.gD);
@@ -244,9 +251,9 @@ function Highscores(menu, gD) {
   };
   /**
    * updates the selected object and deselects the old object
-   * @param {number} rowIndex    the row of the new selected object
-   * @param {number} columnIndex the column of the new selected object
-   * @param {bool}   scroll      if the action should influence scrolling
+   * @param {number}  rowIndex    the row of the new selected object
+   * @param {number}  columnIndex the column of the new selected object
+   * @param {boolean} scroll      if the action should influence scrolling
    */
   this.updateSelection = function(rowIndex, columnIndex, scroll) {
     if (this.selectedRowIndex !== undefined && this.selectedColumnIndex !== undefined) {
@@ -261,7 +268,7 @@ function Highscores(menu, gD) {
     if (rowIndex === -1) {
       this.backToMenu.select();
     } else {
-      var entry = this.highscores[rowIndex];
+      let entry = this.highscores[rowIndex];
       entry.select();
       this.highscoreDetails.setHighscore(entry.highscore);
       if (scroll) {
@@ -312,7 +319,7 @@ function HighscoreHeadline(x, y, width, height, text, styleKey) {
    * @param {GlobalDict} gD the global dictionary
    */
   this.draw = function(gD) {
-    var design = gD.design.elements[this.styleKey];
+    let design = gD.design.elements[this.styleKey];
     drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey, gD);
     drawCanvasText(
       this.x + (this.width / 2), this.y + (this.height / 2), this.text, design.textKey, gD
@@ -358,7 +365,7 @@ function HighscoreEntry(x, y, width, height, highscore, place, styleKey) {
    * @param {GlobalDict} gD         the global dictionary
    */
   this.draw = function(highscores, gD) {
-    var design = gD.design.elements[this.styleKey];
+    let design = gD.design.elements[this.styleKey];
     if (this.selected) {
       drawCanvasRect(this.x, this.y - highscores.scrollHeight, this.width, this.height, design.rectKey.selected, gD);
     } else {
@@ -373,16 +380,24 @@ function HighscoreEntry(x, y, width, height, highscore, place, styleKey) {
       this.highscore.name, design.textKey.name, gD
     );
     drawCanvasText(
-      this.x + this.width - 2, this.y + this.height / 2 - highscores.scrollHeight, 
+      this.x + this.width - 22, this.y + this.height / 2 - highscores.scrollHeight,
       this.highscore.distance + "m", design.textKey.number, gD
+    );
+    drawCanvasText(
+      this.x + this.width - 10, this.y + this.height / 2 - highscores.scrollHeight,
+      "\uf129", design.textKey.info, gD
     );
     drawCanvasLine(
       this.x + 50, this.y - highscores.scrollHeight, design.borderKey, 
       gD, this.x + 50, this.y + this.height - highscores.scrollHeight
     );
     drawCanvasLine(
-      this.x + this.width - 100, this.y - highscores.scrollHeight, design.borderKey, 
-      gD, this.x + this.width - 100, this.y + this.height - highscores.scrollHeight
+      this.x + this.width - 120, this.y - highscores.scrollHeight, design.borderKey,
+      gD, this.x + this.width - 120, this.y + this.height - highscores.scrollHeight
+    );
+    drawCanvasLine(
+      this.x + this.width - 20, this.y - highscores.scrollHeight, design.borderKey,
+      gD, this.x + this.width - 20, this.y + this.height - highscores.scrollHeight
     );
     drawCanvasRectBorder(this.x, this.y - highscores.scrollHeight, this.width, this.height, design.borderKey, gD);
   };
@@ -402,7 +417,14 @@ function HighscoreDetails(x, y, width, height, styleKey) {
   this.width = width;
   this.height = height;
   this.styleKey = styleKey;
+  this.visible = false;
   this.currentHighscore = null;
+  this.setVisible = function() {
+    this.visible = true;
+  };
+  this.setInvisible = function() {
+    this.visible = false;
+  };
   /**
    * sets a new highscore to get the details from
    * @param {Object} highscore the highscore object to use
@@ -415,15 +437,18 @@ function HighscoreDetails(x, y, width, height, styleKey) {
    * @param {GlobalDict} gD the global dictionary
    */
   this.draw = function(gD) {
-    var design = gD.design.elements[this.styleKey];
-    if (this.currentHighscore === null) {
+    let design = gD.design.elements[this.styleKey];
+    if (this.currentHighscore === null || !this.visible) {
       return;
     }
 
-    drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey, gD);
-    drawCanvasText(this.x + 6, this.y + 12, "Name: " + this.currentHighscore.name, design.textKey, gD);
-    drawCanvasText(this.x + 6, this.y + 24, "Distance: " + this.currentHighscore.distance, design.textKey, gD);
-    drawCanvasText(this.x + 6, this.y + 36, "Cash: " + this.currentHighscore.cash, design.textKey, gD);
-    drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
+    drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.modal, gD);
+    drawCanvasRect(this.x + 250, this.y + 85, 500, 180, design.rectKey.background, gD);
+
+    drawCanvasText(this.x + 500, this.y + 95, this.currentHighscore.name, design.textKey.headline, gD);
+    drawCanvasText(this.x + 256, this.y + 85 + 30, "Distance: " + this.currentHighscore.distance, design.textKey.text, gD);
+    drawCanvasText(this.x + 256, this.y + 85 + 50, "Cash: " + this.currentHighscore.cash, design.textKey.text, gD);
+    drawCanvasLine(this.x + 250, this.y + 85 + 20, design.borderKey, gD, this.x + this.width - 250, this.y + 105);
+    drawCanvasRectBorder(this.x + 250, this.y + 85, 500, 180, design.borderKey, gD);
   };
 }

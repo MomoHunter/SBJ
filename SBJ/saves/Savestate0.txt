@@ -1,1 +1,1 @@
-function Savestate1545254554372(){this.name='Test 1';this.spriteKey='Enemy_Fireball';this.date=1545254554372;this.version='v3.0.0';this.data='e30=';}
+function Savestate1545254554372(){this.name='Test 1';this.file='Savestate0.txt';this.spriteKey='Enemy_Fireball';this.date=1545254554372;this.version='v3.0.0';this.data='e30=';}

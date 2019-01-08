@@ -1,1 +1,1 @@
-function Savestate1545254628360(){this.name='Das ist ein guter Test, oh yeah!!';this.spriteKey='Item_Treasure';this.date=1545254628360;this.version='v3.0.0';this.data='e30=';}
+function Savestate1545254628360(){this.name='Das ist ein guter Test, oh yeah!!';this.file='Savestate1.txt';this.spriteKey='Item_Treasure';this.date=1545254628360;this.version='v3.0.0';this.data='e30=';}
