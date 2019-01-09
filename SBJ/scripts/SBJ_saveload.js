@@ -110,6 +110,12 @@ function SaveLoad(menu, gD) {
       if (this.gD.save.achievements) {
         this.menu.achievements.setSaveData(this.gD.save.achievements);
       }
+      if (this.gD.save.highscores) {
+        this.menu.highscores.highscores = this.gD.save.highscores;
+      }
+      if (this.gD.save.statistics) {
+        this.menu.statistics.statistics = new Map(this.gD.save.statistics);
+      }
       this.infoText.text = "Erfolgreich geladen!";
       console.log("Erfolgreich geladen!");
     } catch (e) {
@@ -134,11 +140,12 @@ function SaveLoad(menu, gD) {
   };
   /**
    * creates a new savestate
-   * @param  {string} name      the name of the savestate
-   * @param  {string} spriteKey a spriteKey for the picture of the savestate
+   * @param {string} name      the name of the savestate
+   * @param {string} spriteKey a spriteKey for the picture of the savestate
    */
   this.createSavestate = function(name, spriteKey) {
     let data = [];
+    this.refreshSavedata();
     data.push("this.name='" + name + "';");
     data.push("this.file='Savestate" + this.filesLoaded + ".txt';");
     data.push("this.spriteKey='" + spriteKey + "';");
@@ -154,20 +161,29 @@ function SaveLoad(menu, gD) {
    * @param  {string} savestate a savestate that should be downloaded
    */
   this.downloadSavestate = function(savestate) {
-    var element = document.createElement('a');
-    var file = new Blob([savestate], {type: 'text/javascript'});
+    let element = document.createElement('a');
+    let file = new Blob([savestate], {type: 'text/javascript'});
     element.href = URL.createObjectURL(file);
     element.download = "Savestate" + this.filesLoaded + ".txt";
     element.click();
+  };
+  /**
+   * refreshes the save data
+   */
+  this.refreshSavedata = function() {
+    this.gD.save.achievements = this.menu.achievements.getSaveData();
+    this.gD.save.keyBindings = Array.from(this.menu.controls.keyBindings.entries());
+    this.gD.save.highscores = this.menu.highscores.highscores;
+    this.gD.save.statistics = Array.from(this.menu.statistics.statistics.entries());
   };
   /**
    * checks if a key is pressed and executes commands
    */
   this.updateKeyPresses = function() {
     this.gD.newKeys.map((key, index) => {
-      var keyB = this.menu.controls.keyBindings;
-      var rowIndex = this.selectedRowIndex;
-      var columnIndex = this.selectedColumnIndex;
+      let keyB = this.menu.controls.keyBindings;
+      let rowIndex = this.selectedRowIndex;
+      let columnIndex = this.selectedColumnIndex;
 
       if (this.loaded) {
         if (keyB.get("Menu_Confirm")[3].includes(key)) {

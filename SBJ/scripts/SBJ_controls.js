@@ -130,7 +130,6 @@
     }
     this.keyBindings.get(this.newKeyEntry[0])[3][this.newKeyEntry[1]] = key;
     this.newKeyMode = false;
-    this.gD.save.keyBindings = Array.from(this.keyBindings.entries());
   };
   /**
    * checks if a key is pressed and executes commands
