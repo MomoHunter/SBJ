@@ -1,6 +1,9 @@
 function Statistics(menu, gD) {
   this.menu = menu;
   this.gD = gD;
+  /**
+   * initiates the object
+   */
   this.init = function() {
     this.statistics = new Map([
       ["time_played", new StatisticsData("Zeit gespielt", Events.TIME_PLAYED, false)],
@@ -87,13 +90,13 @@ function Statistics(menu, gD) {
     this.tabs[1].objects.push(new StatisticsItemField(this.gD.canvas.width / 2 + 60, 220, 240, 22, "items_magnet_used", "itemStandard", "Item_Magnet"));
     this.tabs[1].objects.push(new StatisticsItemField(this.gD.canvas.width / 2 + 60, 248, 240, 22, "items_rocket_used", "itemStandard", "Item_Rocket"));
 
-    this.tabs[2].objects.push(new StatisticsMoneyField(this.gD.canvas.width / 2 - 245, 70, 545, 13, "Currency_XS", "money_collected", "moneyPositive"));
-    this.tabs[2].objects.push(new StatisticsMoneyField(this.gD.canvas.width / 2 - 245, 93, 545, 13, "Currency_XS", "money_spent", "moneyNegative"));
-    this.tabs[2].objects.push(new StatisticsMoneyField(this.gD.canvas.width / 2 - 245, 116, 545, 13, "Money_XS_1", "money_1_collected", "statisticsMoney1"));
-    this.tabs[2].objects.push(new StatisticsMoneyField(this.gD.canvas.width / 2 - 245, 139, 545, 13, "Money_XS_10", "money_10_collected", "statisticsMoney10"));
-    this.tabs[2].objects.push(new StatisticsMoneyField(this.gD.canvas.width / 2 - 245, 162, 545, 13, "Money_XS_100", "money_100_collected", "statisticsMoney100"));
-    this.tabs[2].objects.push(new StatisticsMoneyField(this.gD.canvas.width / 2 - 245, 185, 545, 13, "Money_XS_1000", "money_1000_collected", "statisticsMoney1000"));
-    let bonus = new StatisticsMoneyRainbowField(this.gD.canvas.width / 2 - 245, 208, 545, 13, "Currency_XS", "money_bonus", "statisticsMoneyBonus");
+    this.tabs[2].objects.push(new StatisticsMoneyField(this.gD.canvas.width / 2 - 245, 70, 545, 13, "money_collected", "moneyPositive", "Currency_XS"));
+    this.tabs[2].objects.push(new StatisticsMoneyField(this.gD.canvas.width / 2 - 245, 93, 545, 13, "money_spent", "moneyNegative", "Currency_XS"));
+    this.tabs[2].objects.push(new StatisticsMoneyField(this.gD.canvas.width / 2 - 245, 116, 545, 13, "money_1_collected", "statisticsMoney1", "Money_XS_1"));
+    this.tabs[2].objects.push(new StatisticsMoneyField(this.gD.canvas.width / 2 - 245, 139, 545, 13, "money_10_collected", "statisticsMoney10", "Money_XS_10"));
+    this.tabs[2].objects.push(new StatisticsMoneyField(this.gD.canvas.width / 2 - 245, 162, 545, 13, "money_100_collected", "statisticsMoney100", "Money_XS_100"));
+    this.tabs[2].objects.push(new StatisticsMoneyField(this.gD.canvas.width / 2 - 245, 185, 545, 13, "money_1000_collected", "statisticsMoney1000", "Money_XS_1000"));
+    let bonus = new StatisticsMoneyRainbowField(this.gD.canvas.width / 2 - 245, 208, 545, 13, "money_bonus", "statisticsMoneyBonus", "Currency_XS");
     bonus.init(this.statistics);
     this.tabs[2].objects.push(bonus);
     this.tabs[2].objects.push(new StatisticsBar(
@@ -119,11 +122,49 @@ function Statistics(menu, gD) {
 
     this.updateSelection(-1, 0);
   };
+  /**
+   * checks if a key is pressed and executes commands
+   */
   this.updateKeyPresses = function() {
     this.gD.newKeys.map(key => {
+      let keyB = this.menu.controls.keyBindings;
+      let rowIndex = this.selectedRowIndex;
+      let tabIndex = this.selectedTabIndex;
 
+      if (keyB.get("Menu_NavDown")[3].includes(key)) {
+        if (rowIndex === -1) {
+          this.updateSelection(0, 0);
+        } else {
+          tabIndex++;
+          if (tabIndex >= this.tabs.length) {
+            this.updateSelection(-1, tabIndex - 1)
+          } else {
+            this.updateSelection(rowIndex, tabIndex);
+          }
+        }
+      } else if (keyB.get("Menu_NavUp")[3].includes(key)) {
+        if (rowIndex === -1) {
+          this.updateSelection(0, this.tabs.length - 1);
+        } else {
+          tabIndex--;
+          if (tabIndex === -1) {
+            this.updateSelection(-1, tabIndex + 1);
+          } else {
+            this.updateSelection(rowIndex, tabIndex);
+          }
+        }
+      } else if (keyB.get("Menu_Confirm")[3].includes(key)) {
+        if (rowIndex === -1) {
+          gD.currentPage = this.menu;
+        }
+      } else if (keyB.get("Menu_Back")[3].includes(key)) {
+        gD.currentPage = this.menu;
+      }
     }, this);
   };
+  /**
+   * checks, if the mouse was moved, what the mouse hit
+   */
   this.updateMouseMoves = function() {
     this.tabs.map((tab, index) => {
       if (this.gD.mousePos.x >= tab.x && this.gD.mousePos.x <= tab.x + 55 &&
@@ -137,6 +178,9 @@ function Statistics(menu, gD) {
       this.updateSelection(-1, this.selectedTabIndex);
     }
   };
+  /**
+   * checks where a click was executed
+   */
   this.updateClick = function() {
     let clickPos = this.gD.clicks.pop();
     if (!clickPos) {
@@ -148,14 +192,24 @@ function Statistics(menu, gD) {
       this.gD.currentPage = this.menu;
     }
   };
+  /**
+   * checks if the mouse wheel was moved
+   */
   this.updateWheelMoves = function() {
-
+    /* unused */
   };
+  /**
+   * updates moving objects
+   */
   this.update = function() {
     this.tabs.map(tab => {
       tab.update(this.statistics);
     }, this);
   };
+  /**
+   * draws the objects onto the canvas
+   * @param {float} ghostFactor the part of a physics step since the last physics update
+   */
   this.draw = function(ghostFactor) {
     this.gD.context.drawImage(this.menu.backgroundImage, 0, 0);
 
@@ -165,6 +219,11 @@ function Statistics(menu, gD) {
     }, this);
     this.backToMenu.draw(this.gD);
   };
+  /**
+   * updates the selected object and deselects the old object
+   * @param {number} rowIndex the row of the new selected object
+   * @param {number} tabIndex the tab of the new selected object
+   */
   this.updateSelection = function(rowIndex, tabIndex) {
     if (this.selectedRowIndex !== undefined && this.selectedTabIndex !== undefined) {
       if (this.selectedRowIndex === -1) {
@@ -182,16 +241,30 @@ function Statistics(menu, gD) {
   };
 }
 
+/**
+ * a statistic data object that inherits statistical data
+ * @param {string}  name            the name of the statistic data
+ * @param {string}  eventKey        the event key for new values
+ * @param {boolean} isResetPerRound if the value should be reset with every new value
+ */
 function StatisticsData(name, eventKey, isResetPerRound) {
   this.name = name;
   this.eventKey = eventKey;
   this.isResetPerRound = isResetPerRound;
   this.currentCount = 0;
+  /**
+   * resets the current value
+   */
   this.resetAtRoundStart = function() {
     if (this.isResetPerRound) {
       this.currentCount = 0;
     }
   };
+  /**
+   * adds a new value
+   * @param {string} eventKey   the event key to compare if its the same key
+   * @param {number} addedValue the new value
+   */
   this.handleEvent = function(eventKey, addedValue = 1) {
     if (this.eventKey === eventKey) {
       this.currentCount += addedValue;
@@ -199,6 +272,16 @@ function StatisticsData(name, eventKey, isResetPerRound) {
   };
 }
 
+/**
+ * a tab for statistics
+ * @param {number} x         the x-coordinate of the top left corner of the tab
+ * @param {number} y         the y-coordinate of the top left corner of the tab
+ * @param {number} width     the width of the tab
+ * @param {number} height    the height of the tab
+ * @param {number} tabNr     the number of the tab
+ * @param {string} spriteKey the icon for the tab
+ * @param {string} styleKey  the style of the tab
+ */
 function StatisticsTab(x, y, width, height, tabNr, spriteKey, styleKey) {
   this.x = x;
   this.y = y;
@@ -209,15 +292,21 @@ function StatisticsTab(x, y, width, height, tabNr, spriteKey, styleKey) {
   this.styleKey = styleKey;
   this.selected = false;
   this.objects = [];
-  this.init = function() {
-
-  };
+  /**
+   * selects the tab
+   */
   this.select = function() {
     this.selected = true;
   };
+  /**
+   * deselects the tab
+   */
   this.deselect = function() {
     this.selected = false;
   };
+  /**
+   * updates moving objects
+   */
   this.update = function(statistics) {
     this.objects.map(object => {
       if (object.update !== undefined) {
@@ -225,6 +314,9 @@ function StatisticsTab(x, y, width, height, tabNr, spriteKey, styleKey) {
       }
     }, this);
   };
+  /**
+   * draws the objects onto the canvas
+   */
   this.draw = function(gD, statistics) {
     let design = gD.design.elements[this.styleKey];
     let {spriteWidth, spriteHeight} = getSpriteData(this.spriteKey, gD);
@@ -257,6 +349,15 @@ function StatisticsTab(x, y, width, height, tabNr, spriteKey, styleKey) {
   };
 }
 
+/**
+ * an object which uses the data description as headline
+ * @param {number} x         the x-coordinate of the top left corner of the headline
+ * @param {number} y         the y-coordinate of the top left corner of the headline
+ * @param {number} width     the width of the headline
+ * @param {number} height    the height of the headline
+ * @param {string} key       the key of the statistic data
+ * @param {string} styleKey  the style of the headline
+ */
 function StatisticsHeadline(x, y, width, height, key, styleKey) {
   this.x = x;
   this.y = y;
@@ -264,6 +365,9 @@ function StatisticsHeadline(x, y, width, height, key, styleKey) {
   this.height = height;
   this.key = key;
   this.styleKey = styleKey;
+  /**
+   * draws the objects onto the canvas
+   */
   this.draw = function(gD, statistics) {
     let design = gD.design.elements[this.styleKey];
     let data = statistics.get(this.key);
@@ -280,6 +384,15 @@ function StatisticsHeadline(x, y, width, height, key, styleKey) {
   };
 }
 
+/**
+ * an object that displays time
+ * @param {number} x         the x-coordinate of the top left corner of the time field
+ * @param {number} y         the y-coordinate of the top left corner of the time field
+ * @param {number} width     the width of the time field
+ * @param {number} height    the height of the time field
+ * @param {string} key       the key of the statistic data
+ * @param {string} styleKey  the style of the time field
+ */
 function StatisticsTimeField(x, y, width, height, key, styleKey) {
   this.x = x;
   this.y = y;
@@ -287,6 +400,9 @@ function StatisticsTimeField(x, y, width, height, key, styleKey) {
   this.height = height;
   this.key = key;
   this.styleKey = styleKey;
+  /**
+   * draws the objects onto the canvas
+   */
   this.draw = function(gD, statistics) {
     let design = gD.design.elements[this.styleKey];
     let data = statistics.get(this.key);
@@ -303,6 +419,15 @@ function StatisticsTimeField(x, y, width, height, key, styleKey) {
   };
 }
 
+/**
+ * an object that displays a distance using an earth and a moon
+ * @param {number} x         the x-coordinate of the top left corner of the distance field
+ * @param {number} y         the y-coordinate of the top left corner of the distance field
+ * @param {number} width     the width of the distance field
+ * @param {number} height    the height of the distance field
+ * @param {string} key       the key of the statistic data
+ * @param {string} styleKey  the style of the distance field
+ */
 function StatisticsDistanceField(x, y, width, height, key, styleKey) {
   this.x = x;
   this.y = y;
@@ -310,6 +435,9 @@ function StatisticsDistanceField(x, y, width, height, key, styleKey) {
   this.height = height;
   this.key = key;
   this.styleKey = styleKey;
+  /**
+   * draws the objects onto the canvas
+   */
   this.draw = function(gD, statistics) {
     let design = gD.design.elements[this.styleKey];
     let data = statistics.get(this.key);
@@ -327,6 +455,16 @@ function StatisticsDistanceField(x, y, width, height, key, styleKey) {
   };
 }
 
+/**
+ * an object for displaying item numbers
+ * @param {number} x         the x-coordinate of the top left corner of the item field
+ * @param {number} y         the y-coordinate of the top left corner of the item field
+ * @param {number} width     the width of the item field
+ * @param {number} height    the height of the item field
+ * @param {string} key       the key of the statistic data
+ * @param {string} styleKey  the style of the item field
+ * @param {string} spriteKey a key for a sprite that should be used
+ */
 function StatisticsItemField(x, y, width, height, key, styleKey, spriteKey = null) {
   this.x = x;
   this.y = y;
@@ -335,6 +473,9 @@ function StatisticsItemField(x, y, width, height, key, styleKey, spriteKey = nul
   this.key = key;
   this.styleKey = styleKey;
   this.spriteKey = spriteKey;
+  /**
+   * draws the objects onto the canvas
+   */
   this.draw = function(gD, statistics) {
     let design = gD.design.elements[this.styleKey];
     let data = statistics.get(this.key);
@@ -350,14 +491,27 @@ function StatisticsItemField(x, y, width, height, key, styleKey, spriteKey = nul
   };
 }
 
-function StatisticsMoneyField(x, y, width, height, spriteKey, key, styleKey) {
+/**
+ * an object to display money statistics
+ * @param {number} x         the x-coordinate of the top left corner of the money field
+ * @param {number} y         the y-coordinate of the top left corner of the money field
+ * @param {number} width     the width of the money field
+ * @param {number} height    the height of the money field
+ * @param {string} key       the key of the statistic data
+ * @param {string} styleKey  the style of the money field
+ * @param {string} spriteKey a key for a sprite that should be used
+ */
+function StatisticsMoneyField(x, y, width, height, key, styleKey, spriteKey) {
   this.x = x;
   this.y = y;
   this.width = width;
   this.height = height;
-  this.spriteKey = spriteKey;
   this.key = key;
   this.styleKey = styleKey;
+  this.spriteKey = spriteKey;
+  /**
+   * draws the objects onto the canvas
+   */
   this.draw = function(gD, statistics) {
     let design = gD.design.elements[this.styleKey];
     let {spriteHeight} = getSpriteData(this.spriteKey, gD);
@@ -403,23 +557,42 @@ function StatisticsMoneyField(x, y, width, height, spriteKey, key, styleKey) {
   };
 }
 
-function StatisticsMoneyRainbowField(x, y, width, height, spriteKey, key, styleKey) {
+/**
+ * an object to display money statistics with rainbow text
+ * @param {number} x         the x-coordinate of the top left corner of the money field
+ * @param {number} y         the y-coordinate of the top left corner of the money field
+ * @param {number} width     the width of the money field
+ * @param {number} height    the height of the money field
+ * @param {string} key       the key of the statistic data
+ * @param {string} styleKey  the style of the money field
+ * @param {string} spriteKey a key for a sprite that should be used
+ */
+function StatisticsMoneyRainbowField(x, y, width, height, key, styleKey, spriteKey) {
   this.x = x;
   this.y = y;
   this.width = width;
   this.height = height;
-  this.spriteKey = spriteKey;
   this.key = key;
   this.styleKey = styleKey;
+  this.spriteKey = spriteKey;
   this.rainbowText = null;
+  /**
+   * initiates the object
+   */
   this.init = function(statistics) {
     this.rainbowText = new CanvasRainbowText(
       this.x + 3, this.y + this.height / 2, statistics.get(this.key).name, "rainbowLeft"
     );
   };
+  /**
+   * updates the rainbow text
+   */
   this.update = function() {
     this.rainbowText.update();
   };
+  /**
+   * draws the objects onto the canvas
+   */
   this.draw = function(gD, statistics) {
     let design = gD.design.elements[this.styleKey];
     let {spriteHeight} = getSpriteData(this.spriteKey, gD);
@@ -451,6 +624,16 @@ function StatisticsMoneyRainbowField(x, y, width, height, spriteKey, key, styleK
   };
 }
 
+/**
+ * an object for comparing values and a visual representation
+ * @param {number}        x        the x-coordinate of the top left corner of the money field
+ * @param {number}        y        the y-coordinate of the top left corner of the money field
+ * @param {number}        width    the width of the money field
+ * @param {number}        height   the height of the money field
+ * @param {string}        mainKey  the key with which the values should be compared
+ * @param {Array<string>} keys     an array of string
+ * @param {string}        styleKey the style of the money field
+ */
 function StatisticsBar(x, y, width, height, mainKey, keys, styleKey) {
   this.x = x;
   this.y = y;
@@ -460,6 +643,9 @@ function StatisticsBar(x, y, width, height, mainKey, keys, styleKey) {
   this.keys = keys;
   this.styleKey = styleKey;
   this.widths = [];
+  /**
+   * update moving objects
+   */
   this.update = function(statistics) {
     this.keys.map((key, index) => {
       let value = statistics.get(key).currentCount;
@@ -478,6 +664,9 @@ function StatisticsBar(x, y, width, height, mainKey, keys, styleKey) {
       this.widths[index] = value / statistics.get(this.mainKey).currentCount * this.width;
     }, this);
   };
+  /**
+   * draws the objects onto the canvas
+   */
   this.draw = function(gD) {
     let design = gD.design.elements[this.styleKey];
     let newX = this.x;
@@ -492,6 +681,16 @@ function StatisticsBar(x, y, width, height, mainKey, keys, styleKey) {
   };
 }
 
+/**
+ * an object for comparing values and a visual representation
+ * @param {number}        x        the x-coordinate of the top left corner of the money field
+ * @param {number}        y        the y-coordinate of the top left corner of the money field
+ * @param {number}        width    the width of the money field
+ * @param {number}        height   the height of the money field
+ * @param {string}        mainKey  the key with which the values should be compared
+ * @param {Array<string>} keys     an array of string
+ * @param {string}        styleKey the style of the money field
+ */
 function StatisticsLine(x, y, width, height, mainKey, keys, styleKey) {
   this.x = x;
   this.y = y;
@@ -501,6 +700,9 @@ function StatisticsLine(x, y, width, height, mainKey, keys, styleKey) {
   this.keys = keys;
   this.styleKey = styleKey;
   this.heights = [];
+  /**
+   * update moving objects
+   */
   this.update = function(statistics) {
     this.keys.map((key, index) => {
       let value = statistics.get(key).currentCount;
@@ -519,6 +721,9 @@ function StatisticsLine(x, y, width, height, mainKey, keys, styleKey) {
       this.heights[index] = value / statistics.get(this.mainKey).currentCount * this.height;
     }, this);
   };
+  /**
+   * draws the objects onto the canvas
+   */
   this.draw = function(gD) {
     let design = gD.design.elements[this.styleKey];
     let newY = this.y;
