@@ -87,7 +87,7 @@ function Menu(gD) {
    * sets a new background at random
    */
   this.setNewBackground = function() {
-    var backgrounds = ["img/Titlescreen.png"];
+    let backgrounds = ["img/Titlescreen.png"];
     this.backgroundImage.src = backgrounds[Math.floor(Math.random() * backgrounds.length)];
   };
   /**

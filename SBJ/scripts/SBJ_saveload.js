@@ -29,7 +29,7 @@ function SaveLoad(menu, gD) {
       this.gD.canvas.width - 40, 10, 30, 30, "Icon_Refresh", "standardImage"
     );
     this.backButton = new CanvasButton(
-      this.gD.canvas.width / 2 - 100, this.gD.canvas.height - 50, 200, 30, "Back", "menu"
+      this.gD.canvas.width / 2 - 100, this.gD.canvas.height - 50, 200, 30, "Main Menu", "menu"
     );
     this.backButton.select();
 
@@ -188,19 +188,21 @@ function SaveLoad(menu, gD) {
       if (this.loaded) {
         if (keyB.get("Menu_Confirm")[3].includes(key)) {
           this.loaded = false;
+          this.gD.currentPage = this.menu;
         }
       } else if (this.choosePicture) {
         this.choosePictureModal.updateKeyPresses(keyB, key);
         if (keyB.get("Menu_Confirm")[3].includes(key)) {
-          var button = this.choosePictureModal.getSelectedButton();
+          let button = this.choosePictureModal.getSelectedButton();
           if (this.enterNameModal.text === "") {
-            var date = new Date();
+            let date = new Date();
             this.createSavestate(date.toLocaleString('de-DE', {weekday:'short'}) + " " + date.toLocaleString('de-DE'), button.spriteKey);
           } else {
             this.createSavestate(this.enterNameModal.text, button.spriteKey);
           }
           this.enterName = false;
           this.choosePicture = false;
+          this.gD.currentPage = this.menu;
         } else if (keyB.get("Menu_Abort")[3].includes(key)) {
           this.enterName = false;
           this.choosePicture = false;
@@ -641,8 +643,8 @@ function SLSavestateDetails(x, y, width, height, styleKey) {
       this.currentSavestate.spriteKey, gD
     );
     drawCanvasText(this.x + 500, this.y + 150, this.currentSavestate.name, design.textKey.headline, gD);
-    drawCanvasText(this.x + 252, this.y + 138, date, design.textKey.date, gD);
-    drawCanvasText(this.x + this.width - 252, this.y + 138, this.currentSavestate.version, design.textKey.version, gD);
+    drawCanvasText(this.x + 254, this.y + 138, date, design.textKey.date, gD);
+    drawCanvasText(this.x + this.width - 254, this.y + 138, this.currentSavestate.version, design.textKey.version, gD);
 
     drawCanvasLine(this.x + 250, this.y + 140, design.borderKey, gD, this.x + this.width - 250, this.y + 140);
     drawCanvasLine(this.x + 250, this.y + 160, design.borderKey, gD, this.x + this.width - 250, this.y + 160);
