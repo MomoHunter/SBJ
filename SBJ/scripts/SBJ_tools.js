@@ -14,7 +14,7 @@ function randomBetween(n1, n2) {
  * @returns {string} the converted number as a string
  */
 function addLeadingZero(number) {
-  return number > 10 ? number.toString() : "0" + number;
+  return number >= 10 ? number.toString() : "0" + number;
 }
 
 /**
@@ -22,7 +22,7 @@ function addLeadingZero(number) {
  * @return {object | undefined} a deep copy of the given object or undefined if the object is not supported
  */
 function copy(object) {
-  var result;
+  let result;
 
   // Handle the 3 simple types, and null or undefined
   if (null == object || "object" != typeof object) {
@@ -32,8 +32,8 @@ function copy(object) {
   // Handle Array
   if (object instanceof Array) {
     result = [];
-    for (var i = 0; i < object.length; i++) {
-      result[i] = copy(obj[i]);
+    for (let i = 0; i < object.length; i++) {
+      result[i] = copy(object[i]);
     }
     return result;
   }
@@ -41,7 +41,7 @@ function copy(object) {
   // Handle Object
   if (object instanceof Object) {
     result = {};
-    for (var attr in object) {
+    for (let attr in object) {
       if (object.hasOwnProperty(attr)) {
         result[attr] = copy(object[attr]);
       }
@@ -57,9 +57,9 @@ function copy(object) {
  * @return {{spriteWidth: number, spriteHeight: number, full: Array}}
  */
 function getSpriteData(spriteKey, gD) {
-  var spriteData = gD.spriteDict[spriteKey];
+  let spriteData = gD.spriteDict[spriteKey];
   if (!spriteData) {
-    var fallbackSpriteKey = "Special_Placeholder";
+    let fallbackSpriteKey = "Special_Placeholder";
     if (spriteKey.includes("_B_") || spriteKey.endsWith("_B")) {
       fallbackSpriteKey += "_B";
     }
@@ -82,7 +82,7 @@ function getSpriteData(spriteKey, gD) {
  * @param {GlobalDict} gD
  */
 function drawCanvasText(x, y, text, styleKey, gD) {
-  var design = gD.design.text[styleKey];
+  let design = gD.design.text[styleKey];
   gD.context.textAlign = design.align;
   gD.context.textBaseline = design.baseline;
   gD.context.font = design.font;
@@ -103,7 +103,7 @@ function drawCanvasText(x, y, text, styleKey, gD) {
  * @param {GlobalDict} gD
  */
 function drawCanvasTextBorder(x, y, text, styleKey, gD) {
-  var design = gD.design.border[styleKey];
+  let design = gD.design.border[styleKey];
   gD.context.strokeStyle = `rgba(${design.borderColor})`;
   gD.context.lineWidth = design.borderSize;
   gD.context.setLineDash(design.lineDash);
@@ -113,8 +113,8 @@ function drawCanvasTextBorder(x, y, text, styleKey, gD) {
 /**
  * Draw a Sprite-Image onto the used canvas.
  * Its size is determined by the defined data of the given Sprite.
- * @param {width} x x-coordinate of the top-left corner
- * @param {width} y y-coordinate of the top-left corner
+ * @param {string} x x-coordinate of the top-left corner
+ * @param {string} y y-coordinate of the top-left corner
  * @param {string} spriteKey defines which sprite should be drawn
  * @param {GlobalDict} gD
  */
@@ -123,11 +123,11 @@ function drawCanvasImage(x, y, spriteKey, gD) {
     return;
   }
 
-  var {full: spriteData} = getSpriteData(spriteKey, gD);
-  var [isAnim, spriteX, spriteY, spriteWidth, spriteHeight] = spriteData;
+  let {full: spriteData} = getSpriteData(spriteKey, gD);
+  let [isAnim, spriteX, spriteY, spriteWidth, spriteHeight] = spriteData;
 
   if (isAnim) {
-    var frameNo = Math.floor(gD.frameNo / 8) % spriteY.length;
+    let frameNo = Math.floor(gD.frameNo / 8) % spriteY.length;
     spriteY = spriteY[frameNo];
   }
 
@@ -148,7 +148,7 @@ function drawCanvasImage(x, y, spriteKey, gD) {
  * @param {GlobalDict} gD
  */
 function drawCanvasRect(x, y, width, height, styleKey, gD) {
-  var design = gD.design.rect[styleKey];
+  let design = gD.design.rect[styleKey];
   gD.context.fillStyle = `rgba(${design.backgroundColor})`;
   gD.context.fillRect(x, y, width, height);
 }
@@ -163,22 +163,90 @@ function drawCanvasRect(x, y, width, height, styleKey, gD) {
  * @param {GlobalDict} gD
  */
 function drawCanvasRectBorder(x, y, width, height, styleKey, gD) {
-  var design = gD.design.border[styleKey];
+  let design = gD.design.border[styleKey];
   gD.context.strokeStyle = `rgba(${design.borderColor})`;
   gD.context.lineWidth = design.borderSize;
   gD.context.setLineDash(design.lineDash);
   gD.context.strokeRect(x, y, width, height);
 }
 
+function drawCanvasRectRound(x, y, width, height, radius, styleKey, gD, topLeft = true, topRight = true, bottomLeft = true, bottomRight = true) {
+  let design = gD.design.rect[styleKey];
+  gD.context.fillStyle = `rgba(${design.backgroundColor})`;
+  gD.context.beginPath();
+  gD.context.moveTo(x + radius, y);
+  if (topRight) {
+    gD.context.lineTo(x + width - radius, y);
+    gD.context.arc(x + width - radius, y + radius, radius, Math.PI * 1.5, Math.PI * 2);
+  } else {
+    gD.context.lineTo(x + width, y);
+  }
+  if (bottomRight) {
+    gD.context.lineTo(x + width, y + height - radius);
+    gD.context.arc(x + width - radius, y + height - radius, radius, 0, Math.PI * 0.5);
+  } else {
+    gD.context.lineTo(x + width, y + height);
+  }
+  if (bottomLeft) {
+    gD.context.lineTo(x + radius, y + height);
+    gD.context.arc(x + radius, y + height - radius, radius, Math.PI * 0.5, Math.PI);
+  } else {
+    gD.context.lineTo(x, y + height);
+  }
+  if (topLeft) {
+    gD.context.lineTo(x, y + radius);
+    gD.context.arc(x + radius, y + radius, radius, Math.PI, Math.PI * 1.5);
+  } else {
+    gD.context.lineTo(x, y);
+    gD.context.closePath();
+  }
+  gD.context.fill();
+}
+
+function drawCanvasRectRoundBorder(x, y, width, height, radius, styleKey, gD, topLeft = true, topRight = true, bottomLeft = true, bottomRight = true) {
+  let design = gD.design.border[styleKey];
+  gD.context.strokeStyle = `rgba(${design.borderColor})`;
+  gD.context.lineWidth = design.borderSize;
+  gD.context.setLineDash(design.lineDash);
+  gD.context.beginPath();
+  gD.context.moveTo(x + radius, y);
+  if (topRight) {
+    gD.context.lineTo(x + width - radius, y);
+    gD.context.arc(x + width - radius, y + radius, radius, Math.PI * 1.5, Math.PI * 2);
+  } else {
+    gD.context.lineTo(x + width, y);
+  }
+  if (bottomRight) {
+    gD.context.lineTo(x + width, y + height - radius);
+    gD.context.arc(x + width - radius, y + height - radius, radius, 0, Math.PI * 0.5);
+  } else {
+    gD.context.lineTo(x + width, y + height);
+  }
+  if (bottomLeft) {
+    gD.context.lineTo(x + radius, y + height);
+    gD.context.arc(x + radius, y + height - radius, radius, Math.PI * 0.5, Math.PI);
+  } else {
+    gD.context.lineTo(x, y + height);
+  }
+  if (topLeft) {
+    gD.context.lineTo(x, y + radius);
+    gD.context.arc(x + radius, y + radius, radius, Math.PI, Math.PI * 1.5);
+  } else {
+    gD.context.lineTo(x, y);
+    gD.context.closePath();
+  }
+  gD.context.stroke();
+}
+
 
 function drawCanvasLine(startX, startY, styleKey, gD, ...points) {
-  var design = gD.design.border[styleKey];
+  let design = gD.design.border[styleKey];
   gD.context.strokeStyle = `rgba(${design.borderColor})`;
   gD.context.lineWidth = design.borderSize;
   gD.context.setLineDash(design.lineDash);
   gD.context.beginPath();
   gD.context.moveTo(startX, startY);
-  for (var i = 0; i < points.length / 2; i++) {
+  for (let i = 0; i < points.length / 2; i++) {
     if (points[i * 2] !== undefined && points[i * 2 + 1] !== undefined) {
       gD.context.lineTo(points[i * 2], points[i * 2 + 1]);
     } else {
@@ -188,8 +256,42 @@ function drawCanvasLine(startX, startY, styleKey, gD, ...points) {
   gD.context.stroke();
 }
 
+function drawCanvasPolygon(startX, startY, styleKey, gD, ...points) {
+  let design = gD.design.rect[styleKey];
+  gD.context.fillStyle = `rgba(${design.backgroundColor})`;
+  gD.context.beginPath();
+  gD.context.moveTo(startX, startY);
+  for (let i = 0; i < points.length / 2; i++) {
+    if (points[i * 2] !== undefined && points[i * 2 + 1] !== undefined) {
+      gD.context.lineTo(points[i * 2], points[i * 2 + 1]);
+    } else {
+      break;
+    }
+  }
+  gD.context.closePath();
+  gD.context.fill();
+}
+
+function drawCanvasPolygonBorder(startX, startY, styleKey, gD, ...points) {
+  let design = gD.design.border[styleKey];
+  gD.context.strokeStyle = `rgba(${design.borderColor})`;
+  gD.context.lineWidth = design.borderSize;
+  gD.context.setLineDash(design.lineDash);
+  gD.context.beginPath();
+  gD.context.moveTo(startX, startY);
+  for (let i = 0; i < points.length / 2; i++) {
+    if (points[i * 2] !== undefined && points[i * 2 + 1] !== undefined) {
+      gD.context.lineTo(points[i * 2], points[i * 2 + 1]);
+    } else {
+      break;
+    }
+  }
+  gD.context.closePath();
+  gD.context.stroke();
+}
+
 function drawCanvasCircle(centerX, centerY, radius, styleKey, gD) {
-  var design = gD.design.circle[styleKey];
+  let design = gD.design.circle[styleKey];
   gD.context.fillStyle = `rgba(${design.backgroundColor})`;
   gD.context.beginPath();
   gD.context.arc(centerX, centerY, radius, 0, Math.PI * 2);
@@ -197,7 +299,7 @@ function drawCanvasCircle(centerX, centerY, radius, styleKey, gD) {
 }
 
 function drawCanvasCircleBorder(centerX, centerY, radius, styleKey, gD) {
-  var design = gD.design.border[styleKey];
+  let design = gD.design.border[styleKey];
   gD.context.strokeStyle = `rgba(${design.borderColor})`;
   gD.context.lineWidth = design.borderSize;
   gD.context.beginPath();
@@ -207,7 +309,7 @@ function drawCanvasCircleBorder(centerX, centerY, radius, styleKey, gD) {
 }
 
 function drawCanvasCirclePart(centerX, centerY, radius, startAngle, endAngle, styleKey, gD) {
-  var design = gD.design.circle[styleKey];
+  let design = gD.design.circle[styleKey];
   gD.context.fillStyle = `rgba(${design.backgroundColor})`;
   gD.context.beginPath();
   gD.context.arc(centerX, centerY, radius, startAngle, endAngle);
@@ -217,7 +319,7 @@ function drawCanvasCirclePart(centerX, centerY, radius, startAngle, endAngle, st
 }
 
 function drawCanvasCirclePartBorder(centerX, centerY, radius, startAngle, endAngle, styleKey, gD) {
-  var design = gD.design.border[styleKey];
+  let design = gD.design.border[styleKey];
   gD.context.strokeStyle = `rgba(${design.borderColor})`;
   gD.context.lineWidth = design.borderSize;
   gD.context.setLineDash(design.lineDash);
@@ -226,5 +328,49 @@ function drawCanvasCirclePartBorder(centerX, centerY, radius, startAngle, endAng
   gD.context.lineTo(centerX, centerY);
   gD.context.closePath();
   gD.context.stroke();
+}
+
+function drawCanvasStar(centerX, centerY, radius, spikeHeight, edges, styleKey, gD) {
+  let design = gD.design.circle[styleKey];
+  gD.context.fillStyle = `rgba(${design.backgroundColor})`;
+  gD.context.translate(centerX, centerY);
+  gD.context.beginPath();
+  gD.context.moveTo(0, radius);
+  for (let i = 1; i < edges * 2; i++) {
+    let angle = i * (Math.PI / edges);
+    gD.context.rotate(angle);
+    if (i % 2 === 1) {
+      gD.context.lineTo(0, radius * spikeHeight);
+    } else {
+      gD.context.lineTo(0, radius);
+    }
+    gD.context.rotate(-angle);
+  }
+  gD.context.closePath();
+  gD.context.fill();
+  gD.context.translate(-centerX, -centerY);
+}
+
+function drawCanvasStarBorder(centerX, centerY, radius, spikeHeight, edges, styleKey, gD) {
+  let design = gD.design.border[styleKey];
+  gD.context.strokeStyle = `rgba(${design.borderColor})`;
+  gD.context.lineWidth = design.borderSize;
+  gD.context.setLineDash(design.lineDash);
+  gD.context.translate(centerX, centerY);
+  gD.context.beginPath();
+  gD.context.moveTo(0, radius);
+  for (let i = 1; i < edges * 2; i++) {
+    let angle = i * (Math.PI / edges);
+    gD.context.rotate(angle);
+    if (i % 2 === 1) {
+      gD.context.lineTo(0, radius * spikeHeight);
+    } else {
+      gD.context.lineTo(0, radius);
+    }
+    gD.context.rotate(-angle);
+  }
+  gD.context.closePath();
+  gD.context.stroke();
+  gD.context.translate(-centerX, -centerY);
 }
 // endregion

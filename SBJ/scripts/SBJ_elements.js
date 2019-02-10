@@ -212,6 +212,9 @@ function CanvasButton(x, y, width, height, text, styleKey) {
   this.height = height;
   this.text = text;
   this.styleKey = styleKey;
+  this.arrowWidth = 0;
+  this.arrowHeight = 0;
+  this.animationSpeed = 12;
   this.selected = false;
   this.select = function() {
     this.selected = true;
@@ -219,13 +222,53 @@ function CanvasButton(x, y, width, height, text, styleKey) {
   this.deselect = function() {
     this.selected = false;
   };
-  this.draw = function(gD) {
-    var design = gD.design.button[this.styleKey];
+  this.update = function() {
     if (this.selected) {
-      drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.selected, gD);
-    } else {
-      drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.standard, gD);
+      if (this.arrowHeight < this.height) {
+        this.arrowHeight += this.animationSpeed;
+        if (this.arrowHeight >= this.height) {
+          this.arrowHeight = this.height;
+        }
+      } else if (this.arrowHeight >= this.height && this.arrowWidth < this.width) {
+        this.arrowWidth += this.animationSpeed;
+        if (this.arrowWidth >= this.width) {
+          this.arrowWidth = this.width;
+        }
+      }
+    }  else {
+      if (this.arrowWidth > 0) {
+        this.arrowWidth -= this.animationSpeed;
+        if (this.arrowWidth <= 0) {
+          this.arrowWidth = 0;
+        }
+      } else if (this.arrowWidth <= 0 && this.arrowHeight > 0) {
+        this.arrowHeight -= this.animationSpeed;
+        if (this.arrowHeight <= 0) {
+          this.arrowHeight = 0;
+        }
+      }
     }
+  };
+  this.draw = function(gD) {
+    let design = gD.design.button[this.styleKey];
+    let centerX = this.x + this.width / 2;
+    let centerY = this.y + this.height / 2;
+
+    drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.standard, gD);
+    drawCanvasPolygon(
+      centerX + this.arrowWidth / 2, centerY - this.arrowHeight / 2, design.rectKey.selected, gD,
+      centerX + Math.min(this.arrowWidth / 2 + this.arrowHeight / 2, this.width / 2),
+        centerY - Math.max((this.arrowWidth / 2 + this.arrowHeight / 2) - this.width / 2, 0),
+      centerX + Math.min(this.arrowWidth / 2 + this.arrowHeight / 2, this.width / 2),
+        centerY + Math.max((this.arrowWidth / 2 + this.arrowHeight / 2) - this.width / 2, 0),
+      centerX + this.arrowWidth / 2, centerY + this.arrowHeight / 2,
+      centerX - this.arrowWidth / 2, centerY + this.arrowHeight / 2,
+      centerX - Math.min(this.arrowWidth / 2 + this.arrowHeight / 2, this.width / 2),
+        centerY + Math.max((this.arrowWidth / 2 + this.arrowHeight / 2) - this.width / 2, 0),
+      centerX - Math.min(this.arrowWidth / 2 + this.arrowHeight / 2, this.width / 2),
+        centerY - Math.max((this.arrowWidth / 2 + this.arrowHeight / 2) - this.width / 2, 0),
+      centerX - this.arrowWidth / 2, centerY - this.arrowHeight / 2
+    );
     drawCanvasText(this.x + this.width / 2, this.y + this.height / 2, this.text, design.textKey, gD);
     drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
   };
@@ -325,7 +368,7 @@ function CanvasEnterNameModal(x, y, width, height, styleKey) {
   };
   this.draw = function(gD) {
     this.counter++;
-    var design = gD.design.elements[this.styleKey];
+    let design = gD.design.elements[this.styleKey];
 
     drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.modal, gD);
     drawCanvasRect(
@@ -352,8 +395,8 @@ function CanvasEnterNameModal(x, y, width, height, styleKey) {
       this.x + (this.width - (this.width / 3)) / 2 + 5, this.y + this.height / 2 + 20,
       this.width / 3 - 10, 20, design.borderKey.textField, gD
     );
-    if (Math.floor(this.counter / 80) % 2 == 0) {
-      var addCharLength = 0;
+    if (Math.floor(this.counter / 80) % 2 === 0) {
+      let addCharLength = 0;
       if (this.text.length !== 0) {
         addCharLength = (gD.context.measureText(this.text).width / this.text.length) * this.cursorPosition;
       }
@@ -496,5 +539,82 @@ function CanvasCircle(centerX, centerY, radius, styleKey) {
   this.styleKey = styleKey;
   this.draw = function(gD) {
     drawCanvasCircle(this.centerX, this.centerY, this.radius, this.styleKey, gD);
+  };
+}
+
+/**
+ * a tab for four tabs
+ * @param {number} x         the x-coordinate of the top left corner of the tab
+ * @param {number} y         the y-coordinate of the top left corner of the tab
+ * @param {number} width     the width of the tab
+ * @param {number} height    the height of the tab
+ * @param {number} tabNr     the number of the tab
+ * @param {string} spriteKey the icon for the tab
+ * @param {string} styleKey  the style of the tab
+ */
+function CanvasTab(x, y, width, height, tabNr, spriteKey, styleKey) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.tabNr = tabNr;
+  this.spriteKey = spriteKey;
+  this.styleKey = styleKey;
+  this.selected = false;
+  this.objects = [];
+  /**
+   * selects the tab
+   */
+  this.select = function() {
+    this.selected = true;
+  };
+  /**
+   * deselects the tab
+   */
+  this.deselect = function() {
+    this.selected = false;
+  };
+  /**
+   * updates moving objects
+   */
+  this.update = function(page) {
+    this.objects.map(object => {
+      if (object.update !== undefined) {
+        object.update(page);
+      }
+    }, this);
+  };
+  /**
+   * draws the objects onto the canvas
+   */
+  this.draw = function(gD, page) {
+    let design = gD.design.elements[this.styleKey];
+    let {spriteWidth, spriteHeight} = getSpriteData(this.spriteKey, gD);
+    if (!this.selected) {
+      drawCanvasRect(this.x, this.y + 55 * this.tabNr, 55, 55, design.rectKey.tab, gD);
+      drawCanvasImage(
+        this.x + Math.floor((55 - spriteWidth) / 2),
+        this.y + 55 * this.tabNr + Math.floor((55 - spriteHeight) / 2), this.spriteKey, gD
+      );
+      drawCanvasRect(this.x, this.y + 55 * this.tabNr, 55, 55, design.rectKey.inactive, gD);
+      drawCanvasRectBorder(this.x, this.y + 55 * this.tabNr, 55, 55, design.borderKey, gD);
+    } else {
+      drawCanvasRect(this.x, this.y + 55 * this.tabNr, 55, 55, design.rectKey.tab, gD);
+      drawCanvasImage(
+        this.x + Math.floor((55 - spriteWidth) / 2),
+        this.y + 55 * this.tabNr + Math.floor((55 - spriteHeight) / 2), this.spriteKey, gD
+      );
+      drawCanvasRect(this.x + 55, this.y, this.width - 55, this.height, design.rectKey.background, gD);
+      this.objects.map(object => {
+        object.draw(gD, page);
+      }, this);
+      drawCanvasLine(
+        this.x + 55, this.y, design.borderKey, gD, this.x + this.width, this.y,
+        this.x + this.width, this.y + this.height, this.x + 55, this.y + this.height,
+        this.x + 55, this.y + 55 * (this.tabNr + 1), this.x, this.y + 55 * (this.tabNr + 1),
+        this.x, this.y + 55 * this.tabNr, this.x + 55, this.y + 55 * this.tabNr,
+        this.x + 55, this.y
+      );
+    }
   };
 }

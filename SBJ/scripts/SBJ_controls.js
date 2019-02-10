@@ -259,7 +259,7 @@
    * updates moving objects
    */
   this.update = function() {
-    /* unused */
+    this.backToMenu.update();
   };
   /**
    * draws the objects onto the canvas

@@ -1,13 +1,596 @@
-﻿function Shop(gD, menu) {
-  this.gD = gD;
+﻿function Shop(menu, gD) {
   this.menu = menu;
-  this.backgroundImage = new Image();
-  this.backgroundImage.src = "img/Titlescreen.png";
-  this.backgroundMusic = new Audio();
-  this.backgroundMusic.src = "music/shop.mp3";
-  this.backgroundMusic.loop = true;
-  this.backgroundMusic.volume = 0.2;
-  this.visible = false;
+  this.gD = gD;
+  this.init = function () {
+    this.backgroundMusic = new Audio();
+    this.backgroundMusic.src = "music/shop.mp3";
+    this.backgroundMusic.loop = true;
+    this.backgroundMusic.volume = 0.2;
+    this.hype = 100000000000000000000;
+    this.goldenShamrocks = 10000;
+    this.skillData = {
+      "Unlock Skilltree":       new SkillData("Unlock the Skilltree", false, 1, 0, 1000, 0, 0, [], 0),
+      "Level up items":         new SkillData("Level up Items", false, 1, 0, 10000, 0, 0, ["Unlock Skilltree"], 1),
+      "Level up stopwatch":     new SkillData("Stopwatch level up", true, 99, 0, 3250, 0, 110, ["Level up items"], 1),
+      "Level up star":          new SkillData("Star level up", true, 99, 0, 6720, 0, 210, ["Level up items"], 1),
+      "Level up feather":       new SkillData("Feather level up", true, 99, 0, 3000, 0, 120, ["Level up items"], 1),
+      "Level up treasure":      new SkillData("Treasure level up", true, 99, 0, 5550, 0, 220, ["Level up items"], 1),
+      "Level up magnet":        new SkillData("Magnet level up", true, 99, 0, 4100, 0, 170, ["Level up items"], 1),
+      "Level up rocket":        new SkillData("Rocket level up", true, 99, 0, 6020, 0, 199, ["Level up items"], 1),
+      "Start amount stopwatch": new SkillData("Stopwatches at start", true, 2, 12, 75000, 6, 12500, ["Level up stopwatch"], 50),
+      "Start amount star":      new SkillData("Stars at start", true, 2, 45, 179000, 22, 55000, ["Level up star"], 50),
+      "Start amount feather":   new SkillData("Feathers at start", true, 2, 16, 87000, 8, 22000, ["Level up feather"], 50),
+      "Start amount treasure":  new SkillData("Treasures at start", true, 2, 50, 200000, 25, 100000, ["Level up treasure"], 50),
+      "Start amount magnet":    new SkillData("Magnets at start", true, 2, 32, 130000, 16, 62000, ["Level up magnet"], 50),
+      "Start amount rocket":    new SkillData("Rockets at start", true, 2, 39, 166666, 19, 66666, ["Level up rocket"], 50),
+      "Item spawn frequency":   new SkillData(
+        "Item spawn frequency", true, 10, 5, 33000, 3, 6780, [
+          "Level up stopwatch", "Level up star", "Level up feather",
+          "Level up treasure", "Level up magnet", "Level up rocket"
+        ], 100
+      ),
+      "Money multiplier":       new SkillData("Money multiplier", true, 100, 0, 3000, 0, 1700, ["Unlock Skilltree"], 1),
+      "Character upgrades":     new SkillData("Character upgrades", false, 1, 0, 10000, 0, 0, ["Unlock Skilltree"], 1),
+      "Movement speed":         new SkillData("Movement speed", true, 10, 0, 42000, 0, 8000, ["Character upgrades"], 1),
+      "Jump height":            new SkillData("Jump height", true, 5, 0, 44000, 0, 12000, ["Character upgrades"], 1),
+      "Jumps":                  new SkillData("Jumps", true, 3, 8, 25000, 8, 35000, ["Character upgrades"], 1),
+      "Extra life":             new SkillData("Extra life", true, 1, 100, 1000000, 0, 0, ["Deaths"], 1000)
+    };
+
+    this.checkUnlocks();
+
+    this.title = new CanvasText(this.gD.canvas.width / 2, 30, "Shop", "pageTitle");
+
+    this.tabs = ["Item_B_Questionmark", "Item_B_Questionmark", "Item_B_Questionmark", "Item_B_Questionmark"];
+    this.tabs.map((icon, index) => {
+      this.tabs[index] = new CanvasTab(
+        this.gD.canvas.width / 2 - 310, 60, 620, 220, index, icon, "standardTab"
+      );
+    }, this);
+    this.tabs[0].select();
+
+    let skillTree = new ShopSkillTree(this.gD.canvas.width / 2 - 245, 70, 545, 200, "skillTree");
+    skillTree.init(this);
+    this.tabs[0].objects.push(skillTree);
+    console.log(skillTree);
+
+    this.backToMenu = new CanvasButton(
+      this.gD.canvas.width / 2 - 100, this.gD.canvas.height - 50, 200, 30, "Main Menu", "menu"
+    );
+
+    this.updateSelection(-1, 0);
+  };
+  this.levelSkills = function(skill) {
+    let skillData = this.skillData[skill.key];
+    let {goldenShamrock, money} = skillData.getCost();
+
+    if (this.goldenShamrocks >= goldenShamrock && this.hype >= money) {
+      this.goldenShamrocks -= goldenShamrock;
+      this.hype -= money;
+      skillData.levelUp();
+      this.checkUnlocks();
+    }
+  };
+  this.checkUnlocks = function() {
+    for (let key in this.skillData) {
+      console.log(key);
+      if (this.skillData.hasOwnProperty(key)) {
+        this.skillData[key].checkUnlock(this);
+      }
+    }
+  };
+  this.updateKeyPresses = function() {
+
+  };
+  this.updateMouseMoves = function() {
+    if (!this.gD.mouseDown) {
+      this.tabs.map((tab, index) => {
+        if (this.gD.mousePos.x >= tab.x && this.gD.mousePos.x <= tab.x + 55 &&
+            this.gD.mousePos.y >= tab.y + index * 55 && this.gD.mousePos.y <= tab.y + (index + 1) * 55) {
+          this.updateSelection(0, index);
+        }
+      }, this);
+    }
+
+    if (this.gD.mousePos.x >= this.backToMenu.x && this.gD.mousePos.x <= this.backToMenu.x + this.backToMenu.width &&
+        this.gD.mousePos.y >= this.backToMenu.y && this.gD.mousePos.y <= this.backToMenu.y + this.backToMenu.height) {
+      this.updateSelection(-1, this.selectedTabIndex);
+    }
+
+    if (this.tabs[0].selected) {
+      if (this.gD.mouseDown) {
+        this.tabs[0].objects[0].moveTree(gD.mousePos.x - gD.referenceMousePos.x, gD.mousePos.y - gD.referenceMousePos.y);
+        this.reset = true;
+      } else if (this.reset) {
+        this.tabs[0].objects[0].setCurrentPos();
+        this.reset = false;
+      }
+
+      this.tabs[0].objects[0].skills.map(skill => {
+        let skillX = skill.x - (this.tabs[0].objects[0].currentPosX - this.tabs[0].objects[0].moveX);
+        let skillY = skill.y - (this.tabs[0].objects[0].currentPosY - this.tabs[0].objects[0].moveY);
+        if (Math.sqrt((this.gD.mousePos.x - skillX) ** 2 + (this.gD.mousePos.y - skillY) ** 2) <= skill.radius) {
+          skill.select();
+        } else {
+          skill.deselect();
+        }
+      }, this);
+    }
+  };
+  this.updateClick = function() {
+    let clickPos = this.gD.clicks.pop();
+
+    if (!clickPos) {
+      return;
+    }
+
+    this.tabs[0].objects[0].skills.map(skill => {
+      let skillX = skill.x - (this.tabs[0].objects[0].currentPosX - this.tabs[0].objects[0].moveX);
+      let skillY = skill.y - (this.tabs[0].objects[0].currentPosY - this.tabs[0].objects[0].moveY);
+      if (Math.sqrt((this.gD.mousePos.x - skillX) ** 2 + (this.gD.mousePos.y - skillY) ** 2) <= skill.radius) {
+        this.levelSkills(skill);
+      }
+    }, this);
+
+    if (clickPos.x >= this.backToMenu.x && clickPos.x <= this.backToMenu.x + this.backToMenu.width &&
+        clickPos.y >= this.backToMenu.y && clickPos.y <= this.backToMenu.y + this.backToMenu.height) {
+      this.gD.currentPage = this.menu;
+    }
+  };
+  this.updateWheelMoves = function() {
+
+  };
+  this.update = function() {
+    this.tabs.map(tab => {
+      tab.update(this);
+    }, this);
+
+    this.backToMenu.update();
+  };
+  this.draw = function(ghostFactor) {
+    this.gD.context.drawImage(this.menu.backgroundImage, 0, 0);
+
+    this.title.draw(this.gD);
+
+
+    this.tabs.map(tab => {
+      tab.draw(this.gD, this);
+    }, this);
+
+    this.backToMenu.draw(this.gD);
+  };
+  /**
+   * updates the selected object and deselects the old object
+   * @param {number} rowIndex the row of the new selected object
+   * @param {number} tabIndex the tab of the new selected object
+   */
+  this.updateSelection = function(rowIndex, tabIndex) {
+    if (this.selectedRowIndex !== undefined && this.selectedTabIndex !== undefined) {
+      if (this.selectedRowIndex === -1) {
+        this.backToMenu.deselect();
+      }
+      this.tabs[this.selectedTabIndex].deselect();
+    }
+
+    if (rowIndex === -1) {
+      this.backToMenu.select();
+    }
+    this.tabs[tabIndex].select();
+    this.selectedRowIndex = rowIndex;
+    this.selectedTabIndex = tabIndex;
+  };
+}
+
+function SkillData(name, showValue, maxValue, costGoldenShamrock, costMoney, costUpgradeGoldenShamrock, costUpgradeMoney, unlockedBy, unlockedAt) {
+  this.name = name;
+  this.showValue = showValue;
+  this.maxValue = maxValue;
+  this.costGoldenShamrock = costGoldenShamrock;
+  this.costMoney = costMoney;
+  this.costUpgradeGoldenShamrock = costUpgradeGoldenShamrock;
+  this.costUpgradeMoney = costUpgradeMoney;
+  this.unlockedBy = unlockedBy;
+  this.unlockedAt = unlockedAt;
+  this.currentValue = 0;
+  this.unlocked = false;
+  this.maxed = false;
+  this.checkUnlock = function(shop) {
+    let levels = 0;
+
+    this.unlockedBy.map(key => {
+      if (key === "Deaths") {
+        if (shop.skillData["Character upgrades"].unlocked) {
+          levels = shop.menu.statistics.statistics.get("player_deaths").currentCount;
+        }
+      } else {
+        levels += shop.skillData[key].currentValue;
+      }
+    }, this);
+
+    if (levels >= this.unlockedAt) {
+      this.unlocked = true;
+    }
+  };
+  this.levelUp = function() {
+    if (this.currentValue < this.maxValue) {
+      this.currentValue++;
+      if (this.currentValue >= this.maxValue) {
+        this.maxed = true;
+      }
+    }
+  };
+  this.getCost = function() {
+    return {
+      goldenShamrock: this.costGoldenShamrock + this.costUpgradeGoldenShamrock * this.currentValue,
+      money: this.costMoney + this.costUpgradeMoney * this.currentValue
+    };
+  };
+}
+
+function ShopSkillTree(x, y, width, height, styleKey) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.styleKey = styleKey;
+  this.treeWidth = 1200;
+  this.treeHeight = 900;
+  this.moveX = 0;
+  this.moveY = 0;
+  this.currentPosX = 500 - width / 2;
+  this.currentPosY = 0;
+  this.infoBox = null;
+  this.lines = [];
+  this.skills = [];
+  this.init = function(shop) {
+    this.infoBox = new SkillInfoBox(600, 50, 200, 69, "shopSkillInfo");
+    this.skills.push(new ShopSkill(this.x + 475, this.y + 80, 40, "Unlock Skilltree", "", "shopSkillStandard"));
+    this.skills.push(new ShopSkill(this.x + 140, this.y + 190, 40, "Money multiplier", "", "shopSkillMoney"));
+    this.lines.push({startX: 475, startY: 80, endX: 140, endY: 190});
+    this.skills.push(new ShopSkill(this.x + 475, this.y + 280, 40, "Level up items", "", "shopSkillItem"));
+    this.lines.push({startX: 475, startY: 80, endX: 475, endY: 280});
+    this.skills.push(new ShopSkill(this.x + 265, this.y + 370, 40, "Level up stopwatch", "Skill_Stopwatch_level_up", "shopSkillItem"));
+    this.skills.push(new ShopSkill(this.x + 335, this.y + 440, 40, "Level up star", "Skill_Star_level_up", "shopSkillItem"));
+    this.skills.push(new ShopSkill(this.x + 425, this.y + 490, 40, "Level up feather", "", "shopSkillItem"));
+    this.skills.push(new ShopSkill(this.x + 525, this.y + 490, 40, "Level up treasure", "", "shopSkillItem"));
+    this.skills.push(new ShopSkill(this.x + 615, this.y + 440, 40, "Level up magnet", "", "shopSkillItem"));
+    this.skills.push(new ShopSkill(this.x + 685, this.y + 370, 40, "Level up rocket", "", "shopSkillItem"));
+    this.lines.push({startX: 475, startY: 280, endX: 265, endY: 370});
+    this.lines.push({startX: 475, startY: 280, endX: 335, endY: 440});
+    this.lines.push({startX: 475, startY: 280, endX: 425, endY: 490});
+    this.lines.push({startX: 475, startY: 280, endX: 525, endY: 490});
+    this.lines.push({startX: 475, startY: 280, endX: 615, endY: 440});
+    this.lines.push({startX: 475, startY: 280, endX: 685, endY: 370});
+    this.skills.push(new ShopSkill(this.x + 140, this.y + 425, 40, "Start amount stopwatch", "", "shopSkillItem"));
+    this.skills.push(new ShopSkill(this.x + 250, this.y + 545, 40, "Start amount star", "", "shopSkillItem"));
+    this.skills.push(new ShopSkill(this.x + 395, this.y + 615, 40, "Start amount feather", "", "shopSkillItem"));
+    this.skills.push(new ShopSkill(this.x + 555, this.y + 615, 40, "Start amount treasure", "", "shopSkillItem"));
+    this.skills.push(new ShopSkill(this.x + 700, this.y + 545, 40, "Start amount magnet", "", "shopSkillItem"));
+    this.skills.push(new ShopSkill(this.x + 810, this.y + 425, 40, "Start amount rocket", "", "shopSkillItem"));
+    this.lines.push({startX: 265, startY: 370, endX: 140, endY: 425});
+    this.lines.push({startX: 335, startY: 440, endX: 250, endY: 545});
+    this.lines.push({startX: 425, startY: 490, endX: 395, endY: 615});
+    this.lines.push({startX: 525, startY: 490, endX: 555, endY: 615});
+    this.lines.push({startX: 615, startY: 440, endX: 700, endY: 545});
+    this.lines.push({startX: 685, startY: 370, endX: 810, endY: 425});
+    this.skills.push(new ShopSkill(this.x + 475, this.y + 730, 40, "Item spawn frequency", "", "shopSkillItem"));
+    this.lines.push({startX: 475, startY: 280, endX: 475, endY: 730});
+    this.skills.push(new ShopSkill(this.x + 810, this.y + 170, 40, "Character upgrades", "", "shopSkillCharacter"));
+    this.lines.push({startX: 475, startY: 80, endX: 810, endY: 170});
+    this.skills.push(new ShopSkill(this.x + 1050, this.y + 170, 40, "Movement speed", "", "shopSkillCharacter"));
+    this.skills.push(new ShopSkill(this.x + 1050, this.y + 270, 40, "Jump height", "", "shopSkillCharacter"));
+    this.skills.push(new ShopSkill(this.x + 1050, this.y + 400, 40, "Jumps", "", "shopSkillCharacter"));
+    this.skills.push(new ShopSkill(this.x + 1050, this.y + 530, 40, "Extra life", "", "shopSkillCharacter"));
+    this.lines.push({startX: 810, startY: 170, endX: 1050, endY: 170});
+    this.lines.push({startX: 810, startY: 170, endX: 1050, endY: 270});
+    this.lines.push({startX: 810, startY: 170, endX: 1050, endY: 400});
+    this.lines.push({startX: 810, startY: 170, endX: 1050, endY: 530});
+    this.minimap = new ShopSkillTreeMiniMap(shop.gD.canvas.width / 2 + 310, 60, 180, 220, "skillTreeMiniMap");
+    this.minimap.init(shop, this.x, this.y, this.treeWidth, this.treeHeight, this.skills, this.lines);
+  };
+  this.setCurrentPos = function() {
+    this.currentPosX = this.currentPosX - this.moveX;
+    this.currentPosY = this.currentPosY - this.moveY;
+    this.moveX = 0;
+    this.moveY = 0;
+  };
+  this.moveTree = function(x, y) {
+    this.moveX = x;
+    if (this.currentPosX - this.moveX > this.treeWidth - this.width) {
+      this.moveX = this.width - this.treeWidth + this.currentPosX;
+    } else if (this.currentPosX - this.moveX < 0) {
+      this.moveX = 0 + this.currentPosX;
+    }
+
+    this.moveY = y;
+    if (this.currentPosY - this.moveY > this.treeHeight - this.height) {
+      this.moveY = this.height - this.treeHeight + this.currentPosY;
+    } else if (this.currentPosY - this.moveY < 0) {
+      this.moveY = 0 + this.currentPosY;
+    }
+  };
+  this.update = function() {
+    this.skills.map(skill => {
+      skill.update();
+    }, this);
+    this.minimap.setWindowPos(this.currentPosX - this.moveX, this.currentPosY - this.moveY);
+  };
+  this.draw = function(gD, shop) {
+    let design = gD.design.elements[this.styleKey];
+    let newX = this.x - (this.currentPosX - this.moveX);
+    let newY = this.y - (this.currentPosY - this.moveY);
+    gD.context.save();
+    gD.context.beginPath();
+    gD.context.rect(this.x, this.y, this.width, this.height);
+    gD.context.clip();
+    drawCanvasRect(newX, newY, this.treeWidth, this.treeHeight, design.rectKey.background, gD);
+    this.lines.map(line => {
+      drawCanvasLine(newX + line.startX, newY + line.startY, design.borderKey, gD, newX + line.endX, newY + line.endY);
+    }, this);
+    this.skills.map(skill => {
+      skill.draw(gD, shop, this.currentPosX - this.moveX, this.currentPosY - this.moveY);
+      if (skill.selected) {
+        this.infoBox.setSkill(skill);
+      }
+    }, this);
+    this.infoBox.draw(gD, shop, this.currentPosX - this.moveX, this.currentPosY - this.moveY);
+
+    gD.context.restore();
+    drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
+    this.minimap.draw(gD);
+  };
+}
+
+function ShopSkillTreeMiniMap(x, y, width, height, styleKey) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.styleKey = styleKey;
+  this.scaleFactor = 0;
+  this.mapX = x + 5;
+  this.mapY = y + 20;
+  this.mapWidth = 0;
+  this.mapHeight = 0;
+  this.windowX = 0;
+  this.windowY = 0;
+  this.windowWidth = 0;
+  this.windowHeight = 0;
+  this.skills = [];
+  this.lines = [];
+  this.init = function(shop, skillTreeX, skillTreeY, treeWidth, treeHeight, skills, lines) {
+    this.scaleFactor = (this.width - 10) / treeWidth;
+    this.mapWidth = this.scaleFactor * treeWidth;
+    this.mapHeight = this.scaleFactor * treeHeight;
+    this.mapY = this.y + (this.height - this.mapHeight) / 2;
+    this.windowWidth = this.scaleFactor * 545;
+    this.windowHeight = this.scaleFactor * 200;
+    skills.map(skill => {
+      this.skills.push({
+        x: (skill.x - skillTreeX) * this.scaleFactor,
+        y: (skill.y - skillTreeY) * this.scaleFactor,
+        radius: skill.radius * this.scaleFactor,
+        skillData: shop.skillData[skill.key],
+        starEdges: skill.starEdges,
+        edgeFactor: skill.edgeFactor,
+        style: skill.styleKey
+      });
+    }, this);
+    lines.map(line => {
+      this.lines.push({
+        startX: line.startX * this.scaleFactor,
+        startY: line.startY * this.scaleFactor,
+        endX: line.endX * this.scaleFactor,
+        endY: line.endY * this.scaleFactor
+      });
+    }, this);
+  };
+  this.setWindowPos = function(x, y) {
+    this.windowX = this.mapX + x * this.scaleFactor;
+    this.windowY = this.mapY + y * this.scaleFactor;
+  };
+  this.draw = function(gD) {
+    let design = gD.design.elements[this.styleKey];
+
+    drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.background, gD);
+    drawCanvasRect(this.mapX, this.mapY, this.mapWidth, this.mapHeight, design.rectKey.map, gD);
+    this.lines.map(line => {
+      drawCanvasLine(
+        this.mapX + line.startX, this.mapY + line.startY, design.borderKey.line, gD,
+        this.mapX + line.endX, this.mapY + line.endY
+      );
+    }, this);
+    this.skills.map(skill => {
+      let skillDesign = gD.design.elements[skill.style];
+      let {goldenShamrock, money} = skill.skillData.getCost();
+      if (goldenShamrock > 0) {
+        drawCanvasStar(
+          this.mapX + skill.x, this.mapY + skill.y, skill.radius, skill.edgeFactor, skill.starEdges,
+          skillDesign.circleKey.normal, gD
+        );
+        if (!skill.skillData.unlocked) {
+          drawCanvasStar(
+            this.mapX + skill.x, this.mapY + skill.y, skill.radius, skill.edgeFactor, skill.starEdges,
+            skillDesign.circleKey.locked, gD
+          );
+        }
+        drawCanvasStarBorder(
+          this.mapX + skill.x, this.mapY + skill.y, skill.radius, skill.edgeFactor, skill.starEdges,
+          design.borderKey.skill, gD
+        );
+      } else {
+        drawCanvasCircle(this.mapX + skill.x, this.mapY + skill.y, skill.radius, skillDesign.circleKey.normal, gD);
+        if (!skill.skillData.unlocked) {
+          drawCanvasCircle(this.mapX + skill.x, this.mapY + skill.y, skill.radius, skillDesign.circleKey.locked, gD);
+        }
+        drawCanvasCircleBorder(this.mapX + skill.x, this.mapY + skill.y, skill.radius, design.borderKey.skill, gD);
+      }
+    }, this);
+    drawCanvasRectBorder(this.windowX, this.windowY, this.windowWidth, this.windowHeight, design.borderKey.window, gD);
+    drawCanvasRectBorder(this.mapX, this.mapY, this.mapWidth, this.mapHeight, design.borderKey.normal, gD);
+    drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey.normal, gD);
+  };
+}
+
+function ShopSkill(x, y, radius, key, spriteKey, styleKey) {
+  this.x = x;
+  this.y = y;
+  this.radius = radius;
+  this.innerRadius = 0;
+  this.key = key;
+  this.spriteKey = spriteKey;
+  this.styleKey = styleKey;
+  this.starEdges = 12;
+  this.edgeFactor = 1.5;
+  this.selected = false;
+  this.select = function() {
+    this.selected = true;
+  };
+  this.deselect = function() {
+    this.selected = false;
+  };
+  this.update = function() {
+    if (this.selected) {
+      if (this.innerRadius < this.radius) {
+        this.innerRadius += 4;
+        if (this.innerRadius > this.radius) {
+          this.innerRadius = this.radius;
+        }
+      }
+    } else {
+      if (this.innerRadius > 0) {
+        this.innerRadius -= 4;
+        if (this.innerRadius < 0) {
+          this.innerRadius = 0;
+        }
+      }
+    }
+  };
+  this.draw = function(gD, shop, shiftX, shiftY) {
+    let design = gD.design.elements[this.styleKey];
+    let skillData = shop.skillData[this.key];
+    let {goldenShamrock, money} = skillData.getCost();
+    let {spriteWidth, spriteHeight} = getSpriteData(this.spriteKey, gD);
+    let newX = this.x - shiftX;
+    let newY = this.y - shiftY;
+    let name = this.key.split(' ');
+
+    if (goldenShamrock > 0) {
+      drawCanvasStar(newX, newY, this.radius, this.edgeFactor, this.starEdges, design.circleKey.normal, gD);
+      if (skillData.unlocked) {
+        drawCanvasStar(newX, newY, this.innerRadius, this.edgeFactor, this.starEdges, design.circleKey.selected, gD);
+      }
+    } else {
+      drawCanvasCircle(newX, newY, this.radius, design.circleKey.normal, gD);
+      if (skillData.unlocked) {
+        drawCanvasCircle(newX, newY, this.innerRadius, design.circleKey.selected, gD);
+      }
+    }
+
+    if (skillData.showValue) {
+      if (this.spriteKey !== "") {
+        drawCanvasImage(newX - spriteWidth / 2, newY - spriteHeight, this.spriteKey, gD);
+      } else if (name.length === 1) {
+        drawCanvasText(newX, newY - 17, name[0], design.textKey, gD);
+      } else if (name.length === 2) {
+        drawCanvasText(newX, newY - 17, name[0], design.textKey, gD);
+        drawCanvasText(newX, newY - 3, name[1], design.textKey, gD);
+      } else {
+        drawCanvasText(newX, newY - 17, name[0] + " " + name[1], design.textKey, gD);
+        drawCanvasText(newX, newY - 3, name[2], design.textKey, gD);
+      }
+      drawCanvasRectRound(newX - 30, newY + 5, 60, 16, 8, design.rectKey, gD);
+      if (skillData.maxValue > 9) {
+        drawCanvasText(newX, newY + 14, addLeadingZero(skillData.currentValue) + "/" + skillData.maxValue, design.textKey, gD);
+      } else {
+        drawCanvasText(newX, newY + 14, skillData.currentValue + "/" + skillData.maxValue, design.textKey, gD);
+      }
+      drawCanvasRectRoundBorder(newX - 30, newY + 5, 60, 16, 8, design.borderKey, gD);
+    } else {
+      if (this.spriteKey !== "") {
+        drawCanvasImage(newX - spriteWidth / 2, newY - spriteHeight, this.spriteKey, gD);
+      } else if (name.length === 2) {
+        drawCanvasText(newX, newY - 7, name[0], design.textKey, gD);
+        drawCanvasText(newX, newY + 7, name[1], design.textKey, gD);
+      } else {
+        drawCanvasText(newX, newY - 7, name[0] + " " + name[1], design.textKey, gD);
+        drawCanvasText(newX, newY + 7, name[2], design.textKey, gD);
+      }
+    }
+    if (goldenShamrock > 0) {
+      if (!skillData.unlocked) {
+        drawCanvasStar(newX, newY, this.radius, this.edgeFactor, this.starEdges, design.circleKey.locked, gD);
+      }
+      drawCanvasStarBorder(newX, newY, this.radius, this.edgeFactor, this.starEdges, design.borderKey, gD);
+    } else {
+      if (!skillData.unlocked) {
+        drawCanvasCircle(newX, newY, this.radius, design.circleKey.locked, gD);
+      }
+      drawCanvasCircleBorder(newX, newY, this.radius, design.borderKey, gD);
+    }
+  };
+}
+
+function SkillInfoBox(x, y, width, height, styleKey) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.styleKey = styleKey;
+  this.currentSkill = null;
+  this.radius = null;
+  this.setSkill = function(skill) {
+    this.currentSkill = skill;
+    this.x = skill.x;
+    this.y = skill.y;
+    this.radius = skill.radius;
+  };
+  this.draw = function(gD, shop, shiftX, shiftY) {
+    let design = gD.design.elements[this.styleKey];
+    let newX = this.x - shiftX;
+    let newY = this.y - shiftY;
+
+    if (this.currentSkill === null) {
+      return;
+    }
+
+    let skillData = shop.skillData[this.currentSkill.key];
+    let {goldenShamrock, money} = skillData.getCost();
+
+    if (skillData.maxed) {
+      return;
+    }
+
+    if (this.currentSkill.selected && skillData.unlocked) {
+      drawCanvasPolygon(
+        newX, newY + this.radius, design.rectKey, gD, newX + 5, newY + this.radius + 5,
+        newX + this.width / 2, newY + this.radius + 5, newX + this.width / 2, newY + this.radius + this.height,
+        newX - this.width / 2, newY + this.radius + this.height, newX - this.width / 2, newY + this.radius + 5,
+        newX - 5, newY + this.radius + 5
+      );
+      drawCanvasText(newX, newY + this.radius + 15, skillData.name, design.textKey.headline, gD);
+      drawCanvasImage(newX - this.width / 2 + 3, newY + this.radius + 27, "Special_GoldenShamrock", gD);
+      drawCanvasText(
+        newX + this.width / 2 - 3, newY + this.radius + 37,
+        goldenShamrock.toString().replace(/\d(?=(\d{3})+($|\.))/g, '$&.'), design.textKey.text, gD
+      );
+      drawCanvasImage(newX - this.width / 2 + 3, newY + this.radius + 49, "Money_1", gD);
+      drawCanvasText(
+        newX + this.width / 2 - 3, newY + this.radius + 59,
+        money.toString().replace(/\d(?=(\d{3})+($|\.))/g, '$&.'), design.textKey.text, gD
+      );
+      drawCanvasLine(newX - this.width / 2, newY + this.radius + 25, design.borderKey, gD, newX + this.width / 2, newY + this.radius + 25);
+      drawCanvasPolygonBorder(
+        newX, newY + this.radius, design.borderKey, gD, newX + 5, newY + this.radius + 5,
+        newX + this.width / 2, newY + this.radius + 5, newX + this.width / 2, newY + this.radius + this.height,
+        newX - this.width / 2, newY + this.radius + this.height, newX - this.width / 2, newY + this.radius + 5,
+        newX - 5, newY + this.radius + 5
+      );
+    }
+  };
+}
+
+  /*
   this.tabs = [];
   this.buttons = [];
   this.shopEntries = [];
@@ -26,7 +609,7 @@
     this.tabs.push(new ShopTab(this.gD.canvas.width / 2, 60, 300, 30, "15pt", "Showcard Gothic", "rgba(200, 200, 0, 1)", "Items", "rgba(0, 0, 0, .6)", 2));
     this.tabs[this.active].activate();
 
-    for (var i = 0; i < 3; i++) {
+    for (let i = 0; i < 3; i++) {
       this.buttons.push(new MenuTextButton((this.gD.canvas.width / 2) - 290 + (i * 200), 245, 180, 20, "Kaufen"));
     }
     this.shopEntries.push(new ShopEntryPlayer((this.gD.canvas.width / 2) - 300, 90, 200, 200, "12pt", "Consolas", "rgba(150, 180, 150, 1)", 2, "Höhere Sprungkraft", 19999, 2));
@@ -689,4 +1272,4 @@ function drawShop(shop) {
   }
 
   shop.backToMenu.draw(shop.gD);
-}
+}*/

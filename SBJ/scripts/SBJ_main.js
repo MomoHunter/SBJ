@@ -4,6 +4,8 @@ function main() {
   window.addEventListener('keydown', event => keydownEvent(event, globalDict));
   window.addEventListener('keyup', event => keyupEvent(event, globalDict));
   window.addEventListener('mousemove', event => mousemoveEvent(event, globalDict));
+  window.addEventListener('mousedown', event => mousedownEvent(event, globalDict));
+  window.addEventListener('mouseup', event => mouseupEvent(event, globalDict));
   window.addEventListener('click', event => clickEvent(event, globalDict));
   window.addEventListener('wheel', event => wheelEvent(event, globalDict));
   globalDict.currentPage = menu;
@@ -29,6 +31,7 @@ function gameloop(gD, timestamp) {
 
       gD.newKeys = [];
       gD.events = [];
+      gD.lastMousePos = copy(gD.mousePos);
       gD.clicks = [];
       gD.wheelMovements = [];
     
@@ -57,16 +60,26 @@ function keyupEvent(event, gD) {
 }
 
 function mousemoveEvent(event, gD) {
+  gD.lastMousePos = copy(gD.mousePos);
   gD.mousePos = {
-    "x" : (event.clientX - gD.canvas.offsetLeft),
-    "y" : (event.clientY - gD.canvas.offsetTop)
+    "x" : (event.pageX - gD.canvas.offsetLeft),
+    "y" : (event.pageY - gD.canvas.offsetTop)
   };
+}
+
+function mousedownEvent(event, gD) {
+  gD.mouseDown = true;
+  gD.referenceMousePos = copy(gD.mousePos);
+}
+
+function mouseupEvent(event, gD) {
+  gD.mouseDown = false;
 }
 
 function clickEvent(event, gD) {
   gD.clicks.push({
-    "x" : (event.clientX - gD.canvas.offsetLeft),
-    "y" : (event.clientY - gD.canvas.offsetTop)
+    "x" : (event.pageX - gD.canvas.offsetLeft),
+    "y" : (event.pageY - gD.canvas.offsetTop)
   });
 }
 
@@ -82,6 +95,9 @@ function GlobalDict(eventHandler) {
   this.newKeys = [];
   this.events = [];
   this.mousePos = {"x": 0, "y": 0};
+  this.lastMousePos = {"x": 0, "y": 0};
+  this.referenceMousePos = {"x": 0, "y": 0};
+  this.mouseDown = false;
   this.clicks = [];
   this.wheelMovements = [];
   this.currentPage = null;                       //saves the current object, that should be displayed
@@ -211,27 +227,29 @@ function GlobalDict(eventHandler) {
     "Reward_B_use_five_stars": [false, 368, 1377, 80, 80],
     "Reward_B_use_five_stopwatches": [false, 368, 1458, 80, 80],
     "Reward_B_use_five_treasures": [false, 368, 1539, 80, 80],
-    "Special_BlueKey": [false, 449, 0, 11, 22],
-    "Special_GoldenShamrock": [true, 449, [23, 43, 63, 83, 103, 123, 143, 163], 15, 19],
-    "Special_GoldenShamrock_B": [true, 449, [183, 222, 261, 300, 339, 378, 417, 456], 30, 38],
-    "Special_GreenKey": [false, 449, 495, 11, 22],
-    "Special_Placeholder": [false, 449, 518, 40, 40],
-    "Special_Placeholder_B": [false, 449, 559, 80, 80],
-    "Special_Pointer": [false, 449, 640, 10, 6],
-    "Special_RedKey": [false, 449, 647, 11, 22],
-    "Special_YellowKey": [false, 449, 670, 11, 22],
-    "Stagepreview_Air": [false, 530, 0, 56, 26],
-    "Stagepreview_Forest": [false, 530, 27, 56, 26],
-    "Stagepreview_Fortress": [false, 530, 54, 56, 26],
-    "Stagepreview_Standard": [false, 530, 81, 56, 26],
-    "Stagepreview_Universe": [false, 530, 108, 56, 26],
-    "Stagepreview_Water": [false, 530, 135, 56, 26],
-    "Stagepreview_B_Air": [false, 587, 0, 112, 52],
-    "Stagepreview_B_Forest": [false, 587, 53, 112, 52],
-    "Stagepreview_B_Fortress": [false, 587, 106, 112, 52],
-    "Stagepreview_B_Standard": [false, 587, 159, 112, 52],
-    "Stagepreview_B_Universe": [false, 587, 212, 112, 52],
-    "Stagepreview_B_Water": [false, 587, 265, 112, 52]
+    "Skill_Star_level_up": [true, 449, [0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280], 32, 19],
+    "Skill_Stopwatch_level_up": [true, 449, [300, 320, 340, 360, 380, 400, 420, 440, 460, 480, 500, 520, 540, 560, 580, 600], 30, 19],
+    "Special_BlueKey": [false, 482, 0, 11, 22],
+    "Special_GoldenShamrock": [true, 482, [23, 43, 63, 83, 103, 123, 143, 163], 15, 19],
+    "Special_GoldenShamrock_B": [true, 482, [183, 222, 261, 300, 339, 378, 417, 456], 30, 38],
+    "Special_GreenKey": [false, 482, 495, 11, 22],
+    "Special_Placeholder": [false, 482, 518, 40, 40],
+    "Special_Placeholder_B": [false, 482, 559, 80, 80],
+    "Special_Pointer": [false, 482, 640, 10, 6],
+    "Special_RedKey": [false, 482, 647, 11, 22],
+    "Special_YellowKey": [false, 482, 670, 11, 22],
+    "Stagepreview_Air": [false, 563, 0, 56, 26],
+    "Stagepreview_Forest": [false, 563, 27, 56, 26],
+    "Stagepreview_Fortress": [false, 563, 54, 56, 26],
+    "Stagepreview_Standard": [false, 563, 81, 56, 26],
+    "Stagepreview_Universe": [false, 563, 108, 56, 26],
+    "Stagepreview_Water": [false, 563, 135, 56, 26],
+    "Stagepreview_B_Air": [false, 620, 0, 112, 52],
+    "Stagepreview_B_Forest": [false, 620, 53, 112, 52],
+    "Stagepreview_B_Fortress": [false, 620, 106, 112, 52],
+    "Stagepreview_B_Standard": [false, 620, 159, 112, 52],
+    "Stagepreview_B_Universe": [false, 620, 212, 112, 52],
+    "Stagepreview_B_Water": [false, 620, 265, 112, 52]
   };
   // end spriteDict
   this.player = {                    //The data for the different playermodels with: jumps, jumpstrength, movementspeed right, movementspeed left, weight, unlocked
@@ -274,6 +292,75 @@ function GlobalDict(eventHandler) {
   };
   this.design = {
     elements: {
+      skillTree: {
+        rectKey: {
+          background: "modal",
+          test: "standard"
+        },
+        circleKey: "standard",
+        borderKey: "standard"
+      },
+      shopSkillStandard: {
+        rectKey: "standard",
+        circleKey: {
+          normal: "white",
+          selected: "selected",
+          locked: "locked",
+        },
+        textKey: "small",
+        borderKey: "standard"
+      },
+      shopSkillItem: {
+        rectKey: "standard",
+        circleKey: {
+          normal: "item",
+          selected: "selected",
+          locked: "locked",
+        },
+        textKey: "small",
+        borderKey: "standard"
+      },
+      shopSkillMoney: {
+        rectKey: "standard",
+        circleKey: {
+          normal: "money100",
+          selected: "selected",
+          locked: "locked",
+        },
+        textKey: "small",
+        borderKey: "standard"
+      },
+      shopSkillCharacter: {
+        rectKey: "standard",
+        circleKey: {
+          normal: "character",
+          selected: "selected",
+          locked: "locked",
+        },
+        textKey: "small",
+        borderKey: "standard"
+      },
+      shopSkillInfo: {
+        rectKey: "standard",
+        textKey: {
+          headline: "normalBold",
+          text: "highscoreNumber"
+        },
+        borderKey: "standard"
+      },
+      skillTreeMiniMap: {
+        rectKey: {
+          background: "blur",
+          map: "modal"
+        },
+        circleKey: "standard",
+        borderKey: {
+          line: "small",
+          skill: "small",
+          window: "small",
+          normal: "standard"
+        }
+      },
       controlsHeadline: {
         rectKey: "headline",
         textKey: "normalBold",
@@ -371,7 +458,7 @@ function GlobalDict(eventHandler) {
         lineKey: "smallWhite",
         barKey: "bigWhite"
       },
-      statisticsTab: {
+      standardTab: {
         rectKey: {
           tab: "blur",
           background: "blur",
@@ -573,6 +660,21 @@ function GlobalDict(eventHandler) {
     circle: {
       standard: {
         backgroundColor: "0, 255, 255, 1"
+      },
+      white: {
+        backgroundColor: "255, 255, 255, 1"
+      },
+      item: {
+        backgroundColor: "89, 155, 255, 1"
+      },
+      character: {
+        backgroundColor: "224, 192, 62, 1"
+      },
+      selected: {
+        backgroundColor: "180, 50, 50, 1"
+      },
+      locked: {
+        backgroundColor: "44, 47, 51, 0.9"
       },
       money1: {
         backgroundColor: "255, 127, 39, 1"

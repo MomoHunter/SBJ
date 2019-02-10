@@ -73,10 +73,10 @@ function SaveLoad(menu, gD) {
    */
   this.getSavestates = function() {
     this.savestates = [];
-    for (var func in window) {
+    for (let func in window) {
       if (typeof window[func] === 'function' && func.startsWith('Savestate')) {
-        var savestate = new window[func];
-        var pos = 0;
+        let savestate = new window[func];
+        let pos = 0;
         this.savestates.map((state, index) => {
           if (state.date > savestate.date) {
             pos = index + 1;
@@ -352,6 +352,7 @@ function SaveLoad(menu, gD) {
       if (clickPos.x >= button.x && clickPos.x <= button.x + button.width &&
           clickPos.y >= button.y && clickPos.y <= button.y + button.height) {
         this.loaded = false;
+        this.gD.currentPage = this.menu;
       }
     } else {
       this.savestates.map((state, index) => {
@@ -415,7 +416,10 @@ function SaveLoad(menu, gD) {
    * updates moving objects
    */
   this.update = function() {
-    /* unused */
+    this.buttons.map(button => {
+      button.update();
+    }, this);
+    this.backButton.update();
   };
   /**
    * draws the objects onto the canvas
@@ -585,9 +589,9 @@ function SLSavestate(x, y, width, height, styleKey, savestate) {
     drawCanvasText(this.x + 60, this.y + 21 - saveLoad.scrollHeight, "Date: " + date, design.textKey.text, gD);
     drawCanvasText(this.x + 60, this.y + 34 - saveLoad.scrollHeight, "Datei: " + this.savestate.file, design.textKey.text, gD);
     drawCanvasText(this.x + 60, this.y + 46 - saveLoad.scrollHeight, "Version: " + this.savestate.version, design.textKey.text, gD);
-    drawCanvasImage(this.x + this.width - info.spriteWidth - (20 - info.spriteWidth) / 2, this.y + (20 - info.spriteHeight) / 2, "Icon_Info", gD);
-    drawCanvasLine(this.x + 55, this.y, design.borderKey, gD, this.x + 55, this.y + this.height);
-    drawCanvasLine(this.x + this.width - 20, this.y, design.borderKey, gD, this.x + this.width - 20, this.y + 20, this.x + this.width, this.y + 20);
+    drawCanvasImage(this.x + this.width - info.spriteWidth - (20 - info.spriteWidth) / 2, this.y + (20 - info.spriteHeight) / 2 - saveLoad.scrollHeight, "Icon_Info", gD);
+    drawCanvasLine(this.x + 55, this.y - saveLoad.scrollHeight, design.borderKey, gD, this.x + 55, this.y + this.height - saveLoad.scrollHeight);
+    drawCanvasLine(this.x + this.width - 20, this.y - saveLoad.scrollHeight, design.borderKey, gD, this.x + this.width - 20, this.y + 20 - saveLoad.scrollHeight, this.x + this.width, this.y + 20 - saveLoad.scrollHeight);
     drawCanvasRectBorder(this.x, this.y - saveLoad.scrollHeight, this.width, this.height, design.borderKey, gD);
   };
 }

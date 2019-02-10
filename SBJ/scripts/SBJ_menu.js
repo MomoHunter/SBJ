@@ -8,6 +8,8 @@ function Menu(gD) {
     this.extraMC = new MenuController(this);
     this.backgroundImage = new Image();
     this.setNewBackground();
+    this.shop = new Shop(this, this.gD);
+    this.shop.init();
     this.achievements = new Achievements(this, this.gD);
     this.achievements.init();
     this.highscores = new Highscores(this, this.gD);
@@ -150,7 +152,8 @@ function Menu(gD) {
    * updates moving objects
    */
   this.update = function() {
-    /* unused */
+    this.mainMC.update();
+    this.extraMC.update();
   };
   /**
    * draws the objects onto the canvas

@@ -53,8 +53,8 @@ function Statistics(menu, gD) {
 
     this.tabs = ["Icon_Statistic", "Item_B_Questionmark", "Currency_M", "Special_GoldenShamrock_B"];
     this.tabs.map((icon, index) => {
-      this.tabs[index] = new StatisticsTab(
-        this.gD.canvas.width / 2 - 310, 60, 620, 220, index, icon, "statisticsTab"
+      this.tabs[index] = new CanvasTab(
+        this.gD.canvas.width / 2 - 310, 60, 620, 220, index, icon, "standardTab"
       );
     }, this);
 
@@ -205,6 +205,8 @@ function Statistics(menu, gD) {
     this.tabs.map(tab => {
       tab.update(this.statistics);
     }, this);
+
+    this.backToMenu.update();
   };
   /**
    * draws the objects onto the canvas

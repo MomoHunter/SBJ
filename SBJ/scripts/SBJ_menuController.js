@@ -14,12 +14,12 @@ function MenuController(menu) {
   /**
    * checks if a key is pressed and executes commands
    * @param  {string}     key a key code of a button that was pressed
-   * @param  {globalDict} gD  the global dictionary
+   * @param  {GlobalDict} gD  the global dictionary
    */
   this.updateKeyPresses = function(key, gD) {
-    var keyB = this.menu.controls.keyBindings;
-    var rowIndex = this.selectedNGRowIndex;
-    var columnIndex = this.selectedNGColumnIndex;
+    let keyB = this.menu.controls.keyBindings;
+    let rowIndex = this.selectedNGRowIndex;
+    let columnIndex = this.selectedNGColumnIndex;
 
     if (keyB.get("Menu_NavDown")[3].includes(key)) {
       rowIndex = (rowIndex + 1) % this.nG.length;
@@ -55,7 +55,7 @@ function MenuController(menu) {
   };
   /**
    * checks, if the mouse was moved, what the mouse hit 
-   * @param  {globalDict} gD the global Dictionary
+   * @param  {GlobalDict} gD the global Dictionary
    */
   this.updateMouseMoves = function(gD) {
     this.nG.map((buttonRow, rowIndex) => {
@@ -67,7 +67,7 @@ function MenuController(menu) {
       }, this);
     }, this);
 
-    var selectedSomething = false;
+    let selectedSomething = false;
 
     this.aG.map((buttonRow, rowIndex) => {
       buttonRow.map((button, columnIndex) => {
@@ -86,7 +86,7 @@ function MenuController(menu) {
   /**
    * checks where a click was executed
    * @param  {Object} clickPos the popped, non-null position of the click
-   * @param  {globalDict} gD       the global dictionary
+   * @param  {GlobalDict} gD       the global dictionary
    */
   this.updateClick = function(clickPos, gD) {
     this.getSelectedButtons().map(buttonObject => {
@@ -106,11 +106,15 @@ function MenuController(menu) {
    * updates moving objects
    */
   this.update = function() {
-    /* unused */
+    this.nG.map(buttonRow => {
+      buttonRow.map(buttonObject => {
+        buttonObject.button.update();
+      }, this);
+    }, this);
   };
   /**
    * draws the objects of the grids onto the canvas
-   * @param {globalDict} gD the global dictionary
+   * @param {GlobalDict} gD the global dictionary
    */
   this.draw = function(gD) {
     this.nG.map(buttonRow => {
@@ -166,7 +170,7 @@ function MenuController(menu) {
    * @return {Array<Object>} the button objects from the navigationGrid and the additionalGrid 
    */
   this.getSelectedButtons = function() {
-    var buttons = [];
+    let buttons = [];
     buttons.push(this.nG[this.selectedNGRowIndex][this.selectedNGColumnIndex]);
     if (this.selectedAGRowIndex !== undefined && this.selectedAGColumnIndex !== undefined) {
       buttons.push(this.aG[this.selectedAGRowIndex][this.selectedAGColumnIndex]);
