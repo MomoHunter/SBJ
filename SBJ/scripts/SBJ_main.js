@@ -31,6 +31,8 @@ function gameloop(gD, timestamp) {
 
       gD.newKeys = [];
       gD.events = [];
+      gD.mouseDown = [];
+      gD.mouseUp = [];
       gD.lastMousePos = copy(gD.mousePos);
       gD.clicks = [];
       gD.wheelMovements = [];
@@ -68,12 +70,12 @@ function mousemoveEvent(event, gD) {
 }
 
 function mousedownEvent(event, gD) {
-  gD.mouseDown = true;
+  gD.mouseDown.push(true);
   gD.referenceMousePos = copy(gD.mousePos);
 }
 
 function mouseupEvent(event, gD) {
-  gD.mouseDown = false;
+  gD.mouseUp.push(true);
 }
 
 function clickEvent(event, gD) {
@@ -95,6 +97,8 @@ function GlobalDict(eventHandler) {
   this.newKeys = [];
   this.events = [];
   this.mousePos = {"x": 0, "y": 0};
+  this.mouseDown = [];
+  this.mouseUp = [];
   this.lastMousePos = {"x": 0, "y": 0};
   this.referenceMousePos = {"x": 0, "y": 0};
   this.mouseDown = false;

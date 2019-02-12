@@ -8,6 +8,9 @@
     this.backgroundMusic.volume = 0.2;
     this.hype = 100000000000000000000;
     this.goldenShamrocks = 10000;
+    this.movingTree = false;
+    this.movingMinimap = false;
+    this.movingCounter = 0;           //counts how many frames moving was activated
     this.skillData = {
       "Unlock Skilltree":       new SkillData("Unlock the Skilltree", false, 1, 0, 1000, 0, 0, [], 0),
       "Level up items":         new SkillData("Level up Items", false, 1, 0, 10000, 0, 0, ["Unlock Skilltree"], 1),
@@ -41,18 +44,17 @@
 
     this.title = new CanvasText(this.gD.canvas.width / 2, 30, "Shop", "pageTitle");
 
-    this.tabs = ["Item_B_Questionmark", "Item_B_Questionmark", "Item_B_Questionmark", "Item_B_Questionmark"];
+    this.tabs = ["Item_B_Questionmark", "Item_B_Questionmark"];
     this.tabs.map((icon, index) => {
       this.tabs[index] = new CanvasTab(
-        this.gD.canvas.width / 2 - 310, 60, 620, 220, index, icon, "standardTab"
+        this.gD.canvas.width / 2 - 310, 60, 620, 220, index, 2, icon, "standardTab"
       );
     }, this);
     this.tabs[0].select();
 
-    let skillTree = new ShopSkillTree(this.gD.canvas.width / 2 - 245, 70, 545, 200, "skillTree");
-    skillTree.init(this);
-    this.tabs[0].objects.push(skillTree);
-    console.log(skillTree);
+    this.skillTree = new ShopSkillTree(this.gD.canvas.width / 2 - 245, 70, 545, 200, "skillTree");
+    this.skillTree.init(this);
+    this.tabs[0].objects.push(this.skillTree);
 
     this.backToMenu = new CanvasButton(
       this.gD.canvas.width / 2 - 100, this.gD.canvas.height - 50, 200, 30, "Main Menu", "menu"
@@ -73,7 +75,6 @@
   };
   this.checkUnlocks = function() {
     for (let key in this.skillData) {
-      console.log(key);
       if (this.skillData.hasOwnProperty(key)) {
         this.skillData[key].checkUnlock(this);
       }
@@ -83,32 +84,62 @@
 
   };
   this.updateMouseMoves = function() {
-    if (!this.gD.mouseDown) {
+    let mouseDown = this.gD.mouseDown.pop();
+    let mouseUp = this.gD.mouseUp.pop();
+
+    if (!this.movingTree && !this.movingMinimap) {
       this.tabs.map((tab, index) => {
-        if (this.gD.mousePos.x >= tab.x && this.gD.mousePos.x <= tab.x + 55 &&
-            this.gD.mousePos.y >= tab.y + index * 55 && this.gD.mousePos.y <= tab.y + (index + 1) * 55) {
+        if (this.gD.mousePos.x >= tab.x && this.gD.mousePos.x <= tab.x + tab.tabHeadWidth &&
+            this.gD.mousePos.y >= tab.y + index * tab.tabHeadHeight && this.gD.mousePos.y <= tab.y + (index + 1) * tab.tabHeadHeight) {
           this.updateSelection(0, index);
         }
       }, this);
+
+      if (this.gD.mousePos.x >= this.backToMenu.x && this.gD.mousePos.x <= this.backToMenu.x + this.backToMenu.width &&
+        this.gD.mousePos.y >= this.backToMenu.y && this.gD.mousePos.y <= this.backToMenu.y + this.backToMenu.height) {
+        this.updateSelection(-1, this.selectedTabIndex);
+      }
     }
 
-    if (this.gD.mousePos.x >= this.backToMenu.x && this.gD.mousePos.x <= this.backToMenu.x + this.backToMenu.width &&
-        this.gD.mousePos.y >= this.backToMenu.y && this.gD.mousePos.y <= this.backToMenu.y + this.backToMenu.height) {
-      this.updateSelection(-1, this.selectedTabIndex);
+    if (this.movingTree || this.movingMinimap) {
+      this.movingCounter++;
+    }
+
+    if (mouseUp && (this.movingTree || this.movingMinimap)) {
+      this.movingTree = false;
+      this.movingMinimap = false;
+      if (this.movingCounter >= 10) {
+        this.gD.clicks = [];
+      }
+      this.movingCounter = 0;
+    } else if (mouseDown && this.gD.mousePos.x >= this.skillTree.x && this.gD.mousePos.x <= this.skillTree.x + this.skillTree.width &&
+               this.gD.mousePos.y >= this.skillTree.y && this.gD.mousePos.y <= this.skillTree.y + this.skillTree.height) {
+      this.movingTree = true;
+    } else if (mouseDown && this.gD.mousePos.x >= this.skillTree.minimap.windowX &&
+               this.gD.mousePos.x <= this.skillTree.minimap.windowX + this.skillTree.minimap.windowWidth &&
+               this.gD.mousePos.y >= this.skillTree.minimap.windowY &&
+               this.gD.mousePos.y <= this.skillTree.minimap.windowY + this.skillTree.minimap.windowHeight) {
+      this.movingMinimap = true;
     }
 
     if (this.tabs[0].selected) {
-      if (this.gD.mouseDown) {
-        this.tabs[0].objects[0].moveTree(gD.mousePos.x - gD.referenceMousePos.x, gD.mousePos.y - gD.referenceMousePos.y);
+      if (this.movingTree) {
+        this.skillTree.moveTree(gD.mousePos.x - gD.referenceMousePos.x, gD.mousePos.y - gD.referenceMousePos.y);
+        this.reset = true;
+      } else if (this.movingMinimap) {
+        this.skillTree.moveTree(
+          -(gD.mousePos.x - gD.referenceMousePos.x) / this.skillTree.minimap.scaleFactor,
+          -(gD.mousePos.y - gD.referenceMousePos.y) / this.skillTree.minimap.scaleFactor
+        );
         this.reset = true;
       } else if (this.reset) {
-        this.tabs[0].objects[0].setCurrentPos();
+        this.skillTree.setCurrentPos();
         this.reset = false;
       }
 
-      this.tabs[0].objects[0].skills.map(skill => {
-        let skillX = skill.x - (this.tabs[0].objects[0].currentPosX - this.tabs[0].objects[0].moveX);
-        let skillY = skill.y - (this.tabs[0].objects[0].currentPosY - this.tabs[0].objects[0].moveY);
+      this.skillTree.skills.map(skill => {
+        let skillX = skill.x - (this.skillTree.currentPosX - this.skillTree.moveX);
+        let skillY = skill.y - (this.skillTree.currentPosY - this.skillTree.moveY);
         if (Math.sqrt((this.gD.mousePos.x - skillX) ** 2 + (this.gD.mousePos.y - skillY) ** 2) <= skill.radius) {
           skill.select();
         } else {
@@ -124,9 +155,9 @@
       return;
     }
 
-    this.tabs[0].objects[0].skills.map(skill => {
-      let skillX = skill.x - (this.tabs[0].objects[0].currentPosX - this.tabs[0].objects[0].moveX);
-      let skillY = skill.y - (this.tabs[0].objects[0].currentPosY - this.tabs[0].objects[0].moveY);
+    this.skillTree.skills.map(skill => {
+      let skillX = skill.x - (this.skillTree.currentPosX - this.skillTree.moveX);
+      let skillY = skill.y - (this.skillTree.currentPosY - this.skillTree.moveY);
       if (Math.sqrt((this.gD.mousePos.x - skillX) ** 2 + (this.gD.mousePos.y - skillY) ** 2) <= skill.radius) {
         this.levelSkills(skill);
       }
@@ -212,7 +243,7 @@ function SkillData(name, showValue, maxValue, costGoldenShamrock, costMoney, cos
     }
   };
   this.levelUp = function() {
-    if (this.currentValue < this.maxValue) {
+    if (this.currentValue < this.maxValue && this.unlocked) {
       this.currentValue++;
       if (this.currentValue >= this.maxValue) {
         this.maxed = true;

@@ -142,12 +142,12 @@ function CanvasScrollBar(x, y, height, elementHeight, elementsCount, styleKey) {
       return;
     }
     
-    var design = gD.design.elements[this.styleKey];
+    let design = gD.design.elements[this.styleKey];
     drawCanvasLine(this.x, this.y, design.lineKey, gD, this.x, this.y + this.height);
     drawCanvasLine(
       this.x, this.y + ((this.currentElementIndex / this.elementsCount) * this.height),
-      design.barKey, gD,
-      this.x, this.y + (((this.height / this.elementHeight) + this.currentElementIndex) / this.elementsCount) * this.height
+      design.barKey, gD, this.x,
+      this.y + (((this.height / this.elementHeight) + this.currentElementIndex) / this.elementsCount) * this.height
     );
   };
 }
@@ -166,7 +166,7 @@ function Background(y, width, height, img) {
   this.img = new Image();
   this.img.src = img;
   this.draw = function(game, gD, ghostFactor) {
-    var temp = (game.distanceTravelled - (game.globalSpeed * ghostFactor)) % this.width;
+    let temp = (game.distanceTravelled - (game.globalSpeed * ghostFactor)) % this.width;
     gD.context.drawImage(this.img, temp, 0, this.width - temp, this.height, 0, this.y, this.width - temp, this.height);
     gD.context.drawImage(this.img, 0, 0, temp, this.height, this.width - temp, this.y, temp, this.height);
   };
@@ -190,9 +190,15 @@ function AnimatedBackground(y, width, height, img, cycles, speed) {
   this.cycles = cycles;
   this.speed = speed;
   this.draw = function(game, gD, ghostFactor) {
-    var temp = (game.distanceTravelled - (game.globalSpeed * ghostFactor)) % this.width;
-    gD.context.drawImage(this.img, temp, Math.floor(game.frameCounter / this.speed) % cycles * (this.height / cycles), this.width - temp, (this.height / cycles), 0, this.y, this.width - temp, (this.height / cycles));
-    gD.context.drawImage(this.img, 0, Math.floor(game.frameCounter / this.speed) % cycles * (this.height / cycles), temp, (this.height / cycles), this.width - temp, this.y, temp, (this.height / cycles));
+    let temp = (game.distanceTravelled - (game.globalSpeed * ghostFactor)) % this.width;
+    gD.context.drawImage(
+      this.img, temp, Math.floor(game.frameCounter / this.speed) % cycles * (this.height / cycles),
+      this.width - temp, (this.height / cycles), 0, this.y, this.width - temp, (this.height / cycles)
+    );
+    gD.context.drawImage(
+      this.img, 0, Math.floor(game.frameCounter / this.speed) % cycles * (this.height / cycles), temp,
+      (this.height / cycles), this.width - temp, this.y, temp, (this.height / cycles)
+    );
   };
 }
 
@@ -298,8 +304,8 @@ function CanvasImageButton(x, y, width, height, spriteKey, styleKey) {
     this.selected = false;
   };
   this.draw = function(gD) {
-    var design = gD.design.button[this.styleKey];
-    var {spriteWidth, spriteHeight} = getSpriteData(this.spriteKey, gD);
+    let design = gD.design.button[this.styleKey];
+    let {spriteWidth, spriteHeight} = getSpriteData(this.spriteKey, gD);
     if (this.selected) {
       drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.selected, gD);
     } else {
@@ -351,7 +357,8 @@ function CanvasEnterNameModal(x, y, width, height, styleKey) {
     if (this.text.length === 36) {
       return;
     }
-    this.text = this.text.slice(0, this.cursorPosition) + character + this.text.slice(this.cursorPosition, this.text.length);
+    this.text = this.text.slice(0, this.cursorPosition) + character +
+      this.text.slice(this.cursorPosition, this.text.length);
     this.moveCursor(1);
   };
   /**
@@ -461,7 +468,7 @@ function CanvasChoosePictureModal(x, y, width, height, styleKey) {
   this.selectedRowIndex = 0;
   this.selectedColumnIndex = 0;
   this.init = function(gD) {
-    var design = gD.design.elements[this.styleKey];
+    let design = gD.design.elements[this.styleKey];
     this.pictures.map((picture, index) => {
       if (this.pictureButtons[Math.floor(index / 8)] === undefined) {
         this.pictureButtons[Math.floor(index / 8)] = [];
@@ -477,8 +484,8 @@ function CanvasChoosePictureModal(x, y, width, height, styleKey) {
     return this.pictureButtons[this.selectedRowIndex][this.selectedColumnIndex];
   };
   this.updateKeyPresses = function(keyB, key) {
-    var rowIndex = this.selectedRowIndex;
-    var columnIndex = this.selectedColumnIndex;
+    let rowIndex = this.selectedRowIndex;
+    let columnIndex = this.selectedColumnIndex;
 
     if (keyB.get("Menu_NavDown")[2].includes(key)) {
       rowIndex = (rowIndex + 1) % this.pictureButtons.length;
@@ -516,7 +523,7 @@ function CanvasChoosePictureModal(x, y, width, height, styleKey) {
     this.selectedColumnIndex = columnIndex;
   };
   this.draw = function(gD) {
-    var design = gD.design.elements[this.styleKey];
+    let design = gD.design.elements[this.styleKey];
 
     drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.modal, gD);
     drawCanvasRect(this.x + 275, this.y + 35, this.width - 550, this.height - 70, design.rectKey.background, gD);
@@ -528,7 +535,9 @@ function CanvasChoosePictureModal(x, y, width, height, styleKey) {
       }, this);
     }, this);
 
-    drawCanvasRectBorder(this.x + 275, this.y + 35, this.width - 550, this.height - 70, design.borderKey.background, gD);
+    drawCanvasRectBorder(
+      this.x + 275, this.y + 35, this.width - 550, this.height - 70, design.borderKey.background, gD
+    );
   };
 }
 
@@ -549,17 +558,21 @@ function CanvasCircle(centerX, centerY, radius, styleKey) {
  * @param {number} width     the width of the tab
  * @param {number} height    the height of the tab
  * @param {number} tabNr     the number of the tab
+ * @param {number} maxTabs   the maximal count of tabs
  * @param {string} spriteKey the icon for the tab
  * @param {string} styleKey  the style of the tab
  */
-function CanvasTab(x, y, width, height, tabNr, spriteKey, styleKey) {
+function CanvasTab(x, y, width, height, tabNr, maxTabs, spriteKey, styleKey) {
   this.x = x;
   this.y = y;
   this.width = width;
   this.height = height;
   this.tabNr = tabNr;
+  this.maxTabs = maxTabs;
   this.spriteKey = spriteKey;
   this.styleKey = styleKey;
+  this.tabHeadWidth = 55;
+  this.tabHeadHeight = height / maxTabs;
   this.selected = false;
   this.objects = [];
   /**
@@ -591,29 +604,42 @@ function CanvasTab(x, y, width, height, tabNr, spriteKey, styleKey) {
     let design = gD.design.elements[this.styleKey];
     let {spriteWidth, spriteHeight} = getSpriteData(this.spriteKey, gD);
     if (!this.selected) {
-      drawCanvasRect(this.x, this.y + 55 * this.tabNr, 55, 55, design.rectKey.tab, gD);
-      drawCanvasImage(
-        this.x + Math.floor((55 - spriteWidth) / 2),
-        this.y + 55 * this.tabNr + Math.floor((55 - spriteHeight) / 2), this.spriteKey, gD
+      drawCanvasRect(
+        this.x, this.y + this.tabHeadHeight * this.tabNr, this.tabHeadWidth, this.tabHeadHeight, design.rectKey.tab, gD
       );
-      drawCanvasRect(this.x, this.y + 55 * this.tabNr, 55, 55, design.rectKey.inactive, gD);
-      drawCanvasRectBorder(this.x, this.y + 55 * this.tabNr, 55, 55, design.borderKey, gD);
+      drawCanvasImage(
+        this.x + Math.floor((this.tabHeadWidth - spriteWidth) / 2),
+        this.y + this.tabHeadHeight * this.tabNr + Math.floor((this.tabHeadHeight - spriteHeight) / 2),
+        this.spriteKey, gD
+      );
+      drawCanvasRect(
+        this.x, this.y + this.tabHeadHeight * this.tabNr, this.tabHeadWidth,
+        this.tabHeadHeight, design.rectKey.inactive, gD
+      );
+      drawCanvasRectBorder(
+        this.x, this.y + this.tabHeadHeight * this.tabNr, this.tabHeadWidth, this.tabHeadHeight, design.borderKey, gD
+      );
     } else {
-      drawCanvasRect(this.x, this.y + 55 * this.tabNr, 55, 55, design.rectKey.tab, gD);
-      drawCanvasImage(
-        this.x + Math.floor((55 - spriteWidth) / 2),
-        this.y + 55 * this.tabNr + Math.floor((55 - spriteHeight) / 2), this.spriteKey, gD
+      drawCanvasRect(
+        this.x, this.y + this.tabHeadHeight * this.tabNr, this.tabHeadWidth, this.tabHeadHeight, design.rectKey.tab, gD
       );
-      drawCanvasRect(this.x + 55, this.y, this.width - 55, this.height, design.rectKey.background, gD);
+      drawCanvasImage(
+        this.x + Math.floor((this.tabHeadWidth - spriteWidth) / 2),
+        this.y + this.tabHeadHeight * this.tabNr + Math.floor((this.tabHeadHeight - spriteHeight) / 2),
+        this.spriteKey, gD
+      );
+      drawCanvasRect(
+        this.x + this.tabHeadWidth, this.y, this.width - this.tabHeadWidth, this.height, design.rectKey.background, gD
+      );
       this.objects.map(object => {
         object.draw(gD, page);
       }, this);
       drawCanvasLine(
-        this.x + 55, this.y, design.borderKey, gD, this.x + this.width, this.y,
-        this.x + this.width, this.y + this.height, this.x + 55, this.y + this.height,
-        this.x + 55, this.y + 55 * (this.tabNr + 1), this.x, this.y + 55 * (this.tabNr + 1),
-        this.x, this.y + 55 * this.tabNr, this.x + 55, this.y + 55 * this.tabNr,
-        this.x + 55, this.y
+        this.x + this.tabHeadWidth, this.y, design.borderKey, gD, this.x + this.width, this.y,
+        this.x + this.width, this.y + this.height, this.x + this.tabHeadWidth, this.y + this.height,
+        this.x + this.tabHeadWidth, this.y + this.tabHeadHeight * (this.tabNr + 1),
+        this.x, this.y + this.tabHeadHeight * (this.tabNr + 1), this.x, this.y + this.tabHeadHeight * this.tabNr,
+        this.x + this.tabHeadWidth, this.y + this.tabHeadHeight * this.tabNr, this.x + this.tabHeadWidth, this.y
       );
     }
   };

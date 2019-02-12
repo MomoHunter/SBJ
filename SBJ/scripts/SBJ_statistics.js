@@ -54,7 +54,7 @@ function Statistics(menu, gD) {
     this.tabs = ["Icon_Statistic", "Item_B_Questionmark", "Currency_M", "Special_GoldenShamrock_B"];
     this.tabs.map((icon, index) => {
       this.tabs[index] = new CanvasTab(
-        this.gD.canvas.width / 2 - 310, 60, 620, 220, index, icon, "standardTab"
+        this.gD.canvas.width / 2 - 310, 60, 620, 220, index, 4, icon, "standardTab"
       );
     }, this);
 
@@ -167,8 +167,8 @@ function Statistics(menu, gD) {
    */
   this.updateMouseMoves = function() {
     this.tabs.map((tab, index) => {
-      if (this.gD.mousePos.x >= tab.x && this.gD.mousePos.x <= tab.x + 55 &&
-          this.gD.mousePos.y >= tab.y + index * 55 && this.gD.mousePos.y <= tab.y + (index + 1) * 55) {
+      if (this.gD.mousePos.x >= tab.x && this.gD.mousePos.x <= tab.x + tab.tabHeadWidth &&
+          this.gD.mousePos.y >= tab.y + index * tab.tabHeadHeight && this.gD.mousePos.y <= tab.y + (index + 1) * tab.tabHeadHeight) {
         this.updateSelection(0, index);
       }
     }, this);
