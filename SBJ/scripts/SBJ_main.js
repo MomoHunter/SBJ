@@ -310,9 +310,13 @@ function GlobalDict(eventHandler) {
           normal: "white",
           selected: "selected",
           locked: "locked",
+          maxed: "white"
         },
         textKey: "small",
-        borderKey: "standard"
+        borderKey: {
+          normal: "standard",
+          hook: "hook"
+        }
       },
       shopSkillItem: {
         rectKey: "standard",
@@ -320,9 +324,13 @@ function GlobalDict(eventHandler) {
           normal: "item",
           selected: "selected",
           locked: "locked",
+          maxed: "white"
         },
         textKey: "small",
-        borderKey: "standard"
+        borderKey: {
+          normal: "standard",
+          hook: "hook"
+        }
       },
       shopSkillMoney: {
         rectKey: "standard",
@@ -330,9 +338,13 @@ function GlobalDict(eventHandler) {
           normal: "money100",
           selected: "selected",
           locked: "locked",
+          maxed: "white"
         },
         textKey: "small",
-        borderKey: "standard"
+        borderKey: {
+          normal: "standard",
+          hook: "hook"
+        }
       },
       shopSkillCharacter: {
         rectKey: "standard",
@@ -340,9 +352,13 @@ function GlobalDict(eventHandler) {
           normal: "character",
           selected: "selected",
           locked: "locked",
+          maxed: "white"
         },
         textKey: "small",
-        borderKey: "standard"
+        borderKey: {
+          normal: "standard",
+          hook: "hook"
+        }
       },
       shopSkillInfo: {
         rectKey: "standard",
@@ -736,6 +752,11 @@ function GlobalDict(eventHandler) {
         borderColor: "65, 65, 65, 1",
         borderSize: 1,
         lineDash: [5,3]
+      },
+      hook: {
+        borderColor: "45, 215, 45, 1",
+        borderSize: 4,
+        lineDash: []
       }
     },
     text: {

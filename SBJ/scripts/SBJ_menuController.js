@@ -111,6 +111,12 @@ function MenuController(menu) {
         buttonObject.button.update();
       }, this);
     }, this);
+
+    this.aG.map(buttonRow => {
+      buttonRow.map(buttonObject => {
+        buttonObject.button.update();
+      }, this);
+    }, this);
   };
   /**
    * draws the objects of the grids onto the canvas

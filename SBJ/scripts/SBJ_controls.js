@@ -70,10 +70,10 @@
 
     this.title = new CanvasText(this.gD.canvas.width / 2, 30, "Controls", "pageTitle");
 
-    var headline = "";
+    let headline = "";
 
-    for (var key of this.keyBindings.keys()) {
-      var keyHeadline = this.keyBindings.get(key)[0];
+    for (let key of this.keyBindings.keys()) {
+      let keyHeadline = this.keyBindings.get(key)[0];
       if (keyHeadline !== headline) {
         headline = keyHeadline;
         this.keyEntryHeadlines.push(new ControlEntryHeadline(
@@ -82,7 +82,7 @@
         ));
       }
 
-      var entry = new ControlEntry(
+      let entry = new ControlEntry(
         (this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20),
         600, 20, key, "controlsEntry"
       );
@@ -94,13 +94,13 @@
 
     this.backToMenu = new CanvasButton(this.gD.canvas.width / 2 - 100, this.gD.canvas.height - 50, 200, 30, "Main Menu", "menu");
 
-    this.updateSelection(-1, 0);
+    this.updateSelection(-1, 0, false);
   };
   /**
    * activates the new key mode and prepares for a new key
    */
   this.activateNewKeyMode = function() {
-    var selectedEntry = this.keyEntries[this.selectedRowIndex];
+    let selectedEntry = this.keyEntries[this.selectedRowIndex];
     if (!this.newKeyMode) {
       this.newKeyMode = true;
     } else {
@@ -141,9 +141,9 @@
         return;
       }
 
-      var keyB = this.keyBindings;
-      var rowIndex = this.selectedRowIndex;
-      var columnIndex = this.selectedColumnIndex;
+      let keyB = this.keyBindings;
+      let rowIndex = this.selectedRowIndex;
+      let columnIndex = this.selectedColumnIndex;
 
       if (keyB.get("Menu_NavDown")[3].includes(key)) {
         rowIndex++;
@@ -193,7 +193,7 @@
   this.updateMouseMoves = function() {
     this.keyEntries.map((keyEntry, rowIndex) => {
       keyEntry.keys.map((key, columnIndex) => {
-        var realHeight = key.y - this.scrollHeight;
+        let realHeight = key.y - this.scrollHeight;
         if (this.gD.mousePos.x >= key.x && this.gD.mousePos.x <= key.x + key.width &&
             this.gD.mousePos.y >= realHeight && this.gD.mousePos.y <= realHeight + key.height) {
           if (realHeight >= 60 && realHeight < 280) {
@@ -212,14 +212,14 @@
    * checks where a click was executed
    */
   this.updateClick = function() {
-    var clickPos = this.gD.clicks.pop();
+    let clickPos = this.gD.clicks.pop();
     if (!clickPos) {
       return
     }
 
     this.keyEntries.map((keyEntry, rowIndex) => {
       keyEntry.keys.map((key, columnIndex) => {
-        var realHeight = key.y - this.scrollHeight;
+        let realHeight = key.y - this.scrollHeight;
         if (clickPos.x >= key.x && clickPos.x <= key.x + key.width &&
             clickPos.y >= realHeight && clickPos.y <= realHeight + key.height) {
           if (realHeight >= 60 && realHeight < 280) {
@@ -238,7 +238,7 @@
    * checks if the mouse wheel was moved
    */
   this.updateWheelMoves = function() {
-    var wheelMove = this.gD.wheelMovements.pop();
+    let wheelMove = this.gD.wheelMovements.pop();
     if (!wheelMove) {
       return;
     }
@@ -260,6 +260,10 @@
    */
   this.update = function() {
     this.backToMenu.update();
+
+    this.keyEntries.map(entry => {
+      entry.update();
+    }, this);
   };
   /**
    * draws the objects onto the canvas
@@ -272,14 +276,14 @@
     this.scrollBar.draw(this.gD);
 
     this.keyEntries.map(entry => {
-      var realHeight = entry.y - this.scrollHeight;
+      let realHeight = entry.y - this.scrollHeight;
       if (realHeight >= 60 && realHeight < 280) {
         entry.draw(this, this.gD);
       }
     }, this);
 
     this.keyEntryHeadlines.map(headline => {
-      var realHeight = headline.y - this.scrollHeight;
+      let realHeight = headline.y - this.scrollHeight;
       if (realHeight >= 60 && realHeight < 280) {
         headline.draw(this, this.gD);
       }
@@ -293,7 +297,7 @@
    * updates the selected object and deselects the old object
    * @param {number} rowIndex    the row of the new selected object
    * @param {number} columnIndex the column of the new selected object
-   * @param {bool}   scroll      if the action should influence scrolling
+   * @param {boolean}   scroll      if the action should influence scrolling
    */
   this.updateSelection = function(rowIndex, columnIndex, scroll) {
     if (this.selectedRowIndex !== undefined && this.selectedColumnIndex !== undefined) {
@@ -307,7 +311,7 @@
     if (rowIndex === -1) {
       this.backToMenu.select();
     } else {
-      var entry = this.keyEntries[rowIndex];
+      let entry = this.keyEntries[rowIndex];
       entry.select(columnIndex);
       if (scroll) {
         if (entry.y - this.scrollHeight >= 240) {
@@ -358,7 +362,7 @@ function ControlEntryHeadline(x, y, width, height, text, styleKey) {
    * @param {GlobalDict} gD     the global dictionary
    */
   this.draw = function(controls, gD) {
-    var design = gD.design.elements[this.styleKey];
+    let design = gD.design.elements[this.styleKey];
     drawCanvasRect(this.x, this.y - controls.scrollHeight, this.width, this.height, design.rectKey, gD);
     drawCanvasText(
       this.x + (this.width / 2), this.y + (this.height / 2) - controls.scrollHeight, 
@@ -407,13 +411,18 @@ function ControlEntry(x, y, width, height, name, styleKey) {
   this.deselect = function() {
     this.keys[this.selected].deselect();
   };
+  this.update = function() {
+    this.keys.map(key => {
+      key.update();
+    });
+  };
   /**
    * draws the objects onto the canvas
    * @param {Controls} controls the controls object
    * @param {GlobalDict} gD     the global dictionary
    */
   this.draw = function(controls, gD) {
-    var design = gD.design.elements[this.styleKey];
+    let design = gD.design.elements[this.styleKey];
     drawCanvasRect(this.x, this.y - controls.scrollHeight, this.width - 200, this.height, design.rectKey.standard, gD);
     drawCanvasText(
       this.x + 5, this.y - controls.scrollHeight + (this.height / 2), 
@@ -443,6 +452,9 @@ function ControlKey(x, y, width, height, name, keyNr, styleKey) {
   this.name = name;
   this.keyNr = keyNr;
   this.styleKey = styleKey;
+  this.arrowWidth = 0;
+  this.arrowHeight = 0;
+  this.animationSpeed = 12;
   this.selected = false;
   /**
    * selects a key assignment
@@ -456,27 +468,66 @@ function ControlKey(x, y, width, height, name, keyNr, styleKey) {
   this.deselect = function() {
     this.selected = false;
   };
+  this.update = function() {
+    if (this.selected) {
+      if (this.arrowHeight < this.height) {
+        this.arrowHeight += this.animationSpeed;
+        if (this.arrowHeight >= this.height) {
+          this.arrowHeight = this.height;
+        }
+      } else if (this.arrowHeight >= this.height && this.arrowWidth < this.width) {
+        this.arrowWidth += this.animationSpeed;
+        if (this.arrowWidth >= this.width) {
+          this.arrowWidth = this.width;
+        }
+      }
+    }  else {
+      if (this.arrowWidth > 0) {
+        this.arrowWidth -= this.animationSpeed;
+        if (this.arrowWidth <= 0) {
+          this.arrowWidth = 0;
+        }
+      } else if (this.arrowWidth <= 0 && this.arrowHeight > 0) {
+        this.arrowHeight -= this.animationSpeed;
+        if (this.arrowHeight <= 0) {
+          this.arrowHeight = 0;
+        }
+      }
+    }
+  };
   /**
    * draws the objects onto the canvas
    * @param {Controls}   controls the controls object
    * @param {GlobalDict} gD       the global dictionary
    */
   this.draw = function(controls, gD) {
-    var keyRef = controls.keyBindings.get(this.name)[2][this.keyNr];
-    var design = gD.design.elements[this.styleKey];
+    let keyRef = controls.keyBindings.get(this.name)[2][this.keyNr];
+    let design = gD.design.elements[this.styleKey];
+    let centerX = this.x + this.width / 2;
+    let centerY = this.y + this.height / 2 - controls.scrollHeight;
 
-    if (this.selected) {
-      drawCanvasRect(this.x, this.y - controls.scrollHeight, this.width, this.height, design.rectKey.selected, gD);
-    } else {
-      drawCanvasRect(this.x, this.y - controls.scrollHeight, this.width, this.height, design.rectKey.standard, gD);
-    }
+    drawCanvasRect(this.x, this.y - controls.scrollHeight, this.width, this.height, design.rectKey.standard, gD);
+    drawCanvasPolygon(
+      centerX + this.arrowWidth / 2, centerY - this.arrowHeight / 2, design.rectKey.selected, gD,
+      centerX + Math.min(this.arrowWidth / 2 + this.arrowHeight / 2, this.width / 2),
+      centerY - Math.max((this.arrowWidth / 2 + this.arrowHeight / 2) - this.width / 2, 0),
+      centerX + Math.min(this.arrowWidth / 2 + this.arrowHeight / 2, this.width / 2),
+      centerY + Math.max((this.arrowWidth / 2 + this.arrowHeight / 2) - this.width / 2, 0),
+      centerX + this.arrowWidth / 2, centerY + this.arrowHeight / 2,
+      centerX - this.arrowWidth / 2, centerY + this.arrowHeight / 2,
+      centerX - Math.min(this.arrowWidth / 2 + this.arrowHeight / 2, this.width / 2),
+      centerY + Math.max((this.arrowWidth / 2 + this.arrowHeight / 2) - this.width / 2, 0),
+      centerX - Math.min(this.arrowWidth / 2 + this.arrowHeight / 2, this.width / 2),
+      centerY - Math.max((this.arrowWidth / 2 + this.arrowHeight / 2) - this.width / 2, 0),
+      centerX - this.arrowWidth / 2, centerY - this.arrowHeight / 2
+    );
     if (keyRef !== undefined) {
-      var spriteKey = "Icon_KeyShort";
+      let spriteKey = "Icon_KeyShort";
       if (keyRef.length > 1) {
         spriteKey = "Icon_KeyLong";
       }
 
-      var {spriteWidth, spriteHeight} = getSpriteData(spriteKey, gD);
+      let {spriteWidth, spriteHeight} = getSpriteData(spriteKey, gD);
       drawCanvasImage(
         this.x + (this.width - spriteWidth) / 2, this.y - controls.scrollHeight + (this.height - spriteHeight) / 2,
         spriteKey, gD

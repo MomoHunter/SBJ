@@ -112,8 +112,9 @@
         this.gD.clicks = [];
       }
       this.movingCounter = 0;
-    } else if (mouseDown && this.gD.mousePos.x >= this.skillTree.x && this.gD.mousePos.x <= this.skillTree.x + this.skillTree.width &&
-               this.gD.mousePos.y >= this.skillTree.y && this.gD.mousePos.y <= this.skillTree.y + this.skillTree.height) {
+    } else if (mouseDown && this.gD.mousePos.x >= this.skillTree.x &&
+               this.gD.mousePos.x <= this.skillTree.x + this.skillTree.width && this.gD.mousePos.y >= this.skillTree.y &&
+               this.gD.mousePos.y <= this.skillTree.y + this.skillTree.height) {
       this.movingTree = true;
     } else if (mouseDown && this.gD.mousePos.x >= this.skillTree.minimap.windowX &&
                this.gD.mousePos.x <= this.skillTree.minimap.windowX + this.skillTree.minimap.windowWidth &&
@@ -456,6 +457,13 @@ function ShopSkillTreeMiniMap(x, y, width, height, styleKey) {
         }
         drawCanvasCircleBorder(this.mapX + skill.x, this.mapY + skill.y, skill.radius, design.borderKey.skill, gD);
       }
+      if (skill.skillData.maxed) {
+        drawCanvasLine(
+          this.mapX + skill.x - skill.radius / 2, this.mapY + skill.y + skill.radius / 8,
+          design.borderKey.normal, gD, this.mapX + skill.x - skill.radius / 8, this.mapY + skill.y + skill.radius / 2,
+          this.mapX + skill.x + skill.radius / 3 * 2, this.mapY + skill.y - skill.radius / 8 * 3
+        );
+      }
     }, this);
     drawCanvasRectBorder(this.windowX, this.windowY, this.windowWidth, this.windowHeight, design.borderKey.window, gD);
     drawCanvasRectBorder(this.mapX, this.mapY, this.mapWidth, this.mapHeight, design.borderKey.normal, gD);
@@ -536,7 +544,7 @@ function ShopSkill(x, y, radius, key, spriteKey, styleKey) {
       } else {
         drawCanvasText(newX, newY + 14, skillData.currentValue + "/" + skillData.maxValue, design.textKey, gD);
       }
-      drawCanvasRectRoundBorder(newX - 30, newY + 5, 60, 16, 8, design.borderKey, gD);
+      drawCanvasRectRoundBorder(newX - 30, newY + 5, 60, 16, 8, design.borderKey.normal, gD);
     } else {
       if (this.spriteKey !== "") {
         drawCanvasImage(newX - spriteWidth / 2, newY - spriteHeight, this.spriteKey, gD);
@@ -552,12 +560,22 @@ function ShopSkill(x, y, radius, key, spriteKey, styleKey) {
       if (!skillData.unlocked) {
         drawCanvasStar(newX, newY, this.radius, this.edgeFactor, this.starEdges, design.circleKey.locked, gD);
       }
-      drawCanvasStarBorder(newX, newY, this.radius, this.edgeFactor, this.starEdges, design.borderKey, gD);
+      drawCanvasStarBorder(newX, newY, this.radius, this.edgeFactor, this.starEdges, design.borderKey.normal, gD);
     } else {
       if (!skillData.unlocked) {
         drawCanvasCircle(newX, newY, this.radius, design.circleKey.locked, gD);
       }
-      drawCanvasCircleBorder(newX, newY, this.radius, design.borderKey, gD);
+      drawCanvasCircleBorder(newX, newY, this.radius, design.borderKey.normal, gD);
+    }
+
+    if (skillData.maxed) {
+      drawCanvasCircle(
+        newX + this.radius / 16 * 11, newY + this.radius / 16 * 11, this.radius / 16 * 5, design.circleKey.maxed, gD
+      );
+      drawCanvasLine(newX + 18, newY + 27, design.borderKey.hook, gD, newX + 23, newY + 33, newX + 35, newY + 21);
+      drawCanvasCircleBorder(
+        newX + this.radius / 16 * 11, newY + this.radius / 16 * 11, this.radius / 16 * 5, design.borderKey.normal, gD
+      );
     }
   };
 }

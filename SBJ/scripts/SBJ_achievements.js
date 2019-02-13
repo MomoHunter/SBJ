@@ -222,7 +222,7 @@
    * updates moving objects in menu
    */
   this.update = function() {
-    /* unused */
+    this.menuController.update();
   };
   /**
    * draws the screen onto the canvas

@@ -224,6 +224,10 @@ function Highscores(menu, gD) {
    */
   this.update = function() {
     this.backToMenu.update();
+
+    this.highscores.map(entry => {
+      entry.update();
+    }, this);
   };
   /**
    * draws the objects onto the canvas
@@ -346,6 +350,9 @@ function HighscoreEntry(x, y, width, height, highscore, place, styleKey) {
   this.highscore = highscore;
   this.place = place;
   this.styleKey = styleKey;
+  this.arrowWidth = 0;
+  this.arrowHeight = 0;
+  this.animationSpeed = 24;
   this.selected = false;
   /**
    * selects this entry
@@ -359,6 +366,33 @@ function HighscoreEntry(x, y, width, height, highscore, place, styleKey) {
   this.deselect = function() {
     this.selected = false;
   };
+  this.update = function() {
+    if (this.selected) {
+      if (this.arrowHeight < this.height) {
+        this.arrowHeight += this.animationSpeed;
+        if (this.arrowHeight >= this.height) {
+          this.arrowHeight = this.height;
+        }
+      } else if (this.arrowHeight >= this.height && this.arrowWidth < this.width) {
+        this.arrowWidth += this.animationSpeed;
+        if (this.arrowWidth >= this.width) {
+          this.arrowWidth = this.width;
+        }
+      }
+    }  else {
+      if (this.arrowWidth > 0) {
+        this.arrowWidth -= this.animationSpeed;
+        if (this.arrowWidth <= 0) {
+          this.arrowWidth = 0;
+        }
+      } else if (this.arrowWidth <= 0 && this.arrowHeight > 0) {
+        this.arrowHeight -= this.animationSpeed;
+        if (this.arrowHeight <= 0) {
+          this.arrowHeight = 0;
+        }
+      }
+    }
+  };
   /**
    * draws the objects onto the canvas
    * @param {Highscores} highscores the controls object
@@ -367,11 +401,24 @@ function HighscoreEntry(x, y, width, height, highscore, place, styleKey) {
   this.draw = function(highscores, gD) {
     let design = gD.design.elements[this.styleKey];
     let {spriteWidth, spriteHeight} = getSpriteData("Icon_Info", gD);
-    if (this.selected) {
-      drawCanvasRect(this.x, this.y - highscores.scrollHeight, this.width, this.height, design.rectKey.selected, gD);
-    } else {
-      drawCanvasRect(this.x, this.y - highscores.scrollHeight, this.width, this.height, design.rectKey.standard, gD);
-    }
+    let centerX = this.x + this.width / 2;
+    let centerY = this.y + this.height / 2 - highscores.scrollHeight;
+
+    drawCanvasRect(this.x, this.y - highscores.scrollHeight, this.width, this.height, design.rectKey.standard, gD);
+    drawCanvasPolygon(
+      centerX + this.arrowWidth / 2, centerY - this.arrowHeight / 2, design.rectKey.selected, gD,
+      centerX + Math.min(this.arrowWidth / 2 + this.arrowHeight / 2, this.width / 2),
+      centerY - Math.max((this.arrowWidth / 2 + this.arrowHeight / 2) - this.width / 2, 0),
+      centerX + Math.min(this.arrowWidth / 2 + this.arrowHeight / 2, this.width / 2),
+      centerY + Math.max((this.arrowWidth / 2 + this.arrowHeight / 2) - this.width / 2, 0),
+      centerX + this.arrowWidth / 2, centerY + this.arrowHeight / 2,
+      centerX - this.arrowWidth / 2, centerY + this.arrowHeight / 2,
+      centerX - Math.min(this.arrowWidth / 2 + this.arrowHeight / 2, this.width / 2),
+      centerY + Math.max((this.arrowWidth / 2 + this.arrowHeight / 2) - this.width / 2, 0),
+      centerX - Math.min(this.arrowWidth / 2 + this.arrowHeight / 2, this.width / 2),
+      centerY - Math.max((this.arrowWidth / 2 + this.arrowHeight / 2) - this.width / 2, 0),
+      centerX - this.arrowWidth / 2, centerY - this.arrowHeight / 2
+    );
     drawCanvasText(
       this.x + 48, this.y + this.height / 2 - highscores.scrollHeight,
       this.place, design.textKey.number, gD

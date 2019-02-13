@@ -333,20 +333,35 @@ function SaveLoad(menu, gD) {
    */
   this.updateClick = function() {
     let clickPos = this.gD.clicks.pop();
-    if (!clickPos || (this.enterName && !this.choosePicture)) {
+    if (!clickPos) {
       return;
     }
 
     if (this.choosePicture) {
-      let button = this.choosePictureModal.getSelectedButton();
-      if (this.enterNameModal.text === "") {
-        let date = new Date();
-        this.createSavestate(date.toLocaleString('de-DE', {weekday:'short'}) + " " + date.toLocaleString('de-DE'), button.spriteKey);
-      } else {
-        this.createSavestate(this.enterNameModal.text, button.spriteKey);
+      if (clickPos.x >= this.choosePictureModal.innerX &&
+          clickPos.x <= this.choosePictureModal.innerX + this.choosePictureModal.innerWidth &&
+          clickPos.y >= this.choosePictureModal.innerY &&
+          clickPos.y <= this.choosePictureModal.innerY + this.choosePictureModal.innerHeight) {
+        let button = this.choosePictureModal.getSelectedButton();
+        if (this.enterNameModal.text === "") {
+          let date = new Date();
+          this.createSavestate(
+            date.toLocaleString('de-DE', {weekday: 'short'}) + " " + date.toLocaleString('de-DE'),
+            button.spriteKey
+          );
+        } else {
+          this.createSavestate(this.enterNameModal.text, button.spriteKey);
+        }
       }
       this.enterName = false;
       this.choosePicture = false;
+    } else if (this.enterName) {
+      if (!(clickPos.x >= this.enterNameModal.innerX &&
+          clickPos.x <= this.enterNameModal.innerX + this.enterNameModal.innerWidth &&
+          clickPos.y >= this.enterNameModal.innerY &&
+          clickPos.y <= this.enterNameModal.innerY + this.enterNameModal.innerHeight)) {
+        this.enterName = false;
+      }
     } else if (this.loaded) {
       let button = this.backButton;
       if (clickPos.x >= button.x && clickPos.x <= button.x + button.width &&
@@ -416,10 +431,20 @@ function SaveLoad(menu, gD) {
    * updates moving objects
    */
   this.update = function() {
-    this.buttons.map(button => {
-      button.update();
-    }, this);
-    this.backButton.update();
+    if (this.choosePicture) {
+      this.choosePictureModal.update();
+    } else {
+      this.buttons.map(button => {
+        button.update();
+      }, this);
+
+      this.savestates.map(state => {
+        state.update();
+      }, this);
+
+      this.refreshButton.update();
+      this.backButton.update();
+    }
   };
   /**
    * draws the objects onto the canvas
@@ -534,6 +559,9 @@ function SLSavestate(x, y, width, height, styleKey, savestate) {
   this.height = height;
   this.styleKey = styleKey;
   this.savestate = savestate;
+  this.arrowWidth = 0;
+  this.arrowHeight = 0;
+  this.animationSpeed = 24;
   this.selected = false;
   this.marked = false;
   /**
@@ -560,6 +588,33 @@ function SLSavestate(x, y, width, height, styleKey, savestate) {
   this.demark = function() {
     this.marked = false;
   };
+  this.update = function() {
+    if (this.selected) {
+      if (this.arrowHeight < this.height) {
+        this.arrowHeight += this.animationSpeed;
+        if (this.arrowHeight >= this.height) {
+          this.arrowHeight = this.height;
+        }
+      } else if (this.arrowHeight >= this.height && this.arrowWidth < this.width) {
+        this.arrowWidth += this.animationSpeed;
+        if (this.arrowWidth >= this.width) {
+          this.arrowWidth = this.width;
+        }
+      }
+    }  else {
+      if (this.arrowWidth > 0) {
+        this.arrowWidth -= this.animationSpeed;
+        if (this.arrowWidth <= 0) {
+          this.arrowWidth = 0;
+        }
+      } else if (this.arrowWidth <= 0 && this.arrowHeight > 0) {
+        this.arrowHeight -= this.animationSpeed;
+        if (this.arrowHeight <= 0) {
+          this.arrowHeight = 0;
+        }
+      }
+    }
+  };
   /**
    * draws the savestate onto the canvas
    * @param  {SaveLoad}   saveLoad the saveLoad object
@@ -571,12 +626,24 @@ function SLSavestate(x, y, width, height, styleKey, savestate) {
     date = date.toLocaleString('de-DE', {weekday: 'short'}) + " " + date.toLocaleString('de-DE');
     let icon = getSpriteData(this.savestate.spriteKey, gD);
     let info = getSpriteData("Icon_Info", gD);
+    let centerX = this.x + this.width / 2;
+    let centerY = this.y + this.height / 2 - saveLoad.scrollHeight;
 
-    if (this.selected) {
-      drawCanvasRect(this.x, this.y - saveLoad.scrollHeight, this.width, this.height, design.rectKey.selected, gD);
-    } else {
-      drawCanvasRect(this.x, this.y - saveLoad.scrollHeight, this.width, this.height, design.rectKey.standard, gD);
-    }
+    drawCanvasRect(this.x, this.y - saveLoad.scrollHeight, this.width, this.height, design.rectKey.standard, gD);
+    drawCanvasPolygon(
+      centerX + this.arrowWidth / 2, centerY - this.arrowHeight / 2, design.rectKey.selected, gD,
+      centerX + Math.min(this.arrowWidth / 2 + this.arrowHeight / 2, this.width / 2),
+      centerY - Math.max((this.arrowWidth / 2 + this.arrowHeight / 2) - this.width / 2, 0),
+      centerX + Math.min(this.arrowWidth / 2 + this.arrowHeight / 2, this.width / 2),
+      centerY + Math.max((this.arrowWidth / 2 + this.arrowHeight / 2) - this.width / 2, 0),
+      centerX + this.arrowWidth / 2, centerY + this.arrowHeight / 2,
+      centerX - this.arrowWidth / 2, centerY + this.arrowHeight / 2,
+      centerX - Math.min(this.arrowWidth / 2 + this.arrowHeight / 2, this.width / 2),
+      centerY + Math.max((this.arrowWidth / 2 + this.arrowHeight / 2) - this.width / 2, 0),
+      centerX - Math.min(this.arrowWidth / 2 + this.arrowHeight / 2, this.width / 2),
+      centerY - Math.max((this.arrowWidth / 2 + this.arrowHeight / 2) - this.width / 2, 0),
+      centerX - this.arrowWidth / 2, centerY - this.arrowHeight / 2
+    );
     if (this.marked) {
       drawCanvasRect(this.x, this.y - saveLoad.scrollHeight, this.width, this.height, design.rectKey.marked, gD);
     }

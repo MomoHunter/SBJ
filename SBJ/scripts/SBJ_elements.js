@@ -296,6 +296,9 @@ function CanvasImageButton(x, y, width, height, spriteKey, styleKey) {
   this.height = height;
   this.spriteKey = spriteKey;
   this.styleKey = styleKey;
+  this.arrowWidth = 0;
+  this.arrowHeight = 0;
+  this.animationSpeed = 12;
   this.selected = false;
   this.select = function() {
     this.selected = true;
@@ -303,14 +306,54 @@ function CanvasImageButton(x, y, width, height, spriteKey, styleKey) {
   this.deselect = function() {
     this.selected = false;
   };
+  this.update = function() {
+    if (this.selected) {
+      if (this.arrowHeight < this.height) {
+        this.arrowHeight += this.animationSpeed;
+        if (this.arrowHeight >= this.height) {
+          this.arrowHeight = this.height;
+        }
+      } else if (this.arrowHeight >= this.height && this.arrowWidth < this.width) {
+        this.arrowWidth += this.animationSpeed;
+        if (this.arrowWidth >= this.width) {
+          this.arrowWidth = this.width;
+        }
+      }
+    }  else {
+      if (this.arrowWidth > 0) {
+        this.arrowWidth -= this.animationSpeed;
+        if (this.arrowWidth <= 0) {
+          this.arrowWidth = 0;
+        }
+      } else if (this.arrowWidth <= 0 && this.arrowHeight > 0) {
+        this.arrowHeight -= this.animationSpeed;
+        if (this.arrowHeight <= 0) {
+          this.arrowHeight = 0;
+        }
+      }
+    }
+  };
   this.draw = function(gD) {
     let design = gD.design.button[this.styleKey];
     let {spriteWidth, spriteHeight} = getSpriteData(this.spriteKey, gD);
-    if (this.selected) {
-      drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.selected, gD);
-    } else {
-      drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.standard, gD);
-    }
+    let centerX = this.x + this.width / 2;
+    let centerY = this.y + this.height / 2;
+
+    drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.standard, gD);
+    drawCanvasPolygon(
+      centerX + this.arrowWidth / 2, centerY - this.arrowHeight / 2, design.rectKey.selected, gD,
+      centerX + Math.min(this.arrowWidth / 2 + this.arrowHeight / 2, this.width / 2),
+      centerY - Math.max((this.arrowWidth / 2 + this.arrowHeight / 2) - this.width / 2, 0),
+      centerX + Math.min(this.arrowWidth / 2 + this.arrowHeight / 2, this.width / 2),
+      centerY + Math.max((this.arrowWidth / 2 + this.arrowHeight / 2) - this.width / 2, 0),
+      centerX + this.arrowWidth / 2, centerY + this.arrowHeight / 2,
+      centerX - this.arrowWidth / 2, centerY + this.arrowHeight / 2,
+      centerX - Math.min(this.arrowWidth / 2 + this.arrowHeight / 2, this.width / 2),
+      centerY + Math.max((this.arrowWidth / 2 + this.arrowHeight / 2) - this.width / 2, 0),
+      centerX - Math.min(this.arrowWidth / 2 + this.arrowHeight / 2, this.width / 2),
+      centerY - Math.max((this.arrowWidth / 2 + this.arrowHeight / 2) - this.width / 2, 0),
+      centerX - this.arrowWidth / 2, centerY - this.arrowHeight / 2
+    );
     drawCanvasImage(
       this.x + Math.floor((this.width - spriteWidth) / 2),
       this.y + Math.floor((this.height - spriteHeight) / 2),
@@ -334,6 +377,10 @@ function CanvasEnterNameModal(x, y, width, height, styleKey) {
   this.width = width;
   this.height = height;
   this.styleKey = styleKey;
+  this.innerX = x + width / 3;
+  this.innerY = y + height / 3;
+  this.innerWidth = width / 3;
+  this.innerHeight = height / 3;
   this.counter = 0;
   this.cursorPosition = 10;
   this.text = "";
@@ -378,39 +425,32 @@ function CanvasEnterNameModal(x, y, width, height, styleKey) {
     let design = gD.design.elements[this.styleKey];
 
     drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.modal, gD);
-    drawCanvasRect(
-      this.x + (this.width - (this.width / 3)) / 2, this.y + (this.height - (this.height / 3)) / 2, 
-      this.width / 3, this.height / 3, design.rectKey.background, gD
-    );
+    drawCanvasRect(this.innerX, this.innerY, this.innerWidth, this.innerHeight, design.rectKey.background, gD);
     drawCanvasText(
       this.x + this.width / 2, this.y + this.height / 2 - 20, 
       "Bitte Name eingeben:", design.textKey.label, gD
     );
     drawCanvasRect(
-      this.x + (this.width - (this.width / 3)) / 2 + 5, this.y + this.height / 2 + 20,
-      this.width / 3 - 10, 20, design.rectKey.textField, gD
+      this.innerX + 5, this.y + this.height / 2 + 20,
+      this.innerWidth - 10, 20, design.rectKey.textField, gD
     );
     drawCanvasText(
-      this.x + (this.width - (this.width / 3)) / 2 + 8, this.y + this.height / 2 + 30, 
+      this.innerX + 8, this.y + this.height / 2 + 30,
       this.text, design.textKey.textField, gD
     );
+    drawCanvasRectBorder(this.innerX, this.innerY, this.innerWidth, this.innerHeight, design.borderKey.background, gD);
     drawCanvasRectBorder(
-      this.x + (this.width - (this.width / 3)) / 2, this.y + (this.height - (this.height / 3)) / 2, 
-      this.width / 3, this.height / 3, design.borderKey.background, gD
+      this.innerX + 5, this.y + this.height / 2 + 20,
+      this.innerWidth - 10, 20, design.borderKey.textField, gD
     );
-    drawCanvasRectBorder(
-      this.x + (this.width - (this.width / 3)) / 2 + 5, this.y + this.height / 2 + 20,
-      this.width / 3 - 10, 20, design.borderKey.textField, gD
-    );
-    if (Math.floor(this.counter / 80) % 2 === 0) {
+    if (Math.floor(this.counter / 40) % 2 === 0) {
       let addCharLength = 0;
       if (this.text.length !== 0) {
         addCharLength = (gD.context.measureText(this.text).width / this.text.length) * this.cursorPosition;
       }
       drawCanvasLine(
-        this.x + (this.width - (this.width / 3)) / 2 + 8 + addCharLength, this.y + this.height / 2 + 22,
-        design.cursorKey, gD,
-        this.x + (this.width - (this.width / 3)) / 2 + 8 + addCharLength, this.y + this.height / 2 + 38
+        this.innerX + 8 + addCharLength, this.y + this.height / 2 + 22, design.cursorKey, gD,
+        this.innerX + 8 + addCharLength, this.y + this.height / 2 + 38
       );
     }
   };
@@ -430,6 +470,11 @@ function CanvasChoosePictureModal(x, y, width, height, styleKey) {
   this.width = width;
   this.height = height;
   this.styleKey = styleKey;
+  this.innerX = x + 275;
+  this.innerY = y + 35;
+  this.innerWidth = width - 550;
+  this.innerHeight = height - 70;
+  this.buttonSize = 55;
   this.pictures = [
     "Item_Stopwatch",
     "Item_Star",
@@ -474,8 +519,9 @@ function CanvasChoosePictureModal(x, y, width, height, styleKey) {
         this.pictureButtons[Math.floor(index / 8)] = [];
       }
       this.pictureButtons[Math.floor(index / 8)].push(new CanvasImageButton(
-        this.x + 280 + (index % 8) * 55, this.y + 90 + Math.floor(index / 8) * 55,
-        55, 55, this.pictures[index], design.buttonKey
+        this.innerX + 5 + (index % 8) * this.buttonSize,
+        this.innerY + 55 + Math.floor(index / 8) * this.buttonSize,
+        this.buttonSize, this.buttonSize, this.pictures[index], design.buttonKey
       ));
     }, this);
     this.updateSelection(0, 0);
@@ -522,12 +568,19 @@ function CanvasChoosePictureModal(x, y, width, height, styleKey) {
     this.selectedRowIndex = rowIndex;
     this.selectedColumnIndex = columnIndex;
   };
+  this.update = function() {
+    this.pictureButtons.map((buttonRow, rowIndex) => {
+      buttonRow.map((button, columnIndex) => {
+        button.update();
+      }, this);
+    }, this);
+  };
   this.draw = function(gD) {
     let design = gD.design.elements[this.styleKey];
 
     drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.modal, gD);
-    drawCanvasRect(this.x + 275, this.y + 35, this.width - 550, this.height - 70, design.rectKey.background, gD);
-    drawCanvasText(this.x + this.width / 2, this.y + 63, "Bitte Bild auswählen:", design.textKey, gD);
+    drawCanvasRect(this.innerX, this.innerY, this.innerWidth, this.innerHeight, design.rectKey.background, gD);
+    drawCanvasText(this.x + this.width / 2, this.innerY + 28, "Bitte Bild auswählen:", design.textKey, gD);
 
     this.pictureButtons.map((buttonRow, rowIndex) => {
       buttonRow.map((button, columnIndex) => {
@@ -536,7 +589,7 @@ function CanvasChoosePictureModal(x, y, width, height, styleKey) {
     }, this);
 
     drawCanvasRectBorder(
-      this.x + 275, this.y + 35, this.width - 550, this.height - 70, design.borderKey.background, gD
+      this.innerX, this.innerY, this.innerWidth, this.innerHeight, design.borderKey.background, gD
     );
   };
 }
