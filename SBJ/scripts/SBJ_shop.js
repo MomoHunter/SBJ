@@ -283,7 +283,7 @@ function ShopSkillTree(x, y, width, height, styleKey) {
     this.lines.push({startX: 475, startY: 80, endX: 475, endY: 280});
     this.skills.push(new ShopSkill(this.x + 265, this.y + 370, 40, "Level up stopwatch", "Skill_Stopwatch_level_up", "shopSkillItem"));
     this.skills.push(new ShopSkill(this.x + 335, this.y + 440, 40, "Level up star", "Skill_Star_level_up", "shopSkillItem"));
-    this.skills.push(new ShopSkill(this.x + 425, this.y + 490, 40, "Level up feather", "", "shopSkillItem"));
+    this.skills.push(new ShopSkill(this.x + 425, this.y + 490, 40, "Level up feather", "Skill_Feather_level_up", "shopSkillItem"));
     this.skills.push(new ShopSkill(this.x + 525, this.y + 490, 40, "Level up treasure", "", "shopSkillItem"));
     this.skills.push(new ShopSkill(this.x + 615, this.y + 440, 40, "Level up magnet", "", "shopSkillItem"));
     this.skills.push(new ShopSkill(this.x + 685, this.y + 370, 40, "Level up rocket", "", "shopSkillItem"));
