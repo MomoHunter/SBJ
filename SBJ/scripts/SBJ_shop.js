@@ -528,7 +528,7 @@ function ShopSkill(x, y, radius, key, spriteKey, styleKey) {
 
     if (skillData.showValue) {
       if (this.spriteKey !== "") {
-        drawCanvasImage(newX - spriteWidth / 2, newY - spriteHeight, this.spriteKey, gD);
+        drawCanvasImage(newX - Math.floor(spriteWidth / 2), newY - spriteHeight, this.spriteKey, gD);
       } else if (name.length === 1) {
         drawCanvasText(newX, newY - 17, name[0], design.textKey, gD);
       } else if (name.length === 2) {
@@ -547,7 +547,7 @@ function ShopSkill(x, y, radius, key, spriteKey, styleKey) {
       drawCanvasRectRoundBorder(newX - 30, newY + 5, 60, 16, 8, design.borderKey.normal, gD);
     } else {
       if (this.spriteKey !== "") {
-        drawCanvasImage(newX - spriteWidth / 2, newY - spriteHeight, this.spriteKey, gD);
+        drawCanvasImage(newX - Math.floor(spriteWidth / 2), newY - spriteHeight, this.spriteKey, gD);
       } else if (name.length === 2) {
         drawCanvasText(newX, newY - 7, name[0], design.textKey, gD);
         drawCanvasText(newX, newY + 7, name[1], design.textKey, gD);
