@@ -284,9 +284,9 @@ function ShopSkillTree(x, y, width, height, styleKey) {
     this.skills.push(new ShopSkill(this.x + 265, this.y + 370, 40, "Level up stopwatch", "Skill_Stopwatch_level_up", "shopSkillItem"));
     this.skills.push(new ShopSkill(this.x + 335, this.y + 440, 40, "Level up star", "Skill_Star_level_up", "shopSkillItem"));
     this.skills.push(new ShopSkill(this.x + 425, this.y + 490, 40, "Level up feather", "Skill_Feather_level_up", "shopSkillItem"));
-    this.skills.push(new ShopSkill(this.x + 525, this.y + 490, 40, "Level up treasure", "", "shopSkillItem"));
-    this.skills.push(new ShopSkill(this.x + 615, this.y + 440, 40, "Level up magnet", "", "shopSkillItem"));
-    this.skills.push(new ShopSkill(this.x + 685, this.y + 370, 40, "Level up rocket", "", "shopSkillItem"));
+    this.skills.push(new ShopSkill(this.x + 525, this.y + 490, 40, "Level up treasure", "Skill_Treasure_level_up", "shopSkillItem"));
+    this.skills.push(new ShopSkill(this.x + 615, this.y + 440, 40, "Level up magnet", "Skill_Magnet_level_up", "shopSkillItem"));
+    this.skills.push(new ShopSkill(this.x + 685, this.y + 370, 40, "Level up rocket", "Skill_Rocket_level_up", "shopSkillItem"));
     this.lines.push({startX: 475, startY: 280, endX: 265, endY: 370});
     this.lines.push({startX: 475, startY: 280, endX: 335, endY: 440});
     this.lines.push({startX: 475, startY: 280, endX: 425, endY: 490});
