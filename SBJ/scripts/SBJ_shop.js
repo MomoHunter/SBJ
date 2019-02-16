@@ -293,8 +293,8 @@ function ShopSkillTree(x, y, width, height, styleKey) {
     this.lines.push({startX: 475, startY: 280, endX: 525, endY: 490});
     this.lines.push({startX: 475, startY: 280, endX: 615, endY: 440});
     this.lines.push({startX: 475, startY: 280, endX: 685, endY: 370});
-    this.skills.push(new ShopSkill(this.x + 140, this.y + 425, 40, "Start amount stopwatch", "", "shopSkillItem"));
-    this.skills.push(new ShopSkill(this.x + 250, this.y + 545, 40, "Start amount star", "", "shopSkillItem"));
+    this.skills.push(new ShopSkill(this.x + 140, this.y + 425, 40, "Start amount stopwatch", "Skill_Stopwatches_at_start", "shopSkillItem"));
+    this.skills.push(new ShopSkill(this.x + 250, this.y + 545, 40, "Start amount star", "Skill_Stars_at_start", "shopSkillItem"));
     this.skills.push(new ShopSkill(this.x + 395, this.y + 615, 40, "Start amount feather", "", "shopSkillItem"));
     this.skills.push(new ShopSkill(this.x + 555, this.y + 615, 40, "Start amount treasure", "", "shopSkillItem"));
     this.skills.push(new ShopSkill(this.x + 700, this.y + 545, 40, "Start amount magnet", "", "shopSkillItem"));
