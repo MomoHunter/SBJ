@@ -387,6 +387,14 @@ function GlobalDict(eventHandler) {
           normal: "standard"
         }
       },
+      accessoryWindow: {
+        rectKey: {
+          accessory: "blur"
+        },
+        borderKey: {
+          accessory: "standard"
+        }
+      },
       controlsHeadline: {
         rectKey: "headline",
         textKey: "normalBold",
