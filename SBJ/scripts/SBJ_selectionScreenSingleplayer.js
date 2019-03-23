@@ -1,4 +1,97 @@
-﻿function SelectionScreen(gD, menu) {
+﻿function SelectionScreenSingleplayer(menu, gD) {
+  this.menu = menu;
+  this.gD = gD;
+  this.init = function() {
+    this.title = new CanvasText(this.gD.canvas.width / 2, 30, "Singleplayer", "pageTitle");
+
+    this.selections = [
+      new ObjectSelection(100, 60, 40, 130, ["Player_Standard", "Player_Strooper", "Player_Magician"], "objectSelection")
+    ]
+  };
+  this.updateKeyPresses = function() {
+    this.gD.newKeys.map(key => {
+      let keyB = this.menu.controls.keyBindings;
+      if (keyB.get("Menu_Back")[3].includes(key)) {
+        this.gD.currentPage = this.menu;
+      }
+    }, this);
+  };
+  this.updateMouseMoves = function() {
+
+  };
+  this.updateClick = function() {
+    let clickPos = this.gD.clicks.pop();
+    if (!clickPos) {
+      return;
+    }
+
+
+  };
+  this.updateWheelMoves = function() {
+
+  };
+  this.update = function() {
+
+  };
+  this.draw = function() {
+    this.gD.context.drawImage(this.menu.backgroundImage, 0, 0);
+    drawCanvasRect(0, 0, this.gD.canvas.width, this.gD.canvas.height, "selectionBackground", this.gD);
+
+    this.title.draw(this.gD);
+
+    this.selections.map(selection => {
+      selection.draw(this.gD);
+    }, this);
+  };
+}
+
+function ObjectSelection(x, y, width, height, objects, styleKey) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.objects = objects;
+  this.styleKey = styleKey;
+  this.currentIndex = 0;
+  this.draw = function(gD) {
+    let design = gD.design.elements[this.styleKey];
+    let image1 = {};
+    let image2 = getSpriteData(this.objects[this.currentIndex], gD);
+    let image3 = {};
+    if (this.currentIndex === 0) {
+      image1 = getSpriteData(this.objects[this.objects.length - 1], gD);
+    } else {
+      image1 = getSpriteData(this.objects[this.currentIndex - 1], gD);
+    }
+    if (this.currentIndex === this.objects.length - 1) {
+      image3 = getSpriteData(this.objects[0], gD);
+    } else {
+      image3 = getSpriteData(this.objects[this.currentIndex + 1], gD);
+    }
+
+    drawCanvasPolygon(
+      this.x + this.width / 2, this.y, design.rectKey.arrow, gD, this.x + this.width, this.y + 10,
+      this.x + this.width, this.y + 20, this.x + this.width / 2, this.y + 10, this.x, this.y + 20, this.x, this.y + 10
+    );
+    drawCanvasPolygonBorder(
+      this.x + this.width / 2, this.y, design.borderKey.arrow, gD, this.x + this.width, this.y + 10,
+      this.x + this.width, this.y + 20, this.x + this.width / 2, this.y + 10, this.x, this.y + 20, this.x, this.y + 10
+    );
+    drawCanvasSmallImage(this.x + (this.width - image2.spriteWidth) / 2, this.y - this.height / 4 + (this.height - image2.spriteHeight) / 2, 0.6, this.objects[this.currentIndex], gD);
+    drawCanvasImage(this.x + (this.width - image2.spriteWidth) / 2, this.y + (this.height - image2.spriteHeight) / 2, this.objects[this.currentIndex], gD);
+    drawCanvasSmallImage(this.x + (this.width - image2.spriteWidth) / 2, this.y + this.height / 4 + (this.height - image2.spriteHeight) / 2, 0.6, this.objects[this.currentIndex], gD);
+    drawCanvasPolygon(
+      this.x + this.width / 2, this.y + this.height, design.rectKey.arrow, gD, this.x + this.width, this.y + this.height - 10,
+      this.x + this.width, this.y + this.height - 20, this.x + this.width / 2, this.y + this.height - 10, this.x, this.y + this.height - 20, this.x, this.y + this.height - 10
+    );
+    drawCanvasPolygonBorder(
+      this.x + this.width / 2, this.y + this.height, design.borderKey.arrow, gD, this.x + this.width, this.y + this.height - 10,
+      this.x + this.width, this.y + this.height - 20, this.x + this.width / 2, this.y + this.height - 10, this.x, this.y + this.height - 20, this.x, this.y + this.height - 10
+    );
+  };
+}
+
+/*function SelectionScreen(gD, menu) {
   this.gD = gD;
   this.menu = menu;
   this.backgroundImage = new Image();
@@ -288,4 +381,4 @@ function drawSelectionScreen(selectionScreen) {
   selectionScreen.modal.draw(selectionScreen, selectionScreen.gD);
 
   selectionScreen.title.draw(selectionScreen.gD);
-}
+}*/
