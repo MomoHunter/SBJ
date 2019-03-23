@@ -93,6 +93,8 @@ function GlobalDict(eventHandler) {
   this.eventHandler = eventHandler;
   this.canvas = document.getElementById("gamearea");
   this.context = this.canvas.getContext("2d");
+  this.offscreenCanvas = document.getElementById("offscreen");
+  this.offscreenContext = this.offscreenCanvas.getContext("2d");
   this.keys = {};
   this.newKeys = [];
   this.events = [];
@@ -302,6 +304,14 @@ function GlobalDict(eventHandler) {
   };
   this.design = {
     elements: {
+      objectSelection: {
+        rectKey: {
+          arrow: "standard"
+        },
+        borderKey: {
+          arrow: "standard"
+        }
+      },
       skillTree: {
         rectKey: {
           background: "modal",
@@ -689,6 +699,9 @@ function GlobalDict(eventHandler) {
       },
       rocket: {
         backgroundColor: "0, 0, 0, 1"
+      },
+      selectionBackground: {
+        backgroundColor: "0, 0, 0, 0.5"
       }
     },
     circle: {
@@ -944,5 +957,6 @@ function GlobalDict(eventHandler) {
   };
   this.clear = function() {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.offscreenContext.clearRect(0, 0, this.offscreenCanvas.width, this.offscreenCanvas.height);
   };
 }
