@@ -5,9 +5,12 @@ function Menu(gD) {
    */
   this.init = function() {
     this.mainMC = new MenuController(this);
+    this.playMC = new MenuController(this);
     this.extraMC = new MenuController(this);
     this.backgroundImage = new Image();
     this.setNewBackground();
+    this.selectionScreenSP = new SelectionScreenSingleplayer(this, this.gD);
+    this.selectionScreenSP.init();
     this.shop = new Shop(this, this.gD);
     this.shop.init();
     this.achievements = new Achievements(this, this.gD);
@@ -21,16 +24,26 @@ function Menu(gD) {
     this.saveLoad = new SaveLoad(this, this.gD);
     this.saveLoad.init();
 
+    this.showExtras = false;
+    this.showPlay = false;
+
     this.title = new CanvasText(this.gD.canvas.width / 2, 100, "Super Block Jump", "title");
     this.version = new CanvasText(this.gD.canvas.width - 5, this.gD.canvas.height - 5, "v3.0.0", "version");
     this.pressButton = new CanvasText(this.gD.canvas.width / 2, 280, "Drücke eine beliebige Taste", "instruction");
 
     this.mainNavigationGrid = [
-      [{ button: "Play",        action: (gD) => { gD.currentPage = this.selectionScreen } }],
+      [{ button: "Play",        action: (gD) => { this.showPlay = true } }],
       [{ button: "Shop",        action: (gD) => { gD.currentPage = this.shop } }],
       [{ button: "Save / Load", action: (gD) => { gD.currentPage = this.saveLoad } }],
       [{ button: "Extras",      action: (gD) => { this.showExtras = true } }],
       [{ button: "Exit",        action: (gD) => { window.close() } }]
+    ];
+
+    this.playNavigationGrid = [
+      [{ button: "Singleplayer",       action: (gD) => { gD.currentPage = this.selectionScreenSP } }],
+      [{ button: "Local MP",  action: (gD) => { gD.currentPage = this.selectionScreenLMP } }],
+      [{ button: "Online MP", action: (gD) => { gD.currentPage = this.selectionScreenOMP } }],
+      [{ button: "Back",               action: (gD) => { this.showPlay = false } }]
     ];
 
     this.extraNavigationGrid = [
@@ -44,7 +57,7 @@ function Menu(gD) {
     var actionToDo;
     if (window.location.hash) {
       var hashLocation = decodeURIComponent(window.location.hash.substring(1)).toLowerCase(); // remove leading #
-      [...this.mainNavigationGrid, ...this.extraNavigationGrid].map(dataRow => {
+      [...this.mainNavigationGrid, ...this.extraNavigationGrid, ...this.playNavigationGrid].map(dataRow => {
         dataRow.map(data => {
           if (data.button.toLowerCase() === hashLocation) {
             actionToDo = data.action;
@@ -61,6 +74,14 @@ function Menu(gD) {
       }, this);
     }, this);
 
+    this.playNavigationGrid.map((buttonRow, rowIndex) => {
+      buttonRow.map((buttonObject, columnIndex) => {
+        buttonObject.button = new CanvasButton(
+            this.gD.canvas.width / 2 - 100, 150 + 37 * rowIndex, 200, 30, buttonObject.button, "menu"
+        );
+      }, this);
+    }, this);
+
     this.extraNavigationGrid.map((buttonRow, rowIndex) => {
       buttonRow.map((buttonObject, columnIndex) => {
         buttonObject.button = new CanvasButton(
@@ -69,14 +90,20 @@ function Menu(gD) {
       }, this);
     }, this);
 
+    this.muteButton = new CanvasImageButton(this.gD.canvas.width - 40, 10, 30, 30, ["Icon_Sound_on", "Icon_Sound_off"], "standardImage");
+    if (this.gD.muted) {
+      this.muteButton.setSprite();
+    }
+
     this.additionalGrid = [
       [{ 
-        button: new CanvasImageButton(this.gD.canvas.width - 40, 10, 30, 30, "Icon_Mute", "standardImage"),
-        action: (gD) => { gD.muted = !gD.muted }
+        button: this.muteButton,
+        action: (gD) => { gD.muted = !gD.muted; this.muteButton.setSprite() }
       }]
     ];
 
     this.mainMC.setNewGrids(this.mainNavigationGrid, this.additionalGrid);
+    this.playMC.setNewGrids(this.playNavigationGrid, this.additionalGrid);
     this.extraMC.setNewGrids(this.extraNavigationGrid, this.additionalGrid);
 
     this.closedTitlescreen = false;        // if a key was pressed at start to close the tile-screen
@@ -107,6 +134,11 @@ function Menu(gD) {
           if (this.controls.keyBindings.get("Menu_Abort")[3].includes(key)) {
             this.showExtras = false;
           }
+        } else if (this.showPlay) {
+          this.playMC.updateKeyPresses(key, this.gD);
+          if (this.controls.keyBindings.get("Menu_Abort")[3].includes(key)) {
+            this.showPlay = false;
+          }
         } else {
           this.mainMC.updateKeyPresses(key, this.gD);
         }
@@ -119,6 +151,8 @@ function Menu(gD) {
   this.updateMouseMoves = function() {
     if (this.showExtras) {
       this.extraMC.updateMouseMoves(this.gD);
+    } else if (this.showPlay) {
+      this.playMC.updateMouseMoves(this.gD);
     } else {
       this.mainMC.updateMouseMoves(this.gD);
     }
@@ -127,7 +161,7 @@ function Menu(gD) {
    * checks where a click was executed
    */
   this.updateClick = function() {
-    var clickPos = this.gD.clicks.pop();
+    let clickPos = this.gD.clicks.pop();
     if (!clickPos) {
       return
     }
@@ -137,6 +171,8 @@ function Menu(gD) {
     } else {
       if (this.showExtras) {
         this.extraMC.updateClick(clickPos, this.gD);
+      } else if (this.showPlay) {
+        this.playMC.updateClick(clickPos, this.gD);
       } else {
         this.mainMC.updateClick(clickPos, this.gD);
       }
@@ -153,6 +189,7 @@ function Menu(gD) {
    */
   this.update = function() {
     this.mainMC.update();
+    this.playMC.update();
     this.extraMC.update();
   };
   /**
@@ -170,6 +207,8 @@ function Menu(gD) {
     } else {
       if (this.showExtras) {
         this.extraMC.draw(this.gD);
+      } else if (this.showPlay) {
+        this.playMC.draw(this.gD);
       } else {
         this.mainMC.draw(this.gD);
       }

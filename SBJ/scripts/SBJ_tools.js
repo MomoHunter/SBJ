@@ -136,6 +136,33 @@ function drawCanvasImage(x, y, spriteKey, gD) {
     spriteX, spriteY, spriteWidth, spriteHeight,
     x, y, spriteWidth, spriteHeight
   );
+}/**
+ * Draw a Sprite-Image onto the used canvas.
+ * Its size is determined by the defined data of the given Sprite.
+ * @param {string} x x-coordinate of the top-left corner
+ * @param {string} y y-coordinate of the top-left corner
+ * @param {string} spriteKey defines which sprite should be drawn
+ * @param {GlobalDict} gD
+ */
+function drawCanvasSmallImage(x, y, percentage, spriteKey, gD) {
+  if (spriteKey === null) {
+    return;
+  }
+
+  let {full: spriteData} = getSpriteData(spriteKey, gD);
+  let [isAnim, spriteX, spriteY, spriteWidth, spriteHeight] = spriteData;
+
+  if (isAnim) {
+    let frameNo = Math.floor(gD.frameNo / 8) % spriteY.length;
+    spriteY = spriteY[frameNo];
+  }
+
+  gD.context.drawImage(
+    gD.spritesheet,
+    spriteX, spriteY, spriteWidth, spriteHeight,
+    x + (spriteWidth - (spriteWidth * percentage)) / 2, y + (spriteHeight - (spriteHeight * percentage)) / 2,
+    spriteWidth * percentage, spriteHeight * percentage
+  );
 }
 
 /**

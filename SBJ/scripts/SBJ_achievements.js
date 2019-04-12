@@ -168,7 +168,7 @@
               this.buttonStartLeft + (this.buttonSize + this.buttonPadding) * columnIndex,
               this.buttonStartTop + (this.buttonSize + this.buttonPadding) * rowIndex,
               this.buttonSize, this.buttonSize,
-              "Reward_" + achievementData.getSpriteKey(), "menu"
+              ["Reward_" + achievementData.getSpriteKey()], "menu"
             ),
             selected: (gD) => {this.achievementBox.setData(achievementData)}
           };

@@ -26,7 +26,7 @@ function SaveLoad(menu, gD) {
     }, this);
 
     this.refreshButton = new CanvasImageButton(
-      this.gD.canvas.width - 40, 10, 30, 30, "Icon_Refresh", "standardImage"
+      this.gD.canvas.width - 40, 10, 30, 30, ["Icon_Refresh"], "standardImage"
     );
     this.backButton = new CanvasButton(
       this.gD.canvas.width / 2 - 100, this.gD.canvas.height - 50, 200, 30, "Main Menu", "menu"
@@ -273,6 +273,11 @@ function SaveLoad(menu, gD) {
         }
       } else if (keyB.get("Menu_Refresh")[3].includes(key)) {
         this.reloadSavestates();
+      }
+      
+      if (keyB.get("Mute_All")[3].includes(key)) {
+        this.gD.muted = !this.gD.muted;
+        this.menu.muteButton.setSprite();
       }
     }, this);
   };
@@ -714,8 +719,8 @@ function SLSavestateDetails(x, y, width, height, styleKey) {
       this.currentSavestate.spriteKey, gD
     );
     drawCanvasText(this.x + 500, this.y + 150, this.currentSavestate.name, design.textKey.headline, gD);
-    drawCanvasText(this.x + 254, this.y + 138, date, design.textKey.date, gD);
-    drawCanvasText(this.x + this.width - 254, this.y + 138, this.currentSavestate.version, design.textKey.version, gD);
+    drawCanvasText(this.x + 254, this.y + 262, date, design.textKey.date, gD);
+    drawCanvasText(this.x + this.width - 254, this.y + 262, this.currentSavestate.version, design.textKey.version, gD);
 
     drawCanvasLine(this.x + 250, this.y + 140, design.borderKey, gD, this.x + this.width - 250, this.y + 140);
     drawCanvasLine(this.x + 250, this.y + 160, design.borderKey, gD, this.x + this.width - 250, this.y + 160);

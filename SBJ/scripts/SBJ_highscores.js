@@ -11,13 +11,13 @@ function Highscores(menu, gD) {
     this.scrollHeight = 0;
     this.title = new CanvasText(this.gD.canvas.width / 2, 30, "Highscores", "pageTitle");
 
-    this.headline = new HighscoreHeadline(this.gD.canvas.width / 2 - 300, 60, 600, 20, "Highscores", "highscoresHeadline");
+    this.headline = new HighscoreHeadline(this.gD.canvas.width / 2 - 310, 60, 620, 20, "Highscores", "highscoresHeadline");
 
     this.highscoreDetails = new HighscoreDetails(0, 0, this.gD.canvas.width, this.gD.canvas.height, "highscoresDetails");
 
     this.enterNameModal = new CanvasEnterNameModal(0, 0, this.gD.canvas.width, this.gD.canvas.height, "enterNameModal");
 
-    this.scrollBar = new CanvasScrollBar(this.gD.canvas.width / 2 + 310, 80, 200, 20, this.highscores.length, "scrollBarStandard");
+    this.scrollBar = new CanvasScrollBar(this.gD.canvas.width / 2 + 320, 80, 200, 20, this.highscores.length, "scrollBarStandard");
 
     this.backToMenu = new CanvasButton(
       (this.gD.canvas.width / 2) - 100, this.gD.canvas.height - 50, 200, 30, "Main Menu", "menu"
@@ -45,7 +45,7 @@ function Highscores(menu, gD) {
     this.highscores = this.highscores.slice(0, 100);
     this.highscores.map((entry, index) => {
       this.highscores[index] = new HighscoreEntry(
-        this.gD.canvas.width / 2 - 300, 80 + index * 20, 600, 20, entry, index + 1, "highscoresEntry"
+        this.gD.canvas.width / 2 - 310, 80 + index * 20, 620, 20, entry, index + 1, "highscoresEntry"
       );
     }, this);
     this.updateSelection(-1, 0, false);
@@ -133,11 +133,15 @@ function Highscores(menu, gD) {
           }
         } else if (keyB.get("Menu_Back")[3].includes(key)) {
           gD.currentPage = this.menu;
+        } else if (keyB.get("Mute_All")[3].includes(key)) {
+          this.gD.muted = !this.gD.muted;
+          this.menu.muteButton.setSprite();
         } else if (key === "KeyK") {
           this.addHighscore({
             name: "test",
             distance: 2000000,
-            cash: Math.floor(Math.random() * 50000)
+            cash: Math.floor(Math.random() * 50000),
+            stage: "Fortress"
           });
         }
       }
@@ -179,23 +183,30 @@ function Highscores(menu, gD) {
    */
   this.updateClick = function() {
     let clickPos = this.gD.clicks.pop();
-    if (!clickPos || this.chooseName) {
+    if (!clickPos) {
       return;
     }
-
-    this.highscores.map((entry, index) => {
-      let realHeight = entry.y - this.scrollHeight;
-      if (clickPos.x >= entry.x && clickPos.x <= entry.x + entry.width &&
-          clickPos.y >= realHeight && clickPos.y <= realHeight + entry.height) {
-        if (realHeight >= 80 && realHeight < 280) {
-          this.startNewName(index);
-        }
+    
+    if (this.chooseName) {
+      if (!(clickPos.x >= this.enterNameModal.innerX && clickPos.x <= this.enterNameModal.innerX + this.enterNameModal.innerWidth &&
+            clickPos.y >= this.enterNameModal.innerY && clickPos.y <= this.enterNameModal.innerY + this.enterNameModal.innerHeight)) {
+        this.chooseName = false;
       }
-    }, this);
+    } else {
+      this.highscores.map((entry, index) => {
+        let realHeight = entry.y - this.scrollHeight;
+        if (clickPos.x >= entry.x && clickPos.x <= entry.x + entry.width &&
+            clickPos.y >= realHeight && clickPos.y <= realHeight + entry.height) {
+          if (realHeight >= 80 && realHeight < 280) {
+            this.startNewName(index);
+          }
+        }
+      }, this);
 
-    if (clickPos.x >= this.backToMenu.x && clickPos.x <= this.backToMenu.x + this.backToMenu.width &&
-        clickPos.y >= this.backToMenu.y && clickPos.y <= this.backToMenu.y + this.backToMenu.height) {
-      this.gD.currentPage = this.menu;
+      if (clickPos.x >= this.backToMenu.x && clickPos.x <= this.backToMenu.x + this.backToMenu.width &&
+          clickPos.y >= this.backToMenu.y && clickPos.y <= this.backToMenu.y + this.backToMenu.height) {
+        this.gD.currentPage = this.menu;
+      }
     }
   };
   /**
@@ -496,6 +507,7 @@ function HighscoreDetails(x, y, width, height, styleKey) {
     drawCanvasText(this.x + 500, this.y + 95, this.currentHighscore.name, design.textKey.headline, gD);
     drawCanvasText(this.x + 256, this.y + 85 + 30, "Distance: " + this.currentHighscore.distance, design.textKey.text, gD);
     drawCanvasText(this.x + 256, this.y + 85 + 50, "Cash: " + this.currentHighscore.cash, design.textKey.text, gD);
+    drawCanvasText(this.x + 256, this.y + 85 + 70, "Stage: " + this.currentHighscore.stage, design.textKey.text, gD);
     drawCanvasLine(this.x + 250, this.y + 85 + 20, design.borderKey, gD, this.x + this.width - 250, this.y + 105);
     drawCanvasRectBorder(this.x + 250, this.y + 85, 500, 180, design.borderKey, gD);
   };

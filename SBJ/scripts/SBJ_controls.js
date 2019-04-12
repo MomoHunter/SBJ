@@ -77,20 +77,20 @@
       if (keyHeadline !== headline) {
         headline = keyHeadline;
         this.keyEntryHeadlines.push(new ControlEntryHeadline(
-          (this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20),
-          600, 20, headline, "controlsHeadline"
+          (this.gD.canvas.width / 2) - 310, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20),
+          620, 20, headline, "controlsHeadline"
         ));
       }
 
       let entry = new ControlEntry(
-        (this.gD.canvas.width / 2) - 300, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20),
-        600, 20, key, "controlsEntry"
+        (this.gD.canvas.width / 2) - 310, 60 + ((this.keyEntryHeadlines.length + this.keyEntries.length) * 20),
+        620, 20, key, "controlsEntry"
       );
       entry.init();
       this.keyEntries.push(entry);
     }
 
-    this.scrollBar = new CanvasScrollBar(this.gD.canvas.width - 165, 60, 220, 20, (this.keyEntryHeadlines.length + this.keyEntries.length), "scrollBarStandard");
+    this.scrollBar = new CanvasScrollBar(this.gD.canvas.width / 2 + 320, 60, 220, 20, (this.keyEntryHeadlines.length + this.keyEntries.length), "scrollBarStandard");
 
     this.backToMenu = new CanvasButton(this.gD.canvas.width / 2 - 100, this.gD.canvas.height - 50, 200, 30, "Main Menu", "menu");
 
@@ -180,10 +180,13 @@
           this.gD.currentPage = this.menu;
         }
       } else if (keyB.get("Menu_Back")[3].includes(key)) {
-        gD.currentPage = this.menu;
+        this.gD.currentPage = this.menu;
       } else if (keyB.get("Controls_DeleteKey")[3].includes(key)) {
         keyB.get(this.keyEntries[rowIndex].name)[2].splice(columnIndex, 1);
         keyB.get(this.keyEntries[rowIndex].name)[3].splice(columnIndex, 1);
+      } else if (keyB.get("Mute_All")[3].includes(key)) {
+        this.gD.muted = !this.gD.muted;
+        this.menu.muteButton.setSprite();
       }
     }, this);
   };
@@ -291,7 +294,7 @@
 
     this.backToMenu.draw(this.gD);
 
-    drawCanvasRectBorder(200, 60, 600, 220, "standard", this.gD);
+    drawCanvasRectBorder(190, 60, 620, 220, "standard", this.gD);
   };
   /**
    * updates the selected object and deselects the old object

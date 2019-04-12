@@ -159,6 +159,9 @@ function Statistics(menu, gD) {
         }
       } else if (keyB.get("Menu_Back")[3].includes(key)) {
         gD.currentPage = this.menu;
+      } else if (keyB.get("Mute_All")[3].includes(key)) {
+        this.gD.muted = !this.gD.muted;
+        this.menu.muteButton.setSprite();
       }
     }, this);
   };

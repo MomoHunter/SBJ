@@ -93,6 +93,8 @@ function GlobalDict(eventHandler) {
   this.eventHandler = eventHandler;
   this.canvas = document.getElementById("gamearea");
   this.context = this.canvas.getContext("2d");
+  this.offscreenCanvas = document.getElementById("offscreen");
+  this.offscreenContext = this.offscreenCanvas.getContext("2d");
   this.keys = {};
   this.newKeys = [];
   this.events = [];
@@ -101,7 +103,6 @@ function GlobalDict(eventHandler) {
   this.mouseUp = [];
   this.lastMousePos = {"x": 0, "y": 0};
   this.referenceMousePos = {"x": 0, "y": 0};
-  this.mouseDown = false;
   this.clicks = [];
   this.wheelMovements = [];
   this.currentPage = null;                       //saves the current object, that should be displayed
@@ -124,152 +125,167 @@ function GlobalDict(eventHandler) {
    * If isAnimated is true, y-pos is an array, otherwise just a single number.
    */
   this.spriteDict = {
-    "Currency_L": [false, 0, 0, 28, 36],
-    "Currency_M": [false, 0, 37, 21, 27],
-    "Currency_S": [false, 0, 65, 14, 18],
-    "Currency_XS": [false, 0, 84, 7, 9],
-    "Deco_Bubble_L": [false, 29, 0, 7, 7],
-    "Deco_Bubble_M": [false, 29, 8, 5, 5],
-    "Deco_Bubble_S": [false, 29, 14, 3, 3],
-    "Enemy_Apple": [false, 37, 0, 19, 20],
-    "Enemy_Fireball": [false, 37, 21, 12, 12],
-    "Enemy_Rocket": [true, 37, [34, 81, 128], 20, 46],
-    "Enemy_Airplane_Blue": [false, 37, 175, 32, 19],
-    "Enemy_Airplane_Green": [false, 37, 195, 32, 19],
-    "Enemy_Airplane_Purple": [false, 37, 215, 32, 19],
-    "Enemy_Airplane_Red": [false, 37, 235, 32, 19],
-    "Enemy_Asteroid_Ice": [false, 37, 255, 19, 20],
-    "Enemy_Asteroid_Lava": [false, 37, 276, 19, 20],
-    "Enemy_Asteroid_Stone": [false, 37, 297, 19, 20],
-    "Enemy_Bird_Left": [true, 37, [318, 337], 27, 18],
-    "Enemy_Bird_Right": [true, 37, [356, 375], 27, 18],
-    "Enemy_Fish_Blue": [false, 37, 394, 34, 19],
-    "Enemy_Fish_Green": [false, 37, 414, 34, 19],
-    "Enemy_Fish_Nemo": [false, 37, 434, 34, 19],
-    "Enemy_Fish_Red": [false, 37, 454, 34, 19],
-    "Icon_Earth": [false, 72, 0, 50, 50],
-    "Icon_Info": [false, 72, 51, 5, 16],
-    "Icon_KeyLong": [false, 72, 68, 68, 17],
-    "Icon_KeyShort": [false, 72, 86, 16, 17],
-    "Icon_Moon": [false, 72, 104, 35, 35],
-    "Icon_Mute": [false, 72, 140, 24, 22],
-    "Icon_Refresh": [false, 72, 163, 26, 27],
-    "Icon_Statistic": [true, 72, [191, 232, 273, 314, 355, 396, 437, 478, 519], 40, 40],
-    "Item_Feather": [true, 141, [0, 21, 42, 63, 84, 105, 126, 147, 168, 189], 16, 20],
-    "Item_Magnet": [true, 141, [210, 231, 252, 273, 294, 315, 336, 357], 17, 20],
-    "Item_Questionmark": [true, 141, [378, 397, 416, 435, 454, 473, 492, 511, 530, 549, 568, 587, 606, 625, 644, 663, 682, 701, 720, 739, 758, 777], 14, 18],
-    "Item_Rocket": [true, 141, [796, 811, 826, 841, 856, 871, 886, 901], 20, 14],
-    "Item_Star": [true, 141, [916, 936, 956, 976, 996, 1016, 1036, 1056, 1076, 1096, 1116, 1136, 1156, 1176, 1196], 18, 19],
-    "Item_Stopwatch": [true, 141, [1216, 1236, 1256, 1276, 1296, 1316, 1336, 1356], 15, 19],
-    "Item_Treasure": [true, 141, [1376, 1390, 1404, 1418, 1432, 1446, 1460, 1474, 1488, 1502, 1516, 1530, 1544, 1558, 1572, 1586], 20, 13],
-    "Item_B_Feather": [true, 162, [0, 41, 82, 123, 164, 205, 246, 287, 328, 369], 32, 40],
-    "Item_B_Magnet": [true, 162, [410, 451, 492, 533, 574, 615, 656, 697], 34, 40],
-    "Item_B_Questionmark": [true, 162, [738, 775, 812, 849, 886, 923, 960, 997, 1034, 1071, 1108, 1145, 1182, 1219, 1256, 1293, 1330, 1367, 1404, 1441, 1478, 1515], 28, 36],
-    "Item_B_Rocket": [true, 162, [1552, 1581, 1610, 1639, 1668, 1697, 1726, 1755], 40, 28],
-    "Item_B_Star": [true, 162, [1784, 1823, 1862, 1901, 1940, 1979, 2018, 2057, 2096, 2135, 2174, 2213, 2252, 2291, 2330], 36, 38],
-    "Item_B_Stopwatch": [true, 162, [2369, 2408, 2447, 2486, 2525, 2564, 2603, 2642], 30, 38],
-    "Item_B_Treasure": [true, 162, [2681, 2708, 2735, 2762, 2789, 2816, 2843, 2870, 2897, 2924, 2951, 2978, 3005, 3032, 3059, 3086], 40, 26],
-    "Money_1": [true, 203, [0, 19, 38, 57, 76, 95, 114], 30, 18],
-    "Money_10": [true, 203, [133, 152, 171, 190, 209, 228, 247], 30, 18],
-    "Money_100": [true, 203, [266, 285, 304, 323, 342, 361, 380], 30, 18],
-    "Money_1000": [true, 203, [399, 418, 437, 456, 475, 494, 513], 30, 18],
-    "Money_XS_1": [false, 234, 0, 15, 9],
-    "Money_XS_10": [false, 234, 10, 15, 9],
-    "Money_XS_100": [false, 234, 20, 15, 9],
-    "Money_XS_1000": [false, 234, 30, 15, 9],
-    "Player_Afroman": [false, 250, 0, 24, 23],
-    "Player_Disgusty": [false, 250, 24, 25, 23],
-    "Player_Longjohn": [false, 250, 48, 14, 26],
-    "Player_Magician": [false, 250, 75, 24, 14],
-    "Player_Speedy": [false, 250, 90, 14, 14],
-    "Player_Standard": [false, 250, 105, 20, 20],
-    "Player_Strooper": [false, 250, 126, 20, 20],
-    "Player_B_Afroman": [false, 276, 0, 48, 46],
-    "Player_B_Disgusty": [false, 276, 47, 50, 46],
-    "Player_B_Longjohn": [false, 276, 94, 28, 52],
-    "Player_B_Magician": [false, 276, 147, 48, 28],
-    "Player_B_Speedy": [false, 276, 176, 28, 28],
-    "Player_B_Standard": [false, 276, 205, 40, 40],
-    "Player_B_Strooper": [false, 276, 246, 40, 40],
-    "Reward_100_jumps_out_of_bounds": [false, 327, 0, 40, 40],
-    "Reward_collect_100_golden_shamrocks": [false, 327, 41, 40, 40],
-    "Reward_collect_24000_hype": [false, 327, 82, 40, 40],
-    "Reward_collect_25_golden_shamrocks": [false, 327, 123, 40, 40],
-    "Reward_collect_50_golden_shamrocks": [false, 327, 164, 40, 40],
-    "Reward_collect_first_1000_hype": [false, 327, 205, 40, 40],
-    "Reward_collect_first_golden_shamrock": [false, 327, 246, 40, 40],
-    "Reward_collect_first_hype": [false, 327, 287, 40, 40],
-    "Reward_collect_first_treasure": [false, 327, 328, 40, 40],
-    "Reward_die_1000": [false, 327, 369, 40, 40],
-    "Reward_locked": [false, 327, 410, 40, 40],
-    "Reward_slow_1_hour": [false, 327, 451, 40, 40],
-    "Reward_use_all_items_at_once": [false, 327, 492, 40, 40],
-    "Reward_use_first_double_jump": [false, 327, 533, 40, 40],
-    "Reward_use_five_feathers": [false, 327, 574, 40, 40],
-    "Reward_use_five_magnets": [false, 327, 615, 40, 40],
-    "Reward_use_five_rockets": [false, 327, 656, 40, 40],
-    "Reward_use_five_stars": [false, 327, 697, 40, 40],
-    "Reward_use_five_stopwatches": [false, 327, 738, 40, 40],
-    "Reward_use_five_treasures": [false, 327, 779, 40, 40],
-    "Reward_B_100_jumps_out_of_bounds": [false, 368, 0, 80, 80],
-    "Reward_B_collect_100_golden_shamrocks": [false, 368, 81, 80, 80],
-    "Reward_B_collect_24000_hype": [false, 368, 162, 80, 80],
-    "Reward_B_collect_25_golden_shamrocks": [false, 368, 243, 80, 80],
-    "Reward_B_collect_50_golden_shamrocks": [false, 368, 324, 80, 80],
-    "Reward_B_collect_first_1000_hype": [false, 368, 405, 80, 80],
-    "Reward_B_collect_first_golden_shamrock": [false, 368, 486, 80, 80],
-    "Reward_B_collect_first_hype": [false, 368, 567, 80, 80],
-    "Reward_B_collect_first_treasure": [false, 368, 648, 80, 80],
-    "Reward_B_die_1000": [false, 368, 729, 80, 80],
-    "Reward_B_locked": [false, 368, 810, 80, 80],
-    "Reward_B_slow_1_hour": [false, 368, 891, 80, 80],
-    "Reward_B_use_all_items_at_once": [false, 368, 972, 80, 80],
-    "Reward_B_use_first_double_jump": [false, 368, 1053, 80, 80],
-    "Reward_B_use_five_feathers": [false, 368, 1134, 80, 80],
-    "Reward_B_use_five_magnets": [false, 368, 1215, 80, 80],
-    "Reward_B_use_five_rockets": [false, 368, 1296, 80, 80],
-    "Reward_B_use_five_stars": [false, 368, 1377, 80, 80],
-    "Reward_B_use_five_stopwatches": [false, 368, 1458, 80, 80],
-    "Reward_B_use_five_treasures": [false, 368, 1539, 80, 80],
-    "Skill_Feather_level_up": [true, 449, [0, 21, 42, 63, 84, 105, 126, 147, 168, 189, 210, 231, 252, 273, 294, 315, 336, 357, 378, 399], 30, 20],
-    "Skill_Magnet_level_up": [true, 449, [420, 441, 462, 483, 504, 525, 546, 567, 588, 609, 630, 651, 672, 693, 714, 735], 31, 20],
-    "Skill_Rocket_level_up": [true, 449, [756, 776, 796, 816, 836, 856, 876, 896, 916, 936, 956, 976, 996, 1016, 1036, 1056], 34, 19],
-    "Skill_Stars_at_start": [true, 449, [1076, 1093, 1110, 1127, 1144, 1161, 1178, 1195, 1212, 1229, 1246, 1263, 1280], 40, 16],
-    "Skill_Star_level_up": [true, 449, [1297, 1317, 1337, 1357, 1377, 1397, 1417, 1437, 1457, 1477, 1497, 1517, 1537, 1557, 1577], 32, 19],
-    "Skill_Stopwatches_at_start": [true, 449, [1597, 1614, 1631, 1648, 1665, 1682, 1699, 1716, 1733, 1750, 1767, 1784, 1801, 1818, 1835, 1852], 40, 16],
-    "Skill_Stopwatch_level_up": [true, 449, [1869, 1889, 1909, 1929, 1949, 1969, 1989, 2009, 2029, 2049, 2069, 2089, 2109, 2129, 2149, 2169], 29, 19],
-    "Skill_Treasure_level_up": [true, 449, [2189, 2209, 2229, 2249, 2269, 2289, 2309, 2329, 2349, 2369, 2389, 2409, 2429, 2449, 2469, 2489], 34, 19],
-    "Special_BlueKey": [false, 490, 0, 11, 22],
-    "Special_GoldenShamrock": [true, 490, [23, 43, 63, 83, 103, 123, 143, 163], 15, 19],
-    "Special_GoldenShamrock_B": [true, 490, [183, 222, 261, 300, 339, 378, 417, 456], 30, 38],
-    "Special_GreenKey": [false, 490, 495, 11, 22],
-    "Special_Placeholder": [false, 490, 518, 40, 40],
-    "Special_Placeholder_B": [false, 490, 559, 80, 80],
-    "Special_Pointer": [false, 490, 640, 10, 6],
-    "Special_RedKey": [false, 490, 647, 11, 22],
-    "Special_YellowKey": [false, 490, 670, 11, 22],
-    "Stagepreview_Air": [false, 571, 0, 56, 26],
-    "Stagepreview_Forest": [false, 571, 27, 56, 26],
-    "Stagepreview_Fortress": [false, 571, 54, 56, 26],
-    "Stagepreview_Standard": [false, 571, 81, 56, 26],
-    "Stagepreview_Universe": [false, 571, 108, 56, 26],
-    "Stagepreview_Water": [false, 571, 135, 56, 26],
-    "Stagepreview_B_Air": [false, 628, 0, 112, 52],
-    "Stagepreview_B_Forest": [false, 628, 53, 112, 52],
-    "Stagepreview_B_Fortress": [false, 628, 106, 112, 52],
-    "Stagepreview_B_Standard": [false, 628, 159, 112, 52],
-    "Stagepreview_B_Universe": [false, 628, 212, 112, 52],
-    "Stagepreview_B_Water": [false, 628, 265, 112, 52]
+    "Collectables_Nothing": [false, 0, 0, 22, 6],
+    "Currency_L": [false, 23, 0, 28, 36],
+    "Currency_M": [false, 23, 37, 21, 27],
+    "Currency_S": [false, 23, 65, 14, 18],
+    "Currency_XS": [false, 23, 84, 7, 9],
+    "Deco_Bubble_L": [false, 52, 0, 7, 7],
+    "Deco_Bubble_M": [false, 52, 8, 5, 5],
+    "Deco_Bubble_S": [false, 52, 14, 3, 3],
+    "Enemy_Apple": [false, 60, 0, 19, 20],
+    "Enemy_Fireball": [false, 60, 21, 12, 12],
+    "Enemy_Rocket": [true, 60, [34, 81, 128], 20, 46],
+    "Enemy_Airplane_Blue": [false, 60, 175, 32, 19],
+    "Enemy_Airplane_Green": [false, 60, 195, 32, 19],
+    "Enemy_Airplane_Purple": [false, 60, 215, 32, 19],
+    "Enemy_Airplane_Red": [false, 60, 235, 32, 19],
+    "Enemy_Asteroid_Ice": [false, 60, 255, 19, 20],
+    "Enemy_Asteroid_Lava": [false, 60, 276, 19, 20],
+    "Enemy_Asteroid_Stone": [false, 60, 297, 19, 20],
+    "Enemy_Bird_Left": [true, 60, [318, 337], 27, 18],
+    "Enemy_Bird_Right": [true, 60, [356, 375], 27, 18],
+    "Enemy_Fish_Blue": [false, 60, 394, 34, 19],
+    "Enemy_Fish_Green": [false, 60, 414, 34, 19],
+    "Enemy_Fish_Nemo": [false, 60, 434, 34, 19],
+    "Enemy_Fish_Red": [false, 60, 454, 34, 19],
+    "Icon_Earth": [false, 95, 0, 50, 50],
+    "Icon_Info": [false, 95, 51, 5, 16],
+    "Icon_KeyLong": [false, 95, 68, 68, 17],
+    "Icon_KeyShort": [false, 95, 86, 16, 17],
+    "Icon_Moon": [false, 95, 104, 35, 35],
+    "Icon_Refresh": [false, 95, 140, 26, 27],
+    "Icon_Sound_off": [false, 95, 168, 24, 22],
+    "Icon_Sound_on": [false, 95, 191, 24, 22],
+    "Icon_Statistic": [true, 95, [214, 255, 296, 337, 378, 419, 460, 501, 542], 40, 40],
+    "Item_Feather": [true, 164, [0, 21, 42, 63, 84, 105, 126, 147, 168, 189], 16, 20],
+    "Item_Magnet": [true, 164, [210, 231, 252, 273, 294, 315, 336, 357], 17, 20],
+    "Item_Questionmark": [true, 164, [378, 397, 416, 435, 454, 473, 492, 511, 530, 549, 568, 587, 606, 625, 644, 663, 682, 701, 720, 739, 758, 777], 14, 18],
+    "Item_Rocket": [true, 164, [796, 811, 826, 841, 856, 871, 886, 901], 20, 14],
+    "Item_Star": [true, 164, [916, 936, 956, 976, 996, 1016, 1036, 1056, 1076, 1096, 1116, 1136, 1156, 1176, 1196], 18, 19],
+    "Item_Stopwatch": [true, 164, [1216, 1236, 1256, 1276, 1296, 1316, 1336, 1356], 15, 19],
+    "Item_Treasure": [true, 164, [1376, 1390, 1404, 1418, 1432, 1446, 1460, 1474, 1488, 1502, 1516, 1530, 1544, 1558, 1572, 1586], 20, 13],
+    "Item_B_Feather": [true, 185, [0, 41, 82, 123, 164, 205, 246, 287, 328, 369], 32, 40],
+    "Item_B_Magnet": [true, 185, [410, 451, 492, 533, 574, 615, 656, 697], 34, 40],
+    "Item_B_Questionmark": [true, 185, [738, 775, 812, 849, 886, 923, 960, 997, 1034, 1071, 1108, 1145, 1182, 1219, 1256, 1293, 1330, 1367, 1404, 1441, 1478, 1515], 28, 36],
+    "Item_B_Rocket": [true, 185, [1552, 1581, 1610, 1639, 1668, 1697, 1726, 1755], 40, 28],
+    "Item_B_Star": [true, 185, [1784, 1823, 1862, 1901, 1940, 1979, 2018, 2057, 2096, 2135, 2174, 2213, 2252, 2291, 2330], 36, 38],
+    "Item_B_Stopwatch": [true, 185, [2369, 2408, 2447, 2486, 2525, 2564, 2603, 2642], 30, 38],
+    "Item_B_Treasure": [true, 185, [2681, 2708, 2735, 2762, 2789, 2816, 2843, 2870, 2897, 2924, 2951, 2978, 3005, 3032, 3059, 3086], 40, 26],
+    "Money_1": [true, 226, [0, 19, 38, 57, 76, 95, 114], 30, 18],
+    "Money_10": [true, 226, [133, 152, 171, 190, 209, 228, 247], 30, 18],
+    "Money_100": [true, 226, [266, 285, 304, 323, 342, 361, 380], 30, 18],
+    "Money_1000": [true, 226, [399, 418, 437, 456, 475, 494, 513], 30, 18],
+    "Money_XS_1": [false, 257, 0, 15, 9],
+    "Money_XS_10": [false, 257, 10, 15, 9],
+    "Money_XS_100": [false, 257, 20, 15, 9],
+    "Money_XS_1000": [false, 257, 30, 15, 9],
+    "Player_Afroman": [false, 273, 0, 24, 23],
+    "Player_Afroman_G": [false, 273, 24, 24, 23],
+    "Player_Disgusty": [false, 273, 48, 25, 23],
+    "Player_Disgusty_G": [false, 273, 72, 25, 23],
+    "Player_Longjohn": [false, 273, 96, 14, 26],
+    "Player_Longjohn_G": [false, 273, 123, 14, 26],
+    "Player_Magician": [false, 273, 150, 24, 14],
+    "Player_Magician_G": [false, 273, 165, 24, 14],
+    "Player_Speedy": [false, 273, 180, 14, 14],
+    "Player_Speedy_G": [false, 273, 195, 14, 14],
+    "Player_Standard": [false, 273, 210, 20, 20],
+    "Player_Standard_G": [false, 273, 231, 20, 20],
+    "Player_Strooper": [false, 273, 252, 20, 20],
+    "Player_Strooper_G": [false, 273, 273, 20, 20],
+    "Player_B_Afroman": [false, 299, 0, 48, 46],
+    "Player_B_Disgusty": [false, 299, 47, 50, 46],
+    "Player_B_Longjohn": [false, 299, 94, 28, 52],
+    "Player_B_Magician": [false, 299, 147, 48, 28],
+    "Player_B_Speedy": [false, 299, 176, 28, 28],
+    "Player_B_Standard": [false, 299, 205, 40, 40],
+    "Player_B_Strooper": [false, 299, 246, 40, 40],
+    "Reward_100_jumps_out_of_bounds": [false, 350, 0, 40, 40],
+    "Reward_collect_100_golden_shamrocks": [false, 350, 41, 40, 40],
+    "Reward_collect_24000_hype": [false, 350, 82, 40, 40],
+    "Reward_collect_25_golden_shamrocks": [false, 350, 123, 40, 40],
+    "Reward_collect_50_golden_shamrocks": [false, 350, 164, 40, 40],
+    "Reward_collect_first_1000_hype": [false, 350, 205, 40, 40],
+    "Reward_collect_first_golden_shamrock": [false, 350, 246, 40, 40],
+    "Reward_collect_first_hype": [false, 350, 287, 40, 40],
+    "Reward_collect_first_treasure": [false, 350, 328, 40, 40],
+    "Reward_die_1000": [false, 350, 369, 40, 40],
+    "Reward_locked": [false, 350, 410, 40, 40],
+    "Reward_slow_1_hour": [false, 350, 451, 40, 40],
+    "Reward_use_all_items_at_once": [false, 350, 492, 40, 40],
+    "Reward_use_first_double_jump": [false, 350, 533, 40, 40],
+    "Reward_use_five_feathers": [false, 350, 574, 40, 40],
+    "Reward_use_five_magnets": [false, 350, 615, 40, 40],
+    "Reward_use_five_rockets": [false, 350, 656, 40, 40],
+    "Reward_use_five_stars": [false, 350, 697, 40, 40],
+    "Reward_use_five_stopwatches": [false, 350, 738, 40, 40],
+    "Reward_use_five_treasures": [false, 350, 779, 40, 40],
+    "Reward_B_100_jumps_out_of_bounds": [false, 391, 0, 80, 80],
+    "Reward_B_collect_100_golden_shamrocks": [false, 391, 81, 80, 80],
+    "Reward_B_collect_24000_hype": [false, 391, 162, 80, 80],
+    "Reward_B_collect_25_golden_shamrocks": [false, 391, 243, 80, 80],
+    "Reward_B_collect_50_golden_shamrocks": [false, 391, 324, 80, 80],
+    "Reward_B_collect_first_1000_hype": [false, 391, 405, 80, 80],
+    "Reward_B_collect_first_golden_shamrock": [false, 391, 486, 80, 80],
+    "Reward_B_collect_first_hype": [false, 391, 567, 80, 80],
+    "Reward_B_collect_first_treasure": [false, 391, 648, 80, 80],
+    "Reward_B_die_1000": [false, 391, 729, 80, 80],
+    "Reward_B_locked": [false, 391, 810, 80, 80],
+    "Reward_B_slow_1_hour": [false, 391, 891, 80, 80],
+    "Reward_B_use_all_items_at_once": [false, 391, 972, 80, 80],
+    "Reward_B_use_first_double_jump": [false, 391, 1053, 80, 80],
+    "Reward_B_use_five_feathers": [false, 391, 1134, 80, 80],
+    "Reward_B_use_five_magnets": [false, 391, 1215, 80, 80],
+    "Reward_B_use_five_rockets": [false, 391, 1296, 80, 80],
+    "Reward_B_use_five_stars": [false, 391, 1377, 80, 80],
+    "Reward_B_use_five_stopwatches": [false, 391, 1458, 80, 80],
+    "Reward_B_use_five_treasures": [false, 391, 1539, 80, 80],
+    "Skill_Feather_level_up": [true, 472, [0, 21, 42, 63, 84, 105, 126, 147, 168, 189, 210, 231, 252, 273, 294, 315, 336, 357, 378, 399], 30, 20],
+    "Skill_Magnet_level_up": [true, 472, [420, 441, 462, 483, 504, 525, 546, 567, 588, 609, 630, 651, 672, 693, 714, 735], 31, 20],
+    "Skill_Rocket_level_up": [true, 472, [756, 776, 796, 816, 836, 856, 876, 896, 916, 936, 956, 976, 996, 1016, 1036, 1056], 34, 19],
+    "Skill_Stars_at_start": [true, 472, [1076, 1093, 1110, 1127, 1144, 1161, 1178, 1195, 1212, 1229, 1246, 1263, 1280], 40, 16],
+    "Skill_Star_level_up": [true, 472, [1297, 1317, 1337, 1357, 1377, 1397, 1417, 1437, 1457, 1477, 1497, 1517, 1537, 1557, 1577], 32, 19],
+    "Skill_Stopwatches_at_start": [true, 472, [1597, 1614, 1631, 1648, 1665, 1682, 1699, 1716, 1733, 1750, 1767, 1784, 1801, 1818, 1835, 1852], 40, 16],
+    "Skill_Stopwatch_level_up": [true, 472, [1869, 1889, 1909, 1929, 1949, 1969, 1989, 2009, 2029, 2049, 2069, 2089, 2109, 2129, 2149, 2169], 29, 19],
+    "Skill_Treasure_level_up": [true, 472, [2189, 2209, 2229, 2249, 2269, 2289, 2309, 2329, 2349, 2369, 2389, 2409, 2429, 2449, 2469, 2489], 34, 19],
+    "Special_BlueKey": [false, 513, 0, 11, 22],
+    "Special_GoldenShamrock": [true, 513, [23, 43, 63, 83, 103, 123, 143, 163], 15, 19],
+    "Special_GoldenShamrock_B": [true, 513, [183, 222, 261, 300, 339, 378, 417, 456], 30, 38],
+    "Special_GreenKey": [false, 513, 495, 11, 22],
+    "Special_Placeholder": [false, 513, 518, 40, 40],
+    "Special_Placeholder_B": [false, 513, 559, 80, 80],
+    "Special_Pointer": [false, 513, 640, 10, 6],
+    "Special_RedKey": [false, 513, 647, 11, 22],
+    "Special_YellowKey": [false, 513, 670, 11, 22],
+    "Stage_Air": [false, 594, 0, 56, 26],
+    "Stage_Air_G": [false, 594, 27, 56, 26],
+    "Stage_Forest": [false, 594, 54, 56, 26],
+    "Stage_Forest_G": [false, 594, 81, 56, 26],
+    "Stage_Fortress": [false, 594, 108, 56, 26],
+    "Stage_Fortress_G": [false, 594, 135, 56, 26],
+    "Stage_Standard": [false, 594, 162, 56, 26],
+    "Stage_Standard_G": [false, 594, 189, 56, 26],
+    "Stage_Universe": [false, 594, 216, 56, 26],
+    "Stage_Universe_G": [false, 594, 243, 56, 26],
+    "Stage_Water": [false, 594, 270, 56, 26],
+    "Stage_Water_G": [false, 594, 297, 56, 26],
+    "Stage_B_Air": [false, 651, 0, 112, 52],
+    "Stage_B_Forest": [false, 651, 53, 112, 52],
+    "Stage_B_Fortress": [false, 651, 106, 112, 52],
+    "Stage_B_Standard": [false, 651, 159, 112, 52],
+    "Stage_B_Universe": [false, 651, 212, 112, 52],
+    "Stage_B_Water": [false, 651, 265, 112, 52]
   };
   // end spriteDict
-  this.player = {                    //The data for the different playermodels with: jumps, jumpstrength, movementspeed right, movementspeed left, weight, unlocked
-    "Player_Standard" : [2, -9, 3, -3, 45, true],
-    "Player_Longjohn" : [2, -13.5, 3, -3, 42, false],
-    "Player_Speedy" : [2, -9, 6, -6, 38, false],
-    "Player_Magician" : [3, -9, 3, -3, 43, false],
-    "Player_Strooper" : [2, -10.8, 4.5, -4.5, 45, false],
-    "Player_Disgusty" : [3, -10.8, 3, -3, 52, false],
-    "Player_Afroman" : [3, -10.8, 4.5, -4.5, 46, false]
+  this.player = {                    //The data for the different playermodels with: unlocked, jumps, jumpstrength, movementspeed right, movementspeed left, weight
+    "Player_Standard" : [true, 2, -9, 3, -3, 45],
+    "Player_Longjohn" : [false, 2, -13.5, 3, -3, 42],
+    "Player_Speedy" : [false, 2, -9, 6, -6, 38],
+    "Player_Magician" : [false, 3, -9, 3, -3, 43],
+    "Player_Strooper" : [false, 2, -10.8, 4.5, -4.5, 45],
+    "Player_Disgusty" : [false, 3, -10.8, 3, -3, 52],
+    "Player_Afroman" : [false, 3, -10.8, 4.5, -4.5, 46]
   };
   this.items = {                     //probability for spawning, durability, durability per level, costs for level 1
     "Item_Stopwatch": [5, 120, 60, 800],
@@ -292,16 +308,31 @@ function GlobalDict(eventHandler) {
     "Floor_Spikes": [0.8, "rgba(173, 6, 6, 1)"],
     "Floor_Moving": [0.1, "stagecolor"]
   };
-  this.stages = {                    /*/stage class reference, unlocked
-    "Stage_Standard": [Stage0, true],
-    "Stage_Fortress": [Stage1, true],
-    "Stage_Air": [Stage2, false],
-    "Stage_Water": [Stage3, false],
-    "Stage_Forest": [Stage4, false],
-    "Stage_Universe": [Stage5, false]*/
+  this.stages = {                    //stage class reference, unlocked
+    "Stage_Standard": [true, "Stage0"],
+    "Stage_Fortress": [true, "Stage1"],
+    "Stage_Air": [false, "Stage2"],
+    "Stage_Water": [false, "Stage3"],
+    "Stage_Forest": [false, "Stage4"],
+    "Stage_Universe": [false, "Stage5"]
   };
+  this.collectables = {
+    "Collectables_Nothing": [true],
+    "Collectables_Beard1": [true],
+    "Collectables_Glasses1": [true],
+    "Collectables_Hat1": [true]
+  }
   this.design = {
     elements: {
+      objectSelection: {
+        rectKey: {
+          arrow: "standard",
+          selected: "selected"
+        },
+        borderKey: {
+          arrow: "standard"
+        }
+      },
       skillTree: {
         rectKey: {
           background: "modal",
@@ -389,10 +420,19 @@ function GlobalDict(eventHandler) {
       },
       accessoryWindow: {
         rectKey: {
-          accessory: "blur"
+          accessory: {
+            standard: "standard",
+            beard: "shopBeard",
+            glasses: "shopGlasses",
+            hat: "shopHat"
+          },
+          field: "blur",
+          arrow: "modal"
         },
         borderKey: {
-          accessory: "standard"
+          standard: "standard",
+          accessory: "standard",
+          field: "standard"
         }
       },
       controlsHeadline: {
@@ -491,6 +531,10 @@ function GlobalDict(eventHandler) {
       scrollBarStandard: {
         lineKey: "smallWhite",
         barKey: "bigWhite"
+      },
+      scrollBarBlack: {
+        lineKey: "small2",
+        barKey: "big2"
       },
       standardTab: {
         rectKey: {
@@ -689,6 +733,18 @@ function GlobalDict(eventHandler) {
       },
       rocket: {
         backgroundColor: "0, 0, 0, 1"
+      },
+      selectionBackground: {
+        backgroundColor: "0, 0, 0, 0.5"
+      },
+      shopBeard: {
+        backgroundColor: "237, 128, 129, 0.7"
+      },
+      shopGlasses: {
+        backgroundColor: "128, 129, 237, 0.7"
+      },
+      shopHat: {
+        backgroundColor: "129, 237, 128, 0.7"
       }
     },
     circle: {
@@ -737,6 +793,11 @@ function GlobalDict(eventHandler) {
         borderSize: 2,
         lineDash: []
       },
+      small2: {
+        borderColor: "0, 0, 0, 1",
+        borderSize: 1,
+        lineDash: []
+      },
       small: {
         borderColor: "0, 0, 0, 1",
         borderSize: 1.5,
@@ -750,6 +811,11 @@ function GlobalDict(eventHandler) {
       big: {
         borderColor: "0, 0, 0, 1",
         borderSize: 3,
+        lineDash: []
+      },
+      big2: {
+        borderColor: "0, 0, 0, 1",
+        borderSize: 4,
         lineDash: []
       },
       smallWhite: {
@@ -944,5 +1010,6 @@ function GlobalDict(eventHandler) {
   };
   this.clear = function() {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.offscreenContext.clearRect(0, 0, this.offscreenCanvas.width, this.offscreenCanvas.height);
   };
 }

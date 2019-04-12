@@ -241,7 +241,7 @@ function CanvasButton(x, y, width, height, text, styleKey) {
           this.arrowWidth = this.width;
         }
       }
-    }  else {
+    } else {
       if (this.arrowWidth > 0) {
         this.arrowWidth -= this.animationSpeed;
         if (this.arrowWidth <= 0) {
@@ -282,20 +282,21 @@ function CanvasButton(x, y, width, height, text, styleKey) {
 
 /**
  * A button with an image on the canvas
- * @param {number} x         x-coordinate of the top-left corner of the button on the canvas
- * @param {number} y         y-coordinate of the top-left corner of the button on the canvas
- * @param {number} width     width of the button on the canvas
- * @param {number} height    height of the button on the canvas
- * @param {string} spriteKey the sprite for the button
- * @param {string} styleKey  the design to use for the button
+ * @param {number} x          x-coordinate of the top-left corner of the button on the canvas
+ * @param {number} y          y-coordinate of the top-left corner of the button on the canvas
+ * @param {number} width      width of the button on the canvas
+ * @param {number} height     height of the button on the canvas
+ * @param {string} spriteKeys the sprite for the button
+ * @param {string} styleKey   the design to use for the button
  */
-function CanvasImageButton(x, y, width, height, spriteKey, styleKey) {
+function CanvasImageButton(x, y, width, height, spriteKeys, styleKey) {
   this.x = x;
   this.y = y;
   this.width = width;
   this.height = height;
-  this.spriteKey = spriteKey;
+  this.spriteKeys = spriteKeys;
   this.styleKey = styleKey;
+  this.currentSpriteIndex = 0;
   this.arrowWidth = 0;
   this.arrowHeight = 0;
   this.animationSpeed = 12;
@@ -305,6 +306,13 @@ function CanvasImageButton(x, y, width, height, spriteKey, styleKey) {
   };
   this.deselect = function() {
     this.selected = false;
+  };
+  this.setSprite = function(index = -1) {
+    if (index >= 0 && index < this.spriteKeys.length) {
+      this.currentSpriteIndex = index;
+    } else {
+      this.currentSpriteIndex = (this.currentSpriteIndex + 1) % this.spriteKeys.length;
+    }
   };
   this.update = function() {
     if (this.selected) {
@@ -319,7 +327,7 @@ function CanvasImageButton(x, y, width, height, spriteKey, styleKey) {
           this.arrowWidth = this.width;
         }
       }
-    }  else {
+    } else {
       if (this.arrowWidth > 0) {
         this.arrowWidth -= this.animationSpeed;
         if (this.arrowWidth <= 0) {
@@ -333,9 +341,9 @@ function CanvasImageButton(x, y, width, height, spriteKey, styleKey) {
       }
     }
   };
-  this.draw = function(gD) {
+  this.draw = function(gD, deactivated = false) {
     let design = gD.design.button[this.styleKey];
-    let {spriteWidth, spriteHeight} = getSpriteData(this.spriteKey, gD);
+    let {spriteWidth, spriteHeight} = getSpriteData(this.spriteKeys[this.currentSpriteIndex], gD);
     let centerX = this.x + this.width / 2;
     let centerY = this.y + this.height / 2;
 
@@ -357,7 +365,7 @@ function CanvasImageButton(x, y, width, height, spriteKey, styleKey) {
     drawCanvasImage(
       this.x + Math.floor((this.width - spriteWidth) / 2),
       this.y + Math.floor((this.height - spriteHeight) / 2),
-      this.spriteKey, gD
+      this.spriteKeys[this.currentSpriteIndex], gD
     );
     drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
   };

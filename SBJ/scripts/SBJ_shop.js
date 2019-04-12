@@ -11,6 +11,7 @@
     this.movingTree = false;
     this.movingMinimap = false;
     this.movingCounter = 0;           //counts how many frames moving was activated
+    this.scrollHeight = 0;
     this.skillData = {
       "Unlock Skilltree":       new SkillData("Unlock the Skilltree", false, 1, 0, 1000, 0, 0, [], 0),
       "Level up items":         new SkillData("Level up Items", false, 1, 0, 10000, 0, 0, ["Unlock Skilltree"], 1),
@@ -40,28 +41,40 @@
       "Extra life":             new SkillData("Extra life", true, 1, 100, 1000000, 0, 0, ["Deaths"], 1000)
     };
     this.accessories = new Map([
-      ["test", new ShopAccessory("test", "beard", "", 0, 0)],
-      ["test1", new ShopAccessory("test", "beard", "", 0, 0)],
-      ["test2", new ShopAccessory("test", "beard", "", 0, 0)],
-      ["test3", new ShopAccessory("test", "beard", "", 0, 0)],
-      ["test4", new ShopAccessory("test", "beard", "", 0, 0)],
-      ["test5", new ShopAccessory("test", "beard", "", 0, 0)],
-      ["test6", new ShopAccessory("test", "beard", "", 0, 0)],
-      ["test7", new ShopAccessory("test", "beard", "", 0, 0)],
-      ["test8", new ShopAccessory("test", "beard", "", 0, 0)],
-      ["test9", new ShopAccessory("test", "beard", "", 0, 0)],
-      ["test10", new ShopAccessory("test", "beard", "", 0, 0)],
-      ["test11", new ShopAccessory("test", "beard", "", 0, 0)],
-      ["test12", new ShopAccessory("test", "beard", "", 0, 0)],
-      ["test13", new ShopAccessory("test", "beard", "", 0, 0)],
-      ["test14", new ShopAccessory("test", "beard", "", 0, 0)],
-      ["test15", new ShopAccessory("test", "beard", "", 0, 0)],
-      ["test16", new ShopAccessory("test", "beard", "", 0, 0)],
-      ["test17", new ShopAccessory("test", "beard", "", 0, 0)],
-      ["test18", new ShopAccessory("test", "beard", "", 0, 0)],
-      ["test19", new ShopAccessory("test", "beard", "", 0, 0)],
-      ["test20", new ShopAccessory("test", "beard", "", 0, 0)],
-      ["test21", new ShopAccessory("test", "beard", "", 0, 0)]
+      ["test", new ShopAccessory("test", "beard", "Collectables_Beard1", 0, 0)],
+      ["test1", new ShopAccessory("test01", "beard", "Collectables_Beard1", 0, 0)],
+      ["test2", new ShopAccessory("test02", "hat", "Collectables_Hat1", 0, 0)],
+      ["test3", new ShopAccessory("test03", "glasses", "Collectables_Glasses1", 0, 0)],
+      ["test4", new ShopAccessory("test04", "beard", "Collectables_Beard1", 0, 0)],
+      ["test5", new ShopAccessory("test05", "glasses", "Collectables_Glasses1", 0, 0)],
+      ["test6", new ShopAccessory("test06", "hat", "Collectables_Hat1", 0, 0)],
+      ["test7", new ShopAccessory("test07", "beard", "Collectables_Beard1", 0, 0)],
+      ["test8", new ShopAccessory("test08", "beard", "Collectables_Beard1", 0, 0)],
+      ["test9", new ShopAccessory("test09", "glasses", "Collectables_Glasses1", 0, 0)],
+      ["test10", new ShopAccessory("test10", "beard", "Collectables_Beard1", 0, 0)],
+      ["test11", new ShopAccessory("test11", "hat", "Collectables_Hat1", 0, 0)],
+      ["test12", new ShopAccessory("test12", "beard", "Collectables_Beard1", 0, 0)],
+      ["test13", new ShopAccessory("test13", "glasses", "Collectables_Glasses1", 0, 0)],
+      ["test14", new ShopAccessory("test14", "beard", "Collectables_Beard1", 0, 0)],
+      ["test15", new ShopAccessory("test15", "hat", "Collectables_Hat1", 0, 0)],
+      ["test16", new ShopAccessory("test16", "beard", "Collectables_Beard1", 0, 0)],
+      ["test17", new ShopAccessory("test17", "glasses", "Collectables_Glasses1", 0, 0)],
+      ["test18", new ShopAccessory("test18", "glasses", "Collectables_Glasses1", 0, 0)],
+      ["test19", new ShopAccessory("test19", "beard", "Collectables_Beard1", 0, 0)],
+      ["test20", new ShopAccessory("test20", "hat", "Collectables_Hat1", 0, 0)],
+      ["test21", new ShopAccessory("test21", "beard", "Collectables_Beard1", 0, 0)],
+      ["test22", new ShopAccessory("test22", "glasses", "Collectables_Glasses1", 0, 0)],
+      ["test23", new ShopAccessory("test23", "hat", "Collectables_Hat1", 0, 0)],
+      ["test24", new ShopAccessory("test24", "beard", "Collectables_Beard1", 0, 0)],
+      ["test25", new ShopAccessory("test25", "glasses", "Collectables_Glasses1", 0, 0)],
+      ["test26", new ShopAccessory("test26", "hat", "Collectables_Hat1", 0, 0)],
+      ["test27", new ShopAccessory("test27", "beard", "Collectables_Beard1", 0, 0)],
+      ["test28", new ShopAccessory("test28", "beard", "Collectables_Beard1", 0, 0)],
+      ["test29", new ShopAccessory("test29", "hat", "Collectables_Hat1", 0, 0)],
+      ["test30", new ShopAccessory("test30", "glasses", "Collectables_Glasses1", 0, 0)],
+      ["test31", new ShopAccessory("test31", "hat", "Collectables_Hat1", 0, 0)],
+      ["test32", new ShopAccessory("test32", "hat", "Collectables_Hat1", 0, 0)],
+      ["test33", new ShopAccessory("test33", "hat", "Collectables_Hat1", 0, 0)]
     ]);
 
     this.checkUnlocks();
@@ -84,6 +97,9 @@
     this.accessoryWindow = new ShopAccessoryWindow(this.gD.canvas.width / 2 - 245, 70, 545, 200, "accessoryWindow");
     this.accessoryWindow.init();
     this.tabs[1].objects.push(this.accessoryWindow);
+    
+    this.scrollbar = new CanvasScrollBar(this.gD.canvas.width / 2 + 305, 95, 175, 25, Math.ceil(this.accessories.length / 11) * 3, "scrollBarBlack");
+    this.tabs[1].objects.push(this.scrollbar);
 
     this.accessoryWindow.setAccessories(this, []);
 
@@ -92,6 +108,10 @@
     );
 
     this.updateSelection(-1, 0);
+  };
+  this.vScroll = function(elements) {
+    this.scrollHeight = elements * 25;
+    this.scrollbar.scroll(elements);
   };
   this.levelSkills = function(skill) {
     let skillData = this.skillData[skill.key];
@@ -201,7 +221,24 @@
     }
   };
   this.updateWheelMoves = function() {
-
+    let wheelMove = this.gD.wheelMovements.pop();
+    if (!wheelMove) {
+      return;
+    }
+    
+    if (this.selectedTabIndex === 1) {
+      if (wheelMove < 0) {
+        this.vScroll(Math.max(
+          (this.scrollHeight / 25) - 1, 
+          0
+          ));
+      } else if (wheelMove > 0) {
+        this.vScroll(Math.min(
+          (this.scrollHeight / 25) + 1, 
+          (Math.ceil(this.accessoryWindow.accessories.length / 11) * 3) - 7
+        ));
+      }
+    }
   };
   this.update = function() {
     this.tabs.map(tab => {
@@ -690,7 +727,7 @@ function ShopAccessoryWindow(x, y, width, height, styleKey) {
   this.styleKey = styleKey;
   this.accessories = [];
   this.init = function() {
-
+    
   };
   this.setAccessories = function(shop, categories) {
     this.accessories = [];
@@ -702,17 +739,139 @@ function ShopAccessoryWindow(x, y, width, height, styleKey) {
         this.accessories.push(accessory);
       }
     }
+    shop.scrollbar.refresh(Math.ceil(this.accessories.length / 11) * 3);
+    this.sortAccessories("categories_rev");
   };
-  this.draw = function(gD) {
+  this.sortAccessories = function(sortType) {
+    if (sortType === "alphabetic") {
+      for (let i = 0; i < this.accessories.length; i++) {
+        let temp = copy(this.accessories[0]);
+        for (let j = 1; j < this.accessories.length - i; j++) {
+          if (temp.name < this.accessories[j].name) {
+            temp = copy(this.accessories[j]);
+          } else {
+            this.accessories[j - 1] = copy(this.accessories[j]);
+            this.accessories[j] = copy(temp);
+          }
+        }
+      }
+    } else if (sortType === "alphabetic_rev") {
+      for (let i = 0; i < this.accessories.length; i++) {
+        let temp = copy(this.accessories[0]);
+        for (let j = 1; j < this.accessories.length - i; j++) {
+          if (temp.name > this.accessories[j].name) {
+            temp = copy(this.accessories[j]);
+          } else {
+            this.accessories[j - 1] = copy(this.accessories[j]);
+            this.accessories[j] = copy(temp);
+          }
+        }
+      }
+    } else if (sortType === "price_hype_high") {
+      for (let i = 0; i < this.accessories.length; i++) {
+        let temp = copy(this.accessories[0]);
+        for (let j = 1; j < this.accessories.length - i; j++) {
+          if (temp.costHype > this.accessories[j].costHype) {
+            temp = copy(this.accessories[j]);
+          } else {
+            this.accessories[j - 1] = copy(this.accessories[j]);
+            this.accessories[j] = copy(temp);
+          }
+        }
+      }
+    } else if (sortType === "price_hype_low") {
+      for (let i = 0; i < this.accessories.length; i++) {
+        let temp = copy(this.accessories[0]);
+        for (let j = 1; j < this.accessories.length - i; j++) {
+          if (temp.costHype < this.accessories[j].costHype) {
+            temp = copy(this.accessories[j]);
+          } else {
+            this.accessories[j - 1] = copy(this.accessories[j]);
+            this.accessories[j] = copy(temp);
+          }
+        }
+      }
+    } else if (sortType === "price_goldenShamrock_high") {
+      for (let i = 0; i < this.accessories.length; i++) {
+        let temp = copy(this.accessories[0]);
+        for (let j = 1; j < this.accessories.length - i; j++) {
+          if (temp.costGoldenShamrock > this.accessories[j].costGoldenShamrock) {
+            temp = copy(this.accessories[j]);
+          } else {
+            this.accessories[j - 1] = copy(this.accessories[j]);
+            this.accessories[j] = copy(temp);
+          }
+        }
+      }
+    } else if (sortType === "price_goldenShamrock_low") {
+      for (let i = 0; i < this.accessories.length; i++) {
+        let temp = copy(this.accessories[0]);
+        for (let j = 1; j < this.accessories.length - i; j++) {
+          if (temp.costGoldenShamrock < this.accessories[j].costGoldenShamrock) {
+            temp = copy(this.accessories[j]);
+          } else {
+            this.accessories[j - 1] = copy(this.accessories[j]);
+            this.accessories[j] = copy(temp);
+          }
+        }
+      }
+    } else if (sortType === "categories") {
+      for (let i = 0; i < this.accessories.length; i++) {
+        let temp = copy(this.accessories[0]);
+        for (let j = 1; j < this.accessories.length - i; j++) {
+          if (temp.category < this.accessories[j].category) {
+            temp = copy(this.accessories[j]);
+          } else {
+            this.accessories[j - 1] = copy(this.accessories[j]);
+            this.accessories[j] = copy(temp);
+          }
+        }
+      }
+    } else if (sortType === "categories_rev") {
+      for (let i = 0; i < this.accessories.length; i++) {
+        let temp = copy(this.accessories[0]);
+        for (let j = 1; j < this.accessories.length - i; j++) {
+          if (temp.category > this.accessories[j].category) {
+            temp = copy(this.accessories[j]);
+          } else {
+            this.accessories[j - 1] = copy(this.accessories[j]);
+            this.accessories[j] = copy(temp);
+          }
+        }
+      }
+    }
+    console.log(this.accessories);
+  };
+  this.draw = function(gD, shop) {
     let design = gD.design.elements[this.styleKey];
 
+    drawCanvasRect(this.x + 2, this.y, 200, 16, design.rectKey.field, gD);
+    drawCanvasPolygon(
+      this.x + 6, this.y + 4, design.rectKey.arrow, gD, 
+      this.x + 18, this.y + 4, this.x + 12, this.y + 12
+    );
+    drawCanvasLine(this.x + 22, this.y, design.borderKey.standard, gD, this.x + 22, this.y + 16);
+    drawCanvasRectBorder(this.x + 2, this.y, 200, 16, design.borderKey.field, gD);
+    
+    drawCanvasRect(this.x + 212, this.y, 200, 16, design.rectKey.field, gD);
+    drawCanvasPolygon(
+      this.x + 216, this.y + 4, design.rectKey.arrow, gD, 
+      this.x + 228, this.y + 4, this.x + 222, this.y + 12
+    );
+    drawCanvasLine(this.x + 232, this.y, design.borderKey.standard, gD, this.x + 232, this.y + 16);
+    drawCanvasRectBorder(this.x + 212, this.y, 200, 16, design.borderKey.field, gD);
+
     gD.context.save();
-    gD.context.rect(this.x, this.y, this.width, this.height);
+    gD.context.rect(this.x, this.y + 25, this.width, this.height - 25);
     gD.context.clip();
-    console.log(this.accessories);
     this.accessories.map((accessory, index) => {
-      drawCanvasRect(this.x + 2 + (index % 11) * 50, this.y + 2 + Math.floor(index / 11) * 75, 40, 65, design.rectKey.accessory, gD);
-      drawCanvasRectBorder(this.x + 2 + (index % 11) * 50, this.y + 2 + Math.floor(index / 11) * 75, 40, 65, design.borderKey.accessory, gD);
+      let spriteData = getSpriteData(accessory.spriteKey, gD);
+      
+      drawCanvasRect(this.x + 2 + (index % 11) * 50, this.y + 27 + Math.floor(index / 11) * 75 - shop.scrollHeight, 40, 65, design.rectKey.accessory[accessory.category], gD);
+      drawCanvasRect(this.x + 7 + (index % 11) * 50, this.y + 32 + Math.floor(index / 11) * 75 - shop.scrollHeight, 30, 30, design.rectKey.accessory.standard, gD);
+      drawCanvasImage(this.x + 22 - (spriteData.spriteWidth / 2) + (index % 11) * 50, this.y + 47 - (spriteData.spriteHeight / 2) + Math.floor(index / 11) * 75 - shop.scrollHeight, accessory.spriteKey, gD);
+      drawCanvasRectBorder(this.x + 7 + (index % 11) * 50, this.y + 32 + Math.floor(index / 11) * 75 - shop.scrollHeight, 30, 30, design.borderKey.accessory, gD);
+      drawCanvasRectBorder(this.x + 2 + (index % 11) * 50, this.y + 27 + Math.floor(index / 11) * 75 - shop.scrollHeight, 40, 65, design.borderKey.accessory, gD);
     }, this);
 
     gD.context.restore();

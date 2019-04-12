@@ -51,6 +51,7 @@ function MenuController(menu) {
       gD.currentPage = this.menu;
     } else if (keyB.get("Mute_All")[3].includes(key)) {
       gD.muted = !gD.muted;
+      this.menu.muteButton.setSprite();
     }
   };
   /**
