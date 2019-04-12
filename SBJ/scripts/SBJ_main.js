@@ -321,7 +321,7 @@ function GlobalDict(eventHandler) {
     "Collectables_Beard1": [true],
     "Collectables_Glasses1": [true],
     "Collectables_Hat1": [true]
-  }
+  };
   this.design = {
     elements: {
       objectSelection: {
@@ -434,6 +434,13 @@ function GlobalDict(eventHandler) {
           accessory: "standard",
           field: "standard"
         }
+      },
+      shopDropdown: {
+        rectKey: {
+          background: "blur",
+          arrow: "modal"
+        },
+        borderKey: "standard"
       },
       controlsHeadline: {
         rectKey: "headline",
@@ -663,6 +670,14 @@ function GlobalDict(eventHandler) {
           selected: "selected"
         },
         textKey: "menuButton",
+        borderKey: "standard"
+      },
+      shop: {
+        rectKey: {
+          standard: "blur",
+          selected: "selected"
+        },
+        textKey: "normal",
         borderKey: "standard"
       },
       standardImage: {

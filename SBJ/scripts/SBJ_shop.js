@@ -94,11 +94,30 @@
     this.skillTree.init(this);
     this.tabs[0].objects.push(this.skillTree);
 
+    this.dropdowns = [
+      new ShopDropdownMenu(
+        this.gD.canvas.width / 2 - 243, 70, 200, 16, [
+          "Category", "Category reverse", "Alphabetic", "Alphabetic reverse", "Price Hype exp", "Price Hype cheap",
+          "Price GS exp", "Price GS cheap"
+        ], "shopDropdown"
+      ),
+      new ShopDropdownMenu(
+        this.gD.canvas.width / 2 - 33, 70, 200, 16, ["Hats", "Glasses", "Beards"], "shopDropdown"
+      )
+    ];
+    this.tabs[1].objects.push(this.dropdowns[0]);
+    this.tabs[1].objects.push(this.dropdowns[1]);
+
+    this.resetButton = new CanvasButton(this.gD.canvas.width / 2 + 177, 70, 120, 16, "Reset", "shop");
+    this.tabs[1].objects.push(this.resetButton);
+
     this.accessoryWindow = new ShopAccessoryWindow(this.gD.canvas.width / 2 - 245, 70, 545, 200, "accessoryWindow");
     this.accessoryWindow.init();
     this.tabs[1].objects.push(this.accessoryWindow);
     
-    this.scrollbar = new CanvasScrollBar(this.gD.canvas.width / 2 + 305, 95, 175, 25, Math.ceil(this.accessories.length / 11) * 3, "scrollBarBlack");
+    this.scrollbar = new CanvasScrollBar(
+      this.gD.canvas.width / 2 + 305, 95, 175, 25, Math.ceil(this.accessories.length / 11) * 3, "scrollBarBlack"
+    );
     this.tabs[1].objects.push(this.scrollbar);
 
     this.accessoryWindow.setAccessories(this, []);
@@ -198,6 +217,13 @@
           skill.deselect();
         }
       }, this);
+    } else if (this.tabs[1].selected) {
+      if (this.gD.mousePos.x >= this.resetButton.x && this.gD.mousePos.x <= this.resetButton.x + this.resetButton.width &&
+          this.gD.mousePos.y >= this.resetButton.y && this.gD.mousePos.y <= this.resetButton.y + this.resetButton.height) {
+        this.resetButton.select();
+      } else {
+        this.resetButton.deselect();
+      }
     }
   };
   this.updateClick = function() {
@@ -727,7 +753,7 @@ function ShopAccessoryWindow(x, y, width, height, styleKey) {
   this.styleKey = styleKey;
   this.accessories = [];
   this.init = function() {
-    
+
   };
   this.setAccessories = function(shop, categories) {
     this.accessories = [];
@@ -740,10 +766,34 @@ function ShopAccessoryWindow(x, y, width, height, styleKey) {
       }
     }
     shop.scrollbar.refresh(Math.ceil(this.accessories.length / 11) * 3);
-    this.sortAccessories("categories_rev");
+    this.sortAccessories("categories");
   };
   this.sortAccessories = function(sortType) {
-    if (sortType === "alphabetic") {
+    if (sortType === "categories") {
+      for (let i = 0; i < this.accessories.length; i++) {
+        let temp = copy(this.accessories[0]);
+        for (let j = 1; j < this.accessories.length - i; j++) {
+          if (temp.category > this.accessories[j].category) {
+            temp = copy(this.accessories[j]);
+          } else {
+            this.accessories[j - 1] = copy(this.accessories[j]);
+            this.accessories[j] = copy(temp);
+          }
+        }
+      }
+    } else if (sortType === "categories_rev") {
+      for (let i = 0; i < this.accessories.length; i++) {
+        let temp = copy(this.accessories[0]);
+        for (let j = 1; j < this.accessories.length - i; j++) {
+          if (temp.category < this.accessories[j].category) {
+            temp = copy(this.accessories[j]);
+          } else {
+            this.accessories[j - 1] = copy(this.accessories[j]);
+            this.accessories[j] = copy(temp);
+          }
+        }
+      }
+    } else if (sortType === "alphabetic") {
       for (let i = 0; i < this.accessories.length; i++) {
         let temp = copy(this.accessories[0]);
         for (let j = 1; j < this.accessories.length - i; j++) {
@@ -815,51 +865,10 @@ function ShopAccessoryWindow(x, y, width, height, styleKey) {
           }
         }
       }
-    } else if (sortType === "categories") {
-      for (let i = 0; i < this.accessories.length; i++) {
-        let temp = copy(this.accessories[0]);
-        for (let j = 1; j < this.accessories.length - i; j++) {
-          if (temp.category < this.accessories[j].category) {
-            temp = copy(this.accessories[j]);
-          } else {
-            this.accessories[j - 1] = copy(this.accessories[j]);
-            this.accessories[j] = copy(temp);
-          }
-        }
-      }
-    } else if (sortType === "categories_rev") {
-      for (let i = 0; i < this.accessories.length; i++) {
-        let temp = copy(this.accessories[0]);
-        for (let j = 1; j < this.accessories.length - i; j++) {
-          if (temp.category > this.accessories[j].category) {
-            temp = copy(this.accessories[j]);
-          } else {
-            this.accessories[j - 1] = copy(this.accessories[j]);
-            this.accessories[j] = copy(temp);
-          }
-        }
-      }
     }
-    console.log(this.accessories);
   };
   this.draw = function(gD, shop) {
     let design = gD.design.elements[this.styleKey];
-
-    drawCanvasRect(this.x + 2, this.y, 200, 16, design.rectKey.field, gD);
-    drawCanvasPolygon(
-      this.x + 6, this.y + 4, design.rectKey.arrow, gD, 
-      this.x + 18, this.y + 4, this.x + 12, this.y + 12
-    );
-    drawCanvasLine(this.x + 22, this.y, design.borderKey.standard, gD, this.x + 22, this.y + 16);
-    drawCanvasRectBorder(this.x + 2, this.y, 200, 16, design.borderKey.field, gD);
-    
-    drawCanvasRect(this.x + 212, this.y, 200, 16, design.rectKey.field, gD);
-    drawCanvasPolygon(
-      this.x + 216, this.y + 4, design.rectKey.arrow, gD, 
-      this.x + 228, this.y + 4, this.x + 222, this.y + 12
-    );
-    drawCanvasLine(this.x + 232, this.y, design.borderKey.standard, gD, this.x + 232, this.y + 16);
-    drawCanvasRectBorder(this.x + 212, this.y, 200, 16, design.borderKey.field, gD);
 
     gD.context.save();
     gD.context.rect(this.x, this.y + 25, this.width, this.height - 25);
@@ -867,13 +876,64 @@ function ShopAccessoryWindow(x, y, width, height, styleKey) {
     this.accessories.map((accessory, index) => {
       let spriteData = getSpriteData(accessory.spriteKey, gD);
       
-      drawCanvasRect(this.x + 2 + (index % 11) * 50, this.y + 27 + Math.floor(index / 11) * 75 - shop.scrollHeight, 40, 65, design.rectKey.accessory[accessory.category], gD);
-      drawCanvasRect(this.x + 7 + (index % 11) * 50, this.y + 32 + Math.floor(index / 11) * 75 - shop.scrollHeight, 30, 30, design.rectKey.accessory.standard, gD);
-      drawCanvasImage(this.x + 22 - (spriteData.spriteWidth / 2) + (index % 11) * 50, this.y + 47 - (spriteData.spriteHeight / 2) + Math.floor(index / 11) * 75 - shop.scrollHeight, accessory.spriteKey, gD);
-      drawCanvasRectBorder(this.x + 7 + (index % 11) * 50, this.y + 32 + Math.floor(index / 11) * 75 - shop.scrollHeight, 30, 30, design.borderKey.accessory, gD);
-      drawCanvasRectBorder(this.x + 2 + (index % 11) * 50, this.y + 27 + Math.floor(index / 11) * 75 - shop.scrollHeight, 40, 65, design.borderKey.accessory, gD);
+      drawCanvasRect(
+        this.x + 2 + (index % 11) * 50, this.y + 27 + Math.floor(index / 11) * 75 - shop.scrollHeight, 40, 65,
+        design.rectKey.accessory[accessory.category], gD
+      );
+      drawCanvasRect(
+        this.x + 7 + (index % 11) * 50, this.y + 32 + Math.floor(index / 11) * 75 - shop.scrollHeight, 30, 30,
+        design.rectKey.accessory.standard, gD
+      );
+      drawCanvasImage(
+        this.x + 22 - (spriteData.spriteWidth / 2) + (index % 11) * 50,
+        this.y + 47 - (spriteData.spriteHeight / 2) + Math.floor(index / 11) * 75 - shop.scrollHeight,
+        accessory.spriteKey, gD
+      );
+      drawCanvasRectBorder(
+        this.x + 7 + (index % 11) * 50, this.y + 32 + Math.floor(index / 11) * 75 - shop.scrollHeight, 30, 30,
+        design.borderKey.accessory, gD
+      );
+      drawCanvasRectBorder(
+        this.x + 2 + (index % 11) * 50, this.y + 27 + Math.floor(index / 11) * 75 - shop.scrollHeight, 40, 65,
+        design.borderKey.accessory, gD
+      );
     }, this);
 
     gD.context.restore();
+  };
+}
+
+function ShopDropdownMenu(x, y, width, height, options, styleKey, multipleOptions = false) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.options = options;
+  this.styleKey = styleKey;
+  this.multipleOptions = multipleOptions;
+  this.selected = false;
+  this.opened = false;
+  this.select = function() {
+    this.selected = true;
+  };
+  this.deselect = function() {
+    this.selected = false;
+  };
+  this.open = function() {
+    this.opened = true;
+  };
+  this.close = function() {
+    this.opened = false;
+  };
+  this.draw = function(gD) {
+    let design = gD.design.elements[this.styleKey];
+
+    drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.background, gD);
+    drawCanvasPolygon(
+      this.x + 4, this.y + 4, design.rectKey.arrow, gD, this.x + 16, this.y + 4, this.x + 10, this.y + 12
+    );
+    drawCanvasLine(this.x + 20, this.y, design.borderKey, gD, this.x + 20, this.y + 16);
+    drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
+
   };
 }

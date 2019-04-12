@@ -5,11 +5,23 @@
     this.title = new CanvasText(this.gD.canvas.width / 2, 30, "Singleplayer", "pageTitle");
 
     this.selections = [
-      new ObjectSelection(100, 110, 40, 130, ["Player_Standard", "Player_Speedy", "Player_Longjohn", "Player_Disgusty", "Player_Strooper", "Player_Magician", "Player_Afroman"], this.gD.player, "objectSelection"),
-      new ObjectSelection(160, 110, 40, 130, ["Collectables_Nothing", "Collectables_Hat1"], this.gD.collectables, "objectSelection"),
-      new ObjectSelection(220, 110, 40, 130, ["Collectables_Nothing", "Collectables_Glasses1"], this.gD.collectables, "objectSelection"),
-      new ObjectSelection(280, 110, 40, 130, ["Collectables_Nothing", "Collectables_Beard1"], this.gD.collectables, "objectSelection"),
-      new ObjectSelection(340, 110, 40, 130, ["Stage_Fortress", "Stage_Air", "Stage_Water", "Stage_Forest", "Stage_Universe"], this.gD.stages, "objectSelection")
+      new ObjectSelection(
+        100, 110, 40, 130, ["Player_Standard", "Player_Speedy", "Player_Longjohn", "Player_Disgusty",
+        "Player_Strooper", "Player_Magician", "Player_Afroman"], this.gD.player, "objectSelection"
+      ),
+      new ObjectSelection(
+        160, 110, 40, 130, ["Collectables_Nothing", "Collectables_Hat1"], this.gD.collectables, "objectSelection"
+      ),
+      new ObjectSelection(
+        220, 110, 40, 130, ["Collectables_Nothing", "Collectables_Glasses1"], this.gD.collectables, "objectSelection"
+      ),
+      new ObjectSelection(
+        280, 110, 40, 130, ["Collectables_Nothing", "Collectables_Beard1"], this.gD.collectables, "objectSelection"
+      ),
+      new ObjectSelection(
+        340, 110, 40, 130, ["Stage_Fortress", "Stage_Air", "Stage_Water", "Stage_Forest", "Stage_Universe"],
+        this.gD.stages, "objectSelection"
+      )
     ];
     
     this.selections.map(selection => {
@@ -60,7 +72,10 @@
             this.updateSelection(this.selectedRowIndex, 1);
           }
         } else {
-          this.updateSelection(this.selectedRowIndex, (this.selectedColumnIndex + this.selections.length - 1) % this.selections.length);
+          this.updateSelection(
+            this.selectedRowIndex,
+            (this.selectedColumnIndex + this.selections.length - 1) % this.selections.length
+          );
         }
       } else if (keyB.get("Menu_Confirm")[3].includes(key)) {
         if (this.selectedRowIndex === -1) {
@@ -87,13 +102,16 @@
         this.updateSelection(0, index);
       }
       if (this.gD.mousePos.x >= selection.x && this.gD.mousePos.x <= selection.x + selection.width &&
-          this.gD.mousePos.y >= selection.y + selection.height - 20 && this.gD.mousePos.y <= selection.y + selection.height) {
+          this.gD.mousePos.y >= selection.y + selection.height - 20 &&
+          this.gD.mousePos.y <= selection.y + selection.height) {
         this.updateSelection(1, index);
       }
     }, this);
     
-    if (this.gD.mousePos.x >= this.confirmButton.x && this.gD.mousePos.x <= this.confirmButton.x + this.confirmButton.width &&
-        this.gD.mousePos.y >= this.confirmButton.y && this.gD.mousePos.y <= this.confirmButton.y + this.confirmButton.height) {
+    if (this.gD.mousePos.x >= this.confirmButton.x &&
+        this.gD.mousePos.x <= this.confirmButton.x + this.confirmButton.width &&
+        this.gD.mousePos.y >= this.confirmButton.y &&
+        this.gD.mousePos.y <= this.confirmButton.y + this.confirmButton.height) {
       this.updateSelection(-1, 1);
     }
     
@@ -396,10 +414,12 @@ function ObjectSelection(x, y, width, height, objects, data, styleKey) {
       centerTopX + Math.min(this.arrowSelHeight[0] / 2 + this.arrowSelWidth[0] / 2, this.width / 2), centerTopY,
       centerTopX + Math.min(this.arrowSelHeight[0] / 2 + this.arrowSelWidth[0] / 2, this.width / 2),
         centerTopY + Math.max((this.arrowSelHeight[0] / 2 + this.arrowSelWidth[0] / 2) - this.width / 2, 0),
-      centerTopX + this.arrowSelWidth[0] / 2 + this.arrowSelHeight[0] / 2 - 10 * ((this.arrowSelWidth[0] + this.arrowSelHeight[0]) / (this.width + this.arrowSelHeight[0])),
+      centerTopX + this.arrowSelWidth[0] / 2 + this.arrowSelHeight[0] / 2 - 10 *
+          ((this.arrowSelWidth[0] + this.arrowSelHeight[0]) / (this.width + this.arrowSelHeight[0])),
         centerTopY + 10 * ((this.arrowSelWidth[0] + this.arrowSelHeight[0]) / (this.width + this.arrowSelHeight[0])),
       centerTopX, centerTopY,
-      centerTopX - this.arrowSelWidth[0] / 2 - this.arrowSelHeight[0] / 2 + 10 * ((this.arrowSelWidth[0] + this.arrowSelHeight[0]) / (this.width + this.arrowSelHeight[0])),
+      centerTopX - this.arrowSelWidth[0] / 2 - this.arrowSelHeight[0] / 2 + 10 *
+          ((this.arrowSelWidth[0] + this.arrowSelHeight[0]) / (this.width + this.arrowSelHeight[0])),
         centerTopY + 10 * ((this.arrowSelWidth[0] + this.arrowSelHeight[0]) / (this.width + this.arrowSelHeight[0])),
       centerTopX - Math.min(this.arrowSelHeight[0] / 2 + this.arrowSelWidth[0] / 2, this.width / 2),
         centerTopY + Math.max((this.arrowSelHeight[0] / 2 + this.arrowSelWidth[0] / 2) - this.width / 2, 0),
@@ -413,9 +433,15 @@ function ObjectSelection(x, y, width, height, objects, data, styleKey) {
     );
     this.spriteData.map((sprite, index) => {
       if (this.data[this.objects[this.currentIndices[index]]][0]) {
-        drawCanvasSmallImage(Math.floor(this.spritesX[index]), Math.floor(this.spritesY[index]), this.spritesZoom[index], this.objects[this.currentIndices[index]], gD);
+        drawCanvasSmallImage(
+          Math.floor(this.spritesX[index]), Math.floor(this.spritesY[index]),
+          this.spritesZoom[index], this.objects[this.currentIndices[index]], gD
+        );
       } else {
-        drawCanvasSmallImage(Math.floor(this.spritesX[index]), Math.floor(this.spritesY[index]), this.spritesZoom[index], this.objects[this.currentIndices[index]] + "_G", gD);
+        drawCanvasSmallImage(
+          Math.floor(this.spritesX[index]), Math.floor(this.spritesY[index]), this.spritesZoom[index],
+          this.objects[this.currentIndices[index]] + "_G", gD
+        );
         drawCanvasSmallImage(
           this.x + Math.floor(this.width / 2 - qmSpriteData.spriteWidth / 2), 
           this.spritesY[index] + Math.floor((this.spriteData[index].spriteHeight - qmSpriteData.spriteHeight) / 2), 
@@ -436,8 +462,9 @@ function ObjectSelection(x, y, width, height, objects, data, styleKey) {
       }
     }
     drawCanvasPolygon(
-      this.x + this.width / 2, this.y + this.height, design.rectKey.arrow, gD, this.x + this.width, this.y + this.height - 10,
-      this.x + this.width, this.y + this.height - 20, this.x + this.width / 2, this.y + this.height - 10, this.x, this.y + this.height - 20, this.x, this.y + this.height - 10
+      this.x + this.width / 2, this.y + this.height, design.rectKey.arrow, gD, this.x + this.width,
+      this.y + this.height - 10, this.x + this.width, this.y + this.height - 20, this.x + this.width / 2,
+      this.y + this.height - 10, this.x, this.y + this.height - 20, this.x, this.y + this.height - 10
     );
     drawCanvasPolygon(
       centerBottomX, centerBottomY + this.arrowSelHeight[1] / 2, design.rectKey.selected, gD, 
@@ -446,10 +473,12 @@ function ObjectSelection(x, y, width, height, objects, data, styleKey) {
       centerBottomX - Math.min(this.arrowSelHeight[1] / 2 + this.arrowSelWidth[1] / 2, this.width / 2), centerBottomY,
       centerBottomX - Math.min(this.arrowSelHeight[1] / 2 + this.arrowSelWidth[1] / 2, this.width / 2),
         centerBottomY - Math.max((this.arrowSelHeight[1] / 2 + this.arrowSelWidth[1] / 2) - this.width / 2, 0),
-      centerBottomX - this.arrowSelWidth[1] / 2 - this.arrowSelHeight[1] / 2 + 10 * ((this.arrowSelWidth[1] + this.arrowSelHeight[1]) / (this.width + this.arrowSelHeight[1])),
+      centerBottomX - this.arrowSelWidth[1] / 2 - this.arrowSelHeight[1] / 2 + 10 *
+          ((this.arrowSelWidth[1] + this.arrowSelHeight[1]) / (this.width + this.arrowSelHeight[1])),
         centerBottomY - 10 * ((this.arrowSelWidth[1] + this.arrowSelHeight[1]) / (this.width + this.arrowSelHeight[1])),
       centerBottomX, centerBottomY,
-      centerBottomX + this.arrowSelWidth[1] / 2 + this.arrowSelHeight[1] / 2 - 10 * ((this.arrowSelWidth[1] + this.arrowSelHeight[1]) / (this.width + this.arrowSelHeight[1])),
+      centerBottomX + this.arrowSelWidth[1] / 2 + this.arrowSelHeight[1] / 2 - 10 *
+          ((this.arrowSelWidth[1] + this.arrowSelHeight[1]) / (this.width + this.arrowSelHeight[1])),
         centerBottomY - 10 * ((this.arrowSelWidth[1] + this.arrowSelHeight[1]) / (this.width + this.arrowSelHeight[1])),
       centerBottomX + Math.min(this.arrowSelHeight[1] / 2 + this.arrowSelWidth[1] / 2, this.width / 2),
         centerBottomY - Math.max((this.arrowSelHeight[1] / 2 + this.arrowSelWidth[1] / 2) - this.width / 2, 0),
@@ -458,8 +487,9 @@ function ObjectSelection(x, y, width, height, objects, data, styleKey) {
         centerBottomY + this.arrowSelHeight[1] / 2 - 10 * (this.arrowSelWidth[1] / this.width)
     );
     drawCanvasPolygonBorder(
-      this.x + this.width / 2, this.y + this.height, design.borderKey.arrow, gD, this.x + this.width, this.y + this.height - 10,
-      this.x + this.width, this.y + this.height - 20, this.x + this.width / 2, this.y + this.height - 10, this.x, this.y + this.height - 20, this.x, this.y + this.height - 10
+      this.x + this.width / 2, this.y + this.height, design.borderKey.arrow, gD, this.x + this.width,
+      this.y + this.height - 10, this.x + this.width, this.y + this.height - 20, this.x + this.width / 2,
+      this.y + this.height - 10, this.x, this.y + this.height - 20, this.x, this.y + this.height - 10
     );
   };
 }

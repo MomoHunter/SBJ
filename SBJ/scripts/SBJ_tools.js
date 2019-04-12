@@ -113,8 +113,8 @@ function drawCanvasTextBorder(x, y, text, styleKey, gD) {
 /**
  * Draw a Sprite-Image onto the used canvas.
  * Its size is determined by the defined data of the given Sprite.
- * @param {string} x x-coordinate of the top-left corner
- * @param {string} y y-coordinate of the top-left corner
+ * @param {number} x x-coordinate of the top-left corner
+ * @param {number} y y-coordinate of the top-left corner
  * @param {string} spriteKey defines which sprite should be drawn
  * @param {GlobalDict} gD
  */
@@ -139,9 +139,10 @@ function drawCanvasImage(x, y, spriteKey, gD) {
 }/**
  * Draw a Sprite-Image onto the used canvas.
  * Its size is determined by the defined data of the given Sprite.
- * @param {string} x x-coordinate of the top-left corner
- * @param {string} y y-coordinate of the top-left corner
- * @param {string} spriteKey defines which sprite should be drawn
+ * @param {number} x          x-coordinate of the top-left corner
+ * @param {number} y          y-coordinate of the top-left corner
+ * @param {number} percentage percentage for the new size from the old size between 0 and 1
+ * @param {string} spriteKey  defines which sprite should be drawn
  * @param {GlobalDict} gD
  */
 function drawCanvasSmallImage(x, y, percentage, spriteKey, gD) {
