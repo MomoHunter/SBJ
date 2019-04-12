@@ -5,102 +5,19 @@
     this.title = new CanvasText(this.gD.canvas.width / 2, 30, "Singleplayer", "pageTitle");
 
     this.selections = [
-      new ObjectSelection(100, 110, 40, 130, ["Player_Standard", "Player_Speedy", "Player_Longjohn", "Player_Disgusty", "Player_Strooper", "Player_Magician", "Player_Afroman"], this.gD.player, "objectSelection"),
-      new ObjectSelection(160, 110, 40, 130, ["Collectables_Nothing", "Collectables_Hat1"], this.gD.collectables, "objectSelection"),
-      new ObjectSelection(220, 110, 40, 130, ["Collectables_Nothing", "Collectables_Glasses1"], this.gD.collectables, "objectSelection"),
-      new ObjectSelection(280, 110, 40, 130, ["Collectables_Nothing", "Collectables_Beard1"], this.gD.collectables, "objectSelection"),
-      new ObjectSelection(340, 110, 40, 130, ["Stage_Fortress", "Stage_Air", "Stage_Water", "Stage_Forest", "Stage_Universe"], this.gD.stages, "objectSelection")
-    ];
-    
-    this.selections.map(selection => {
-      selection.init(this.gD);
-    }, this);
-    
-    this.confirmButton = new CanvasButton(
-      (this.gD.canvas.width / 2) + 5, this.gD.canvas.height - 50, 200, 30, "Start", "menu"
-    );
-    this.backToMenu = new CanvasButton(
-      (this.gD.canvas.width / 2) - 205, this.gD.canvas.height - 50, 200, 30, "Main Menu", "menu"
-    );
-    
-    this.updateSelection(-1, 0);
+      new ObjectSelection(100, 60, 40, 130, ["Player_Standard", "Player_Strooper", "Player_Magician"], "objectSelection")
+    ]
   };
   this.updateKeyPresses = function() {
     this.gD.newKeys.map(key => {
       let keyB = this.menu.controls.keyBindings;
       if (keyB.get("Menu_Back")[3].includes(key)) {
         this.gD.currentPage = this.menu;
-      } else if (keyB.get("Menu_NavUp")[3].includes(key)) {
-        if (this.selectedRowIndex === -1) {
-          this.updateSelection(1, this.selectedColumnIndex);
-        } else {
-          this.updateSelection(this.selectedRowIndex - 1, this.selectedColumnIndex);
-        }
-      } else if (keyB.get("Menu_NavDown")[3].includes(key)) {
-        if (this.selectedRowIndex === 1) {
-          this.updateSelection(-1, this.selectedColumnIndex);
-        } else {
-          this.updateSelection(this.selectedRowIndex + 1, this.selectedColumnIndex);
-        }
-      } else if (keyB.get("Menu_NavRight")[3].includes(key)) {
-        if (this.selectedRowIndex === -1) {
-          if (this.selectedColumnIndex > 0) {
-            this.updateSelection(this.selectedRowIndex, 0);
-          } else {
-            this.updateSelection(this.selectedRowIndex, 1);
-          }
-        } else {
-          this.updateSelection(this.selectedRowIndex, (this.selectedColumnIndex + 1) % this.selections.length);
-        }
-      } else if (keyB.get("Menu_NavLeft")[3].includes(key)) {
-        if (this.selectedRowIndex === -1) {
-          if (this.selectedColumnIndex > 0) {
-            this.updateSelection(this.selectedRowIndex, 0);
-          } else {
-            this.updateSelection(this.selectedRowIndex, 1);
-          }
-        } else {
-          this.updateSelection(this.selectedRowIndex, (this.selectedColumnIndex + this.selections.length - 1) % this.selections.length);
-        }
-      } else if (keyB.get("Menu_Confirm")[3].includes(key)) {
-        if (this.selectedRowIndex === -1) {
-          if (this.selectedColumnIndex === 0) {
-            this.gD.currentPage = this.menu;
-          } else {
-            this.gD.currentPage = this.menu.game;
-          }
-        } else if (this.selectedRowIndex === 0) {
-          this.selections[this.selectedColumnIndex].down(this.gD);
-        } else {
-          this.selections[this.selectedColumnIndex].up(this.gD);
-        }
-      } else if (keyB.get("Mute_All")[3].includes(key)) {
-        this.gD.muted = !this.gD.muted;
-        this.menu.muteButton.setSprite();
       }
     }, this);
   };
   this.updateMouseMoves = function() {
-    this.selections.map((selection, index) => {
-      if (this.gD.mousePos.x >= selection.x && this.gD.mousePos.x <= selection.x + selection.width &&
-          this.gD.mousePos.y >= selection.y && this.gD.mousePos.y <= selection.y + 20) {
-        this.updateSelection(0, index);
-      }
-      if (this.gD.mousePos.x >= selection.x && this.gD.mousePos.x <= selection.x + selection.width &&
-          this.gD.mousePos.y >= selection.y + selection.height - 20 && this.gD.mousePos.y <= selection.y + selection.height) {
-        this.updateSelection(1, index);
-      }
-    }, this);
-    
-    if (this.gD.mousePos.x >= this.confirmButton.x && this.gD.mousePos.x <= this.confirmButton.x + this.confirmButton.width &&
-        this.gD.mousePos.y >= this.confirmButton.y && this.gD.mousePos.y <= this.confirmButton.y + this.confirmButton.height) {
-      this.updateSelection(-1, 1);
-    }
-    
-    if (this.gD.mousePos.x >= this.backToMenu.x && this.gD.mousePos.x <= this.backToMenu.x + this.backToMenu.width &&
-        this.gD.mousePos.y >= this.backToMenu.y && this.gD.mousePos.y <= this.backToMenu.y + this.backToMenu.height) {
-      this.updateSelection(-1, 0);
-    }
+
   };
   this.updateClick = function() {
     let clickPos = this.gD.clicks.pop();
@@ -108,35 +25,13 @@
       return;
     }
 
-    
-    this.selections.map(selection => {
-      if (clickPos.x >= selection.x && clickPos.x <= selection.x + selection.width &&
-          clickPos.y >= selection.y && clickPos.y <= selection.y + 20) {
-        selection.down(this.gD);
-      } else if (clickPos.x >= selection.x && clickPos.x <= selection.x + selection.width &&
-                 clickPos.y >= selection.y + selection.height - 20 && clickPos.y <= selection.y + selection.height) {
-        selection.up(this.gD);
-      }
-    }, this);
-    
-    if (clickPos.x >= this.confirmButton.x && clickPos.x <= this.confirmButton.x + this.confirmButton.width &&
-        clickPos.y >= this.confirmButton.y && clickPos.y <= this.confirmButton.y + this.confirmButton.height) {
-      this.gD.currentPage = this.menu.game;
-    } else if (clickPos.x >= this.backToMenu.x && clickPos.x <= this.backToMenu.x + this.backToMenu.width &&
-               clickPos.y >= this.backToMenu.y && clickPos.y <= this.backToMenu.y + this.backToMenu.height) {
-      this.gD.currentPage = this.menu;
-    }
+
   };
   this.updateWheelMoves = function() {
-    /* unused */
+
   };
   this.update = function() {
-    this.selections.map(selection => {
-      selection.update(this.gD);
-    }, this);
-    
-    this.confirmButton.update();
-    this.backToMenu.update();
+
   };
   this.draw = function() {
     this.gD.context.drawImage(this.menu.backgroundImage, 0, 0);
@@ -147,315 +42,47 @@
     this.selections.map(selection => {
       selection.draw(this.gD);
     }, this);
-    
-    this.confirmButton.draw(this.gD);
-    this.backToMenu.draw(this.gD);
-  };
-  /**
-   * updates the selected object and deselects the old object
-   * @param {number}  rowIndex    the row of the new selected object
-   * @param {number}  columnIndex the column of the new selected object
-   */
-  this.updateSelection = function(rowIndex, columnIndex) {
-    if (this.selectedRowIndex !== undefined && this.selectedColumnIndex !== undefined) {
-      if (this.selectedRowIndex === -1) {
-        if (this.selectedColumnIndex === 0) {
-          this.backToMenu.deselect();
-        } else {
-          this.confirmButton.deselect();
-        }
-      } else {
-        if (this.selectedRowIndex === 0) {
-          this.selections[this.selectedColumnIndex].deselectTop();
-        } else {
-          this.selections[this.selectedColumnIndex].deselectBottom();
-        }
-      }
-    }
-
-    if (rowIndex === -1) {
-      if (columnIndex === 0) {
-        this.backToMenu.select();
-      } else {
-        this.confirmButton.select();
-      }
-    } else {
-      if (rowIndex === 0) {
-        this.selections[columnIndex].selectTop();
-      } else {
-        this.selections[columnIndex].selectBottom();
-      }
-    }
-    this.selectedRowIndex = rowIndex;
-    this.selectedColumnIndex = columnIndex;
   };
 }
 
-function ObjectSelection(x, y, width, height, objects, data, styleKey) {
+function ObjectSelection(x, y, width, height, objects, styleKey) {
   this.x = x;
   this.y = y;
   this.width = width;
   this.height = height;
-  this.data = data;
-  this.spriteData = [];
-  this.newSprite = {};
-  this.spritesX = [0, 0, 0];
-  this.spritesY = [0, 0, 0];
-  this.spritesZoom = [0.6, 1, 0.6];
-  this.newX = 0;
-  this.newY = 0;
-  this.newZoom = 0;
-  this.newIndex = 0;
-  this.direction = 0;      //0 = no moving, -1 = up, 1 = down
   this.objects = objects;
   this.styleKey = styleKey;
-  this.arrowSelWidth = [0, 0];
-  this.arrowSelHeight = [0, 0];
-  this.topSelected = false;
-  this.bottomSelected = false;
-  this.speed = 25;
-  this.animationSpeed = 4;
-  this.currentIndices = [0, 0, 0];
-  this.init = function(gD) {
-    this.spriteData.push({});
-    this.spriteData.push(getSpriteData(this.objects[this.currentIndices[1]], gD));
-    this.spriteData.push({});
-    
-    if (this.currentIndices[1] === 0) {
-      this.currentIndices[0] = this.objects.length - 1;
-      this.spriteData[0] = getSpriteData(this.objects[this.currentIndices[0]], gD);
-    } else {
-      this.currentIndices[0] = this.currentIndices[1] - 1;
-      this.spriteData[0] = getSpriteData(this.objects[this.currentIndices[0]], gD);
-    }
-    if (this.currentIndices[1] === this.objects.length - 1) {
-      this.currentIndices[2] = 0;
-      this.spriteData[2] = getSpriteData(this.objects[this.currentIndices[2]], gD);
-    } else {
-      this.currentIndices[2] = this.currentIndices[1] + 1;
-      this.spriteData[2] = getSpriteData(this.objects[this.currentIndices[2]], gD);
-    }
-    
-    this.spriteData.map((data, index) => {
-      this.spritesX[index] = this.x + (this.width - data.spriteWidth) / 2;
-      this.spritesY[index] = this.y + this.height / 4 * (index + 1) - data.spriteHeight / 2;
-    }, this);
-  };
-  this.getSelected = function() {
-    return this.objects[this.currentIndices[1]];
-  };
-  this.selectTop = function() {
-    this.topSelected = true;
-  };
-  this.deselectTop = function() {
-    this.topSelected = false;
-  };
-  this.selectBottom = function() {
-    this.bottomSelected = true;
-  };
-  this.deselectBottom = function() {
-    this.bottomSelected = false;
-  };
-  this.up = function(gD) {
-    if (this.direction === 0) {
-      this.newIndex = this.currentIndices[2] + 1;
-      if (this.newIndex >= this.objects.length) {
-        this.newIndex = 0;
-      }
-      this.newSprite = getSpriteData(this.objects[this.newIndex], gD);
-      
-      this.newX = this.x + this.width / 2 - this.newSprite.spriteWidth / 2;
-      this.newY = this.y + this.height / 8 * 7 - this.newSprite.spriteHeight / 2;
-      this.newZoom = 0;
-      this.direction = -1;
-    }
-  };
-  this.down = function(gD) {
-    if (this.direction === 0) {
-      this.newIndex = this.currentIndices[0] - 1;
-      if (this.newIndex < 0) {
-        this.newIndex = this.objects.length - 1;
-      }
-      this.newSprite = getSpriteData(this.objects[this.newIndex], gD);
-      
-      this.newX = this.x + this.width / 2 - this.newSprite.spriteWidth / 2;
-      this.newY = this.y + this.height / 8 - this.newSprite.spriteHeight / 2;
-      this.newZoom = 0;
-      this.direction = 1;
-    }
-  };
-  this.update = function(gD) {
-    if (this.direction === 1) {
-      this.newY += (this.height / 8) / this.speed;
-      this.spritesY[0] += (this.height / 4) / this.speed;
-      this.spritesY[1] += (this.height / 4) / this.speed;
-      this.spritesY[2] += (this.height / 8) / this.speed;
-      this.newZoom += 0.6 / this.speed;
-      this.spritesZoom[0] += 0.4 / this.speed;
-      this.spritesZoom[1] -= 0.4 / this.speed;
-      this.spritesZoom[2] -= 0.6 / this.speed;
-      if (this.newZoom >= 0.6) {
-        this.currentIndices.unshift(this.newIndex);
-        this.currentIndices = this.currentIndices.slice(0, 3);
-        this.currentIndices.map((cI, index) => {
-          this.spriteData[index] = getSpriteData(this.objects[cI], gD);
-          this.spritesX[index] = this.x + (this.width - this.spriteData[index].spriteWidth) / 2;
-          this.spritesY[index] = this.y + this.height / 4 * (index + 1) - this.spriteData[index].spriteHeight / 2;
-        }, this);
-        this.spritesZoom = [0.6, 1, 0.6];
-        this.direction = 0;
-      }
-    } else if (this.direction === -1) {
-      this.spritesY[0] -= (this.height / 8) / this.speed;
-      this.spritesY[1] -= (this.height / 4) / this.speed;
-      this.spritesY[2] -= (this.height / 4) / this.speed;
-      this.newY -= (this.height / 8) / this.speed;
-      this.spritesZoom[0] -= 0.6 / this.speed;
-      this.spritesZoom[1] -= 0.4 / this.speed;
-      this.spritesZoom[2] += 0.4 / this.speed;
-      this.newZoom += 0.6 / this.speed;
-      if (this.newZoom >= 0.6) {
-        this.currentIndices.push(this.newIndex);
-        this.currentIndices = this.currentIndices.slice(1, 4);
-        this.currentIndices.map((cI, index) => {
-          this.spriteData[index] = getSpriteData(this.objects[cI], gD);
-          this.spritesX[index] = this.x + (this.width - this.spriteData[index].spriteWidth) / 2;
-          this.spritesY[index] = this.y + this.height / 4 * (index + 1) - this.spriteData[index].spriteHeight / 2;
-        }, this);
-        this.spritesZoom = [0.6, 1, 0.6];
-        this.direction = 0;
-      }
-    }
-    if (this.topSelected) {
-      if (this.arrowSelHeight[0] < 20) {
-        this.arrowSelHeight[0] += this.animationSpeed;
-        if (this.arrowSelHeight[0] >= 20) {
-          this.arrowSelHeight[0] = 20;
-        }
-      } else if (this.arrowSelHeight[0] >= 20 && this.arrowSelWidth[0] < this.width) {
-        this.arrowSelWidth[0] += this.animationSpeed;
-        if (this.arrowSelWidth[0] >= this.width) {
-          this.arrowSelWidth[0] = this.width;
-        }
-      }
-    } else {
-      if (this.arrowSelWidth[0] > 0) {
-        this.arrowSelWidth[0] -= this.animationSpeed;
-        if (this.arrowSelWidth[0] <= 0) {
-          this.arrowSelWidth[0] = 0;
-        }
-      } else if (this.arrowSelWidth[0] <= 0 && this.arrowSelHeight[0] > 0) {
-        this.arrowSelHeight[0] -= this.animationSpeed;
-        if (this.arrowSelHeight[0] <= 0) {
-          this.arrowSelHeight[0] = 0;
-        }
-      }
-    }
-    if (this.bottomSelected) {
-      if (this.arrowSelHeight[1] < 20) {
-        this.arrowSelHeight[1] += this.animationSpeed;
-        if (this.arrowSelHeight[1] >= 20) {
-          this.arrowSelHeight[1] = 20;
-        }
-      } else if (this.arrowSelHeight[1] >= 20 && this.arrowSelWidth[1] < this.width) {
-        this.arrowSelWidth[1] += this.animationSpeed;
-        if (this.arrowSelWidth[1] >= this.width) {
-          this.arrowSelWidth[1] = this.width;
-        }
-      }
-    } else {
-      if (this.arrowSelWidth[1] > 0) {
-        this.arrowSelWidth[1] -= this.animationSpeed;
-        if (this.arrowSelWidth[1] <= 0) {
-          this.arrowSelWidth[1] = 0;
-        }
-      } else if (this.arrowSelWidth[1] <= 0 && this.arrowSelHeight[1] > 0) {
-        this.arrowSelHeight[1] -= this.animationSpeed;
-        if (this.arrowSelHeight[1] <= 0) {
-          this.arrowSelHeight[1] = 0;
-        }
-      }
-    }
-  };
+  this.currentIndex = 0;
   this.draw = function(gD) {
     let design = gD.design.elements[this.styleKey];
-    let centerTopX = this.x + this.width / 2;
-    let centerTopY = this.y + 10;
-    let centerBottomX = this.x + this.width / 2;
-    let centerBottomY = this.y + this.height - 10;
-    let qmSpriteData = getSpriteData("Item_Questionmark", gD);
+    let image1 = {};
+    let image2 = getSpriteData(this.objects[this.currentIndex], gD);
+    let image3 = {};
+    if (this.currentIndex === 0) {
+      image1 = getSpriteData(this.objects[this.objects.length - 1], gD);
+    } else {
+      image1 = getSpriteData(this.objects[this.currentIndex - 1], gD);
+    }
+    if (this.currentIndex === this.objects.length - 1) {
+      image3 = getSpriteData(this.objects[0], gD);
+    } else {
+      image3 = getSpriteData(this.objects[this.currentIndex + 1], gD);
+    }
 
     drawCanvasPolygon(
       this.x + this.width / 2, this.y, design.rectKey.arrow, gD, this.x + this.width, this.y + 10,
       this.x + this.width, this.y + 20, this.x + this.width / 2, this.y + 10, this.x, this.y + 20, this.x, this.y + 10
     );
-    drawCanvasPolygon(
-      centerTopX, centerTopY - this.arrowSelHeight[0] / 2, design.rectKey.selected, gD, 
-      centerTopX + this.arrowSelWidth[0] / 2,
-        centerTopY - this.arrowSelHeight[0] / 2 + 10 * (this.arrowSelWidth[0] / this.width),
-      centerTopX + Math.min(this.arrowSelHeight[0] / 2 + this.arrowSelWidth[0] / 2, this.width / 2), centerTopY,
-      centerTopX + Math.min(this.arrowSelHeight[0] / 2 + this.arrowSelWidth[0] / 2, this.width / 2),
-        centerTopY + Math.max((this.arrowSelHeight[0] / 2 + this.arrowSelWidth[0] / 2) - this.width / 2, 0),
-      centerTopX + this.arrowSelWidth[0] / 2 + this.arrowSelHeight[0] / 2 - 10 * ((this.arrowSelWidth[0] + this.arrowSelHeight[0]) / (this.width + this.arrowSelHeight[0])),
-        centerTopY + 10 * ((this.arrowSelWidth[0] + this.arrowSelHeight[0]) / (this.width + this.arrowSelHeight[0])),
-      centerTopX, centerTopY,
-      centerTopX - this.arrowSelWidth[0] / 2 - this.arrowSelHeight[0] / 2 + 10 * ((this.arrowSelWidth[0] + this.arrowSelHeight[0]) / (this.width + this.arrowSelHeight[0])),
-        centerTopY + 10 * ((this.arrowSelWidth[0] + this.arrowSelHeight[0]) / (this.width + this.arrowSelHeight[0])),
-      centerTopX - Math.min(this.arrowSelHeight[0] / 2 + this.arrowSelWidth[0] / 2, this.width / 2),
-        centerTopY + Math.max((this.arrowSelHeight[0] / 2 + this.arrowSelWidth[0] / 2) - this.width / 2, 0),
-      centerTopX - Math.min(this.arrowSelHeight[0] / 2 + this.arrowSelWidth[0] / 2, this.width / 2), centerTopY,
-      centerTopX - this.arrowSelWidth[0] / 2, 
-        centerTopY - this.arrowSelHeight[0] / 2 + 10 * (this.arrowSelWidth[0] / this.width)
-    );
     drawCanvasPolygonBorder(
       this.x + this.width / 2, this.y, design.borderKey.arrow, gD, this.x + this.width, this.y + 10,
       this.x + this.width, this.y + 20, this.x + this.width / 2, this.y + 10, this.x, this.y + 20, this.x, this.y + 10
     );
-    this.spriteData.map((sprite, index) => {
-      if (this.data[this.objects[this.currentIndices[index]]][0]) {
-        drawCanvasSmallImage(Math.floor(this.spritesX[index]), Math.floor(this.spritesY[index]), this.spritesZoom[index], this.objects[this.currentIndices[index]], gD);
-      } else {
-        drawCanvasSmallImage(Math.floor(this.spritesX[index]), Math.floor(this.spritesY[index]), this.spritesZoom[index], this.objects[this.currentIndices[index]] + "_G", gD);
-        drawCanvasSmallImage(
-          this.x + Math.floor(this.width / 2 - qmSpriteData.spriteWidth / 2), 
-          this.spritesY[index] + Math.floor((this.spriteData[index].spriteHeight - qmSpriteData.spriteHeight) / 2), 
-          this.spritesZoom[index], "Item_Questionmark", gD
-        );
-      }
-    }, this);
-    if (this.direction !== 0) {
-      if (this.data[this.objects[this.newIndex]][0]) {
-        drawCanvasSmallImage(this.newX, this.newY, this.newZoom, this.objects[this.newIndex], gD);
-      } else {
-        drawCanvasSmallImage(this.newX, this.newY, this.newZoom, this.objects[this.newIndex] + "_G", gD);
-        drawCanvasSmallImage(
-          this.x + Math.floor(this.width / 2 - qmSpriteData.spriteWidth / 2), 
-          this.newY + Math.floor((this.newSprite.spriteHeight - qmSpriteData.spriteHeight) / 2), 
-          this.newZoom, "Item_Questionmark", gD
-        );
-      }
-    }
+    drawCanvasSmallImage(this.x + (this.width - image2.spriteWidth) / 2, this.y - this.height / 4 + (this.height - image2.spriteHeight) / 2, 0.6, this.objects[this.currentIndex], gD);
+    drawCanvasImage(this.x + (this.width - image2.spriteWidth) / 2, this.y + (this.height - image2.spriteHeight) / 2, this.objects[this.currentIndex], gD);
+    drawCanvasSmallImage(this.x + (this.width - image2.spriteWidth) / 2, this.y + this.height / 4 + (this.height - image2.spriteHeight) / 2, 0.6, this.objects[this.currentIndex], gD);
     drawCanvasPolygon(
       this.x + this.width / 2, this.y + this.height, design.rectKey.arrow, gD, this.x + this.width, this.y + this.height - 10,
       this.x + this.width, this.y + this.height - 20, this.x + this.width / 2, this.y + this.height - 10, this.x, this.y + this.height - 20, this.x, this.y + this.height - 10
-    );
-    drawCanvasPolygon(
-      centerBottomX, centerBottomY + this.arrowSelHeight[1] / 2, design.rectKey.selected, gD, 
-      centerBottomX - this.arrowSelWidth[1] / 2,
-        centerBottomY + this.arrowSelHeight[1] / 2 - 10 * (this.arrowSelWidth[1] / this.width),
-      centerBottomX - Math.min(this.arrowSelHeight[1] / 2 + this.arrowSelWidth[1] / 2, this.width / 2), centerBottomY,
-      centerBottomX - Math.min(this.arrowSelHeight[1] / 2 + this.arrowSelWidth[1] / 2, this.width / 2),
-        centerBottomY - Math.max((this.arrowSelHeight[1] / 2 + this.arrowSelWidth[1] / 2) - this.width / 2, 0),
-      centerBottomX - this.arrowSelWidth[1] / 2 - this.arrowSelHeight[1] / 2 + 10 * ((this.arrowSelWidth[1] + this.arrowSelHeight[1]) / (this.width + this.arrowSelHeight[1])),
-        centerBottomY - 10 * ((this.arrowSelWidth[1] + this.arrowSelHeight[1]) / (this.width + this.arrowSelHeight[1])),
-      centerBottomX, centerBottomY,
-      centerBottomX + this.arrowSelWidth[1] / 2 + this.arrowSelHeight[1] / 2 - 10 * ((this.arrowSelWidth[1] + this.arrowSelHeight[1]) / (this.width + this.arrowSelHeight[1])),
-        centerBottomY - 10 * ((this.arrowSelWidth[1] + this.arrowSelHeight[1]) / (this.width + this.arrowSelHeight[1])),
-      centerBottomX + Math.min(this.arrowSelHeight[1] / 2 + this.arrowSelWidth[1] / 2, this.width / 2),
-        centerBottomY - Math.max((this.arrowSelHeight[1] / 2 + this.arrowSelWidth[1] / 2) - this.width / 2, 0),
-      centerBottomX + Math.min(this.arrowSelHeight[1] / 2 + this.arrowSelWidth[1] / 2, this.width / 2), centerBottomY,
-      centerBottomX + this.arrowSelWidth[1] / 2, 
-        centerBottomY + this.arrowSelHeight[1] / 2 - 10 * (this.arrowSelWidth[1] / this.width)
     );
     drawCanvasPolygonBorder(
       this.x + this.width / 2, this.y + this.height, design.borderKey.arrow, gD, this.x + this.width, this.y + this.height - 10,
@@ -463,3 +90,295 @@ function ObjectSelection(x, y, width, height, objects, data, styleKey) {
     );
   };
 }
+
+/*function SelectionScreen(gD, menu) {
+  this.gD = gD;
+  this.menu = menu;
+  this.backgroundImage = new Image();
+  this.backgroundImage.src = "img/Titlescreen.png";
+  this.visible = false;
+  this.page = 1;
+  this.init = function() {
+    this.title = new CanvasText(this.gD.canvas.width / 2, 30, "Select Your Character", "normal");
+    this.modal = new SelectionScreenModal(0, 0, this.gD.canvas.width, this.gD.canvas.height, "rgba(0, 0, 0, .5)");
+    this.modal.player.push(new SelectionScreenImage(this.gD.canvas.width / 2 - 135, this.gD.canvas.height - 45, 30, 30, "Player1", 1, [], ["Doppel Sprung"], 2));
+    this.modal.player.push(new SelectionScreenImage(this.gD.canvas.width / 2 - 95, this.gD.canvas.height - 45, 30, 30, "Player2", 2, ["Freischaltbar im Shop"], ["Doppel Sprung", "1.5x höhere Sprungkraft"], 2));
+    this.modal.player.push(new SelectionScreenImage(this.gD.canvas.width / 2 - 55, this.gD.canvas.height - 45, 30, 30, "Player3", 3, ["Freischaltbar im Shop"], ["Doppel Sprung", "2x schnellere Bewegung"], 2));
+    this.modal.player.push(new SelectionScreenImage(this.gD.canvas.width / 2 - 15, this.gD.canvas.height - 45, 30, 30, "Player4", 4, ["Freischaltbar im Shop"], ["Dreifach Sprung"], 2));
+    this.modal.player.push(new SelectionScreenImage(this.gD.canvas.width / 2 + 25, this.gD.canvas.height - 45, 30, 30, "Player5", 5, ["Freischaltbar durch Achievement 'Ein neuer PC'"], ["Doppel Sprung", "1.5x schnellere Bewegung", "1.2x höhere Sprungkraft"], 2));
+    this.modal.player.push(new SelectionScreenImage(this.gD.canvas.width / 2 + 65, this.gD.canvas.height - 45, 30, 30, "Player6", 6, ["Freischaltbar durch Achievement 'Ausdauerprofi'"], ["Dreifach Sprung", "1.2x höhere Sprungkraft"], 2));
+    this.modal.player.push(new SelectionScreenImage(this.gD.canvas.width / 2 + 105, this.gD.canvas.height - 45, 30, 30, "Player7", 7, ["Freischaltbar durch Achievement 'Achievementhunter'"], ["Startet mit 10 von jedem Item", "Dreifach Sprung", "1.5x schnellere Bewegung", "1.2x höhere Sprungkraft"], 2));
+
+    this.modal.stages.push(new SelectionScreenImage(this.gD.canvas.width / 2 - 205, this.gD.canvas.height - 45, 60, 30, "Stage0", 0, [], ["Standard", "Schwierigkeit: leicht"], 2));
+    this.modal.stages.push(new SelectionScreenImage(this.gD.canvas.width / 2 - 135, this.gD.canvas.height - 45, 60, 30, "Stage1", 1, ["Freischaltbar durch 1000m in 'Standard'-Stage"], ["Festung", "Schwierigkeit: mittel"], 2));
+    this.modal.stages.push(new SelectionScreenImage(this.gD.canvas.width / 2 - 65, this.gD.canvas.height - 45, 60, 30, "Stage2", 2, ["Freischaltbar durch 1300m in 'Festung'-Stage"], ["Luft", "Schwierigkeit: mittel"], 2));
+    this.modal.stages.push(new SelectionScreenImage(this.gD.canvas.width / 2 + 5, this.gD.canvas.height - 45, 60, 30, "Stage3", 3, ["Freischaltbar durch 1600m in 'Luft'-Stage"], ["Wasser", "Schwierigkeit: schwer"], 2));
+    this.modal.stages.push(new SelectionScreenImage(this.gD.canvas.width / 2 + 75, this.gD.canvas.height - 45, 60, 30, "Stage4", 4, ["Freischaltbar durch 1900m in 'Wasser'-Stage"], ["Wald", "Schwierigkeit: mittel"], 2));
+    this.modal.stages.push(new SelectionScreenImage(this.gD.canvas.width / 2 + 145, this.gD.canvas.height - 45, 60, 30, "Stage5", 5, ["Freischaltbar durch 2200m in 'Wald'-Stage"], ["All", "Schwierigkeit: schwer"], 2));
+
+    this.modal.init();
+  };
+  this.clear = function() {
+    this.gD.context.clearRect(0, 0, this.gD.canvas.width, this.gD.canvas.height);
+  };
+  this.show = function() {
+    this.visible = true;
+    this.page = 1;
+    drawSelectionScreen(this);
+  };
+  this.stop = function() {
+    this.visible = false;
+  };
+}
+
+function SelectionScreenModal(x, y, width, height, color) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.color = color;
+  this.player = [];
+  this.stages = [];
+  this.playerSelected = 0;
+  this.stageSelected = 0;
+  this.showcase = new SelectionScreenShowcase(this.width / 2 - 60, this.height / 2 - 30, 120, 60);
+  this.init = function() {
+    if (this.player.length > 0) {
+      this.player[this.playerSelected].select();
+    }
+    if (this.stages.length > 0) {
+      this.stages[this.stageSelected].select();
+    }
+  };
+  this.draw = function(selectionScreen, gD) {
+    gD.context.fillStyle = this.color;
+    gD.context.fillRect(this.x, this.y, this.width, this.height);
+
+    switch (selectionScreen.page) {
+      case 1:
+        this.showcase.imageName = this.player[this.playerSelected].name + "B";
+        this.showcase.imageNr = this.player[this.playerSelected].nr;
+        this.showcase.descOver = this.player[this.playerSelected].descOver;
+        this.showcase.descBelow = this.player[this.playerSelected].descBelow;
+        break;
+      case 2:
+        this.showcase.imageName = this.stages[this.stageSelected].name + "B";
+        this.showcase.imageNr = this.stages[this.stageSelected].nr;
+        this.showcase.descOver = this.stages[this.stageSelected].descOver;
+        this.showcase.descBelow = this.stages[this.stageSelected].descBelow;
+        break;
+      default:
+    }
+
+    this.showcase.draw(selectionScreen, gD);
+    if (selectionScreen.page == 1) {
+      for (var i = 0; i < this.player.length; i++) {
+        this.player[i].draw(gD);
+      }
+    } else if (selectionScreen.page == 2) {
+      for (var i = 0; i < this.stages.length; i++) {
+        this.stages[i].draw(gD);
+      }
+    }
+  };
+}
+
+function SelectionScreenImage(x, y, width, height, name, nr, descOver, descBelow, bordersize) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.name = name;
+  this.nr = nr;
+  this.descOver = descOver;
+  this.descBelow = descBelow;
+  this.bordersize = bordersize;
+  this.selected = false;
+  this.select = function() {
+    this.selected = true;
+  };
+  this.deselect = function() {
+    this.selected = false;
+  };
+  this.draw = function(gD) {
+    if (this.selected) {
+      gD.context.strokeStyle = "rgba(180, 50, 50, 1)";
+      gD.context.lineWidth = this.bordersize;
+      gD.context.strokeRect(this.x, this.y, this.width, this.height);
+    }
+    gD.context.drawImage(gD.spritesheet, gD.spriteDict[this.name][0], gD.spriteDict[this.name][1], gD.spriteDict[this.name][2], gD.spriteDict[this.name][3],
+      this.x + Math.floor((this.width - gD.spriteDict[this.name][2]) / 2), this.y + Math.floor((this.height - gD.spriteDict[this.name][3]) / 2), gD.spriteDict[this.name][2], gD.spriteDict[this.name][3]);
+  };
+}
+
+function SelectionScreenShowcase(x, y, width, height) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.imageName = "";
+  this.imageNr = 1;         //is the number, that is inside the imageName
+  this.descOver = [""];
+  this.descBelow = [""];
+  this.draw = function(selectionScreen, gD) {
+    gD.context.drawImage(gD.spritesheet, gD.spriteDict[this.imageName][0], gD.spriteDict[this.imageName][1], gD.spriteDict[this.imageName][2], gD.spriteDict[this.imageName][3],
+      this.x + ((this.width - gD.spriteDict[this.imageName][2]) / 2), this.y + ((this.height - gD.spriteDict[this.imageName][3]) / 2), gD.spriteDict[this.imageName][2], gD.spriteDict[this.imageName][3]);
+    gD.context.textAlign = "center";
+    gD.context.textBaseline = "middle";
+    gD.context.font = "13pt Consolas";
+    gD.context.fillStyle = "rgba(255, 255, 255, 1)";
+    for (var i = 0; i < this.descOver.length; i++) {
+      gD.context.fillText(this.descOver[i], this.x + (this.width / 2), this.y - 40 + (i * 20));
+    }
+    for (var i = 0; i < this.descBelow.length; i++) {
+      gD.context.fillText(this.descBelow[i], this.x + (this.width / 2), this.y + this.height + ((i + 1) * 20));
+    }
+
+    if (
+      (selectionScreen.page == 1 && this.imageNr > 1 && !gD.playerUnlocked[this.imageNr - 2])
+      ||
+      (selectionScreen.page == 2 && this.imageNr > 0 && !gD.stagesUnlocked[this.imageNr - 1])
+    ) {
+      gD.context.translate(this.x + (this.width / 2), this.y + (this.height / 2));
+      gD.context.rotate(-20 * Math.PI / 180);
+      gD.context.textAlign = "center";
+      gD.context.textBaseline = "middle";
+      gD.context.font = "20pt Stencil";
+      gD.context.fillStyle = "rgba(255, 0, 0, 1)";
+      gD.context.fillText("Gesperrt!", 0, 0);
+      gD.context.strokeStyle = "rgba(0, 0, 0, 1)";
+      gD.context.lineWidth = 1;
+      gD.context.strokeText("Gesperrt!", 0, 0);
+      gD.context.rotate(20 * Math.PI / 180);
+      gD.context.translate(-(this.x + (this.width / 2)), -(this.y + (this.height / 2)));
+    }
+  };
+}
+
+function selectionScreenControlDown(selectionScreen, key) {
+  if (selectionScreen.page == 1) {
+    if (selectionScreen.menu.controls.keyBindings["SelectionScreen1"][2].includes(key)) {
+      selectionScreen.modal.player[selectionScreen.modal.playerSelected].deselect();
+      selectionScreen.modal.player[(selectionScreen.modal.playerSelected + 1) % selectionScreen.modal.player.length].select();
+      selectionScreen.modal.playerSelected = (selectionScreen.modal.playerSelected + 1) % selectionScreen.modal.player.length;
+    } else if (selectionScreen.menu.controls.keyBindings["SelectionScreen2"][2].includes(key)) {
+      selectionScreen.modal.player[selectionScreen.modal.playerSelected].deselect();
+      selectionScreen.modal.player[(selectionScreen.modal.playerSelected + selectionScreen.modal.player.length - 1) % selectionScreen.modal.player.length].select();
+      selectionScreen.modal.playerSelected = (selectionScreen.modal.playerSelected + selectionScreen.modal.player.length - 1) % selectionScreen.modal.player.length;
+    }
+
+    if (selectionScreen.menu.controls.keyBindings["SelectionScreen3"][2].includes(key)) {
+      if (selectionScreen.modal.playerSelected == 0) {
+        selectionScreen.page++;
+      } else if (selectionScreen.gD.playerUnlocked[selectionScreen.modal.playerSelected - 1]) {
+        selectionScreen.page++;
+      }
+      drawSelectionScreen(selectionScreen);
+    } else if (selectionScreen.menu.controls.keyBindings["SelectionScreen4"][2].includes(key)) {
+      selectionScreen.menu.show();
+      selectionScreen.stop();
+    } else {
+      drawSelectionScreen(selectionScreen);
+    }
+  } else if (selectionScreen.page == 2) {
+    if (selectionScreen.menu.controls.keyBindings["SelectionScreen1"][2].includes(key)) {
+      selectionScreen.modal.stages[selectionScreen.modal.stageSelected].deselect();
+      selectionScreen.modal.stages[(selectionScreen.modal.stageSelected + 1) % selectionScreen.modal.stages.length].select();
+      selectionScreen.modal.stageSelected = (selectionScreen.modal.stageSelected + 1) % selectionScreen.modal.stages.length;
+    } else if (selectionScreen.menu.controls.keyBindings["SelectionScreen2"][2].includes(key)) {
+      selectionScreen.modal.stages[selectionScreen.modal.stageSelected].deselect();
+      selectionScreen.modal.stages[(selectionScreen.modal.stageSelected + selectionScreen.modal.stages.length - 1) % selectionScreen.modal.stages.length].select();
+      selectionScreen.modal.stageSelected = (selectionScreen.modal.stageSelected + selectionScreen.modal.stages.length - 1) % selectionScreen.modal.stages.length;
+    }
+
+    if (selectionScreen.menu.controls.keyBindings["SelectionScreen3"][2].includes(key)) {
+      if (selectionScreen.modal.stageSelected == 0) {
+        selectionScreen.menu.game.player.setPlayer(selectionScreen.modal.playerSelected + 1, selectionScreen.menu.game, selectionScreen.gD);
+        selectionScreen.menu.game.setStage(selectionScreen.modal.stageSelected);
+        selectionScreen.menu.game.show();
+        selectionScreen.stop();
+      } else if (selectionScreen.gD.stagesUnlocked[selectionScreen.modal.stageSelected - 1]) {
+        selectionScreen.menu.game.player.setPlayer(selectionScreen.modal.playerSelected + 1, selectionScreen.menu.game, selectionScreen.gD);
+        selectionScreen.menu.game.setStage(selectionScreen.modal.stageSelected);
+        selectionScreen.menu.game.show();
+        selectionScreen.stop();
+      }
+    } else if (selectionScreen.menu.controls.keyBindings["SelectionScreen4"][2].includes(key)) {
+      selectionScreen.menu.show();
+      selectionScreen.stop();
+    } else {
+      drawSelectionScreen(selectionScreen);
+    }
+  }
+}
+
+function selectionScreenControlUp(selectionScreen, key) {
+
+}
+
+function selectionScreenMouseMove(selectionScreen) {
+  if (selectionScreen.page == 1) {
+    for (var i = 0; i < selectionScreen.modal.player.length; i++) {
+      if (selectionScreen.gD.mousePos.x >= selectionScreen.modal.player[i].x && selectionScreen.gD.mousePos.x <= selectionScreen.modal.player[i].x + selectionScreen.modal.player[i].width &&
+          selectionScreen.gD.mousePos.y >= selectionScreen.modal.player[i].y && selectionScreen.gD.mousePos.y <= selectionScreen.modal.player[i].y + selectionScreen.modal.player[i].height) {
+        selectionScreen.modal.player[selectionScreen.modal.playerSelected].deselect();
+        selectionScreen.modal.player[i].select();
+        selectionScreen.modal.playerSelected = i;
+        break;
+      }
+    }
+  } else if (selectionScreen.page == 2) {
+    for (var i = 0; i < selectionScreen.modal.stages.length; i++) {
+      if (selectionScreen.gD.mousePos.x >= selectionScreen.modal.stages[i].x && selectionScreen.gD.mousePos.x <= selectionScreen.modal.stages[i].x + selectionScreen.modal.stages[i].width &&
+          selectionScreen.gD.mousePos.y >= selectionScreen.modal.stages[i].y && selectionScreen.gD.mousePos.y <= selectionScreen.modal.stages[i].y + selectionScreen.modal.stages[i].height) {
+        selectionScreen.modal.stages[selectionScreen.modal.stageSelected].deselect();
+        selectionScreen.modal.stages[i].select();
+        selectionScreen.modal.stageSelected = i;
+        break;
+      }
+    }
+  }
+  drawSelectionScreen(selectionScreen);
+}
+
+function selectionScreenClick(selectionScreen) {
+  if (selectionScreen.page == 1) {
+    if (selectionScreen.gD.mousePos.x >= selectionScreen.modal.player[selectionScreen.modal.playerSelected].x && selectionScreen.gD.mousePos.x <= selectionScreen.modal.player[selectionScreen.modal.playerSelected].x + selectionScreen.modal.player[selectionScreen.modal.playerSelected].width &&
+        selectionScreen.gD.mousePos.y >= selectionScreen.modal.player[selectionScreen.modal.playerSelected].y && selectionScreen.gD.mousePos.y <= selectionScreen.modal.player[selectionScreen.modal.playerSelected].y + selectionScreen.modal.player[selectionScreen.modal.playerSelected].height) {
+      if (selectionScreen.modal.playerSelected == 0) {
+        selectionScreen.page++;
+      } else if (selectionScreen.gD.playerUnlocked[selectionScreen.modal.playerSelected - 1]) {
+        selectionScreen.page++;
+      }
+    }
+    drawSelectionScreen(selectionScreen);
+  } else if (selectionScreen.page == 2) {
+    if (selectionScreen.gD.mousePos.x >= selectionScreen.modal.stages[selectionScreen.modal.stageSelected].x && selectionScreen.gD.mousePos.x <= selectionScreen.modal.stages[selectionScreen.modal.stageSelected].x + selectionScreen.modal.stages[selectionScreen.modal.stageSelected].width &&
+        selectionScreen.gD.mousePos.y >= selectionScreen.modal.stages[selectionScreen.modal.stageSelected].y && selectionScreen.gD.mousePos.y <= selectionScreen.modal.stages[selectionScreen.modal.stageSelected].y + selectionScreen.modal.stages[selectionScreen.modal.stageSelected].height) {
+      if (selectionScreen.modal.stageSelected == 0) {
+        selectionScreen.menu.game.player.setPlayer(selectionScreen.modal.playerSelected + 1, selectionScreen.menu.game, selectionScreen.gD);
+        selectionScreen.menu.game.setStage(selectionScreen.modal.stageSelected);
+        selectionScreen.menu.game.show();
+        selectionScreen.stop();
+      } else if (selectionScreen.gD.stagesUnlocked[selectionScreen.modal.stageSelected - 1]) {
+        selectionScreen.menu.game.player.setPlayer(selectionScreen.modal.playerSelected + 1, selectionScreen.menu.game, selectionScreen.gD);
+        selectionScreen.menu.game.setStage(selectionScreen.modal.stageSelected);
+        selectionScreen.menu.game.show();
+        selectionScreen.stop();
+      }
+    }
+  }
+}
+
+function selectionScreenWheel(selectionScreen, event) {
+
+}
+
+function drawSelectionScreen(selectionScreen) {
+  selectionScreen.clear();
+
+  selectionScreen.gD.context.drawImage(selectionScreen.backgroundImage, 0, 0);
+  selectionScreen.modal.draw(selectionScreen, selectionScreen.gD);
+
+  selectionScreen.title.draw(selectionScreen.gD);
+}*/
