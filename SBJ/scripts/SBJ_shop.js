@@ -41,40 +41,40 @@
       "Extra life":             new SkillData("Extra life", true, 1, 100, 1000000, 0, 0, ["Deaths"], 1000)
     };
     this.accessories = new Map([
-      ["test", new ShopAccessory("test", "beard", "Collectables_Beard1", 0, 0)],
-      ["test1", new ShopAccessory("test01", "beard", "Collectables_Beard1", 0, 0)],
-      ["test2", new ShopAccessory("test02", "hat", "Collectables_Hat1", 0, 0)],
-      ["test3", new ShopAccessory("test03", "glasses", "Collectables_Glasses1", 0, 0)],
-      ["test4", new ShopAccessory("test04", "beard", "Collectables_Beard1", 0, 0)],
-      ["test5", new ShopAccessory("test05", "glasses", "Collectables_Glasses1", 0, 0)],
-      ["test6", new ShopAccessory("test06", "hat", "Collectables_Hat1", 0, 0)],
-      ["test7", new ShopAccessory("test07", "beard", "Collectables_Beard1", 0, 0)],
-      ["test8", new ShopAccessory("test08", "beard", "Collectables_Beard1", 0, 0)],
-      ["test9", new ShopAccessory("test09", "glasses", "Collectables_Glasses1", 0, 0)],
-      ["test10", new ShopAccessory("test10", "beard", "Collectables_Beard1", 0, 0)],
-      ["test11", new ShopAccessory("test11", "hat", "Collectables_Hat1", 0, 0)],
-      ["test12", new ShopAccessory("test12", "beard", "Collectables_Beard1", 0, 0)],
-      ["test13", new ShopAccessory("test13", "glasses", "Collectables_Glasses1", 0, 0)],
-      ["test14", new ShopAccessory("test14", "beard", "Collectables_Beard1", 0, 0)],
-      ["test15", new ShopAccessory("test15", "hat", "Collectables_Hat1", 0, 0)],
-      ["test16", new ShopAccessory("test16", "beard", "Collectables_Beard1", 0, 0)],
-      ["test17", new ShopAccessory("test17", "glasses", "Collectables_Glasses1", 0, 0)],
-      ["test18", new ShopAccessory("test18", "glasses", "Collectables_Glasses1", 0, 0)],
-      ["test19", new ShopAccessory("test19", "beard", "Collectables_Beard1", 0, 0)],
-      ["test20", new ShopAccessory("test20", "hat", "Collectables_Hat1", 0, 0)],
-      ["test21", new ShopAccessory("test21", "beard", "Collectables_Beard1", 0, 0)],
-      ["test22", new ShopAccessory("test22", "glasses", "Collectables_Glasses1", 0, 0)],
-      ["test23", new ShopAccessory("test23", "hat", "Collectables_Hat1", 0, 0)],
-      ["test24", new ShopAccessory("test24", "beard", "Collectables_Beard1", 0, 0)],
-      ["test25", new ShopAccessory("test25", "glasses", "Collectables_Glasses1", 0, 0)],
-      ["test26", new ShopAccessory("test26", "hat", "Collectables_Hat1", 0, 0)],
-      ["test27", new ShopAccessory("test27", "beard", "Collectables_Beard1", 0, 0)],
-      ["test28", new ShopAccessory("test28", "beard", "Collectables_Beard1", 0, 0)],
-      ["test29", new ShopAccessory("test29", "hat", "Collectables_Hat1", 0, 0)],
-      ["test30", new ShopAccessory("test30", "glasses", "Collectables_Glasses1", 0, 0)],
-      ["test31", new ShopAccessory("test31", "hat", "Collectables_Hat1", 0, 0)],
-      ["test32", new ShopAccessory("test32", "hat", "Collectables_Hat1", 0, 0)],
-      ["test33", new ShopAccessory("test33", "hat", "Collectables_Hat1", 0, 0)]
+      ["test", new ShopAccessory("test", "Beard", "Collectables_Beard1", 0, 0)],
+      ["test1", new ShopAccessory("test01", "Beard", "Collectables_Beard1", 0, 0)],
+      ["test2", new ShopAccessory("test02", "Hat", "Collectables_Hat1", 0, 0)],
+      ["test3", new ShopAccessory("test03", "Glasses", "Collectables_Glasses1", 0, 0)],
+      ["test4", new ShopAccessory("test04", "Beard", "Collectables_Beard1", 0, 0)],
+      ["test5", new ShopAccessory("test05", "Glasses", "Collectables_Glasses1", 0, 0)],
+      ["test6", new ShopAccessory("test06", "Hat", "Collectables_Hat1", 0, 0)],
+      ["test7", new ShopAccessory("test07", "Beard", "Collectables_Beard1", 0, 0)],
+      ["test8", new ShopAccessory("test08", "Beard", "Collectables_Beard1", 0, 0)],
+      ["test9", new ShopAccessory("test09", "Glasses", "Collectables_Glasses1", 0, 0)],
+      ["test10", new ShopAccessory("test10", "Beard", "Collectables_Beard1", 0, 0)],
+      ["test11", new ShopAccessory("test11", "Hat", "Collectables_Hat1", 0, 0)],
+      ["test12", new ShopAccessory("test12", "Beard", "Collectables_Beard1", 0, 0)],
+      ["test13", new ShopAccessory("test13", "Glasses", "Collectables_Glasses1", 0, 0)],
+      ["test14", new ShopAccessory("test14", "Beard", "Collectables_Beard1", 0, 0)],
+      ["test15", new ShopAccessory("test15", "Hat", "Collectables_Hat1", 0, 0)],
+      ["test16", new ShopAccessory("test16", "Beard", "Collectables_Beard1", 0, 0)],
+      ["test17", new ShopAccessory("test17", "Glasses", "Collectables_Glasses1", 0, 0)],
+      ["test18", new ShopAccessory("test18", "Glasses", "Collectables_Glasses1", 0, 0)],
+      ["test19", new ShopAccessory("test19", "Beard", "Collectables_Beard1", 0, 0)],
+      ["test20", new ShopAccessory("test20", "Hat", "Collectables_Hat1", 0, 0)],
+      ["test21", new ShopAccessory("test21", "Beard", "Collectables_Beard1", 0, 0)],
+      ["test22", new ShopAccessory("test22", "Glasses", "Collectables_Glasses1", 0, 0)],
+      ["test23", new ShopAccessory("test23", "Hat", "Collectables_Hat1", 0, 0)],
+      ["test24", new ShopAccessory("test24", "Beard", "Collectables_Beard1", 0, 0)],
+      ["test25", new ShopAccessory("test25", "Glasses", "Collectables_Glasses1", 0, 0)],
+      ["test26", new ShopAccessory("test26", "Hat", "Collectables_Hat1", 0, 0)],
+      ["test27", new ShopAccessory("test27", "Beard", "Collectables_Beard1", 0, 0)],
+      ["test28", new ShopAccessory("test28", "Beard", "Collectables_Beard1", 0, 0)],
+      ["test29", new ShopAccessory("test29", "Hat", "Collectables_Hat1", 0, 0)],
+      ["test30", new ShopAccessory("test30", "Glasses", "Collectables_Glasses1", 0, 0)],
+      ["test31", new ShopAccessory("test31", "Hat", "Collectables_Hat1", 0, 0)],
+      ["test32", new ShopAccessory("test32", "Hat", "Collectables_Hat1", 0, 0)],
+      ["test33", new ShopAccessory("test33", "Hat", "Collectables_Hat1", 0, 0)]
     ]);
 
     this.checkUnlocks();
@@ -94,6 +94,12 @@
     this.skillTree.init(this);
     this.tabs[0].objects.push(this.skillTree);
 
+    this.resetButton = new CanvasButton(this.gD.canvas.width / 2 + 177, 70, 120, 16, "Reset", "shop");
+    this.tabs[1].objects.push(this.resetButton);
+
+    this.accessoryWindow = new ShopAccessoryWindow(this.gD.canvas.width / 2 - 245, 70, 545, 200, "accessoryWindow");
+    this.tabs[1].objects.push(this.accessoryWindow);
+
     this.dropdowns = [
       new ShopDropdownMenu(
         this.gD.canvas.width / 2 - 243, 70, 200, 16, [
@@ -102,25 +108,18 @@
         ], "shopDropdown"
       ),
       new ShopDropdownMenu(
-        this.gD.canvas.width / 2 - 33, 70, 200, 16, ["Hats", "Glasses", "Beards"], "shopDropdown"
+        this.gD.canvas.width / 2 - 33, 70, 200, 16, ["Hat", "Glasses", "Beard"], "shopDropdown", true
       )
     ];
     this.tabs[1].objects.push(this.dropdowns[0]);
     this.tabs[1].objects.push(this.dropdowns[1]);
-
-    this.resetButton = new CanvasButton(this.gD.canvas.width / 2 + 177, 70, 120, 16, "Reset", "shop");
-    this.tabs[1].objects.push(this.resetButton);
-
-    this.accessoryWindow = new ShopAccessoryWindow(this.gD.canvas.width / 2 - 245, 70, 545, 200, "accessoryWindow");
-    this.accessoryWindow.init();
-    this.tabs[1].objects.push(this.accessoryWindow);
     
     this.scrollbar = new CanvasScrollBar(
       this.gD.canvas.width / 2 + 305, 95, 175, 25, Math.ceil(this.accessories.length / 11) * 3, "scrollBarBlack"
     );
     this.tabs[1].objects.push(this.scrollbar);
 
-    this.accessoryWindow.setAccessories(this, []);
+    this.accessoryWindow.setAccessories(this, this.dropdowns[1].currentOption);
 
     this.backToMenu = new CanvasButton(
       this.gD.canvas.width / 2 - 100, this.gD.canvas.height - 50, 200, 30, "Main Menu", "menu"
@@ -224,10 +223,37 @@
       } else {
         this.resetButton.deselect();
       }
+
+      let dropdownOpen = false;
+
+      this.dropdowns.map((dropdown, index) => {
+        if (this.gD.mousePos.x >= dropdown.x && this.gD.mousePos.x <= dropdown.x + 20 &&
+            this.gD.mousePos.y >= dropdown.y && this.gD.mousePos.y <= dropdown.y + dropdown.height) {
+          dropdown.select();
+        } else {
+          dropdown.deselect();
+        }
+        if (dropdown.opened) {
+          dropdown.options.map((option, indexOption) => {
+            if (this.gD.mousePos.x >= dropdown.x && this.gD.mousePos.x < dropdown.x + dropdown.width &&
+              this.gD.mousePos.y >= dropdown.y + (indexOption + 1) * dropdown.height && this.gD.mousePos.y < dropdown.y + (indexOption + 2) * dropdown.height) {
+              dropdown.select(indexOption + 1);
+            } else {
+              dropdown.deselect(indexOption + 1);
+            }
+          }, this);
+          dropdownOpen = true;
+        }
+      }, this);
+
+      if (!dropdownOpen) {
+
+      }
     }
   };
   this.updateClick = function() {
     let clickPos = this.gD.clicks.pop();
+    let dropdownOpen = false;
 
     if (!clickPos) {
       return;
@@ -244,6 +270,39 @@
     if (clickPos.x >= this.backToMenu.x && clickPos.x <= this.backToMenu.x + this.backToMenu.width &&
         clickPos.y >= this.backToMenu.y && clickPos.y <= this.backToMenu.y + this.backToMenu.height) {
       this.gD.currentPage = this.menu;
+    }
+
+    if (this.tabs[1].selected) {
+      this.dropdowns.map((dropdown, index) => {
+        if (clickPos.x >= dropdown.x && clickPos.x <= dropdown.x + 20 &&
+            clickPos.y >= dropdown.y && clickPos.y <= dropdown.y + dropdown.height) {
+          if (dropdown.opened) {
+            dropdown.close();
+          } else {
+            dropdown.open();
+          }
+        }
+        if (dropdown.opened) {
+          dropdown.options.map((option, indexOption) => {
+            if (clickPos.x >= dropdown.x && clickPos.x < dropdown.x + dropdown.width &&
+                clickPos.y >= dropdown.y + (indexOption + 1) * dropdown.height && clickPos.y < dropdown.y + (indexOption + 2) * dropdown.height) {
+              dropdown.setOption(option);
+              switch (index) {
+                case 0:
+                  this.accessoryWindow.sortAccessories(option);
+                  dropdown.close();
+                  break;
+                case 1:
+                  this.accessoryWindow.setAccessories(this, dropdown.currentOption);
+                  this.vScroll(0);
+                  break;
+                default:
+              }
+            }
+          }, this);
+          dropdownOpen = true;
+        }
+      }, this);
     }
   };
   this.updateWheelMoves = function() {
@@ -752,24 +811,19 @@ function ShopAccessoryWindow(x, y, width, height, styleKey) {
   this.height = height;
   this.styleKey = styleKey;
   this.accessories = [];
-  this.init = function() {
-
-  };
   this.setAccessories = function(shop, categories) {
     this.accessories = [];
 
     for (let accessory of shop.accessories.values()) {
-      if (categories.toString() === "") {
-        this.accessories.push(accessory);
-      } else if (categories.includes(accessory.category)) {
+      if (categories.includes(accessory.category)) {
         this.accessories.push(accessory);
       }
     }
     shop.scrollbar.refresh(Math.ceil(this.accessories.length / 11) * 3);
-    this.sortAccessories("categories");
+    this.sortAccessories(shop.dropdowns[0].currentOption);
   };
   this.sortAccessories = function(sortType) {
-    if (sortType === "categories") {
+    if (sortType === "Category") {
       for (let i = 0; i < this.accessories.length; i++) {
         let temp = copy(this.accessories[0]);
         for (let j = 1; j < this.accessories.length - i; j++) {
@@ -781,7 +835,7 @@ function ShopAccessoryWindow(x, y, width, height, styleKey) {
           }
         }
       }
-    } else if (sortType === "categories_rev") {
+    } else if (sortType === "Category reverse") {
       for (let i = 0; i < this.accessories.length; i++) {
         let temp = copy(this.accessories[0]);
         for (let j = 1; j < this.accessories.length - i; j++) {
@@ -793,7 +847,7 @@ function ShopAccessoryWindow(x, y, width, height, styleKey) {
           }
         }
       }
-    } else if (sortType === "alphabetic") {
+    } else if (sortType === "Alphabetic") {
       for (let i = 0; i < this.accessories.length; i++) {
         let temp = copy(this.accessories[0]);
         for (let j = 1; j < this.accessories.length - i; j++) {
@@ -805,7 +859,7 @@ function ShopAccessoryWindow(x, y, width, height, styleKey) {
           }
         }
       }
-    } else if (sortType === "alphabetic_rev") {
+    } else if (sortType === "Alphabetic reverse") {
       for (let i = 0; i < this.accessories.length; i++) {
         let temp = copy(this.accessories[0]);
         for (let j = 1; j < this.accessories.length - i; j++) {
@@ -817,7 +871,7 @@ function ShopAccessoryWindow(x, y, width, height, styleKey) {
           }
         }
       }
-    } else if (sortType === "price_hype_high") {
+    } else if (sortType === "Price Hype exp") {
       for (let i = 0; i < this.accessories.length; i++) {
         let temp = copy(this.accessories[0]);
         for (let j = 1; j < this.accessories.length - i; j++) {
@@ -829,7 +883,7 @@ function ShopAccessoryWindow(x, y, width, height, styleKey) {
           }
         }
       }
-    } else if (sortType === "price_hype_low") {
+    } else if (sortType === "Price Hype cheap") {
       for (let i = 0; i < this.accessories.length; i++) {
         let temp = copy(this.accessories[0]);
         for (let j = 1; j < this.accessories.length - i; j++) {
@@ -841,7 +895,7 @@ function ShopAccessoryWindow(x, y, width, height, styleKey) {
           }
         }
       }
-    } else if (sortType === "price_goldenShamrock_high") {
+    } else if (sortType === "Price GS exp") {
       for (let i = 0; i < this.accessories.length; i++) {
         let temp = copy(this.accessories[0]);
         for (let j = 1; j < this.accessories.length - i; j++) {
@@ -853,7 +907,7 @@ function ShopAccessoryWindow(x, y, width, height, styleKey) {
           }
         }
       }
-    } else if (sortType === "price_goldenShamrock_low") {
+    } else if (sortType === "Price GS cheap") {
       for (let i = 0; i < this.accessories.length; i++) {
         let temp = copy(this.accessories[0]);
         for (let j = 1; j < this.accessories.length - i; j++) {
@@ -878,7 +932,7 @@ function ShopAccessoryWindow(x, y, width, height, styleKey) {
       
       drawCanvasRect(
         this.x + 2 + (index % 11) * 50, this.y + 27 + Math.floor(index / 11) * 75 - shop.scrollHeight, 40, 65,
-        design.rectKey.accessory[accessory.category], gD
+        design.rectKey.accessory[accessory.category.toLowerCase()], gD
       );
       drawCanvasRect(
         this.x + 7 + (index % 11) * 50, this.y + 32 + Math.floor(index / 11) * 75 - shop.scrollHeight, 30, 30,
@@ -911,13 +965,19 @@ function ShopDropdownMenu(x, y, width, height, options, styleKey, multipleOption
   this.options = options;
   this.styleKey = styleKey;
   this.multipleOptions = multipleOptions;
-  this.selected = false;
+  this.currentOption = multipleOptions ? options : options[0];
+  this.arrowWidth = new Array(options.length + 1).fill(0);
+  this.arrowHeight = new Array(options.length + 1).fill(0);
+  this.animationSpeeds = [6, 12, 12, 6];
+  this.optionsHeight = 0;
+  this.rotation = 0;
+  this.selected = new Array(options.length + 1).fill(false);
   this.opened = false;
-  this.select = function() {
-    this.selected = true;
+  this.select = function(index = 0) {
+    this.selected[index] = true;
   };
-  this.deselect = function() {
-    this.selected = false;
+  this.deselect = function(index = 0) {
+    this.selected[index] = false;
   };
   this.open = function() {
     this.opened = true;
@@ -925,15 +985,161 @@ function ShopDropdownMenu(x, y, width, height, options, styleKey, multipleOption
   this.close = function() {
     this.opened = false;
   };
+  this.setOption = function(option) {
+    if (this.multipleOptions) {
+      if (this.currentOption.includes(option)) {
+        this.currentOption = this.currentOption.filter(word => word !== option);
+      } else {
+        this.currentOption.push(option)
+      }
+    } else {
+      this.currentOption = option;
+    }
+  };
+  this.update = function() {
+    this.selected.map((select, index) => {
+      let width = this.width;
+      let speed = this.animationSpeeds[1];
+      if (index === 0) {
+        width = 20;
+        speed = this.animationSpeeds[0];
+      }
+      if (select) {
+        if (this.arrowHeight[index] < this.height) {
+          this.arrowHeight[index] += speed;
+          if (this.arrowHeight[index] >= this.height) {
+            this.arrowHeight[index] = this.height;
+          }
+        } else if (this.arrowHeight[index] >= this.height && this.arrowWidth[index] < width) {
+          this.arrowWidth[index] += speed;
+          if (this.arrowWidth[index] >= width) {
+            this.arrowWidth[index] = width;
+          }
+        }
+      } else {
+        if (this.arrowWidth[index] > 0) {
+          this.arrowWidth[index] -= speed;
+          if (this.arrowWidth[index] <= 0) {
+            this.arrowWidth[index] = 0;
+          }
+        } else if (this.arrowWidth[index] <= 0 && this.arrowHeight[index] > 0) {
+          this.arrowHeight[index] -= speed;
+          if (this.arrowHeight[index] <= 0) {
+            this.arrowHeight[index] = 0;
+          }
+        }
+      }
+    }, this);
+    if (this.opened) {
+      if (this.rotation < 180) {
+        this.rotation += this.animationSpeeds[2];
+        if (this.rotation > 180) {
+          this.rotation = 180;
+        }
+      }
+      if (this.optionsHeight < this.options.length * this.height) {
+        this.optionsHeight += this.animationSpeeds[3];
+        if (this.optionsHeight > this.options.length * this.height) {
+          this.optionsHeight = this.options.length * this.height;
+        }
+      }
+    } else {
+      if (this.rotation > 0) {
+        this.rotation -= this.animationSpeeds[2];
+        if (this.rotation < 0) {
+          this.rotation = 0;
+        }
+      }
+      if (this.optionsHeight > 0) {
+        this.optionsHeight -= this.animationSpeeds[3];
+        if (this.optionsHeight < 0) {
+          this.optionsHeight = 0;
+        }
+      }
+    }
+  };
   this.draw = function(gD) {
     let design = gD.design.elements[this.styleKey];
+    let centerX = this.x + 10;
+    let centerY = this.y + this.height / 2;
 
     drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.background, gD);
     drawCanvasPolygon(
-      this.x + 4, this.y + 4, design.rectKey.arrow, gD, this.x + 16, this.y + 4, this.x + 10, this.y + 12
+      centerX + this.arrowWidth[0] / 2, centerY - this.arrowHeight[0] / 2, design.rectKey.selected, gD,
+      centerX + Math.min(this.arrowWidth[0] / 2 + this.arrowHeight[0] / 2, 10),
+      centerY - Math.max((this.arrowWidth[0] / 2 + this.arrowHeight[0] / 2) - 10, 0),
+      centerX + Math.min(this.arrowWidth[0] / 2 + this.arrowHeight[0] / 2, 10),
+      centerY + Math.max((this.arrowWidth[0] / 2 + this.arrowHeight[0] / 2) - 10, 0),
+      centerX + this.arrowWidth[0] / 2, centerY + this.arrowHeight[0] / 2,
+      centerX - this.arrowWidth[0] / 2, centerY + this.arrowHeight[0] / 2,
+      centerX - Math.min(this.arrowWidth[0] / 2 + this.arrowHeight[0] / 2, 10),
+      centerY + Math.max((this.arrowWidth[0] / 2 + this.arrowHeight[0] / 2) - 10, 0),
+      centerX - Math.min(this.arrowWidth[0] / 2 + this.arrowHeight[0] / 2, 10),
+      centerY - Math.max((this.arrowWidth[0] / 2 + this.arrowHeight[0] / 2) - 10, 0),
+      centerX - this.arrowWidth[0] / 2, centerY - this.arrowHeight[0] / 2
     );
+    gD.context.translate(this.x + 10, this.y + this.height / 2);
+    gD.context.rotate(-this.rotation * Math.PI / 180);
+    drawCanvasPolygon(-6, -4, design.rectKey.arrow, gD, 6, -4, 0, 4);
+    gD.context.rotate(this.rotation * Math.PI / 180);
+    gD.context.translate(-this.x - 10, -this.y - this.height / 2);
+    if (this.multipleOptions) {
+      if (this.currentOption.toString().length > 20) {
+        drawCanvasText(
+          this.x + 23, this.y + this.height / 2, this.currentOption.toString().substring(0, 17) + "...",
+          design.textKey, gD
+        );
+      } else {
+        drawCanvasText(this.x + 23, this.y + this.height / 2, this.currentOption.toString(), design.textKey, gD);
+      }
+    } else {
+      drawCanvasText(this.x + 23, this.y + this.height / 2, this.currentOption, design.textKey, gD);
+    }
+    gD.context.save();
+    gD.context.rect(this.x, this.y + this.height, this.width, this.optionsHeight);
+    gD.context.clip();
+    this.options.map((option, index) => {
+      let optionCenterX = this.x + this.width / 2;
+      let optionCenterY = this.y + (index + 1.5) * this.height;
+
+      drawCanvasRect(this.x, this.y + (index + 1) * this.height, this.width, this.height, design.rectKey.background, gD);
+      drawCanvasPolygon(
+        optionCenterX + this.arrowWidth[index + 1] / 2, optionCenterY - this.arrowHeight[index + 1] / 2,
+        design.rectKey.selected, gD,
+        optionCenterX + Math.min(this.arrowWidth[index + 1] / 2 + this.arrowHeight[index + 1] / 2, this.width),
+        optionCenterY - Math.max((this.arrowWidth[index + 1] / 2 + this.arrowHeight[index + 1] / 2) - this.width, 0),
+        optionCenterX + Math.min(this.arrowWidth[index + 1] / 2 + this.arrowHeight[index + 1] / 2, this.width),
+        optionCenterY + Math.max((this.arrowWidth[index + 1] / 2 + this.arrowHeight[index + 1] / 2) - this.width, 0),
+        optionCenterX + this.arrowWidth[index + 1] / 2, optionCenterY + this.arrowHeight[index + 1] / 2,
+        optionCenterX - this.arrowWidth[index + 1] / 2, optionCenterY + this.arrowHeight[index + 1] / 2,
+        optionCenterX - Math.min(this.arrowWidth[index + 1] / 2 + this.arrowHeight[index + 1] / 2, this.width),
+        optionCenterY + Math.max((this.arrowWidth[index + 1] / 2 + this.arrowHeight[index + 1] / 2) - this.width, 0),
+        optionCenterX - Math.min(this.arrowWidth[index + 1] / 2 + this.arrowHeight[index + 1] / 2, this.width),
+        optionCenterY - Math.max((this.arrowWidth[index + 1] / 2 + this.arrowHeight[index + 1] / 2) - this.width, 0),
+        optionCenterX - this.arrowWidth[index + 1] / 2, optionCenterY - this.arrowHeight[index + 1] / 2
+      );
+      if (this.multipleOptions) {
+        drawCanvasRectBorder(
+          this.x + 3, this.y + (index + 1) * this.height + 3, this.height - 6, this.height - 6, design.borderKey, gD
+        );
+        if (this.currentOption.includes(option)) {
+          drawCanvasLine(
+            this.x + 3, this.y + (index + 1) * this.height + 3, design.borderKey, gD,
+            this.x + this.height - 3, this.y + (index + 2) * this.height - 3
+          );
+          drawCanvasLine(
+            this.x + this.height - 3, this.y + (index + 1) * this.height + 3, design.borderKey, gD,
+            this.x + 3, this.y + (index + 2) * this.height - 3
+          );
+        }
+        drawCanvasText(this.x + this.height + 3, this.y + (index + 1.5) * this.height, option, design.textKey, gD);
+      } else {
+        drawCanvasText(this.x + 3, this.y + (index + 1.5) * this.height, option, design.textKey, gD);
+      }
+    }, this);
+    gD.context.restore();
     drawCanvasLine(this.x + 20, this.y, design.borderKey, gD, this.x + 20, this.y + 16);
     drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
-
+    drawCanvasRectBorder(this.x, this.y + this.height, this.width, this.optionsHeight, design.borderKey, gD);
   };
 }

@@ -92,13 +92,13 @@ function Menu(gD) {
 
     this.muteButton = new CanvasImageButton(this.gD.canvas.width - 40, 10, 30, 30, ["Icon_Sound_on", "Icon_Sound_off"], "standardImage");
     if (this.gD.muted) {
-      this.muteButton.setSprite();
+      this.muteButton.setSprite(1);
     }
 
     this.additionalGrid = [
-      [{ 
+      [{
         button: this.muteButton,
-        action: (gD) => { gD.muted = !gD.muted; this.muteButton.setSprite() }
+        action: (gD) => { gD.muted = !gD.muted; this.muteButton.setSprite(gD.muted ? 1 : 0) }
       }]
     ];
 

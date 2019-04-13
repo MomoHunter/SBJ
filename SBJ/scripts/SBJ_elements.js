@@ -286,7 +286,7 @@ function CanvasButton(x, y, width, height, text, styleKey) {
  * @param {number} y          y-coordinate of the top-left corner of the button on the canvas
  * @param {number} width      width of the button on the canvas
  * @param {number} height     height of the button on the canvas
- * @param {string} spriteKeys the sprite for the button
+ * @param {Array<string>} spriteKeys the sprite for the button
  * @param {string} styleKey   the design to use for the button
  */
 function CanvasImageButton(x, y, width, height, spriteKeys, styleKey) {

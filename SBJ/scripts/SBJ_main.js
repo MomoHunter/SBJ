@@ -270,12 +270,24 @@ function GlobalDict(eventHandler) {
     "Stage_Universe_G": [false, 594, 243, 56, 26],
     "Stage_Water": [false, 594, 270, 56, 26],
     "Stage_Water_G": [false, 594, 297, 56, 26],
-    "Stage_B_Air": [false, 651, 0, 112, 52],
-    "Stage_B_Forest": [false, 651, 53, 112, 52],
-    "Stage_B_Fortress": [false, 651, 106, 112, 52],
-    "Stage_B_Standard": [false, 651, 159, 112, 52],
-    "Stage_B_Universe": [false, 651, 212, 112, 52],
-    "Stage_B_Water": [false, 651, 265, 112, 52]
+    "Stagepreview_Air": [false, 651, 0, 56, 26],
+    "Stagepreview_Forest": [false, 651, 27, 56, 26],
+    "Stagepreview_Fortress": [false, 651, 54, 56, 26],
+    "Stagepreview_Standard": [false, 651, 81, 56, 26],
+    "Stagepreview_Universe": [false, 651, 108, 56, 26],
+    "Stagepreview_Water": [false, 651, 135, 56, 26],
+    "Stagepreview_B_Air": [false, 708, 0, 112, 52],
+    "Stagepreview_B_Forest": [false, 708, 53, 112, 52],
+    "Stagepreview_B_Fortress": [false, 708, 106, 112, 52],
+    "Stagepreview_B_Standard": [false, 708, 159, 112, 52],
+    "Stagepreview_B_Universe": [false, 708, 212, 112, 52],
+    "Stagepreview_B_Water": [false, 708, 265, 112, 52],
+    "Stage_B_Air": [false, 821, 0, 112, 52],
+    "Stage_B_Forest": [false, 821, 53, 112, 52],
+    "Stage_B_Fortress": [false, 821, 106, 112, 52],
+    "Stage_B_Standard": [false, 821, 159, 112, 52],
+    "Stage_B_Universe": [false, 821, 212, 112, 52],
+    "Stage_B_Water": [false, 821, 265, 112, 52]
   };
   // end spriteDict
   this.player = {                    //The data for the different playermodels with: unlocked, jumps, jumpstrength, movementspeed right, movementspeed left, weight
@@ -437,9 +449,11 @@ function GlobalDict(eventHandler) {
       },
       shopDropdown: {
         rectKey: {
-          background: "blur",
+          background: "standard",
+          selected: "selected",
           arrow: "modal"
         },
+        textKey: "savestate",
         borderKey: "standard"
       },
       controlsHeadline: {
