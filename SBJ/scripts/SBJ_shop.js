@@ -227,7 +227,7 @@
       let dropdownOpen = false;
 
       this.dropdowns.map((dropdown, index) => {
-        if (this.gD.mousePos.x >= dropdown.x && this.gD.mousePos.x <= dropdown.x + 20 &&
+        if (this.gD.mousePos.x >= dropdown.x && this.gD.mousePos.x <= dropdown.x + dropdown.width &&
             this.gD.mousePos.y >= dropdown.y && this.gD.mousePos.y <= dropdown.y + dropdown.height) {
           dropdown.select();
         } else {
@@ -273,8 +273,16 @@
     }
 
     if (this.tabs[1].selected) {
+      if (clickPos.x >= this.resetButton.x && clickPos.x <= this.resetButton.x + this.resetButton.width &&
+          clickPos.y >= this.resetButton.y && clickPos.y <= this.resetButton.y + this.resetButton.height) {
+        this.dropdowns.map(dropdown => {
+          dropdown.reset();
+        }, this);
+        this.accessoryWindow.setAccessories(this, this.dropdowns[1].currentOption);
+      }
+
       this.dropdowns.map((dropdown, index) => {
-        if (clickPos.x >= dropdown.x && clickPos.x <= dropdown.x + 20 &&
+        if (clickPos.x >= dropdown.x && clickPos.x <= dropdown.x + dropdown.width &&
             clickPos.y >= dropdown.y && clickPos.y <= dropdown.y + dropdown.height) {
           if (dropdown.opened) {
             dropdown.close();
@@ -995,6 +1003,14 @@ function ShopDropdownMenu(x, y, width, height, options, styleKey, multipleOption
     } else {
       this.currentOption = option;
     }
+  };
+  this.reset = function() {
+    if (this.multipleOptions) {
+      this.currentOption = this.options;
+    } else {
+      this.currentOption = this.options[0];
+    }
+    this.opened = false;
   };
   this.update = function() {
     this.selected.map((select, index) => {
