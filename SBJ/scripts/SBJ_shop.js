@@ -295,20 +295,20 @@
       return;
     }
 
-    this.skillTree.skills.map(skill => {
-      let skillX = skill.x - (this.skillTree.currentPosX - this.skillTree.moveX);
-      let skillY = skill.y - (this.skillTree.currentPosY - this.skillTree.moveY);
-      if (Math.sqrt((this.gD.mousePos.x - skillX) ** 2 + (this.gD.mousePos.y - skillY) ** 2) <= skill.radius) {
-        this.levelSkills(skill);
-      }
-    }, this);
-
     if (clickPos.x >= this.backToMenu.x && clickPos.x <= this.backToMenu.x + this.backToMenu.width &&
-        clickPos.y >= this.backToMenu.y && clickPos.y <= this.backToMenu.y + this.backToMenu.height) {
+      clickPos.y >= this.backToMenu.y && clickPos.y <= this.backToMenu.y + this.backToMenu.height) {
       this.gD.currentPage = this.menu;
     }
 
-    if (this.tabs[1].selected) {
+    if (this.tabs[0].selected) {
+      this.skillTree.skills.map(skill => {
+        let skillX = skill.x - (this.skillTree.currentPosX - this.skillTree.moveX);
+        let skillY = skill.y - (this.skillTree.currentPosY - this.skillTree.moveY);
+        if (Math.sqrt((this.gD.mousePos.x - skillX) ** 2 + (this.gD.mousePos.y - skillY) ** 2) <= skill.radius) {
+          this.levelSkills(skill);
+        }
+      }, this);
+    } else if (this.tabs[1].selected) {
       if (clickPos.x >= this.resetButton.x && clickPos.x <= this.resetButton.x + this.resetButton.width &&
           clickPos.y >= this.resetButton.y && clickPos.y <= this.resetButton.y + this.resetButton.height) {
         this.dropdowns.map(dropdown => {
