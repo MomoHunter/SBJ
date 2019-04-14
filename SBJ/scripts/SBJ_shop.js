@@ -11,7 +11,7 @@
     this.movingTree = false;
     this.movingMinimap = false;
     this.movingCounter = 0;           //counts how many frames moving was activated
-    this.currentlyMarked = 0;
+    this.currentlyMarked = null;
     this.scrollHeight = 0;
     this.skillData = {
       "Unlock Skilltree":       new SkillData("Unlock the Skilltree", false, 1, 0, 1000, 0, 0, [], 0),
@@ -43,15 +43,15 @@
     };
     this.accessories = new Map([
       ["test", new ShopAccessory("test", "Beard", "Collectables_Beard1", 0, 0)],
-      ["test1", new ShopAccessory("test01", "Beard", "Collectables_Beard1", 0, 0)],
-      ["test2", new ShopAccessory("test02", "Hat", "Collectables_Hat1", 0, 0)],
-      ["test3", new ShopAccessory("test03", "Glasses", "Collectables_Glasses1", 0, 0)],
-      ["test4", new ShopAccessory("test04", "Beard", "Collectables_Beard1", 0, 0)],
-      ["test5", new ShopAccessory("test05", "Glasses", "Collectables_Glasses1", 0, 0)],
-      ["test6", new ShopAccessory("test06", "Hat", "Collectables_Hat1", 0, 0)],
-      ["test7", new ShopAccessory("test07", "Beard", "Collectables_Beard1", 0, 0)],
-      ["test8", new ShopAccessory("test08", "Beard", "Collectables_Beard1", 0, 0)],
-      ["test9", new ShopAccessory("test09", "Glasses", "Collectables_Glasses1", 0, 0)],
+      ["test01", new ShopAccessory("test01", "Beard", "Collectables_Beard1", 0, 0)],
+      ["test02", new ShopAccessory("test02", "Hat", "Collectables_Hat1", 0, 0)],
+      ["test03", new ShopAccessory("test03", "Glasses", "Collectables_Glasses1", 0, 0)],
+      ["test04", new ShopAccessory("test04", "Beard", "Collectables_Beard1", 0, 0)],
+      ["test05", new ShopAccessory("test05", "Glasses", "Collectables_Glasses1", 0, 0)],
+      ["test06", new ShopAccessory("test06", "Hat", "Collectables_Hat1", 0, 0)],
+      ["test07", new ShopAccessory("test07", "Beard", "Collectables_Beard1", 0, 0)],
+      ["test08", new ShopAccessory("test08", "Beard", "Collectables_Beard1", 0, 0)],
+      ["test09", new ShopAccessory("test09", "Glasses", "Collectables_Glasses1", 0, 0)],
       ["test10", new ShopAccessory("test10", "Beard", "Collectables_Beard1", 0, 0)],
       ["test11", new ShopAccessory("test11", "Hat", "Collectables_Hat1", 0, 0)],
       ["test12", new ShopAccessory("test12", "Beard", "Collectables_Beard1", 0, 0)],
@@ -95,11 +95,11 @@
     this.skillTree.init(this);
     this.tabs[0].objects.push(this.skillTree);
 
-    this.resetButton = new CanvasButton(this.gD.canvas.width / 2 + 177, 70, 120, 16, "Reset", "shop");
-    this.tabs[1].objects.push(this.resetButton);
-
     this.accessoryWindow = new ShopAccessoryWindow(this.gD.canvas.width / 2 - 245, 70, 545, 200, "accessoryWindow");
     this.tabs[1].objects.push(this.accessoryWindow);
+
+    this.resetButton = new CanvasButton(this.gD.canvas.width / 2 + 177, 70, 120, 16, "Reset", "shop");
+    this.tabs[1].objects.push(this.resetButton);
 
     this.dropdowns = [
       new ShopDropdownMenu(
@@ -119,6 +119,10 @@
       this.gD.canvas.width / 2 + 305, 95, 175, 25, Math.ceil(this.accessories.length / 11) * 3, "scrollBarBlack"
     );
     this.tabs[1].objects.push(this.scrollbar);
+
+    this.accessoryDetails = new ShopAccessoryDetails(this.gD.canvas.width / 2 + 310, 60, 180, 220, "accessoryDetails");
+    this.accessoryDetails.init();
+    this.tabs[1].objects.push(this.accessoryDetails);
 
     this.accessoryWindow.setAccessories(this, this.dropdowns[1].currentOption);
 
@@ -143,6 +147,14 @@
       this.checkUnlocks();
     }
   };
+  this.buyAccessory = function(accessory) {
+    if (this.goldenShamrocks >= accessory.costGoldenShamrock && this.hype >= accessory.costHype) {
+      this.goldenShamrocks -= accessory.costGoldenShamrock;
+      this.hype -= accessory.costHype;
+      this.accessories.get(accessory.name).buy();
+      accessory.buy();
+    }
+  };
   this.checkUnlocks = function() {
     for (let key in this.skillData) {
       if (this.skillData.hasOwnProperty(key)) {
@@ -156,17 +168,19 @@
   this.updateMouseMoves = function() {
     let mouseDown = this.gD.mouseDown.pop();
     let mouseUp = this.gD.mouseUp.pop();
+    let dropdownOpen = false;
 
     if (!this.movingTree && !this.movingMinimap) {
       this.tabs.map((tab, index) => {
         if (this.gD.mousePos.x >= tab.x && this.gD.mousePos.x <= tab.x + tab.tabHeadWidth &&
-            this.gD.mousePos.y >= tab.y + index * tab.tabHeadHeight && this.gD.mousePos.y <= tab.y + (index + 1) * tab.tabHeadHeight) {
+            this.gD.mousePos.y >= tab.y + index * tab.tabHeadHeight &&
+            this.gD.mousePos.y <= tab.y + (index + 1) * tab.tabHeadHeight) {
           this.updateSelection(0, index);
         }
       }, this);
 
       if (this.gD.mousePos.x >= this.backToMenu.x && this.gD.mousePos.x <= this.backToMenu.x + this.backToMenu.width &&
-        this.gD.mousePos.y >= this.backToMenu.y && this.gD.mousePos.y <= this.backToMenu.y + this.backToMenu.height) {
+          this.gD.mousePos.y >= this.backToMenu.y && this.gD.mousePos.y <= this.backToMenu.y + this.backToMenu.height) {
         this.updateSelection(-1, this.selectedTabIndex);
       }
     }
@@ -225,8 +239,6 @@
         this.resetButton.deselect();
       }
 
-      let dropdownOpen = false;
-
       this.dropdowns.map((dropdown, index) => {
         if (this.gD.mousePos.x >= dropdown.x && this.gD.mousePos.x <= dropdown.x + dropdown.width &&
             this.gD.mousePos.y >= dropdown.y && this.gD.mousePos.y <= dropdown.y + dropdown.height) {
@@ -237,7 +249,8 @@
         if (dropdown.opened) {
           dropdown.options.map((option, indexOption) => {
             if (this.gD.mousePos.x >= dropdown.x && this.gD.mousePos.x < dropdown.x + dropdown.width &&
-              this.gD.mousePos.y >= dropdown.y + (indexOption + 1) * dropdown.height && this.gD.mousePos.y < dropdown.y + (indexOption + 2) * dropdown.height) {
+                this.gD.mousePos.y >= dropdown.y + (indexOption + 1) * dropdown.height &&
+                this.gD.mousePos.y < dropdown.y + (indexOption + 2) * dropdown.height) {
               dropdown.select(indexOption + 1);
             } else {
               dropdown.deselect(indexOption + 1);
@@ -254,12 +267,22 @@
               this.gD.mousePos.y >= this.accessoryWindow.y + 27 + Math.floor(index / 11) * 75 - this.scrollHeight &&
               this.gD.mousePos.y <= this.accessoryWindow.y + 92 + Math.floor(index / 11) * 75 - this.scrollHeight &&
               this.gD.mousePos.y >= this.accessoryWindow.y + 27 &&
-              this.gD.mousePos.y <= this.accessoryWindow.y +this.accessoryWindow.height) {
+              this.gD.mousePos.y <= this.accessoryWindow.y + this.accessoryWindow.height) {
             this.accessoryWindow.select(index);
           } else {
             this.accessoryWindow.deselect(index);
           }
         }, this);
+      }
+
+      if (this.gD.mousePos.x >= this.accessoryDetails.buyButton.x &&
+          this.gD.mousePos.x <= this.accessoryDetails.buyButton.x + this.accessoryDetails.buyButton.width &&
+          this.gD.mousePos.y >= this.accessoryDetails.buyButton.y &&
+          this.gD.mousePos.y <= this.accessoryDetails.buyButton.y + this.accessoryDetails.buyButton.height &&
+          this.accessoryDetails.currentAccessory !== null) {
+        this.accessoryDetails.buyButton.select();
+      } else {
+        this.accessoryDetails.buyButton.deselect();
       }
     }
   };
@@ -307,19 +330,14 @@
         if (dropdown.opened) {
           dropdown.options.map((option, indexOption) => {
             if (clickPos.x >= dropdown.x && clickPos.x < dropdown.x + dropdown.width &&
-                clickPos.y >= dropdown.y + (indexOption + 1) * dropdown.height && clickPos.y < dropdown.y + (indexOption + 2) * dropdown.height) {
+                clickPos.y >= dropdown.y + (indexOption + 1) * dropdown.height &&
+                clickPos.y < dropdown.y + (indexOption + 2) * dropdown.height) {
               dropdown.setOption(option);
               dropdownClicked = true;
-              switch (index) {
-                case 0:
-                  this.accessoryWindow.sortAccessories(option);
-                  dropdown.close();
-                  break;
-                case 1:
-                  this.accessoryWindow.setAccessories(this, dropdown.currentOption);
-                  this.vScroll(0);
-                  break;
-                default:
+              this.accessoryWindow.setAccessories(this, this.dropdowns[1].currentOption);
+              this.vScroll(0);
+              if (index === 0) {
+                dropdown.close();
               }
             }
           }, this);
@@ -336,16 +354,32 @@
       if (!dropdownOpen) {
         this.accessoryWindow.accessories.map((accessory, index) => {
           if (clickPos.x >= this.accessoryWindow.x + 2 + (index % 11) * 50 &&
-            clickPos.x <= this.accessoryWindow.x + 42 + (index % 11) * 50 &&
-            clickPos.y >= this.accessoryWindow.y + 27 + Math.floor(index / 11) * 75 - this.scrollHeight &&
-            clickPos.y <= this.accessoryWindow.y + 92 + Math.floor(index / 11) * 75 - this.scrollHeight &&
-            clickPos.y >= this.accessoryWindow.y + 27 &&
-            clickPos.y <= this.accessoryWindow.y +this.accessoryWindow.height) {
-            this.accessoryWindow.demark(this.currentlyMarked);
-            this.accessoryWindow.mark(index);
-            this.currentlyMarked = index;
+              clickPos.x <= this.accessoryWindow.x + 42 + (index % 11) * 50 &&
+              clickPos.y >= this.accessoryWindow.y + 27 + Math.floor(index / 11) * 75 - this.scrollHeight &&
+              clickPos.y <= this.accessoryWindow.y + 92 + Math.floor(index / 11) * 75 - this.scrollHeight &&
+              clickPos.y >= this.accessoryWindow.y + 27 &&
+              clickPos.y <= this.accessoryWindow.y + this.accessoryWindow.height) {
+            if (this.currentlyMarked !== null) {
+              this.accessoryWindow.demark(this.currentlyMarked);
+            }
+            this.accessoryDetails.setAccessory();
+            if (this.currentlyMarked !== index) {
+              this.accessoryWindow.mark(index);
+              this.accessoryDetails.setAccessory(accessory);
+              this.currentlyMarked = index;
+            } else {
+              this.currentlyMarked = null;
+            }
           }
         }, this);
+      }
+
+      if (clickPos.x >= this.accessoryDetails.buyButton.x &&
+          clickPos.x <= this.accessoryDetails.buyButton.x + this.accessoryDetails.buyButton.width &&
+          clickPos.y >= this.accessoryDetails.buyButton.y &&
+          clickPos.y <= this.accessoryDetails.buyButton.y + this.accessoryDetails.buyButton.height &&
+          this.accessoryDetails.currentAccessory !== null && !this.accessoryDetails.currentAccessory.bought) {
+        this.buyAccessory(this.accessoryDetails.currentAccessory);
       }
     }
   };
@@ -866,7 +900,8 @@ function ShopAccessoryWindow(x, y, width, height, styleKey) {
     this.arrowHeight = [];
     this.selected = [];
     this.marked = [];
-    shop.currentlyMarked = 0;
+    shop.currentlyMarked = null;
+    shop.accessoryDetails.setAccessory();
 
     for (let accessory of shop.accessories.values()) {
       if (categories.includes(accessory.category)) {
@@ -1024,6 +1059,7 @@ function ShopAccessoryWindow(x, y, width, height, styleKey) {
     let design = gD.design.elements[this.styleKey];
 
     gD.context.save();
+    gD.context.beginPath();
     gD.context.rect(this.x, this.y + 25, this.width, this.height - 25);
     gD.context.clip();
     this.accessories.map((accessory, index) => {
@@ -1068,6 +1104,14 @@ function ShopAccessoryWindow(x, y, width, height, styleKey) {
         this.x + 7 + (index % 11) * 50, this.y + 32 + Math.floor(index / 11) * 75 - shop.scrollHeight, 30, 30,
         design.borderKey.accessory, gD
       );
+      if (accessory.bought) {
+        drawCanvasLine(
+          this.x + 12 + (index % 11) * 50, this.y + 77 + Math.floor(index / 11) * 75 - shop.scrollHeight,
+          design.borderKey.hook, gD,
+          this.x + 19 + (index % 11) * 50, this.y + 84 + Math.floor(index / 11) * 75 - shop.scrollHeight,
+          this.x + 32 + (index % 11) * 50, this.y + 71 + Math.floor(index / 11) * 75 - shop.scrollHeight,
+        )
+      }
       drawCanvasRectBorder(
         this.x + 2 + (index % 11) * 50, this.y + 27 + Math.floor(index / 11) * 75 - shop.scrollHeight, 40, 65,
         design.borderKey.accessory, gD
@@ -1270,5 +1314,60 @@ function ShopDropdownMenu(x, y, width, height, options, styleKey, multipleOption
     drawCanvasLine(this.x + 20, this.y, design.borderKey, gD, this.x + 20, this.y + 16);
     drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
     drawCanvasRectBorder(this.x, this.y + this.height, this.width, this.optionsHeight, design.borderKey, gD);
+  };
+}
+
+function ShopAccessoryDetails(x, y, width, height, styleKey) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.styleKey = styleKey;
+  this.currentAccessory = null;
+  this.init = function() {
+    this.buyButton = new CanvasButton(this.x + 10, this.y + this.height - 30, this.width - 20, 20, "Kaufen", "shop");
+  };
+  this.setAccessory = function(accessory = null) {
+    this.currentAccessory = accessory;
+  };
+  this.update = function() {
+    this.buyButton.update();
+  };
+  this.draw = function(gD) {
+    let design = gD.design.elements[this.styleKey];
+
+    if (this.currentAccessory === null) {
+      return;
+    }
+
+    let {spriteWidth, spriteHeight} = getSpriteData(this.currentAccessory.spriteKey + "_B", gD);
+
+    drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.background, gD);
+    drawCanvasRect(this.x + 60, this.y + 10, 60, 60, design.rectKey.window, gD);
+    drawCanvasImage(
+      this.x + (this.width - spriteWidth) / 2, this.y + 40 - spriteHeight / 2, this.currentAccessory.spriteKey + "_B", gD
+    );
+    drawCanvasRectBorder(this.x + 60, this.y + 10, 60, 60, design.borderKey, gD);
+    drawCanvasText(this.x + this.width / 2, this.y + 85, this.currentAccessory.name, design.textKey.name, gD);
+    drawCanvasImage(this.x + 10, this.y + this.height - 78, "Special_GoldenShamrock", gD);
+    drawCanvasText(
+      this.x + this.width - 10, this.y + this.height - 68,
+      this.currentAccessory.costGoldenShamrock.toString().replace(/\d(?=(\d{3})+($|\.))/g, '$&.'),
+      design.textKey.number, gD
+    );
+    drawCanvasImage(this.x + 10, this.y + this.height - 55, "Money_1", gD);
+    drawCanvasText(
+      this.x + this.width - 10, this.y + this.height - 45,
+      this.currentAccessory.costHype.toString().replace(/\d(?=(\d{3})+($|\.))/g, '$&.'),
+      design.textKey.number, gD
+    );
+    drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
+    if (this.currentAccessory.bought) {
+      drawCanvasRect(this.x + 10, this.y + this.height - 30, this.width - 20, 20, design.rectKey.bought, gD);
+      drawCanvasText(this.x + this.width / 2, this.y + this.height - 20, "Gekauft", design.textKey.text, gD);
+      drawCanvasRectBorder(this.x + 10, this.y + this.height - 30, this.width - 20, 20, design.borderKey, gD);
+    } else {
+      this.buyButton.draw(gD);
+    }
   };
 }
