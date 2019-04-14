@@ -439,6 +439,8 @@ function GlobalDict(eventHandler) {
             hat: "shopHat"
           },
           field: "blur",
+          selected: "selected",
+          marked: "marked",
           arrow: "modal"
         },
         borderKey: {

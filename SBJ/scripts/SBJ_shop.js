@@ -11,6 +11,7 @@
     this.movingTree = false;
     this.movingMinimap = false;
     this.movingCounter = 0;           //counts how many frames moving was activated
+    this.currentlyMarked = 0;
     this.scrollHeight = 0;
     this.skillData = {
       "Unlock Skilltree":       new SkillData("Unlock the Skilltree", false, 1, 0, 1000, 0, 0, [], 0),
@@ -247,13 +248,25 @@
       }, this);
 
       if (!dropdownOpen) {
-
+        this.accessoryWindow.accessories.map((accessory, index) => {
+          if (this.gD.mousePos.x >= this.accessoryWindow.x + 2 + (index % 11) * 50 &&
+              this.gD.mousePos.x <= this.accessoryWindow.x + 42 + (index % 11) * 50 &&
+              this.gD.mousePos.y >= this.accessoryWindow.y + 27 + Math.floor(index / 11) * 75 - this.scrollHeight &&
+              this.gD.mousePos.y <= this.accessoryWindow.y + 92 + Math.floor(index / 11) * 75 - this.scrollHeight &&
+              this.gD.mousePos.y >= this.accessoryWindow.y + 27 &&
+              this.gD.mousePos.y <= this.accessoryWindow.y +this.accessoryWindow.height) {
+            this.accessoryWindow.select(index);
+          } else {
+            this.accessoryWindow.deselect(index);
+          }
+        }, this);
       }
     }
   };
   this.updateClick = function() {
     let clickPos = this.gD.clicks.pop();
     let dropdownOpen = false;
+    let dropdownClicked = false;
 
     if (!clickPos) {
       return;
@@ -288,6 +301,7 @@
             dropdown.close();
           } else {
             dropdown.open();
+            dropdownClicked = true;
           }
         }
         if (dropdown.opened) {
@@ -295,6 +309,7 @@
             if (clickPos.x >= dropdown.x && clickPos.x < dropdown.x + dropdown.width &&
                 clickPos.y >= dropdown.y + (indexOption + 1) * dropdown.height && clickPos.y < dropdown.y + (indexOption + 2) * dropdown.height) {
               dropdown.setOption(option);
+              dropdownClicked = true;
               switch (index) {
                 case 0:
                   this.accessoryWindow.sortAccessories(option);
@@ -311,6 +326,27 @@
           dropdownOpen = true;
         }
       }, this);
+
+      if (!dropdownClicked && dropdownOpen) {
+        this.dropdowns.map(dropdown => {
+          dropdown.close();
+        }, this);
+      }
+
+      if (!dropdownOpen) {
+        this.accessoryWindow.accessories.map((accessory, index) => {
+          if (clickPos.x >= this.accessoryWindow.x + 2 + (index % 11) * 50 &&
+            clickPos.x <= this.accessoryWindow.x + 42 + (index % 11) * 50 &&
+            clickPos.y >= this.accessoryWindow.y + 27 + Math.floor(index / 11) * 75 - this.scrollHeight &&
+            clickPos.y <= this.accessoryWindow.y + 92 + Math.floor(index / 11) * 75 - this.scrollHeight &&
+            clickPos.y >= this.accessoryWindow.y + 27 &&
+            clickPos.y <= this.accessoryWindow.y +this.accessoryWindow.height) {
+            this.accessoryWindow.demark(this.currentlyMarked);
+            this.accessoryWindow.mark(index);
+            this.currentlyMarked = index;
+          }
+        }, this);
+      }
     }
   };
   this.updateWheelMoves = function() {
@@ -819,12 +855,26 @@ function ShopAccessoryWindow(x, y, width, height, styleKey) {
   this.height = height;
   this.styleKey = styleKey;
   this.accessories = [];
+  this.arrowWidth = [];
+  this.arrowHeight = [];
+  this.selected = [];
+  this.marked = [];
+  this.animationSpeed = 12;
   this.setAccessories = function(shop, categories) {
     this.accessories = [];
+    this.arrowWidth = [];
+    this.arrowHeight = [];
+    this.selected = [];
+    this.marked = [];
+    shop.currentlyMarked = 0;
 
     for (let accessory of shop.accessories.values()) {
       if (categories.includes(accessory.category)) {
         this.accessories.push(accessory);
+        this.arrowWidth.push(0);
+        this.arrowHeight.push(0);
+        this.selected.push(false);
+        this.marked.push(false);
       }
     }
     shop.scrollbar.refresh(Math.ceil(this.accessories.length / 11) * 3);
@@ -929,6 +979,47 @@ function ShopAccessoryWindow(x, y, width, height, styleKey) {
       }
     }
   };
+  this.select = function(index = 0) {
+    this.selected[index] = true;
+  };
+  this.deselect = function(index = 0) {
+    this.selected[index] = false;
+  };
+  this.mark = function(index) {
+    this.marked[index] = true;
+  };
+  this.demark = function(index) {
+    this.marked[index] = false;
+  };
+  this.update = function() {
+    this.selected.map((select, index) => {
+      if (select) {
+        if (this.arrowHeight[index] < 65) {
+          this.arrowHeight[index] += this.animationSpeed;
+          if (this.arrowHeight[index] >= 65) {
+            this.arrowHeight[index] = 65;
+          }
+        } else if (this.arrowHeight[index] >= 65 && this.arrowWidth[index] < 40) {
+          this.arrowWidth[index] += this.animationSpeed;
+          if (this.arrowWidth[index] >= 40) {
+            this.arrowWidth[index] = 40;
+          }
+        }
+      } else {
+        if (this.arrowWidth[index] > 0) {
+          this.arrowWidth[index] -= this.animationSpeed;
+          if (this.arrowWidth[index] <= 0) {
+            this.arrowWidth[index] = 0;
+          }
+        } else if (this.arrowWidth[index] <= 0 && this.arrowHeight[index] > 0) {
+          this.arrowHeight[index] -= this.animationSpeed;
+          if (this.arrowHeight[index] <= 0) {
+            this.arrowHeight[index] = 0;
+          }
+        }
+      }
+    }, this);
+  };
   this.draw = function(gD, shop) {
     let design = gD.design.elements[this.styleKey];
 
@@ -937,11 +1028,33 @@ function ShopAccessoryWindow(x, y, width, height, styleKey) {
     gD.context.clip();
     this.accessories.map((accessory, index) => {
       let spriteData = getSpriteData(accessory.spriteKey, gD);
-      
+      let centerX = this.x + 22 + (index % 11) * 50;
+      let centerY = this.y + 59.5 + Math.floor(index / 11) * 75 - shop.scrollHeight;
+
       drawCanvasRect(
         this.x + 2 + (index % 11) * 50, this.y + 27 + Math.floor(index / 11) * 75 - shop.scrollHeight, 40, 65,
         design.rectKey.accessory[accessory.category.toLowerCase()], gD
       );
+      drawCanvasPolygon(
+        centerX + this.arrowWidth[0] / 2, centerY - this.arrowHeight[index] / 2, design.rectKey.selected, gD,
+        centerX + Math.min(this.arrowWidth[index] / 2 + this.arrowHeight[index] / 2, 20),
+        centerY - Math.max((this.arrowWidth[index] / 2 + this.arrowHeight[index] / 2) - 20, 0),
+        centerX + Math.min(this.arrowWidth[index] / 2 + this.arrowHeight[index] / 2, 20),
+        centerY + Math.max((this.arrowWidth[index] / 2 + this.arrowHeight[index] / 2) - 20, 0),
+        centerX + this.arrowWidth[index] / 2, centerY + this.arrowHeight[index] / 2,
+        centerX - this.arrowWidth[index] / 2, centerY + this.arrowHeight[index] / 2,
+        centerX - Math.min(this.arrowWidth[index] / 2 + this.arrowHeight[index] / 2, 20),
+        centerY + Math.max((this.arrowWidth[index] / 2 + this.arrowHeight[index] / 2) - 20, 0),
+        centerX - Math.min(this.arrowWidth[index] / 2 + this.arrowHeight[index] / 2, 20),
+        centerY - Math.max((this.arrowWidth[index] / 2 + this.arrowHeight[index] / 2) - 20, 0),
+        centerX - this.arrowWidth[index] / 2, centerY - this.arrowHeight[index] / 2
+      );
+      if (this.marked[index]) {
+        drawCanvasRect(
+          this.x + 2 + (index % 11) * 50, this.y + 27 + Math.floor(index / 11) * 75 - shop.scrollHeight, 40, 65,
+          design.rectKey.marked, gD
+        );
+      }
       drawCanvasRect(
         this.x + 7 + (index % 11) * 50, this.y + 32 + Math.floor(index / 11) * 75 - shop.scrollHeight, 30, 30,
         design.rectKey.accessory.standard, gD
