@@ -65,7 +65,7 @@ function getSpriteData(spriteKey, gD) {
     }
     return getSpriteData(fallbackSpriteKey, gD);
   } else {
-    return {spriteWidth: spriteData[3], spriteHeight: spriteData[4], full: spriteData}
+    return {spriteWidth: spriteData[3], spriteHeight: spriteData[4], full: spriteData, key: spriteKey}
   }
 }
 // endregion

@@ -6,20 +6,20 @@
 
     this.selections = [
       new ObjectSelection(
-        100, 110, 40, 130, ["Player_Standard", "Player_Speedy", "Player_Longjohn", "Player_Disgusty",
+        120, 105, 40, 130, ["Player_Standard", "Player_Speedy", "Player_Longjohn", "Player_Disgusty",
         "Player_Strooper", "Player_Magician", "Player_Afroman"], this.gD.player, "objectSelection"
       ),
       new ObjectSelection(
-        160, 110, 40, 130, ["Collectables_Nothing", "Collectables_Hat1"], this.gD.collectables, "objectSelection"
+        180, 105, 40, 130, ["Collectables_Nothing", "Collectables_Hat1"], this.gD.collectables, "objectSelection"
       ),
       new ObjectSelection(
-        220, 110, 40, 130, ["Collectables_Nothing", "Collectables_Glasses1"], this.gD.collectables, "objectSelection"
+        240, 105, 40, 130, ["Collectables_Nothing", "Collectables_Glasses1"], this.gD.collectables, "objectSelection"
       ),
       new ObjectSelection(
-        280, 110, 40, 130, ["Collectables_Nothing", "Collectables_Beard1"], this.gD.collectables, "objectSelection"
+        300, 105, 40, 130, ["Collectables_Nothing", "Collectables_Beard1"], this.gD.collectables, "objectSelection"
       ),
       new ObjectSelection(
-        340, 110, 40, 130, ["Stage_Fortress", "Stage_Air", "Stage_Water", "Stage_Forest", "Stage_Universe"],
+        360, 105, 40, 130, ["Stage_Fortress", "Stage_Air", "Stage_Water", "Stage_Forest", "Stage_Universe"],
         this.gD.stages, "objectSelection"
       )
     ];
@@ -27,6 +27,8 @@
     this.selections.map(selection => {
       selection.init(this.gD);
     }, this);
+    
+    this.selectionPreview = new SelectionPreview(this.gD.canvas.width / 2 - 400, 90, 800, 160, "selectionPreview");
     
     this.confirmButton = new CanvasButton(
       (this.gD.canvas.width / 2) + 5, this.gD.canvas.height - 50, 200, 30, "Start", "menu"
@@ -161,6 +163,8 @@
     drawCanvasRect(0, 0, this.gD.canvas.width, this.gD.canvas.height, "selectionBackground", this.gD);
 
     this.title.draw(this.gD);
+    
+    this.selectionPreview.draw(this, this.gD);
 
     this.selections.map(selection => {
       selection.draw(this.gD);
@@ -491,5 +495,70 @@ function ObjectSelection(x, y, width, height, objects, data, styleKey) {
       this.y + this.height - 10, this.x + this.width, this.y + this.height - 20, this.x + this.width / 2,
       this.y + this.height - 10, this.x, this.y + this.height - 20, this.x, this.y + this.height - 10
     );
+  };
+}
+
+function SelectionPreview(x, y, width, height, styleKey) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.styleKey = styleKey;
+  this.draw = function(selectionScreenSP, gD) {
+    let design = gD.design.elements[this.styleKey];
+    let spriteData = [];
+    selectionScreenSP.selections.map((selection, index) => {
+      if (index === 4) {
+        spriteData.push(getSpriteData("Stage_B_" + selection.getSelected().split("_")[1] + "2", gD));
+      } else {
+        if (selection.getSelected() === "Collectables_Nothing") {
+          spriteData.push({spriteWidth: 0, spriteHeight: 0, key: "Collectables_Nothing"});
+        } else {
+          spriteData.push(getSpriteData(selection.getSelected(), gD));
+        }
+      }
+    }, this);
+    
+    drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey, gD);
+    drawCanvasImage(
+      this.x + this.width - spriteData[4].spriteWidth - 10, this.y + (this.height - spriteData[4].spriteHeight) / 2,
+      spriteData[4].key, gD
+    );
+    drawCanvasRect(this.x + this.width / 2 - 10, this.y + 10, 60, 60, design.rectKey, gD);
+    
+    let charHeight = spriteData[0].spriteHeight - gD.player[spriteData[0].key][1].y + spriteData[1].spriteHeight + 
+      Math.max(spriteData[3].spriteHeight - (spriteData[0].spriteHeight - gD.player[spriteData[0].key][3].y), 0);
+    let playerY = spriteData[1].spriteHeight - gD.player[spriteData[0].key][1].y;
+      
+    drawCanvasImage(
+      this.x + this.width / 2 + 20 - spriteData[0].spriteWidth / 2, 
+      this.y + 40 - charHeight / 2 + playerY, 
+      spriteData[0].key, gD
+    );
+    if (spriteData[1].key !== "Collectables_Nothing") {
+      drawCanvasImage(
+        this.x + this.width / 2 + 20 - spriteData[1].spriteWidth / 2, 
+        this.y + 40 - charHeight / 2, spriteData[1].key, gD
+      );
+    }
+    if (spriteData[2].key !== "Collectables_Nothing") {
+      drawCanvasImage(
+        this.x + this.width / 2 + 20 - spriteData[2].spriteWidth / 2, 
+        this.y + 40 - charHeight / 2 + playerY + gD.player[spriteData[0].key][2].y - spriteData[2].spriteHeight / 2, 
+        spriteData[2].key, gD
+      );
+    }
+    if (spriteData[3].key !== "Collectables_Nothing") {
+      drawCanvasImage(
+        this.x + this.width / 2 + 20 - spriteData[3].spriteWidth / 2, 
+        this.y + 40 - charHeight / 2 + playerY + gD.player[spriteData[0].key][3].y, spriteData[3].key, gD
+      );
+    }
+    drawCanvasRectBorder(this.x + this.width / 2 - 10, this.y + 10, 60, 60, design.borderKey, gD);
+    drawCanvasRectBorder(
+      this.x + this.width - spriteData[4].spriteWidth - 10, this.y + (this.height - spriteData[4].spriteHeight) / 2, 
+      spriteData[4].spriteWidth, spriteData[4].spriteHeight, design.borderKey, gD
+    );
+    drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
   };
 }

@@ -126,12 +126,12 @@ function GlobalDict(eventHandler) {
    */
   this.spriteDict = {
     "Collectables_Beard1": [false, 0, 0, 12, 4],
-    "Collectables_Beard1_B": [false, 0, 5, 12, 4],
-    "Collectables_Glasses1": [false, 0, 10, 12, 4],
-    "Collectables_Glasses1_B": [false, 0, 15, 24, 8],
-    "Collectables_Hat1": [false, 0, 24, 16, 9],
-    "Collectables_Hat1_B": [false, 0, 34, 32, 18],
-    "Collectables_Nothing": [false, 0, 53, 22, 6],
+    "Collectables_Beard1_B": [false, 0, 5, 24, 8],
+    "Collectables_Glasses1": [false, 0, 14, 12, 4],
+    "Collectables_Glasses1_B": [false, 0, 19, 24, 8],
+    "Collectables_Hat1": [false, 0, 28, 16, 9],
+    "Collectables_Hat1_B": [false, 0, 38, 32, 18],
+    "Collectables_Nothing": [false, 0, 57, 22, 6],
     "Currency_L": [false, 33, 0, 28, 36],
     "Currency_M": [false, 33, 37, 21, 27],
     "Currency_S": [false, 33, 65, 14, 18],
@@ -276,34 +276,24 @@ function GlobalDict(eventHandler) {
     "Stage_Universe_G": [false, 604, 243, 56, 26],
     "Stage_Water": [false, 604, 270, 56, 26],
     "Stage_Water_G": [false, 604, 297, 56, 26],
-    "Stagepreview_Air": [false, 661, 0, 56, 26],
-    "Stagepreview_Forest": [false, 661, 27, 56, 26],
-    "Stagepreview_Fortress": [false, 661, 54, 56, 26],
-    "Stagepreview_Standard": [false, 661, 81, 56, 26],
-    "Stagepreview_Universe": [false, 661, 108, 56, 26],
-    "Stagepreview_Water": [false, 661, 135, 56, 26],
-    "Stagepreview_B_Air": [false, 718, 0, 112, 52],
-    "Stagepreview_B_Forest": [false, 718, 53, 112, 52],
-    "Stagepreview_B_Fortress": [false, 718, 106, 112, 52],
-    "Stagepreview_B_Standard": [false, 718, 159, 112, 52],
-    "Stagepreview_B_Universe": [false, 718, 212, 112, 52],
-    "Stagepreview_B_Water": [false, 718, 265, 112, 52],
-    "Stage_B_Air": [false, 831, 0, 112, 52],
-    "Stage_B_Forest": [false, 831, 53, 112, 52],
-    "Stage_B_Fortress": [false, 831, 106, 112, 52],
-    "Stage_B_Standard": [false, 831, 159, 112, 52],
-    "Stage_B_Universe": [false, 831, 212, 112, 52],
-    "Stage_B_Water": [false, 831, 265, 112, 52]
+    "Stage_B_Air": [false, 661, 0, 112, 52],
+    "Stage_B_Forest": [false, 661, 53, 112, 52],
+    "Stage_B_Fortress": [false, 661, 106, 112, 52],
+    "Stage_B_Standard": [false, 661, 159, 112, 52],
+    "Stage_B_Universe": [false, 661, 212, 112, 52],
+    "Stage_B_Water": [false, 661, 265, 112, 52],
+    "Stage_B_Fortress2": [false, 661, 318, 400, 140],
+    "Stage_B_Air2": [false, 661, 459, 400, 140]
   };
   // end spriteDict
-  this.player = {                    //The data for the different playermodels with: unlocked, jumps, jumpstrength, movementspeed right, movementspeed left, weight
-    "Player_Standard" : [true, 2, -9, 3, -3, 45],
-    "Player_Longjohn" : [false, 2, -13.5, 3, -3, 42],
-    "Player_Speedy" : [false, 2, -9, 6, -6, 38],
-    "Player_Magician" : [false, 3, -9, 3, -3, 43],
-    "Player_Strooper" : [false, 2, -10.8, 4.5, -4.5, 45],
-    "Player_Disgusty" : [false, 3, -10.8, 3, -3, 52],
-    "Player_Afroman" : [false, 3, -10.8, 4.5, -4.5, 46]
+  this.player = {                    //The data for the different playermodels with: unlocked, bottom middle of hat, middle of glasses, top middle of beard
+    "Player_Standard" : [true, {x: 10, y: 0}, {x: 10, y: 8}, {x: 10, y: 10}],
+    "Player_Longjohn" : [false, {x: 7, y: 0}, {x: 7, y: 8}, {x: 7, y: 14}],
+    "Player_Speedy" : [false, {x: 7, y: 0}, {x: 7, y: 4}, {x: 7, y: 7}],
+    "Player_Magician" : [false, {x: 12, y: 0}, {x: 12, y: 6}, {x: 12, y: 9}],
+    "Player_Strooper" : [false, {x: 10, y: 1}, {x: 10, y: 6}, {x: 10, y: 9}],
+    "Player_Disgusty" : [false, {x: 12.5, y: 1}, {x: 12.5, y: 5}, {x: 12.5, y: 9}],
+    "Player_Afroman" : [false, {x: 12, y: 1}, {x: 12, y: 14}, {x: 12, y: 16}]
   };
   this.items = {                     //probability for spawning, durability, durability per level, costs for level 1
     "Item_Stopwatch": [5, 120, 60, 800],
@@ -336,7 +326,12 @@ function GlobalDict(eventHandler) {
   };
   this.collectables = {
     "Collectables_Nothing": [true],
-    "Collectables_Beard1": [true],
+    "Collectables_Beard1": [
+      true,
+      {
+        "Player_Standard": [10, ]
+      }
+    ],
     "Collectables_Glasses1": [true],
     "Collectables_Hat1": [true]
   };
@@ -350,6 +345,10 @@ function GlobalDict(eventHandler) {
         borderKey: {
           arrow: "standard"
         }
+      },
+      selectionPreview: {
+        rectKey: "blur",
+        borderKey: "standard"
       },
       skillTree: {
         rectKey: {

@@ -109,7 +109,7 @@
         ], "shopDropdown"
       ),
       new ShopDropdownMenu(
-        this.gD.canvas.width / 2 - 33, 70, 200, 16, ["Hat", "Glasses", "Beard"], "shopDropdown", true
+        this.gD.canvas.width / 2 - 33, 70, 200, 16, ["Hat", "Glasses", "Beard", "Only buyable"], "shopDropdown", true
       )
     ];
     this.tabs[1].objects.push(this.dropdowns[0]);
@@ -130,7 +130,7 @@
       this.gD.canvas.width / 2 - 100, this.gD.canvas.height - 50, 200, 30, "Main Menu", "menu"
     );
 
-    this.updateSelection(-1, 0);
+    this.updateSelection(0, -1, 0);
   };
   this.vScroll = function(elements) {
     this.scrollHeight = elements * 25;
@@ -163,7 +163,164 @@
     }
   };
   this.updateKeyPresses = function() {
-
+    this.gD.newKeys.map(key => {
+      let keyB = this.menu.controls.keyBindings;
+      if (keyB.get("Menu_Back")[3].includes(key)) {
+        this.gD.currentPage = this.menu;
+      } else if (keyB.get("Menu_NavUp")[3].includes(key)) {
+        if (this.selectedColumnIndex === 0) {
+          if (this.selectedRowIndex === -1) {
+            this.updateSelection(1, 1, this.selectedColumnIndex);
+          } else if (this.selectedRowIndex === 0) {
+            this.updateSelection(0, -1, this.selectedColumnIndex);
+          } else {
+            this.updateSelection(this.selectedTabIndex - 1, this.selectedRowIndex - 1, this.selectedColumnIndex);
+          }
+        } else if ((this.selectedColumnIndex === 1 && this.dropdowns[0].opened) ||
+                   (this.selectedColumnIndex === 2 && this.dropdowns[1].opened)) {
+          if (this.selectedRowIndex === 0) {
+            this.updateSelection(this.selectedTabIndex, this.dropdowns[this.selectedColumnIndex - 1].options.length, this.selectedColumnIndex);
+          } else {
+            this.updateSelection(this.selectedTabIndex, this.selectedRowIndex - 1, this.selectedColumnIndex);
+          }
+        } else if (this.selectedRowIndex === 0) {
+          if (this.selectedColumnIndex !== 12) {
+            this.updateSelection(
+              this.selectedTabIndex, 
+              Math.floor((this.accessoryWindow.accessories.length - this.selectedColumnIndex) / 11) + 1, 
+              this.selectedColumnIndex
+            );
+          }
+        } else if (this.selectedRowIndex === 1) {
+          if (this.selectedColumnIndex !== 12) {
+            if (this.selectedColumnIndex > 2) {
+              this.updateSelection(this.selectedTabIndex, 0, 3);
+            } else {
+              this.updateSelection(this.selectedTabIndex, 0, this.selectedColumnIndex);
+            }
+          }
+        } else {
+          this.updateSelection(
+            this.selectedTabIndex, 
+            this.selectedRowIndex - 1, 
+            this.selectedColumnIndex
+          );
+        }
+      } else if (keyB.get("Menu_NavDown")[3].includes(key)) {
+        if (this.selectedColumnIndex === 0) {
+          if (this.selectedRowIndex !== 1) {
+            this.updateSelection(this.selectedRowIndex + 1, this.selectedRowIndex + 1, this.selectedColumnIndex);
+          } else {
+            this.updateSelection(this.selectedTabIndex, -1, this.selectedColumnIndex);
+          }
+        } else if ((this.selectedColumnIndex === 1 && this.dropdowns[0].opened) ||
+                   (this.selectedColumnIndex === 2 && this.dropdowns[1].opened)) {
+          if (this.selectedRowIndex === this.dropdowns[this.selectedColumnIndex - 1].options.length) {
+            this.updateSelection(this.selectedTabIndex, 0, this.selectedColumnIndex);
+          } else {
+            this.updateSelection(this.selectedTabIndex, this.selectedRowIndex + 1, this.selectedColumnIndex);
+          }
+        } else if (this.selectedRowIndex === Math.floor((this.accessoryWindow.accessories.length - this.selectedColumnIndex) / 11) + 1) {
+          if (this.selectedColumnIndex !== 12) {
+            if (this.selectedColumnIndex > 2) {
+              this.updateSelection(this.selectedTabIndex, 0, 3);
+            } else {
+              this.updateSelection(this.selectedTabIndex, 0, this.selectedColumnIndex);
+            }
+          }
+        } else {
+          this.updateSelection(
+            this.selectedTabIndex, 
+            this.selectedRowIndex + 1, 
+            this.selectedColumnIndex
+          );
+        }
+      } else if (keyB.get("Menu_NavRight")[3].includes(key)) {
+        if (this.selectedTabIndex === 1) {
+          if (this.selectedColumnIndex === 0) {
+            this.updateSelection(this.selectedTabIndex, 0, 1);
+          } else if (this.accessoryDetails.currentAccessory !== null) {
+            if (this.selectedColumnIndex === 3 && this.selectedRowIndex === 0) {
+              this.updateSelection(this.selectedTabIndex, this.selectedRowIndex, 12);
+            } else if (this.selectedRowIndex === Math.ceil(this.accessoryWindow.accessories.length / 11) && 
+                       this.selectedColumnIndex === (this.accessoryWindow.accessories.length - 1) % 11 + 1) {
+              this.updateSelection(this.selectedTabIndex, this.selectedRowIndex, 12);
+            } else if (this.selectedColumnIndex === 12) {
+              this.updateSelection(this.selectedTabIndex, this.selectedTabIndex, 0);
+            } else {
+              this.updateSelection(this.selectedTabIndex, this.selectedRowIndex, this.selectedColumnIndex + 1);
+            }
+          } else {
+            if (this.selectedColumnIndex === 3 && this.selectedRowIndex === 0) {
+              this.updateSelection(this.selectedTabIndex, this.selectedTabIndex, 0);
+            } else if (this.selectedRowIndex === Math.ceil(this.accessoryWindow.accessories.length / 11) && 
+                       this.selectedColumnIndex === (this.accessoryWindow.accessories.length - 1) % 11 + 1) {
+              this.updateSelection(this.selectedTabIndex, this.selectedTabIndex, 0);
+            } else if (this.selectedColumnIndex === 11) {
+              this.updateSelection(this.selectedTabIndex, this.selectedTabIndex, 0);
+            } else {
+              this.updateSelection(this.selectedTabIndex, this.selectedRowIndex, this.selectedColumnIndex + 1);
+            }
+          }
+        }
+      } else if (keyB.get("Menu_NavLeft")[3].includes(key)) {
+        if (this.selectedTabIndex === 1) {
+          if (this.selectedColumnIndex === 1) {
+            this.updateSelection(this.selectedTabIndex, this.selectedTabIndex, 0);
+          } else if (this.accessoryDetails.currentAccessory !== null) {
+            if (this.selectedColumnIndex === 0) {
+              this.updateSelection(this.selectedTabIndex, this.selectedRowIndex, 12);
+            } else if (this.selectedColumnIndex === 1) {
+              this.updateSelection(this.selectedTabIndex, this.selectedTabIndex, 0);
+            } else if (this.selectedColumnIndex === 12 && this.selectedRowIndex === 0) {
+              this.updateSelection(this.selectedTabIndex, this.selectedRowIndex, 3);
+            } else if (this.selectedColumnIndex === 12 && 
+                       this.selectedRowIndex === Math.ceil(this.accessoryWindow.accessories.length / 11)) {
+              this.updateSelection(
+                this.selectedTabIndex, 
+                this.selectedRowIndex, 
+                (this.accessoryWindow.accessories.length - 1) % 11 + 1
+              );
+            } else {
+              this.updateSelection(this.selectedTabIndex, this.selectedRowIndex, this.selectedColumnIndex - 1);
+            }
+          } else {
+            if (this.selectedColumnIndex === 0) {
+              if (this.selectedRowIndex === 0) {
+                this.updateSelection(this.selectedTabIndex, this.selectedRowIndex, 3);
+              } else if (this.selectedRowIndex === Math.ceil(this.accessoryWindow.accessories.length / 11)) {
+                this.updateSelection(
+                  this.selectedTabIndex, 
+                  this.selectedRowIndex, 
+                  (this.accessoryWindow.accessories.length - 1) % 11 + 1
+                );
+              } else {
+                this.updateSelection(this.selectedTabIndex, this.selectedRowIndex, 11);
+              }
+            } else if (this.selectedColumnIndex === 1) {
+              this.updateSelection(this.selectedTabIndex, this.selectedTabIndex, 0);
+            } else {
+              this.updateSelection(this.selectedTabIndex, this.selectedRowIndex, this.selectedColumnIndex - 1);
+            }
+          }
+        }
+      } else if (keyB.get("Menu_Confirm")[3].includes(key)) {
+        if (this.selectedTabIndex === 1) {
+          if (this.selectedRowIndex === 0 && (this.selectedColumnIndex === 1 || this.selectedColumnIndex === 2)) {
+            if (this.dropdowns[this.selectedColumnIndex - 1].opened) {
+              this.dropdowns[this.selectedColumnIndex - 1].close();
+            } else {
+              this.dropdowns[this.selectedColumnIndex - 1].open();
+            }
+          } else if (this.selectedRowIndex === 0 && this.selectedColumnIndex === 3) {
+            this.dropdowns.map(dropdown => {
+              dropdown.reset();
+            }, this);
+            this.accessoryWindow.setAccessories(this, this.dropdowns[1].currentOption);
+          }
+        }
+      }
+    }, this);
   };
   this.updateMouseMoves = function() {
     let mouseDown = this.gD.mouseDown.pop();
@@ -175,13 +332,13 @@
         if (this.gD.mousePos.x >= tab.x && this.gD.mousePos.x <= tab.x + tab.tabHeadWidth &&
             this.gD.mousePos.y >= tab.y + index * tab.tabHeadHeight &&
             this.gD.mousePos.y <= tab.y + (index + 1) * tab.tabHeadHeight) {
-          this.updateSelection(0, index);
+          this.updateSelection(index, index, 0);
         }
       }, this);
 
       if (this.gD.mousePos.x >= this.backToMenu.x && this.gD.mousePos.x <= this.backToMenu.x + this.backToMenu.width &&
           this.gD.mousePos.y >= this.backToMenu.y && this.gD.mousePos.y <= this.backToMenu.y + this.backToMenu.height) {
-        this.updateSelection(-1, this.selectedTabIndex);
+        this.updateSelection(this.selectedTabIndex, -1, 0);
       }
     }
 
@@ -234,26 +391,20 @@
     } else if (this.tabs[1].selected) {
       if (this.gD.mousePos.x >= this.resetButton.x && this.gD.mousePos.x <= this.resetButton.x + this.resetButton.width &&
           this.gD.mousePos.y >= this.resetButton.y && this.gD.mousePos.y <= this.resetButton.y + this.resetButton.height) {
-        this.resetButton.select();
-      } else {
-        this.resetButton.deselect();
+        this.updateSelection(this.selectedTabIndex, 0, 3);
       }
 
       this.dropdowns.map((dropdown, index) => {
         if (this.gD.mousePos.x >= dropdown.x && this.gD.mousePos.x <= dropdown.x + dropdown.width &&
             this.gD.mousePos.y >= dropdown.y && this.gD.mousePos.y <= dropdown.y + dropdown.height) {
-          dropdown.select();
-        } else {
-          dropdown.deselect();
+          this.updateSelection(this.selectedTabIndex, 0, index + 1);
         }
         if (dropdown.opened) {
           dropdown.options.map((option, indexOption) => {
             if (this.gD.mousePos.x >= dropdown.x && this.gD.mousePos.x < dropdown.x + dropdown.width &&
                 this.gD.mousePos.y >= dropdown.y + (indexOption + 1) * dropdown.height &&
                 this.gD.mousePos.y < dropdown.y + (indexOption + 2) * dropdown.height) {
-              dropdown.select(indexOption + 1);
-            } else {
-              dropdown.deselect(indexOption + 1);
+              this.updateSelection(1, indexOption + 1, index + 1);
             }
           }, this);
           dropdownOpen = true;
@@ -268,9 +419,7 @@
               this.gD.mousePos.y <= this.accessoryWindow.y + 92 + Math.floor(index / 11) * 75 - this.scrollHeight &&
               this.gD.mousePos.y >= this.accessoryWindow.y + 27 &&
               this.gD.mousePos.y <= this.accessoryWindow.y + this.accessoryWindow.height) {
-            this.accessoryWindow.select(index);
-          } else {
-            this.accessoryWindow.deselect(index);
+            this.updateSelection(this.selectedTabIndex, Math.floor(index / 11) + 1, (index % 11) + 1);
           }
         }, this);
       }
@@ -280,9 +429,7 @@
           this.gD.mousePos.y >= this.accessoryDetails.buyButton.y &&
           this.gD.mousePos.y <= this.accessoryDetails.buyButton.y + this.accessoryDetails.buyButton.height &&
           this.accessoryDetails.currentAccessory !== null) {
-        this.accessoryDetails.buyButton.select();
-      } else {
-        this.accessoryDetails.buyButton.deselect();
+        this.updateSelection(this.selectedTabIndex, this.selectedRowIndex, 12);
       }
     }
   };
@@ -369,6 +516,7 @@
               this.currentlyMarked = index;
             } else {
               this.currentlyMarked = null;
+              this.accessoryWindow.setAccessories(this, this.dropdowns[1].currentOption);
             }
           }
         }, this);
@@ -415,7 +563,6 @@
 
     this.title.draw(this.gD);
 
-
     this.tabs.map(tab => {
       tab.draw(this.gD, this);
     }, this);
@@ -427,20 +574,68 @@
    * @param {number} rowIndex the row of the new selected object
    * @param {number} tabIndex the tab of the new selected object
    */
-  this.updateSelection = function(rowIndex, tabIndex) {
-    if (this.selectedRowIndex !== undefined && this.selectedTabIndex !== undefined) {
+  this.updateSelection = function(tabIndex, rowIndex, columnIndex) {
+    if (this.selectedTabIndex !== undefined && this.selectedRowIndex !== undefined &&
+        this.selectedColumnIndex !== undefined) {
       if (this.selectedRowIndex === -1) {
         this.backToMenu.deselect();
       }
       this.tabs[this.selectedTabIndex].deselect();
+      if (this.selectedColumnIndex !== 0) {
+        if (this.selectedTabIndex === 1) {
+          if ((this.selectedColumnIndex === 1 && this.dropdowns[0].opened) || 
+              (this.selectedColumnIndex === 2 && this.dropdowns[1].opened)) {
+            this.dropdowns[this.selectedColumnIndex - 1].deselect(this.selectedRowIndex);
+          } else if (this.selectedRowIndex === 0) {
+            if (this.selectedColumnIndex === 1 || this.selectedColumnIndex === 2) {
+              this.dropdowns[this.selectedColumnIndex - 1].deselect();
+            } else if (this.selectedColumnIndex === 3) {
+              this.resetButton.deselect();
+            } else if (this.selectedColumnIndex === 12) {
+              this.accessoryDetails.buyButton.deselect();
+            }
+          } else {
+            if (this.selectedColumnIndex === 12) {
+              this.accessoryDetails.buyButton.deselect();
+            } else {
+              this.accessoryWindow.deselect((this.selectedRowIndex - 1) * 11 + this.selectedColumnIndex - 1);
+            }
+          }
+        }
+      }
     }
-
+    
     if (rowIndex === -1) {
       this.backToMenu.select();
     }
     this.tabs[tabIndex].select();
+    if (columnIndex !== 0) {
+      if (tabIndex === 1) {
+        if ((columnIndex === 1 && this.dropdowns[0].opened) || 
+            (columnIndex === 2 && this.dropdowns[1].opened)) {
+          this.dropdowns[columnIndex - 1].select(rowIndex);
+        } else if (rowIndex === 0) {
+          if (columnIndex === 1 || columnIndex === 2) {
+            this.dropdowns[columnIndex - 1].select();
+          } else if (columnIndex === 3) {
+            this.resetButton.select();
+          } else if (columnIndex === 12) {
+            this.accessoryDetails.buyButton.select();
+          }
+        } else {
+          if (columnIndex === 12) {
+            this.accessoryDetails.buyButton.select();
+          } else {
+            this.accessoryWindow.select((rowIndex - 1) * 11 + columnIndex - 1);
+          }
+        }
+      }
+    }
+    
     this.selectedRowIndex = rowIndex;
     this.selectedTabIndex = tabIndex;
+    this.selectedColumnIndex = columnIndex;
+    console.log(tabIndex + " " + rowIndex + " " + columnIndex);
   };
 }
 
@@ -904,6 +1099,9 @@ function ShopAccessoryWindow(x, y, width, height, styleKey) {
     shop.accessoryDetails.setAccessory();
 
     for (let accessory of shop.accessories.values()) {
+      if (categories.includes("Only buyable") && accessory.bought) {
+        continue;
+      }
       if (categories.includes(accessory.category)) {
         this.accessories.push(accessory);
         this.arrowWidth.push(0);
@@ -1257,9 +1455,9 @@ function ShopDropdownMenu(x, y, width, height, options, styleKey, multipleOption
     gD.context.rotate(this.rotation * Math.PI / 180);
     gD.context.translate(-this.x - 10, -this.y - this.height / 2);
     if (this.multipleOptions) {
-      if (this.currentOption.toString().length > 20) {
+      if (this.currentOption.toString().length > 23) {
         drawCanvasText(
-          this.x + 23, this.y + this.height / 2, this.currentOption.toString().substring(0, 17) + "...",
+          this.x + 23, this.y + this.height / 2, this.currentOption.toString().substring(0, 20) + "...",
           design.textKey, gD
         );
       } else {
