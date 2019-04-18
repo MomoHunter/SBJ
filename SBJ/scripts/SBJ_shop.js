@@ -237,8 +237,12 @@
         }
       } else if (keyB.get("Menu_NavRight")[3].includes(key)) {
         if (this.selectedTabIndex === 1) {
-          if (this.selectedColumnIndex === 0) {
-            this.updateSelection(this.selectedTabIndex, 0, 1);
+          if (this.selectedColumnIndex === 1 && this.dropdowns[0].opened) {
+            if (this.selectedRowIndex > this.dropdowns[1].options.length) {
+              this.updateSelection(this.selectedTabIndex, this.dropdowns[1].options.length, 2);
+            } else {
+              this.updateSelection(this.selectedTabIndex, this.selectedRowIndex, 2);
+            }
           } else if (this.accessoryDetails.currentAccessory !== null) {
             if (this.selectedColumnIndex === 3 && this.selectedRowIndex === 0) {
               this.updateSelection(this.selectedTabIndex, this.selectedRowIndex, 12);
@@ -265,8 +269,12 @@
         }
       } else if (keyB.get("Menu_NavLeft")[3].includes(key)) {
         if (this.selectedTabIndex === 1) {
-          if (this.selectedColumnIndex === 1) {
-            this.updateSelection(this.selectedTabIndex, this.selectedTabIndex, 0);
+          if (this.selectedColumnIndex === 2 && this.dropdowns[1].opened) {
+            if (this.selectedRowIndex > this.dropdowns[0].options.length) {
+              this.updateSelection(this.selectedTabIndex, this.dropdowns[0].options.length, 1);
+            } else {
+              this.updateSelection(this.selectedTabIndex, this.selectedRowIndex, 1);
+            }
           } else if (this.accessoryDetails.currentAccessory !== null) {
             if (this.selectedColumnIndex === 0) {
               this.updateSelection(this.selectedTabIndex, this.selectedRowIndex, 12);
@@ -297,7 +305,7 @@
               } else {
                 this.updateSelection(this.selectedTabIndex, this.selectedRowIndex, 11);
               }
-            } else if (this.selectedColumnIndex === 1) {
+            } else if (this.selectedColumnIndex === 1 && !this.dropdowns[0].opened) {
               this.updateSelection(this.selectedTabIndex, this.selectedTabIndex, 0);
             } else {
               this.updateSelection(this.selectedTabIndex, this.selectedRowIndex, this.selectedColumnIndex - 1);
@@ -305,7 +313,9 @@
           }
         }
       } else if (keyB.get("Menu_Confirm")[3].includes(key)) {
-        if (this.selectedTabIndex === 1) {
+        if (this.selectedRowIndex === -1) {
+          this.gD.currentPage = this.menu;
+        } else if (this.selectedTabIndex === 1) {
           if (this.selectedRowIndex === 0 && (this.selectedColumnIndex === 1 || this.selectedColumnIndex === 2)) {
             if (this.dropdowns[this.selectedColumnIndex - 1].opened) {
               this.dropdowns[this.selectedColumnIndex - 1].close();
@@ -317,8 +327,42 @@
               dropdown.reset();
             }, this);
             this.accessoryWindow.setAccessories(this, this.dropdowns[1].currentOption);
+          } else if ((this.selectedColumnIndex === 1 && this.dropdowns[0].opened) ||
+                     (this.selectedColumnIndex === 2 && this.dropdowns[1].opened)) {
+            if (this.selectedRowIndex !== 0) {
+              this.dropdowns[this.selectedColumnIndex - 1]
+                .setOption(this.dropdowns[this.selectedColumnIndex - 1].options[this.selectedRowIndex - 1]);
+              this.accessoryWindow.setAccessories(this, this.dropdowns[1].currentOption);
+              this.vScroll(0);
+              if (this.selectedColumnIndex === 1) {
+                this.dropdowns[0].close();
+                this.updateSelection(this.selectedTabIndex, 0, 1);
+              }
+            }
+          } else if (this.selectedColumnIndex !== 0 && this.selectedRowIndex !== 0) {
+            if (this.selectedColumnIndex === 12 && this.accessoryDetails.currentAccessory !== null && !this.accessoryDetails.currentAccessory.bought) {
+              this.buyAccessory(this.accessoryDetails.currentAccessory);
+            } else {
+              if (this.currentlyMarked !== null) {
+                this.accessoryWindow.demark(this.currentlyMarked);
+              }
+              this.accessoryDetails.setAccessory();
+              if (this.currentlyMarked !== (this.selectedRowIndex - 1) * 11 + this.selectedColumnIndex - 1) {
+                this.accessoryWindow.mark((this.selectedRowIndex - 1) * 11 + this.selectedColumnIndex - 1);
+                this.accessoryDetails
+                  .setAccessory(this.accessoryWindow.accessories[(this.selectedRowIndex - 1) * 11 + this.selectedColumnIndex - 1]);
+                this.currentlyMarked = (this.selectedRowIndex - 1) * 11 + this.selectedColumnIndex - 1;
+              } else {
+                this.currentlyMarked = null;
+                this.accessoryWindow.setAccessories(this, this.dropdowns[1].currentOption);
+                this.updateSelection(this.selectedTabIndex, 0, this.selectedColumnIndex);
+              }
+            }
           }
         }
+      } else if (keyB.get("Mute_All")[3].includes(key)) {
+        this.gD.muted = !this.gD.muted;
+        this.menu.muteButton.setSprite();
       }
     }, this);
   };

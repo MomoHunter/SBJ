@@ -31,13 +31,16 @@
     this.selectionPreview = new SelectionPreview(this.gD.canvas.width / 2 - 400, 90, 800, 160, "selectionPreview");
     
     this.confirmButton = new CanvasButton(
-      (this.gD.canvas.width / 2) + 5, this.gD.canvas.height - 50, 200, 30, "Start", "menu"
+      (this.gD.canvas.width / 2) + 110, this.gD.canvas.height - 50, 200, 30, "Start", "menu"
     );
     this.backToMenu = new CanvasButton(
-      (this.gD.canvas.width / 2) - 205, this.gD.canvas.height - 50, 200, 30, "Main Menu", "menu"
+      (this.gD.canvas.width / 2) - 100, this.gD.canvas.height - 50, 200, 30, "Main Menu", "menu"
+    );
+    this.trainingButton = new CanvasButton(
+      (this.gD.canvas.width / 2) - 310, this.gD.canvas.height - 50, 200, 30, "Training", "menu"
     );
     
-    this.updateSelection(-1, 0);
+    this.updateSelection(-1, 1);
   };
   this.updateKeyPresses = function() {
     this.gD.newKeys.map(key => {
@@ -58,20 +61,16 @@
         }
       } else if (keyB.get("Menu_NavRight")[3].includes(key)) {
         if (this.selectedRowIndex === -1) {
-          if (this.selectedColumnIndex > 0) {
-            this.updateSelection(this.selectedRowIndex, 0);
-          } else {
-            this.updateSelection(this.selectedRowIndex, 1);
-          }
+          this.updateSelection(this.selectedRowIndex, (this.selectedColumnIndex + 1) % 3);
         } else {
           this.updateSelection(this.selectedRowIndex, (this.selectedColumnIndex + 1) % this.selections.length);
         }
       } else if (keyB.get("Menu_NavLeft")[3].includes(key)) {
         if (this.selectedRowIndex === -1) {
           if (this.selectedColumnIndex > 0) {
-            this.updateSelection(this.selectedRowIndex, 0);
+            this.updateSelection(this.selectedRowIndex, this.selectedColumnIndex - 1);
           } else {
-            this.updateSelection(this.selectedRowIndex, 1);
+            this.updateSelection(this.selectedRowIndex, 2);
           }
         } else {
           this.updateSelection(
@@ -82,6 +81,8 @@
       } else if (keyB.get("Menu_Confirm")[3].includes(key)) {
         if (this.selectedRowIndex === -1) {
           if (this.selectedColumnIndex === 0) {
+
+          } else if (this.selectedColumnIndex === 0) {
             this.gD.currentPage = this.menu;
           } else {
             this.gD.currentPage = this.menu.game;
@@ -114,11 +115,18 @@
         this.gD.mousePos.x <= this.confirmButton.x + this.confirmButton.width &&
         this.gD.mousePos.y >= this.confirmButton.y &&
         this.gD.mousePos.y <= this.confirmButton.y + this.confirmButton.height) {
-      this.updateSelection(-1, 1);
+      this.updateSelection(-1, 2);
     }
-    
+
     if (this.gD.mousePos.x >= this.backToMenu.x && this.gD.mousePos.x <= this.backToMenu.x + this.backToMenu.width &&
         this.gD.mousePos.y >= this.backToMenu.y && this.gD.mousePos.y <= this.backToMenu.y + this.backToMenu.height) {
+      this.updateSelection(-1, 1);
+    }
+
+    if (this.gD.mousePos.x >= this.trainingButton.x &&
+        this.gD.mousePos.x <= this.trainingButton.x + this.trainingButton.width &&
+        this.gD.mousePos.y >= this.trainingButton.y &&
+        this.gD.mousePos.y <= this.trainingButton.y + this.trainingButton.height) {
       this.updateSelection(-1, 0);
     }
   };
@@ -145,6 +153,9 @@
     } else if (clickPos.x >= this.backToMenu.x && clickPos.x <= this.backToMenu.x + this.backToMenu.width &&
                clickPos.y >= this.backToMenu.y && clickPos.y <= this.backToMenu.y + this.backToMenu.height) {
       this.gD.currentPage = this.menu;
+    } else if (clickPos.x >= this.trainingButton.x && clickPos.x <= this.trainingButton.x + this.trainingButton.width &&
+               clickPos.y >= this.trainingButton.y && clickPos.y <= this.trainingButton.y + this.trainingButton.height) {
+
     }
   };
   this.updateWheelMoves = function() {
@@ -157,6 +168,7 @@
     
     this.confirmButton.update();
     this.backToMenu.update();
+    this.trainingButton.update();
   };
   this.draw = function() {
     this.gD.context.drawImage(this.menu.backgroundImage, 0, 0);
@@ -172,6 +184,7 @@
     
     this.confirmButton.draw(this.gD);
     this.backToMenu.draw(this.gD);
+    this.trainingButton.draw(this.gD);
   };
   /**
    * updates the selected object and deselects the old object
@@ -182,6 +195,8 @@
     if (this.selectedRowIndex !== undefined && this.selectedColumnIndex !== undefined) {
       if (this.selectedRowIndex === -1) {
         if (this.selectedColumnIndex === 0) {
+          this.trainingButton.deselect();
+        } else if (this.selectedColumnIndex === 1) {
           this.backToMenu.deselect();
         } else {
           this.confirmButton.deselect();
@@ -197,6 +212,8 @@
 
     if (rowIndex === -1) {
       if (columnIndex === 0) {
+        this.trainingButton.select();
+      } else if (columnIndex === 1) {
         this.backToMenu.select();
       } else {
         this.confirmButton.select();
@@ -509,7 +526,7 @@ function SelectionPreview(x, y, width, height, styleKey) {
     let spriteData = [];
     selectionScreenSP.selections.map((selection, index) => {
       if (index === 4) {
-        spriteData.push(getSpriteData("Stage_B_" + selection.getSelected().split("_")[1] + "2", gD));
+        spriteData.push(getSpriteData(selection.getSelected().replace("_", "_B_"), gD));
       } else {
         if (selection.getSelected() === "Collectables_Nothing") {
           spriteData.push({spriteWidth: 0, spriteHeight: 0, key: "Collectables_Nothing"});
@@ -519,40 +536,78 @@ function SelectionPreview(x, y, width, height, styleKey) {
       }
     }, this);
     
-    drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey, gD);
-    drawCanvasImage(
-      this.x + this.width - spriteData[4].spriteWidth - 10, this.y + (this.height - spriteData[4].spriteHeight) / 2,
-      spriteData[4].key, gD
-    );
-    drawCanvasRect(this.x + this.width / 2 - 10, this.y + 10, 60, 60, design.rectKey, gD);
+    drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.background, gD);
+    if (gD.stages[spriteData[4].key.replace("_B", "")][0]) {
+      drawCanvasImage(
+        this.x + this.width - spriteData[4].spriteWidth - 10, this.y + (this.height - spriteData[4].spriteHeight) / 2,
+        spriteData[4].key, gD
+      );
+    } else {
+      drawCanvasRect(
+        this.x + this.width - spriteData[4].spriteWidth - 10, this.y + (this.height - spriteData[4].spriteHeight) / 2,
+        spriteData[4].spriteWidth, spriteData[4].spriteHeight, design.rectKey.locked, gD
+      );
+    }
+    drawCanvasRect(this.x + this.width / 2 - 10, this.y + 10, 60, 60, design.rectKey.background, gD);
     
     let charHeight = spriteData[0].spriteHeight - gD.player[spriteData[0].key][1].y + spriteData[1].spriteHeight + 
       Math.max(spriteData[3].spriteHeight - (spriteData[0].spriteHeight - gD.player[spriteData[0].key][3].y), 0);
     let playerY = spriteData[1].spriteHeight - gD.player[spriteData[0].key][1].y;
-      
-    drawCanvasImage(
-      this.x + this.width / 2 + 20 - spriteData[0].spriteWidth / 2, 
-      this.y + 40 - charHeight / 2 + playerY, 
-      spriteData[0].key, gD
-    );
-    if (spriteData[1].key !== "Collectables_Nothing") {
+
+    if (gD.player[spriteData[0].key][0]) {
       drawCanvasImage(
-        this.x + this.width / 2 + 20 - spriteData[1].spriteWidth / 2, 
-        this.y + 40 - charHeight / 2, spriteData[1].key, gD
+        this.x + this.width / 2 + 20 - spriteData[0].spriteWidth / 2,
+        this.y + 40 - charHeight / 2 + playerY,
+        spriteData[0].key, gD
       );
+    } else {
+      drawCanvasImage(
+        this.x + this.width / 2 + 20 - spriteData[0].spriteWidth / 2,
+        this.y + 40 - charHeight / 2 + playerY,
+        spriteData[0].key + "_G", gD
+      );
+    }
+    if (spriteData[1].key !== "Collectables_Nothing") {
+      if (gD.collectables[spriteData[1].key][0]) {
+        drawCanvasImage(
+          this.x + this.width / 2 + 20 - spriteData[1].spriteWidth / 2,
+          this.y + 40 - charHeight / 2, spriteData[1].key, gD
+        );
+      } else {
+        drawCanvasImage(
+          this.x + this.width / 2 + 20 - spriteData[1].spriteWidth / 2,
+          this.y + 40 - charHeight / 2, spriteData[1].key + "_G", gD
+        );
+      }
     }
     if (spriteData[2].key !== "Collectables_Nothing") {
-      drawCanvasImage(
-        this.x + this.width / 2 + 20 - spriteData[2].spriteWidth / 2, 
-        this.y + 40 - charHeight / 2 + playerY + gD.player[spriteData[0].key][2].y - spriteData[2].spriteHeight / 2, 
-        spriteData[2].key, gD
-      );
+      if (gD.collectables[spriteData[2].key][0]) {
+        drawCanvasImage(
+          this.x + this.width / 2 + 20 - spriteData[2].spriteWidth / 2,
+          this.y + 40 - charHeight / 2 + playerY + gD.player[spriteData[0].key][2].y - spriteData[2].spriteHeight / 2,
+          spriteData[2].key, gD
+        );
+      } else {
+        drawCanvasImage(
+          this.x + this.width / 2 + 20 - spriteData[2].spriteWidth / 2,
+          this.y + 40 - charHeight / 2 + playerY + gD.player[spriteData[0].key][2].y - spriteData[2].spriteHeight / 2,
+          spriteData[2].key + "_G", gD
+        );
+      }
     }
     if (spriteData[3].key !== "Collectables_Nothing") {
-      drawCanvasImage(
-        this.x + this.width / 2 + 20 - spriteData[3].spriteWidth / 2, 
-        this.y + 40 - charHeight / 2 + playerY + gD.player[spriteData[0].key][3].y, spriteData[3].key, gD
-      );
+      if (gD.collectables[spriteData[3].key][0]) {
+        drawCanvasImage(
+          this.x + this.width / 2 + 20 - spriteData[3].spriteWidth / 2,
+          this.y + 40 - charHeight / 2 + playerY + gD.player[spriteData[0].key][3].y, spriteData[3].key, gD
+        );
+      } else {
+        drawCanvasImage(
+          this.x + this.width / 2 + 20 - spriteData[3].spriteWidth / 2,
+          this.y + 40 - charHeight / 2 + playerY + gD.player[spriteData[0].key][3].y,
+          spriteData[3].key + "_G", gD
+        );
+      }
     }
     drawCanvasRectBorder(this.x + this.width / 2 - 10, this.y + 10, 60, 60, design.borderKey, gD);
     drawCanvasRectBorder(
