@@ -203,7 +203,8 @@
           this.updateSelection(
             this.selectedTabIndex, 
             this.selectedRowIndex - 1, 
-            this.selectedColumnIndex
+            this.selectedColumnIndex,
+            true
           );
         }
       } else if (keyB.get("Menu_NavDown")[3].includes(key)) {
@@ -232,7 +233,8 @@
           this.updateSelection(
             this.selectedTabIndex, 
             this.selectedRowIndex + 1, 
-            this.selectedColumnIndex
+            this.selectedColumnIndex,
+            true
           );
         }
       } else if (keyB.get("Menu_NavRight")[3].includes(key)) {
@@ -252,7 +254,12 @@
             } else if (this.selectedColumnIndex === 12) {
               this.updateSelection(this.selectedTabIndex, this.selectedTabIndex, 0);
             } else {
-              this.updateSelection(this.selectedTabIndex, this.selectedRowIndex, this.selectedColumnIndex + 1);
+              this.updateSelection(
+                this.selectedTabIndex,
+                this.selectedRowIndex,
+                this.selectedColumnIndex + 1,
+                true
+              );
             }
           } else {
             if (this.selectedColumnIndex === 3 && this.selectedRowIndex === 0) {
@@ -263,7 +270,12 @@
             } else if (this.selectedColumnIndex === 11) {
               this.updateSelection(this.selectedTabIndex, this.selectedTabIndex, 0);
             } else {
-              this.updateSelection(this.selectedTabIndex, this.selectedRowIndex, this.selectedColumnIndex + 1);
+              this.updateSelection(
+                this.selectedTabIndex,
+                this.selectedRowIndex,
+                this.selectedColumnIndex + 1,
+                true
+              );
             }
           }
         }
@@ -290,7 +302,12 @@
                 (this.accessoryWindow.accessories.length - 1) % 11 + 1
               );
             } else {
-              this.updateSelection(this.selectedTabIndex, this.selectedRowIndex, this.selectedColumnIndex - 1);
+              this.updateSelection(
+                this.selectedTabIndex,
+                this.selectedRowIndex,
+                this.selectedColumnIndex - 1,
+                true
+              );
             }
           } else {
             if (this.selectedColumnIndex === 0) {
@@ -308,7 +325,12 @@
             } else if (this.selectedColumnIndex === 1 && !this.dropdowns[0].opened) {
               this.updateSelection(this.selectedTabIndex, this.selectedTabIndex, 0);
             } else {
-              this.updateSelection(this.selectedTabIndex, this.selectedRowIndex, this.selectedColumnIndex - 1);
+              this.updateSelection(
+                this.selectedTabIndex,
+                this.selectedRowIndex,
+                this.selectedColumnIndex - 1,
+                true
+              );
             }
           }
         }
@@ -615,10 +637,12 @@
   };
   /**
    * updates the selected object and deselects the old object
-   * @param {number} rowIndex the row of the new selected object
    * @param {number} tabIndex the tab of the new selected object
+   * @param {number} rowIndex the row of the new selected object
+   * @param {number} columnIndex the column of the new selected object
+   * @param {boolean} keyboard if the command comes from the keyboard (for scrolling)
    */
-  this.updateSelection = function(tabIndex, rowIndex, columnIndex) {
+  this.updateSelection = function(tabIndex, rowIndex, columnIndex, keyboard = false) {
     if (this.selectedTabIndex !== undefined && this.selectedRowIndex !== undefined &&
         this.selectedColumnIndex !== undefined) {
       if (this.selectedRowIndex === -1) {
@@ -671,6 +695,17 @@
             this.accessoryDetails.buyButton.select();
           } else {
             this.accessoryWindow.select((rowIndex - 1) * 11 + columnIndex - 1);
+            if (keyboard) {
+              this.vScroll(
+                Math.max(
+                  Math.min(
+                    (Math.ceil(this.accessoryWindow.accessories.length / 11) * 3) - 7,
+                    (rowIndex - 1) * 3 - 1
+                  ),
+                  0
+                )
+              );
+            }
           }
         }
       }
