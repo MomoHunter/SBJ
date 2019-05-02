@@ -149,6 +149,11 @@
     
     if (clickPos.x >= this.confirmButton.x && clickPos.x <= this.confirmButton.x + this.confirmButton.width &&
         clickPos.y >= this.confirmButton.y && clickPos.y <= this.confirmButton.y + this.confirmButton.height) {
+      this.menu.game.setStage(this.selections[4].getSelected());
+      this.menu.game.addPlayer(
+        this.selections[0].getSelected(), "", this.selections[1].getSelected(), this.selections[2].getSelected(),
+        this.selections[3].getSelected()
+      );
       this.gD.currentPage = this.menu.game;
     } else if (clickPos.x >= this.backToMenu.x && clickPos.x <= this.backToMenu.x + this.backToMenu.width &&
                clickPos.y >= this.backToMenu.y && clickPos.y <= this.backToMenu.y + this.backToMenu.height) {

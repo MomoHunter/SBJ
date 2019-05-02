@@ -714,7 +714,6 @@
     this.selectedRowIndex = rowIndex;
     this.selectedTabIndex = tabIndex;
     this.selectedColumnIndex = columnIndex;
-    console.log(tabIndex + " " + rowIndex + " " + columnIndex);
   };
 }
 

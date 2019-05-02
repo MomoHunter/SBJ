@@ -13,6 +13,8 @@ function Menu(gD) {
     this.selectionScreenSP.init();
     this.shop = new Shop(this, this.gD);
     this.shop.init();
+    this.game = new Game(this, this.gD);
+    this.game.init();
     this.achievements = new Achievements(this, this.gD);
     this.achievements.init();
     this.highscores = new Highscores(this, this.gD);
@@ -40,10 +42,10 @@ function Menu(gD) {
     ];
 
     this.playNavigationGrid = [
-      [{ button: "Singleplayer",       action: (gD) => { gD.currentPage = this.selectionScreenSP } }],
-      [{ button: "Local MP",  action: (gD) => { gD.currentPage = this.selectionScreenLMP } }],
-      [{ button: "Online MP", action: (gD) => { gD.currentPage = this.selectionScreenOMP } }],
-      [{ button: "Back",               action: (gD) => { this.showPlay = false } }]
+      [{ button: "Singleplayer", action: (gD) => { gD.currentPage = this.selectionScreenSP } }],
+      [{ button: "Local MP",     action: (gD) => { gD.currentPage = this.selectionScreenLMP } }],
+      [{ button: "Online MP",    action: (gD) => { gD.currentPage = this.selectionScreenOMP } }],
+      [{ button: "Back",         action: (gD) => { this.showPlay = false } }]
     ];
 
     this.extraNavigationGrid = [
