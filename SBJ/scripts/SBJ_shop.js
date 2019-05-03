@@ -730,6 +730,9 @@ function SkillData(name, showValue, maxValue, costGoldenShamrock, costHype, cost
   this.currentValue = 0;
   this.unlocked = false;
   this.maxed = false;
+  this.getValue = function() {
+    return this.currentValue;
+  };
   this.checkUnlock = function(shop) {
     let levels = 0;
 
