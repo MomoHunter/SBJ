@@ -329,15 +329,15 @@ function GlobalDict(eventHandler) {
       {type: "Standard", x: 1860, y: 200}
     ]}
   ];
-  this.floors = {                    //probability
-    "Floor_Standard": [5, "stagecolor"],
-    "Floor_Jump": [1, "rgba(229, 149, 149, 1)"],
-    "Floor_Fall": [0.8, "rgba(126, 186, 115, 1)"],
-    "Floor_Spikes": [0.8, "rgba(173, 6, 6, 1)"],
-    "Floor_Moving": [0.1, "stagecolor"]
+  this.floors = {                    //color
+    "Standard": "stagecolor",
+    "Jump": "rgba(229, 149, 149, 1)",
+    "Fall": "rgba(126, 186, 115, 1)",
+    "Spikes": "rgba(173, 6, 6, 1)",
+    "Moving": "stagecolor"
   };
   this.stages = {                    //stage class reference, unlocked
-    "Stage_Training": [true, "Stage0"],
+    "Stage_Training": [true, Stage0],
     "Stage_Fortress": [true, "Stage1"],
     "Stage_Air": [false, "Stage2"],
     "Stage_Water": [false, "Stage3"],
@@ -924,6 +924,11 @@ function GlobalDict(eventHandler) {
       hook2: {
         borderColor: "25, 145, 25, 1",
         borderSize: 4,
+        lineDash: []
+      },
+      stage0Floor: {
+        borderColor: "155, 155, 155, 1",
+        borderSize: 5,
         lineDash: []
       }
     },

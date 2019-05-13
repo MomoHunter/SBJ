@@ -12,14 +12,17 @@ function Game(menu, gD) {
     this.currentLevel = 1;
     this.distance = 0;
     this.distanceSinceLvlUp = 0;
-    this.floors = [];
+    this.floors = [new GameFloor(0, this.gD.canvas.height - 50.5, this.gD.canvas.width + 100, "Standard")];
+    this.floorStartIndex = 0;
     this.objects = [];
     
     this.inventory = new GameInventory();
     this.inventory.init(this, gD);
   };
   this.setStage = function(stage, training = false) {
-    this.stage = stage;
+    let stageClass = this.gD.stages[stage][1];
+    this.stage = new stageClass(this);
+    this.stage.init();
     this.trainingMode = training;
   };
   this.addPlayer = function(character, hat, glasses, beard, name = "") {
@@ -28,7 +31,7 @@ function Game(menu, gD) {
   };
   this.speedLvlUp = function() {
     this.currentLevel++;
-    this.distanceSinceLvlUp = this.inventory.getValue("distance") - getLevelStart(this.currentLevel);
+    this.distanceSinceLvlUp = this.inventory.getValue("distance") - this.getLevelStart(this.currentLevel);
     this.globalSpeed++;
   };
   this.getLevelStart = function(level) {
@@ -92,13 +95,19 @@ function Game(menu, gD) {
 
   };
   this.update = function() {
-
+    this.players.map(player => {
+      player.update(this, this.gD);
+    }, this);
   };
   this.draw = function() {
     this.inventory.draw(this, this.gD);
 
     this.players.map(player => {
       player.draw(this, this.gD);
+    }, this);
+
+    this.floors.map(floor => {
+      floor.draw(this, this.gD);
     }, this);
   };
 }
@@ -113,6 +122,7 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
   this.beard = beard;
   this.speed = 0;
   this.velocity = 0;
+  this.gravity = 0.005;
   this.jumps = 0;
   this.jumping = false;
   this.onFloor = false;
@@ -120,7 +130,7 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
   this.outsideWater = false;
   this.outsideCanvas = false;
   this.distanceBackwards = 0;
-  this.currentFloor = undefined;
+  this.currentFloor = null; //saves a floor on which the player is atm
   this.moveForward = function(game, menu) {
     this.speed = game.globalSpeed + menu.shop.skillData["Movement speed"].getValue() * 0.4;
   };
@@ -132,15 +142,15 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
   };
   this.downFromPlatform = function() {
     this.onFloor = false;
-    this.curerntFloor = undefined;
+    this.currentFloor = null;
     this.jumps = 1;
   };
   this.jump = function(game, menu) {
     if (!this.jumping && this.jumps < 2 + menu.shop.skillData["Jumps"].getValue()) {
-      if (game.stage == "Stage_Universe") {
+      if (game.stage.name === "Universe") {
         this.velocity = -(9 + menu.shop.skillData["Jump Height"].getValue()) / 2.9;
         this.jumping = true;
-      } else if (game.stage == "Stage_Water" && this.y + this.height >= game.gD.canvas.height / 2) {
+      } else if (game.stage.name === "Water" && this.y + this.height >= game.gD.canvas.height / 2) {
         this.velocity = -(9 + menu.shop.skillData["Jump Height"].getValue()) / 3;
       } else {
         this.velocity = -(9 + menu.shop.skillData["Jump Height"].getValue());
@@ -154,9 +164,10 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
     this.jumps++;
   };
   this.hitWalls = function(game, gD) {  //checks, if the player touches a canvas wall, or the floor of the current stage
-    if (this.y + this.height > gD.canvas.height/* - game.stages[game.stage].deadZoneGround*/) {
+    let canvasX = this.x - game.distance;
+    if (this.y + this.height > gD.canvas.height - game.stage.deadZoneGround) {
       if (game.inventory.items["Item_Star"].active) {
-        this.y = gD.canvas.height - /*game.stages[game.stage].deadZoneGround - */this.height;
+        this.y = gD.canvas.height - game.stage.deadZoneGround - this.height;
         this.velocity = 0;
         this.onFloor = true;
         this.jumps = 1;
@@ -165,24 +176,27 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
       }
     }
 
-    if (this.x < 0) {
-      this.x = 0;
-    } else if (this.x + this.width > gD.canvas.width) {
-      this.x = gD.canvas.width - this.width;
+    if (canvasX < 0) {
+      this.x += canvasX;
+    } else if (canvasX + this.width > gD.canvas.width) {
+      this.x -= (canvasX + this.width) - gD.canvas.width;
     }
   };
   this.touchFloor = function(game, gD) {
-    for (var i = 0; i < game.floor.length; i++) {
-      var floor = game.floor[i];
+    for (let i = game.floorStartIndex; i < game.floors.length; i++) {
+      let floor = game.floors[i];
       if ((this.x > floor.x && this.x < floor.x + floor.width) ||
           (this.x + this.width > floor.x && this.x + this.width < floor.x + floor.width)) {
-        if (this.currentFloor != undefined && this.y + this.height > this.currentFloor.y - (this.currentFloor.thickness / 2) && this.velocity > 0 && this.aboveFloor) {
-          if (!gD.keys[game.menu.controls.keyBindings["Game4"][2][0]] && !gD.keys[game.menu.controls.keyBindings["Game4"][2][1]]) {
+        if (this.currentFloor !== null &&
+            this.y + this.height >= this.currentFloor.y - (this.currentFloor.thickness / 2) && this.velocity > 0 &&
+            this.aboveFloor) {
+          if (!gD.keys[game.menu.controls.keyBindings.get("Game_JumpFromPlatform")[3][0]] &&
+              !gD.keys[game.menu.controls.keyBindings.get("Game_JumpFromPlatform")[3][1]]) {
             switch (this.currentFloor.type) {
-              case 1:
+              case "Jump":
                 this.velocity = -this.velocity * 0.9;
                 break;
-              case 2:
+              case "Fall":
                 this.currentFloor.isFalling = true;
                 this.onFloor = true;
                 this.velocity = 0;
@@ -195,22 +209,23 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
             this.y = this.currentFloor.y - (this.currentFloor.thickness / 2) - this.height;
             this.jumps = 1;
           } else {
-            this.currentFloor = undefined;
+            this.currentFloor = null;
           }
         }
         if (this.y + this.height < floor.y - (floor.thickness / 2)) {
           this.aboveFloor = true;
-          if (this.currentFloor == undefined || floor.y - this.y < this.currentFloor.y - this.y) {
+          if (this.currentFloor === null || floor.y - this.y < this.currentFloor.y - this.y) {
             this.currentFloor = floor;
+            break;
           }
         }
       }
-      if (i + 1 == game.floor.length && this.currentFloor != undefined &&
+      if (i + 1 === game.floors.length && this.currentFloor !== null &&
           (this.x > this.currentFloor.x + this.currentFloor.width || this.x + this.width < this.currentFloor.x) &&
-          !(this.y == gD.canvas.height - game.stages[game.stage].deadZoneGround - this.height)) {
+          !(this.y === gD.canvas.height - game.stage.deadZoneGround - this.height)) {
         this.aboveFloor = false;
         this.onFloor = false;
-        this.currentFloor = undefined;
+        this.currentFloor = null;
       }
     }
   };
@@ -219,17 +234,12 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
         (this.y > object.y + object.height) ||
         (this.x + this.width < object.x) ||
         (this.x > object.x + object.width)) {
-      switch (object.name.split("_")[0]) {
-        case "Item":
-          this.inventory.items[object.name].amount++;
-          break;
-        case "Money":
-          this.cashVault.money[object.name]++;
-          break;
-        case "Enemy":
-          game.finish();
-          break;
-        default:
+      if (object.name.startsWith("Item") || object.name.startsWith("Special")) {
+        game.inventory.collect(object.name);
+      } else if (object.name.startsWith("Money")) {
+
+      } else if (object.name.startsWith("Enemy")) {
+
       }
       return true;
     }
@@ -243,10 +253,10 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
       this.velocity = 0;
       this.jumps = 1;
     } else {
-      if (!this.onFloor || (this.currentFloor != undefined && this.currentFloor.type == 2)) {
+      if (!this.onFloor || (this.currentFloor !== null && this.currentFloor.type === "Fall")) {
         this.y += this.velocity;
-        this.velocity += this.weight / game.stage.gravity;
-        if (game.stage == "Stage_Water") {
+        this.velocity += this.gravity;
+        if (game.stage.name === "Water") {
           if (this.y + this.height > game.gD.canvas.height / 2) {
             if (this.outsideWater) {
               this.velocity = 1;
@@ -254,7 +264,7 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
             this.outsideWater = false;
           } else {
             if (!this.outsideWater) {
-              this.velocity = game.player[this.playerName][1] / 1.8;
+              this.velocity = -(9 + game.menu.shop.skillData["Jump Height"].getValue()) / 1.8;
             }
             this.outsideWater = true;
           }
@@ -269,11 +279,9 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
     let canvasX = this.x - game.distance;
     let character = this.character;
     if (game.inventory.items["Item_Rocket"].active) {
-      let characterData = getSpriteData("Item_Rocket", gD);
       drawCanvasImage(canvasX, this.y, "Item_Rocket", gD);
       character = "Item_Rocket";
     } else {
-      let characterData = getSpriteData(this.character, gD);
       drawCanvasImage(canvasX, this.y, this.character, gD);
     }
 
@@ -301,6 +309,43 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
   };
 }
 
+function GameCashVault(x, y, width, height, spriteKey, styleKey) {
+  this.money = {};
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.spriteKey = spriteKey;
+  this.styleKey = styleKey;
+  this.init = function(game, gD) {
+    for (let type in gD.money) {
+      if (gD.money.hasOwnProperty(type)) {
+        this.money[type] = 0;
+      }
+    }
+  };
+  this.addMoney = function(type) {
+    this.money[type]++;
+  };
+  /**
+   * @return {number} returns the total cash
+   */
+  this.getTotalCash = function() {
+    return Object.keys(this.money).reduce(function(accumulator, key) {
+      return accumulator + this.money[key] * parseInt(key.split('_')[1]);
+    }, this);
+  };
+  this.draw = function(game, gD) {
+    let design = gD.design.elements[this.styleKey];
+    let spriteData = getSpriteData(this.spriteKey, gD);
+
+    drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey, gD);
+    drawCanvasImage(this.x + 3, this.y + Math.floor((this.height - spriteData.spriteHeight) / 2), this.spriteKey, gD);
+    drawCanvasText(this.x + this.width - 3, this.y + this.height / 2, this.getTotalCash().toString(), design.textKey, gD);
+    drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
+  };
+}
+
 function GameInventory() {
   this.items = {};
   this.special = null;
@@ -319,7 +364,7 @@ function GameInventory() {
     }
     this.special = new GameInventorySpecial(60 * counter, 0, 200, 30, "inventory2");
     this.distance = new GameInventoryLabel(60 * counter + 200, 0, 220, 30, "Icon_Distance", "inventory2");
-    this.hype = new GameInventoryLabel(60 * counter + 420, 0, 220, 30, "Money_1", "inventory2");
+    this.hype = new GameCashVault(60 * counter + 420, 0, 220, 30, "Money_1", "inventory2");
   };
   this.fill = function(amount) {
     for (let str in this.items) {
@@ -507,37 +552,57 @@ function GameFloor(x, y, width, type) {
   this.addObject = function(object) {
     this.objects.push(object);
   };
-  this.draw = function(game, gD, ghostFactor) {
-    gD.context.beginPath();
-    gD.context.moveTo(this.x + (game.globalSpeed * ghostFactor), this.y * (this.velocity * ghostFactor));
-    gD.context.lineTo(this.x + this.width + (game.globalSpeed * ghostFactor), this.y * (this.velocity * ghostFactor));
-
-    if (gD.floors[this.name][1] == "stagecolor") {
-      gD.context.strokeStyle = game.stages[game.stage].floorColor;
-    } else {
-      gD.context.strokeStyle = gD.floors[this.name][1];
-    }
-    gD.context.lineWidth = this.thickness;
-    gD.context.stroke();
-
-    for (var i = 0; i < this.objects.length; i++) {
-      this.objects[i].draw(game, gD, ghostFactor);
-    }
-  };
-  this.newPos = function(game, gD) {
-    this.x += game.globalSpeed;
+  this.update = function(game, gD) {
     this.y += this.velocity;
     if (this.isFalling) {
-      this.velocity += game.stages[game.stage].gravity / this.weight;
-    } else if (!this.isFalling && this.name == "Floor_Moving") {
-      this.velocity -= game.stages[game.stage].gravity / this.weight;
+      this.velocity += game.stage.gravity / this.weight;
+    } else if (!this.isFalling && this.type === "Moving") {
+      this.velocity -= game.stage.gravity / this.weight;
     }
-    if (this.name == "Floor_Moving" && (this.velocity > 3 || this.velocity < -3)) {
+    if (this.type === "Moving" && (this.velocity > 3 || this.velocity < -3)) {
       this.isFalling = !this.isFalling;
     }
-    for (var i = 0; i < this.objects.length; i++) {
-      this.objects[i].newPos(game, gD);
-    }
+    this.objects.map(object => {
+      object.update(game, gD);
+    }, this);
+  };
+  this.draw = function(game, gD, ghostFactor) {
+    let canvasX = this.x - game.distance;
+    drawCanvasLine(
+      canvasX, this.y, gD.floors[this.type] === "stagecolor" ? game.stage.floorColorKey : gD.floors[this.type],
+      gD, canvasX + this.width, this.y
+    );
+
+    this.objects.map(object => {
+      object.draw(game, gD);
+    }, this);
+  };
+}
+
+function GameObject(x, y, width, height, spriteKey) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.spriteKey = spriteKey;
+  this.update = function(game) {
+    game.players.map(player => {
+      if (game.inventory.items["Item_Magnet"].active) {
+        let distX = (player.x + player.width / 2) - (this.x + this.width / 2);
+        let distY = (player.y + player.height / 2) - (this.y + this.height / 2);
+        let distanceToPlayer = Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2));
+        if (distanceToPlayer < 150) {
+          this.x += (distX * Math.pow(20, 3)) / Math.pow(distanceToPlayer, 3);
+          this.y += (distY * Math.pow(20, 3)) / Math.pow(distanceToPlayer, 3);
+        }
+      }
+    }, this);
+  };
+  this.draw = function(game, gD, ghostFactor) {
+    let canvasX = this.x - game.distance;
+    let spriteData = getSpriteData(this.spriteKey, gD);
+
+    drawCanvasImage(canvasX, this.y, this.spriteKey, gD);
   };
 }
 
