@@ -17,6 +17,22 @@ function addLeadingZero(number) {
   return number >= 10 ? number.toString() : "0" + number;
 }
 
+function factorial(number) {
+  let result = 1;
+  for (let i = 1; i <= number; i++) {
+    result *= i;
+  }
+  return result;
+}
+
+function sum(number) {
+  let result = 0;
+  for (let i = 1; i <= number; i++) {
+    result += i;
+  }
+  return result;
+}
+
 /**
  * @param  {object} object the object that should be copied
  * @return {object | undefined} a deep copy of the given object or undefined if the object is not supported

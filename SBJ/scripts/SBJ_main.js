@@ -93,8 +93,6 @@ function GlobalDict(eventHandler) {
   this.eventHandler = eventHandler;
   this.canvas = document.getElementById("gamearea");
   this.context = this.canvas.getContext("2d");
-  this.offscreenCanvas = document.getElementById("offscreen");
-  this.offscreenContext = this.offscreenCanvas.getContext("2d");
   this.keys = {};
   this.newKeys = [];
   this.events = [];
@@ -320,20 +318,45 @@ function GlobalDict(eventHandler) {
     "Money_100": [1, 100],
     "Money_1000": [0.05, 1000]
   };
-  this.floorPieces = [             //x starts at the end of the previous floor
-    {chance: 1, earliestLevel: 0, floors: [
-      {type: "Standard", x: 100, y: 120},
-      {type: "Standard", x: 540, y: 140},
-      {type: "Standard", x: 980, y: 160},
-      {type: "Standard", x: 1420, y: 180},
-      {type: "Standard", x: 1860, y: 200}
+  this.floorPieces = [             //x starts at the end of the previous floors
+    {chance: 3, earliestLevel: 1, floors: [
+      {type: "Standard", x: 100, y: 280.5},
+      {type: "Standard", x: 540, y: 260.5},
+      {type: "Standard", x: 980, y: 240.5},
+      {type: "Standard", x: 1420, y: 220.5},
+      {type: "Standard", x: 1860, y: 200.5},
+      {type: "Standard", x: 2300, y: 180.5},
+      {type: "Standard", x: 2740, y: 160.5},
+      {type: "Standard", x: 3180, y: 140.5},
+      {type: "Standard", x: 3620, y: 120.5}
+    ]},
+    {chance: 1, earliestLevel: 2, floors: [
+      {type: "Jump", x: 120, y: 299.5},
+      {type: "Jump", x: 560, y: 120.5},
+      {type: "Jump", x: 1000, y: 300.5},
+      {type: "Jump", x: 1440, y: 120.5},
+      {type: "Jump", x: 1880, y: 300.5}
+    ]},
+    {chance: 1, earliestLevel: 1, floors: [
+      {type: "Fall", x: 120, y: 209.5},
+      {type: "Spikes", x: 560, y: 170.5},
+      {type: "Spikes", x: 1000, y: 209.5},
+      {type: "Fall", x: 1440, y: 230.5},
+      {type: "Spikes", x: 1880, y: 169.5}
+    ]},
+    {chance: 0.5, earliestLevel: 1, floors: [
+      {type: "Jump", x: 120, y: 209.5},
+      {type: "Moving", x: 560, y: 301, height: 180},
+      {type: "Standard", x: 1000, y: 120.5},
+      {type: "Spikes", x: 1000, y: 300.5},
+      {type: "Standard", x: 1440, y: 210.5}
     ]}
   ];
   this.floors = {                    //color
     "Standard": "stagecolor",
-    "Jump": "rgba(229, 149, 149, 1)",
-    "Fall": "rgba(126, 186, 115, 1)",
-    "Spikes": "rgba(173, 6, 6, 1)",
+    "Jump": "floorJump",
+    "Fall": "floorFall",
+    "Spikes": "floorSpikes",
     "Moving": "stagecolor"
   };
   this.stages = {                    //stage class reference, unlocked
@@ -357,12 +380,12 @@ function GlobalDict(eventHandler) {
           background: "blur",
           progress: "progress"
         },
-        textKey: "highscoreNumber",
+        textKey: "valueBig",
         borderKey: "standard"
       },
       inventory2: {
         rectKey: "blur",
-        textKey: "highscoreNumber",
+        textKey: "valueBig",
         borderKey: "standard"
       },
       objectSelection: {
@@ -926,6 +949,26 @@ function GlobalDict(eventHandler) {
         borderSize: 4,
         lineDash: []
       },
+      ookii: {
+        borderColor: "0, 0, 0, 1",
+        borderSize: 5,
+        lineDash: []
+      },
+      floorJump: {
+        borderColor: "229, 149, 149, 1",
+        borderSize: 5,
+        lineDash: []
+      },
+      floorFall: {
+        borderColor: "126, 186, 115, 1",
+        borderSize: 5,
+        lineDash: []
+      },
+      floorSpikes: {
+        borderColor: "173, 6, 6, 1",
+        borderSize: 5,
+        lineDash: []
+      },
       stage0Floor: {
         borderColor: "155, 155, 155, 1",
         borderSize: 5,
@@ -1007,7 +1050,7 @@ function GlobalDict(eventHandler) {
         font: "15pt Consolas",
         color: "0, 0, 0, 1",
         align: "right",
-        baseline: "alphabetic",
+        baseline: "middle",
         borderKey: ""
       },
       big: {
@@ -1016,6 +1059,13 @@ function GlobalDict(eventHandler) {
         align: "left",
         baseline: "middle",
         borderKey: ""
+      },
+      ookii: {
+        font: "150pt Showcard Gothic, Impact",
+        color: "255, 255, 255, 1",
+        align: "center",
+        baseline: "middle",
+        borderKey: "ookii"
       },
       percent: {
         font: "10pt Consolas",
@@ -1103,6 +1153,5 @@ function GlobalDict(eventHandler) {
   };
   this.clear = function() {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.offscreenContext.clearRect(0, 0, this.offscreenCanvas.width, this.offscreenCanvas.height);
   };
 }

@@ -2,19 +2,28 @@ function Game(menu, gD) {
   this.menu = menu;
   this.gD = gD;
   this.init = function () {
+    this.player = null;
     this.players = [];
     this.stage = null;
     this.trainingMode = false;
     this.paused = false;
     this.finished = false;
-    this.baseLevelLength = 250;
+    this.baseLevelLength = 250 * 15;
     this.globalSpeed = 2;
     this.currentLevel = 1;
     this.distance = 0;
     this.distanceSinceLvlUp = 0;
-    this.floors = [new GameFloor(0, this.gD.canvas.height - 50.5, this.gD.canvas.width + 100, "Standard")];
+    this.floors = [new GameFloor(0, this.gD.canvas.height - 49.5, this.gD.canvas.width + 100, "Standard")];
     this.floorStartIndex = 0;
     this.objects = [];
+    this.objectStartIndex = 0;
+    this.showLevel = 180;
+    this.currentMoneyProbability = {};
+    for (let money in this.gD.money) {
+      if (this.gD.money.hasOwnProperty(money)) {
+        this.currentMoneyProbability[money] = this.gD.money[money][0];
+      }
+    }
     
     this.inventory = new GameInventory();
     this.inventory.init(this, gD);
@@ -25,14 +34,29 @@ function Game(menu, gD) {
     this.stage.init();
     this.trainingMode = training;
   };
+  this.setPlayer = function(player) {
+    this.player = player;
+  };
   this.addPlayer = function(character, hat, glasses, beard, name = "") {
     let player = new GamePlayer(this.players.length * 35 + 20, 260, character, name, hat, glasses, beard);
+    player.init(this, this.gD);
+    if (this.players.length === 0) {
+      this.setPlayer(player);
+    }
     this.players.push(player);
   };
   this.speedLvlUp = function() {
-    this.currentLevel++;
-    this.distanceSinceLvlUp = this.inventory.getValue("distance") - this.getLevelStart(this.currentLevel);
-    this.globalSpeed++;
+    if (this.distanceSinceLvlUp >= this.baseLevelLength * this.globalSpeed) {
+      this.currentLevel++;
+      this.showLevel = 180;
+      this.distanceSinceLvlUp = this.inventory.getValue("distance") - this.getLevelStart(this.currentLevel);
+      this.globalSpeed = Math.min(this.currentLevel * 0.5 + 1.5, 12);
+      this.player.stopMoving(this, null);
+      this.currentMoneyProbability["Money_1"] = Math.max(this.currentMoneyProbability["Money_1"] - 0.1, 3);
+      this.currentMoneyProbability["Money_10"] = Math.max(this.currentMoneyProbability["Money_10"] - 0.1, 2);
+      this.currentMoneyProbability["Money_100"] = Math.min(this.currentMoneyProbability["Money_100"] + 0.1, 3);
+      this.currentMoneyProbability["Money_1000"] = Math.min(this.currentMoneyProbability["Money_1000"] + 0.05, 1.15);
+    }
   };
   this.getLevelStart = function(level) {
     let distance = 0;
@@ -65,20 +89,113 @@ function Game(menu, gD) {
     }, this);
     
     pieces.floors.map(floor => {
-      this.floors.push(new GameFloor(
+      let newFloor = new GameFloor(
         startX + floor.x, floor.y, 
         startX + floor.x > this.getLevelStart(this.currentLevel + 1) ? 
           this.getFloorWidth(this.currentLevel + 1) : this.getFloorWidth(this.currentLevel), 
-        floor.type
-      ));
+        floor.type, floor.height ? floor.height : 0
+      );
+      newFloor.init(this);
+      this.floors.push(newFloor);
     }, this);
   };
   this.getFloorWidth = function(level) {
     return Math.max(50, 300 - (level - 1) * 15);
   };
+  this.addMoney = function() {
+    let total = 0;
+    let random = 0;
+    for (let prob in this.currentMoneyProbability) {
+      if (this.currentMoneyProbability.hasOwnProperty(prob)) {
+        total += this.currentMoneyProbability[prob];
+      }
+    }
+    
+    total *= 8;
+    
+    random = Math.random() * total;
+    
+    for (let prob in this.currentMoneyProbability) {
+      if (this.currentMoneyProbability.hasOwnProperty(prob)) {
+        random -= this.currentMoneyProbability[prob];
+        if (random <= 0) {
+          let {spriteWidth, spriteHeight} = getSpriteData(prob, this.gD);
+          
+          this.objects.push(new GameObject(
+            this.distance + 1000 + randomBetween(10, 150), randomBetween(50, 320), spriteWidth, spriteHeight, prob
+          ));
+          break;
+        }
+      }
+    }
+  };
+  this.addItem = function() {
+    let total = 0;
+    let random = 0;
+    for (let prob in this.currentMoneyProbability) {
+      if (this.currentMoneyProbability.hasOwnProperty(prob)) {
+        total += this.currentMoneyProbability[prob];
+      }
+    }
+    
+    total *= 8;
+    
+    random = Math.random() * total;
+    
+    for (let prob in this.currentMoneyProbability) {
+      if (this.currentMoneyProbability.hasOwnProperty(prob)) {
+        random -= this.currentMoneyProbability[prob];
+        if (random <= 0) {
+          let {spriteWidth, spriteHeight} = getSpriteData(prob, this.gD);
+          
+          this.objects.push(new GameObject(
+            this.distance + 1000 + randomBetween(10, 150), randomBetween(50, 320), spriteWidth, spriteHeight, prob
+          ));
+          break;
+        }
+      }
+    }
+  };
+  this.restart = function() {
+    let players = this.players;
+    let stage = this.stage;
+    
+    this.init();
+    
+    players.map(player => {
+      this.addPlayer(player.character, player.hat, player.glasses, player.beard, player.name);
+    }, this);
+    this.stage = stage;
+  };
   this.updateKeyPresses = function() {
-    this.gD.newKeys.map(key => {
-
+    let keyB = this.menu.controls.keyBindings;
+    
+    this.gD.newKeys.map((key, index) => {
+      if (keyB.get("Game_JumpFromPlatform")[3].includes(key)) {
+        this.player.downFromPlatform();
+      } else if (keyB.get("Game_Pause")[3].includes(key)) {
+        this.paused = !this.paused;
+      } else if (key === "KeyN") {
+        this.restart();
+      }
+    }, this);
+    
+    Object.keys(this.gD.keys).map((key, index) => {
+      if (keyB.get("Game_Jump")[3].includes(key) && this.gD.keys[key]) {
+        this.player.jump(this, this.menu);
+      } else if (keyB.get("Game_Jump")[3].includes(key) && !this.gD.keys[key]) {
+        this.player.jumpStop();
+      }
+      
+      if (keyB.get("Game_MoveRight")[3].includes(key) && this.gD.keys[key]) {
+        this.player.moveForward(this, this.menu);
+      } else if (keyB.get("Game_MoveLeft")[3].includes(key) && this.gD.keys[key]) {
+        this.player.moveBackward(this, this.menu);
+      } else if (keyB.get("Game_MoveRight")[3].includes(key) && !this.gD.keys[key]) {
+        this.player.stopMoving(this, "forward");
+      } else if (keyB.get("Game_MoveLeft")[3].includes(key) && !this.gD.keys[key]) {
+        this.player.stopMoving(this, "backward");
+      }
     }, this);
   };
   this.updateMouseMoves = function() {
@@ -95,20 +212,54 @@ function Game(menu, gD) {
 
   };
   this.update = function() {
-    this.players.map(player => {
-      player.update(this, this.gD);
-    }, this);
+    if (!this.finished && !this.paused) {
+      this.speedLvlUp();
+      this.distance += this.globalSpeed;
+      this.distanceSinceLvlUp += this.globalSpeed;
+      this.inventory.setValue("distance", this.distance);
+      
+      this.players.map(player => {
+        player.update(this, this.gD);
+      }, this);
+      this.floors.map(floor => {
+        floor.update(this, this.gD);
+      }, this);
+      
+      if (this.floors[this.floors.length - 1].x + this.floors[this.floors.length - 1].width < this.distance + 1100) {
+        this.addFloors();
+      }
+      if (this.floors[this.floorStartIndex].x + this.floors[this.floorStartIndex].width < this.distance - 100) {
+        this.floorStartIndex++;
+      }
+      if (this.gD.frameNo % 30 === 0) {
+        this.addMoney();
+      }
+      this.objects.map((object, index) => {
+        this.player.collect(this, object, index);
+      }, this);
+      if (this.objects.length > 0 && this.objectStartIndex < this.objects.length &&
+          this.objects[this.objectStartIndex].x + this.objects[this.objectStartIndex].width < this.distance - 100) {
+        this.objectStartIndex++;
+      }
+    }
   };
   this.draw = function() {
-    this.inventory.draw(this, this.gD);
-
+    if (this.showLevel > 0) {
+      drawCanvasText(this.gD.canvas.width / 2, this.gD.canvas.height / 2, this.currentLevel, "ookii", this.gD);
+      this.showLevel--;
+    }
     this.players.map(player => {
       player.draw(this, this.gD);
     }, this);
 
-    this.floors.map(floor => {
-      floor.draw(this, this.gD);
-    }, this);
+    this.inventory.draw(this, this.gD);
+
+    for (let i = this.floorStartIndex; i < this.floors.length; i++) {
+      this.floors[i].draw(this, this.gD);
+    }
+    for (let i = this.objectStartIndex; i < this.objects.length; i++) {
+      this.objects[i].draw(this, this.gD);
+    }
   };
 }
 
@@ -120,9 +271,12 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
   this.hat = hat;
   this.glasses = glasses;
   this.beard = beard;
+  this.width = 0;
+  this.height = 0;
+  this.direction = null;
   this.speed = 0;
   this.velocity = 0;
-  this.gravity = 0.005;
+  this.gravity = 0.45;
   this.jumps = 0;
   this.jumping = false;
   this.onFloor = false;
@@ -131,14 +285,22 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
   this.outsideCanvas = false;
   this.distanceBackwards = 0;
   this.currentFloor = null; //saves a floor on which the player is atm
+  this.init = function(game, gD) {
+    this.stopMoving(game, null);
+  };
   this.moveForward = function(game, menu) {
-    this.speed = game.globalSpeed + menu.shop.skillData["Movement speed"].getValue() * 0.4;
+    this.direction = "forward";
+    this.speed = game.globalSpeed + 3 + menu.shop.skillData["Movement speed"].getValue() * 0.4;
   };
   this.moveBackward = function(game, menu) {
-    this.speed = game.globalSpeed - menu.shop.skillData["Movement speed"].getValue() * 0.4;
+    this.direction = "backward";
+    this.speed = game.globalSpeed - 3 - menu.shop.skillData["Movement speed"].getValue() * 0.4;
   };
-  this.stopMoving = function(game) {
-    this.speed = game.globalSpeed;
+  this.stopMoving = function(game, direction) {
+    if (this.direction === direction) {
+      this.speed = game.globalSpeed;
+      this.direction = null;
+    }
   };
   this.downFromPlatform = function() {
     this.onFloor = false;
@@ -148,20 +310,22 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
   this.jump = function(game, menu) {
     if (!this.jumping && this.jumps < 2 + menu.shop.skillData["Jumps"].getValue()) {
       if (game.stage.name === "Universe") {
-        this.velocity = -(9 + menu.shop.skillData["Jump Height"].getValue()) / 2.9;
+        this.velocity = -(9 + menu.shop.skillData["Jump height"].getValue()) / 2.9;
         this.jumping = true;
       } else if (game.stage.name === "Water" && this.y + this.height >= game.gD.canvas.height / 2) {
-        this.velocity = -(9 + menu.shop.skillData["Jump Height"].getValue()) / 3;
+        this.velocity = -(9 + menu.shop.skillData["Jump height"].getValue()) / 3;
       } else {
-        this.velocity = -(9 + menu.shop.skillData["Jump Height"].getValue());
+        this.velocity = -(9 + menu.shop.skillData["Jump height"].getValue());
         this.jumping = true;
       }
       this.onFloor = false;
     }
   };
   this.jumpStop = function() {
-    this.jumping = false;
-    this.jumps++;
+    if (this.jumping) {
+      this.jumping = false;
+      this.jumps++;
+    }
   };
   this.hitWalls = function(game, gD) {  //checks, if the player touches a canvas wall, or the floor of the current stage
     let canvasX = this.x - game.distance;
@@ -170,14 +334,15 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
         this.y = gD.canvas.height - game.stage.deadZoneGround - this.height;
         this.velocity = 0;
         this.onFloor = true;
-        this.jumps = 1;
+        this.jumps = 0;
+        this.jumping = false;
       } else {
-        game.finish();
+        game.finished = true;
       }
     }
 
     if (canvasX < 0) {
-      this.x += canvasX;
+      this.x -= canvasX;
     } else if (canvasX + this.width > gD.canvas.width) {
       this.x -= (canvasX + this.width) - gD.canvas.width;
     }
@@ -194,20 +359,23 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
               !gD.keys[game.menu.controls.keyBindings.get("Game_JumpFromPlatform")[3][1]]) {
             switch (this.currentFloor.type) {
               case "Jump":
-                this.velocity = -this.velocity * 0.9;
+                this.velocity = -this.velocity * 0.8;
+                this.jumps = 1;
                 break;
               case "Fall":
                 this.currentFloor.isFalling = true;
                 this.onFloor = true;
                 this.velocity = 0;
+                this.jumps = 0;
                 break;
               default:
                 this.aboveFloor = false;
                 this.onFloor = true;
                 this.velocity = 0;
+                this.jumps = 0;
             }
             this.y = this.currentFloor.y - (this.currentFloor.thickness / 2) - this.height;
-            this.jumps = 1;
+            this.jumping = false;
           } else {
             this.currentFloor = null;
           }
@@ -223,37 +391,50 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
       if (i + 1 === game.floors.length && this.currentFloor !== null &&
           (this.x > this.currentFloor.x + this.currentFloor.width || this.x + this.width < this.currentFloor.x) &&
           !(this.y === gD.canvas.height - game.stage.deadZoneGround - this.height)) {
+        if (this.onFloor) {
+          this.jumps = 1;
+        }
         this.aboveFloor = false;
         this.onFloor = false;
         this.currentFloor = null;
       }
     }
   };
-  this.collect = function(game, object) {                   //checks if an object is touched by the player
-    if (!(this.y + this.height < object.y) ||
-        (this.y > object.y + object.height) ||
-        (this.x + this.width < object.x) ||
-        (this.x > object.x + object.width)) {
-      if (object.name.startsWith("Item") || object.name.startsWith("Special")) {
-        game.inventory.collect(object.name);
-      } else if (object.name.startsWith("Money")) {
-
-      } else if (object.name.startsWith("Enemy")) {
-
+  this.collect = function(game, object, index) {                   //checks if an object is touched by the player
+    if (this.x < object.x + object.width &&
+         this.x + this.width > object.x &&
+         this.y < object.y + object.height &&
+         this.height + this.y > object.y) {
+      if (object.spriteKey === "") {
+        game.finished = true;
+      } else if (object.spriteKey.startsWith("Item") || object.spriteKey.startsWith("Special")) {
+        game.inventory.collect(object.spriteKey);
+        game.objects.splice(index, 1);
+      } else if (object.spriteKey.startsWith("Money")) {
+        game.inventory.hype.addMoney(object.spriteKey);
+        game.objects.splice(index, 1);
+      } else if (object.spriteKey.startsWith("Enemy")) {
+        game.finished = true;
       }
-      return true;
     }
-    return false;
   };
   this.update = function(game, gD) {
+    let spriteData = getSpriteData(this.character, gD);
+    
+    this.width = spriteData.spriteWidth;
+    this.height = spriteData.spriteHeight;
+    
     if (game.inventory.items["Item_Rocket"].active) {
       this.x += this.speed;//Math.min(Math.pow((-game.itemTimer[5] + 5 + (max / 2)) / (max / 5), 4) - 40, Math.ceil(game.globalBaseSpeed - (game. distanceTravelled * 0.00015))); //-((-x + 5 + (max/2)) / (max/5))^4+40 max is the max durability of the item
       this.y -= (this.y - 50) / 40;
       this.onFloor = false;
       this.velocity = 0;
       this.jumps = 1;
+      this.jumping = false;
     } else {
-      if (!this.onFloor || (this.currentFloor !== null && this.currentFloor.type === "Fall")) {
+      if (this.onFloor && this.currentFloor !== null && this.currentFloor.type === "Moving") {
+        this.y = this.currentFloor.y - (this.currentFloor.thickness / 2) - this.height + this.currentFloor.velocity;
+      } else if (!this.onFloor || (this.currentFloor !== null && this.currentFloor.type === "Fall")) {
         this.y += this.velocity;
         this.velocity += this.gravity;
         if (game.stage.name === "Water") {
@@ -331,9 +512,9 @@ function GameCashVault(x, y, width, height, spriteKey, styleKey) {
    * @return {number} returns the total cash
    */
   this.getTotalCash = function() {
-    return Object.keys(this.money).reduce(function(accumulator, key) {
-      return accumulator + this.money[key] * parseInt(key.split('_')[1]);
-    }, this);
+    return Object.keys(this.money).reduce((accumulator, key) => {
+      return accumulator + (this.money[key] * parseInt(key.split('_')[1]));
+    }, 0);
   };
   this.draw = function(game, gD) {
     let design = gD.design.elements[this.styleKey];
@@ -363,8 +544,9 @@ function GameInventory() {
       }
     }
     this.special = new GameInventorySpecial(60 * counter, 0, 200, 30, "inventory2");
-    this.distance = new GameInventoryLabel(60 * counter + 200, 0, 220, 30, "Icon_Distance", "inventory2");
+    this.distance = new GameInventoryDistance(60 * counter + 200, 0, 220, 30, "Icon_Distance", "inventory2");
     this.hype = new GameCashVault(60 * counter + 420, 0, 220, 30, "Money_1", "inventory2");
+    this.hype.init(game, gD);
   };
   this.fill = function(amount) {
     for (let str in this.items) {
@@ -400,7 +582,7 @@ function GameInventory() {
     }
     this.special.draw(gD);
     this.distance.draw(gD);
-    this.hype.draw(gD);
+    this.hype.draw(game, gD);
   };
 }
 
@@ -511,7 +693,7 @@ function GameInventorySpecial(x, y, width, height, styleKey) {
   };
 }
 
-function GameInventoryLabel(x, y, width, height, spriteKey, styleKey) {
+function GameInventoryDistance(x, y, width, height, spriteKey, styleKey) {
   this.x = x;
   this.y = y;
   this.width = width;
@@ -534,23 +716,31 @@ function GameInventoryLabel(x, y, width, height, spriteKey, styleKey) {
 
     drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey, gD);
     drawCanvasImage(this.x + 3, this.y + Math.floor((this.height - spriteData.spriteHeight) / 2), this.spriteKey, gD);
-    drawCanvasText(this.x + this.width - 3, this.y + this.height / 2, this.currentValue.toString(), design.textKey, gD);
+    drawCanvasText(this.x + this.width - 3, this.y + this.height / 2, Math.floor(this.currentValue / 15).toString(), design.textKey, gD);
     drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
   };
 }
 
-function GameFloor(x, y, width, type) {
+function GameFloor(x, y, width, type, height = 0) {
   this.x = x;
   this.y = y;
   this.width = width;
   this.type = type;
-  this.weight = 4;//(300 - 50) / (maxW - minW) * (width - 50) + minW;
+  this.weight = 0;
+  this.height = height;
   this.thickness = 5;
   this.velocity = 0;
   this.isFalling = false;
-  this.objects = [];
-  this.addObject = function(object) {
-    this.objects.push(object);
+  this.init = function(game) {
+    if (this.type === "Moving") {
+      this.weight = game.stage.gravity / (3 / (Math.floor((this.height / 3)) - 1));
+    } else {
+      this.weight = game.stage.gravity / ((300 - 50) / (2000 - 500) * (this.width - 50) + 500);
+    }
+    if (this.type === "Spikes") {
+      game.objects.push(new GameObject(this.x - 7, this.y - 9.5, 57, 19));
+      game.objects.push(new GameObject(this.x + this.width - 50, this.y - 9.5, 57, 19));
+    }
   };
   this.update = function(game, gD) {
     this.y += this.velocity;
@@ -562,47 +752,51 @@ function GameFloor(x, y, width, type) {
     if (this.type === "Moving" && (this.velocity > 3 || this.velocity < -3)) {
       this.isFalling = !this.isFalling;
     }
-    this.objects.map(object => {
-      object.update(game, gD);
-    }, this);
   };
   this.draw = function(game, gD, ghostFactor) {
     let canvasX = this.x - game.distance;
+    let spikesLeft = getSpriteData("Deco_Spikes_Left", gD);
+    let spikesRight = getSpriteData("Deco_Spikes_Right", gD);
+    
+    if (this.type === "Spikes") {
+      drawCanvasImage(canvasX - 10, this.y - spikesLeft.spriteHeight / 2, "Deco_Spikes_Left", gD);
+      drawCanvasImage(
+        canvasX + this.width + 10 - spikesRight.spriteWidth, this.y - spikesRight.spriteHeight / 2, 
+        "Deco_Spikes_Right", gD
+      );
+    }
+    
     drawCanvasLine(
       canvasX, this.y, gD.floors[this.type] === "stagecolor" ? game.stage.floorColorKey : gD.floors[this.type],
       gD, canvasX + this.width, this.y
     );
-
-    this.objects.map(object => {
-      object.draw(game, gD);
-    }, this);
   };
 }
 
-function GameObject(x, y, width, height, spriteKey) {
+function GameObject(x, y, width, height, spriteKey = "") {
   this.x = x;
   this.y = y;
   this.width = width;
   this.height = height;
   this.spriteKey = spriteKey;
   this.update = function(game) {
-    game.players.map(player => {
-      if (game.inventory.items["Item_Magnet"].active) {
-        let distX = (player.x + player.width / 2) - (this.x + this.width / 2);
-        let distY = (player.y + player.height / 2) - (this.y + this.height / 2);
-        let distanceToPlayer = Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2));
-        if (distanceToPlayer < 150) {
-          this.x += (distX * Math.pow(20, 3)) / Math.pow(distanceToPlayer, 3);
-          this.y += (distY * Math.pow(20, 3)) / Math.pow(distanceToPlayer, 3);
-        }
+    if (spriteKey !== "" && game.inventory.items["Item_Magnet"].active) {
+      let distX = (game.player.x + game.player.width / 2) - (this.x + this.width / 2);
+      let distY = (game.player.y + game.player.height / 2) - (this.y + this.height / 2);
+      let distanceToPlayer = Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2));
+      if (distanceToPlayer < 150) {
+        this.x += (distX * Math.pow(20, 3)) / Math.pow(distanceToPlayer, 3);
+        this.y += (distY * Math.pow(20, 3)) / Math.pow(distanceToPlayer, 3);
       }
-    }, this);
+    }
   };
   this.draw = function(game, gD, ghostFactor) {
-    let canvasX = this.x - game.distance;
-    let spriteData = getSpriteData(this.spriteKey, gD);
+    if (this.spriteKey !== "") {
+      let canvasX = this.x - game.distance;
+      let spriteData = getSpriteData(this.spriteKey, gD);
 
-    drawCanvasImage(canvasX, this.y, this.spriteKey, gD);
+      drawCanvasImage(canvasX, this.y, this.spriteKey, gD);
+    }
   };
 }
 
