@@ -10,36 +10,36 @@
     this.goldenShamrocks = 10000;
     this.movingTree = false;
     this.movingMinimap = false;
-    this.movingCounter = 0;           //counts how many frames moving was activated
+    this.movingCounter = 0;           //counts how many frames moving was activated to prevent wrong clicks
     this.currentlyMarked = null;
     this.scrollHeight = 0;
-    this.skillData = {
-      "Unlock Skilltree":       new SkillData("Unlock the Skilltree", false, 1, 0, 1000, 0, 0, [], 0),
-      "Level up items":         new SkillData("Level up Items", false, 1, 0, 10000, 0, 0, ["Unlock Skilltree"], 1),
-      "Level up stopwatch":     new SkillData("Stopwatch level up", true, 99, 0, 3250, 0, 110, ["Level up items"], 1),
-      "Level up star":          new SkillData("Star level up", true, 99, 0, 6720, 0, 210, ["Level up items"], 1),
-      "Level up feather":       new SkillData("Feather level up", true, 99, 0, 3000, 0, 120, ["Level up items"], 1),
-      "Level up treasure":      new SkillData("Treasure level up", true, 99, 0, 5550, 0, 220, ["Level up items"], 1),
-      "Level up magnet":        new SkillData("Magnet level up", true, 99, 0, 4100, 0, 170, ["Level up items"], 1),
-      "Level up rocket":        new SkillData("Rocket level up", true, 99, 0, 6020, 0, 199, ["Level up items"], 1),
-      "Start amount stopwatch": new SkillData("Stopwatches at start", true, 2, 12, 75000, 6, 12500, ["Level up stopwatch"], 50),
-      "Start amount star":      new SkillData("Stars at start", true, 2, 45, 179000, 22, 55000, ["Level up star"], 50),
-      "Start amount feather":   new SkillData("Feathers at start", true, 2, 16, 87000, 8, 22000, ["Level up feather"], 50),
-      "Start amount treasure":  new SkillData("Treasures at start", true, 2, 50, 200000, 25, 100000, ["Level up treasure"], 50),
-      "Start amount magnet":    new SkillData("Magnets at start", true, 2, 32, 130000, 16, 62000, ["Level up magnet"], 50),
-      "Start amount rocket":    new SkillData("Rockets at start", true, 2, 39, 166666, 19, 66666, ["Level up rocket"], 50),
-      "Item spawn frequency":   new SkillData(
+    this.skillData = {          //funktion einbinden, die den aktuellen Wert zurückgibt
+      "unlock_skilltree":       new SkillData("Unlock the Skilltree", false, 1, 0, 1000, 0, 0, [], 0),
+      "level_up_items":         new SkillData("Level up Items", false, 1, 0, 10000, 0, 0, ["unlock_skilltree"], 1),
+      "level_up_stopwatch":     new SkillData("Stopwatch level up", true, 99, 0, 3250, 0, 110, ["level_up_items"], 1),
+      "level_up_star":          new SkillData("Star level up", true, 99, 0, 6720, 0, 210, ["level_up_items"], 1),
+      "level_up_feather":       new SkillData("Feather level up", true, 99, 0, 3000, 0, 120, ["level_up_items"], 1),
+      "level_up_treasure":      new SkillData("Treasure level up", true, 99, 0, 5550, 0, 220, ["level_up_items"], 1),
+      "level_up_magnet":        new SkillData("Magnet level up", true, 99, 0, 4100, 0, 170, ["level_up_items"], 1),
+      "level_up_rocket":        new SkillData("Rocket level up", true, 99, 0, 6020, 0, 199, ["level_up_items"], 1),
+      "start_amount_stopwatch": new SkillData("Stopwatches at start", true, 2, 12, 75000, 6, 12500, ["level_up_stopwatch"], 50),
+      "start_amount_star":      new SkillData("Stars at start", true, 2, 45, 179000, 22, 55000, ["level_up_star"], 50),
+      "start_amount_feather":   new SkillData("Feathers at start", true, 2, 16, 87000, 8, 22000, ["level_up_feather"], 50),
+      "start_amount_treasure":  new SkillData("Treasures at start", true, 2, 50, 200000, 25, 100000, ["level_up_treasure"], 50),
+      "start_amount_magnet":    new SkillData("Magnets at start", true, 2, 32, 130000, 16, 62000, ["level_up_magnet"], 50),
+      "start_amount_rocket":    new SkillData("Rockets at start", true, 2, 39, 166666, 19, 66666, ["level_up_rocket"], 50),
+      "item_spawn_frequency":   new SkillData(
         "Item spawn frequency", true, 10, 5, 33000, 3, 6780, [
-          "Level up stopwatch", "Level up star", "Level up feather",
-          "Level up treasure", "Level up magnet", "Level up rocket"
+          "level_up_stopwatch", "level_up_star", "level_up_feather",
+          "level_up_treasure", "level_up_magnet", "level_up_rocket"
         ], 100
       ),
-      "Money multiplier":       new SkillData("Money multiplier", true, 100, 0, 3000, 0, 1700, ["Unlock Skilltree"], 1),
-      "Character upgrades":     new SkillData("Character upgrades", false, 1, 0, 10000, 0, 0, ["Unlock Skilltree"], 1),
-      "Movement speed":         new SkillData("Movement speed", true, 10, 0, 42000, 0, 8000, ["Character upgrades"], 1),
-      "Jump height":            new SkillData("Jump height", true, 5, 0, 44000, 0, 12000, ["Character upgrades"], 1),
-      "Jumps":                  new SkillData("Jumps", true, 3, 8, 25000, 8, 35000, ["Character upgrades"], 1),
-      "Extra life":             new SkillData("Extra life", true, 1, 100, 1000000, 0, 0, ["Deaths"], 1000)
+      "money_multiplier":       new SkillData("Money multiplier", true, 100, 0, 3000, 0, 1700, ["unlock_skilltree"], 1),
+      "character_upgrades":     new SkillData("Character upgrades", false, 1, 0, 10000, 0, 0, ["unlock_skilltree"], 1),
+      "movement_speed":         new SkillData("Movement speed", true, 10, 0, 42000, 0, 8000, ["character_upgrades"], 1),
+      "jump_height":            new SkillData("Jump height", true, 5, 0, 44000, 0, 12000, ["character_upgrades"], 1),
+      "jumps":                  new SkillData("Jumps", true, 3, 8, 25000, 8, 35000, ["character_upgrades"], 1),
+      "extra_life":             new SkillData("Extra life", true, 1, 100, 1000000, 0, 0, ["Deaths"], 1000)
     };
     this.accessories = new Map([
       ["test", new ShopAccessory("test", "Beard", "Collectables_Beard1", 0, 0)],
@@ -126,6 +126,8 @@
 
     this.accessoryWindow.setAccessories(this, this.dropdowns[1].currentOption);
 
+    this.moneyDisplay = new ShopMoneyDisplay(this.gD.canvas.width / 2 - 490, 60, 170, 220, "shopMoneyDisplay");
+
     this.backToMenu = new CanvasButton(
       this.gD.canvas.width / 2 - 100, this.gD.canvas.height - 50, 200, 30, "Main Menu", "menu"
     );
@@ -161,6 +163,9 @@
         this.skillData[key].checkUnlock(this);
       }
     }
+  };
+  this.getSkillValue = function(skillName) {
+    return this.skillData[skillName].getValue();
   };
   this.updateKeyPresses = function() {
     this.gD.newKeys.map(key => {
@@ -628,6 +633,8 @@
     this.gD.context.drawImage(this.menu.backgroundImage, 0, 0);
 
     this.title.draw(this.gD);
+    
+    this.moneyDisplay.draw(this, this.gD);
 
     this.tabs.map(tab => {
       tab.draw(this.gD, this);
@@ -717,6 +724,27 @@
   };
 }
 
+function ShopMoneyDisplay(x, y, width, height, styleKey) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.styleKey = styleKey;
+  this.draw = function(shop, gD) {
+    let design = gD.design.elements[this.styleKey];
+    
+    drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.background, gD);
+    drawCanvasImage(this.x + 5, this.y + 5, "Money_1", gD);
+    drawCanvasImage(this.x + 10, this.y + 5, "Money_10", gD);
+    drawCanvasImage(this.x + 15, this.y + 5, "Money_100", gD);
+    drawCanvasImage(this.x + 20, this.y + 5, "Money_1000", gD);
+    drawCanvasRect(this.x + 5, this.y + 25, this.width - 10, 13, design.rectKey.hype, gD);
+    drawCanvasImage(this.x + 7, this.y + 27, "Currency_XS", gD);
+    drawCanvasRectBorder(this.x + 5, this.y + 25, this.width - 10, 13, design.borderKey, gD);
+    drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
+  };
+}
+
 function SkillData(name, showValue, maxValue, costGoldenShamrock, costHype, costUpgradeGoldenShamrock, costUpgradeMoney, unlockedBy, unlockedAt) {
   this.name = name;
   this.showValue = showValue;
@@ -738,7 +766,7 @@ function SkillData(name, showValue, maxValue, costGoldenShamrock, costHype, cost
 
     this.unlockedBy.map(key => {
       if (key === "Deaths") {
-        if (shop.skillData["Character upgrades"].unlocked) {
+        if (shop.skillData["character_upgrades"].unlocked) {
           levels = shop.menu.statistics.statistics.get("player_deaths").currentCount;
         }
       } else {
@@ -783,43 +811,43 @@ function ShopSkillTree(x, y, width, height, styleKey) {
   this.skills = [];
   this.init = function(shop) {
     this.infoBox = new SkillInfoBox(600, 50, 200, 69, "shopSkillInfo");
-    this.skills.push(new ShopSkill(this.x + 475, this.y + 80, 40, "Unlock Skilltree", "", "shopSkillStandard"));
-    this.skills.push(new ShopSkill(this.x + 140, this.y + 190, 40, "Money multiplier", "", "shopSkillMoney"));
+    this.skills.push(new ShopSkill(this.x + 475, this.y + 80, 40, "unlock_skilltree", "", "shopSkillStandard"));
+    this.skills.push(new ShopSkill(this.x + 140, this.y + 190, 40, "money_multiplier", "", "shopSkillMoney"));
     this.lines.push({startX: 475, startY: 80, endX: 140, endY: 190});
-    this.skills.push(new ShopSkill(this.x + 475, this.y + 280, 40, "Level up items", "", "shopSkillItem"));
+    this.skills.push(new ShopSkill(this.x + 475, this.y + 280, 40, "level_up_items", "", "shopSkillItem"));
     this.lines.push({startX: 475, startY: 80, endX: 475, endY: 280});
-    this.skills.push(new ShopSkill(this.x + 265, this.y + 370, 40, "Level up stopwatch", "Skill_Stopwatch_level_up", "shopSkillItem"));
-    this.skills.push(new ShopSkill(this.x + 335, this.y + 440, 40, "Level up star", "Skill_Star_level_up", "shopSkillItem"));
-    this.skills.push(new ShopSkill(this.x + 425, this.y + 490, 40, "Level up feather", "Skill_Feather_level_up", "shopSkillItem"));
-    this.skills.push(new ShopSkill(this.x + 525, this.y + 490, 40, "Level up treasure", "Skill_Treasure_level_up", "shopSkillItem"));
-    this.skills.push(new ShopSkill(this.x + 615, this.y + 440, 40, "Level up magnet", "Skill_Magnet_level_up", "shopSkillItem"));
-    this.skills.push(new ShopSkill(this.x + 685, this.y + 370, 40, "Level up rocket", "Skill_Rocket_level_up", "shopSkillItem"));
+    this.skills.push(new ShopSkill(this.x + 265, this.y + 370, 40, "level_up_stopwatch", "Skill_Stopwatch_level_up", "shopSkillItem"));
+    this.skills.push(new ShopSkill(this.x + 335, this.y + 440, 40, "level_up_star", "Skill_Star_level_up", "shopSkillItem"));
+    this.skills.push(new ShopSkill(this.x + 425, this.y + 490, 40, "level_up_feather", "Skill_Feather_level_up", "shopSkillItem"));
+    this.skills.push(new ShopSkill(this.x + 525, this.y + 490, 40, "level_up_treasure", "Skill_Treasure_level_up", "shopSkillItem"));
+    this.skills.push(new ShopSkill(this.x + 615, this.y + 440, 40, "level_up_magnet", "Skill_Magnet_level_up", "shopSkillItem"));
+    this.skills.push(new ShopSkill(this.x + 685, this.y + 370, 40, "level_up_rocket", "Skill_Rocket_level_up", "shopSkillItem"));
     this.lines.push({startX: 475, startY: 280, endX: 265, endY: 370});
     this.lines.push({startX: 475, startY: 280, endX: 335, endY: 440});
     this.lines.push({startX: 475, startY: 280, endX: 425, endY: 490});
     this.lines.push({startX: 475, startY: 280, endX: 525, endY: 490});
     this.lines.push({startX: 475, startY: 280, endX: 615, endY: 440});
     this.lines.push({startX: 475, startY: 280, endX: 685, endY: 370});
-    this.skills.push(new ShopSkill(this.x + 140, this.y + 425, 40, "Start amount stopwatch", "Skill_Stopwatches_at_start", "shopSkillItem"));
-    this.skills.push(new ShopSkill(this.x + 250, this.y + 545, 40, "Start amount star", "Skill_Stars_at_start", "shopSkillItem"));
-    this.skills.push(new ShopSkill(this.x + 395, this.y + 615, 40, "Start amount feather", "", "shopSkillItem"));
-    this.skills.push(new ShopSkill(this.x + 555, this.y + 615, 40, "Start amount treasure", "", "shopSkillItem"));
-    this.skills.push(new ShopSkill(this.x + 700, this.y + 545, 40, "Start amount magnet", "", "shopSkillItem"));
-    this.skills.push(new ShopSkill(this.x + 810, this.y + 425, 40, "Start amount rocket", "", "shopSkillItem"));
+    this.skills.push(new ShopSkill(this.x + 140, this.y + 425, 40, "start_amount_stopwatch", "Skill_Stopwatches_at_start", "shopSkillItem"));
+    this.skills.push(new ShopSkill(this.x + 250, this.y + 545, 40, "start_amount_star", "Skill_Stars_at_start", "shopSkillItem"));
+    this.skills.push(new ShopSkill(this.x + 395, this.y + 615, 40, "start_amount_feather", "", "shopSkillItem"));
+    this.skills.push(new ShopSkill(this.x + 555, this.y + 615, 40, "start_amount_treasure", "", "shopSkillItem"));
+    this.skills.push(new ShopSkill(this.x + 700, this.y + 545, 40, "start_amount_magnet", "", "shopSkillItem"));
+    this.skills.push(new ShopSkill(this.x + 810, this.y + 425, 40, "start_amount_rocket", "", "shopSkillItem"));
     this.lines.push({startX: 265, startY: 370, endX: 140, endY: 425});
     this.lines.push({startX: 335, startY: 440, endX: 250, endY: 545});
     this.lines.push({startX: 425, startY: 490, endX: 395, endY: 615});
     this.lines.push({startX: 525, startY: 490, endX: 555, endY: 615});
     this.lines.push({startX: 615, startY: 440, endX: 700, endY: 545});
     this.lines.push({startX: 685, startY: 370, endX: 810, endY: 425});
-    this.skills.push(new ShopSkill(this.x + 475, this.y + 730, 40, "Item spawn frequency", "", "shopSkillItem"));
+    this.skills.push(new ShopSkill(this.x + 475, this.y + 730, 40, "item_spawn_frequency", "", "shopSkillItem"));
     this.lines.push({startX: 475, startY: 280, endX: 475, endY: 730});
-    this.skills.push(new ShopSkill(this.x + 810, this.y + 170, 40, "Character upgrades", "", "shopSkillCharacter"));
+    this.skills.push(new ShopSkill(this.x + 810, this.y + 170, 40, "character_upgrades", "", "shopSkillCharacter"));
     this.lines.push({startX: 475, startY: 80, endX: 810, endY: 170});
-    this.skills.push(new ShopSkill(this.x + 1050, this.y + 170, 40, "Movement speed", "", "shopSkillCharacter"));
-    this.skills.push(new ShopSkill(this.x + 1050, this.y + 270, 40, "Jump height", "", "shopSkillCharacter"));
-    this.skills.push(new ShopSkill(this.x + 1050, this.y + 400, 40, "Jumps", "", "shopSkillCharacter"));
-    this.skills.push(new ShopSkill(this.x + 1050, this.y + 530, 40, "Extra life", "", "shopSkillCharacter"));
+    this.skills.push(new ShopSkill(this.x + 1050, this.y + 170, 40, "movement_speed", "", "shopSkillCharacter"));
+    this.skills.push(new ShopSkill(this.x + 1050, this.y + 270, 40, "jump_height", "", "shopSkillCharacter"));
+    this.skills.push(new ShopSkill(this.x + 1050, this.y + 400, 40, "jumps", "", "shopSkillCharacter"));
+    this.skills.push(new ShopSkill(this.x + 1050, this.y + 530, 40, "extra_life", "", "shopSkillCharacter"));
     this.lines.push({startX: 810, startY: 170, endX: 1050, endY: 170});
     this.lines.push({startX: 810, startY: 170, endX: 1050, endY: 270});
     this.lines.push({startX: 810, startY: 170, endX: 1050, endY: 400});

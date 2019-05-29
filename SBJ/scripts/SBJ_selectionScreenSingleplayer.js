@@ -84,7 +84,7 @@
             this.menu.game.setStage("Stage_Training", true);
             this.menu.game.addPlayer(
               this.selections[0].getSelected(), this.selections[1].getSelected(), this.selections[2].getSelected(),
-              this.selections[3].getSelected()
+              this.selections[3].getSelected(), true
             );
             this.gD.currentPage = this.menu.game;
           } else if (this.selectedColumnIndex === 1) {
@@ -93,7 +93,7 @@
             this.menu.game.setStage(this.selections[4].getSelected());
             this.menu.game.addPlayer(
               this.selections[0].getSelected(), this.selections[1].getSelected(), this.selections[2].getSelected(),
-              this.selections[3].getSelected()
+              this.selections[3].getSelected(), true
             );
             this.gD.currentPage = this.menu.game;
           }
@@ -162,7 +162,7 @@
       this.menu.game.setStage(this.selections[4].getSelected());
       this.menu.game.addPlayer(
         this.selections[0].getSelected(), this.selections[1].getSelected(), this.selections[2].getSelected(),
-        this.selections[3].getSelected()
+        this.selections[3].getSelected(), true
       );
       this.gD.currentPage = this.menu.game;
     } else if (clickPos.x >= this.backToMenu.x && clickPos.x <= this.backToMenu.x + this.backToMenu.width &&
@@ -173,7 +173,7 @@
       this.menu.game.setStage("Stage_Training", true);
       this.menu.game.addPlayer(
         this.selections[0].getSelected(), this.selections[1].getSelected(), this.selections[2].getSelected(),
-        this.selections[3].getSelected()
+        this.selections[3].getSelected(), true
       );
       this.gD.currentPage = this.menu.game;
     }

@@ -27,6 +27,9 @@ function Game(menu, gD) {
     
     this.inventory = new GameInventory();
     this.inventory.init(this, gD);
+    this.endScreen = new GameEndScreen(0, 0, this.gD.canvas.width, this.gD.canvas.height, "endScreen");
+    this.endScreen.init();
+    this.updateSelection(0);
   };
   this.setStage = function(stage, training = false) {
     let stageClass = this.gD.stages[stage][1];
@@ -37,31 +40,40 @@ function Game(menu, gD) {
   this.setPlayer = function(player) {
     this.player = player;
   };
-  this.addPlayer = function(character, hat, glasses, beard, name = "") {
+  this.addPlayer = function(character, hat, glasses, beard, main = false, name = "") {
     let player = new GamePlayer(this.players.length * 35 + 20, 260, character, name, hat, glasses, beard);
     player.init(this, this.gD);
-    if (this.players.length === 0) {
+    this.players.push(player);
+    if (main) {
       this.setPlayer(player);
     }
-    this.players.push(player);
   };
   this.speedLvlUp = function() {
-    if (this.distanceSinceLvlUp >= this.baseLevelLength * this.globalSpeed) {
+    if (this.distanceSinceLvlUp >= this.baseLevelLength * Math.min(this.currentLevel * 0.5 + 1.5, 12)) {
       this.currentLevel++;
       this.showLevel = 180;
       this.distanceSinceLvlUp = this.inventory.getValue("distance") - this.getLevelStart(this.currentLevel);
-      this.globalSpeed = Math.min(this.currentLevel * 0.5 + 1.5, 12);
-      this.player.stopMoving(this, null);
+      if (!this.inventory.items["Item_Stopwatch"].active && !this.inventory.items["Item_Rocket"].active) {
+        this.globalSpeed = Math.min(this.currentLevel * 0.5 + 1.5, 12);
+      }
       this.currentMoneyProbability["Money_1"] = Math.max(this.currentMoneyProbability["Money_1"] - 0.1, 3);
       this.currentMoneyProbability["Money_10"] = Math.max(this.currentMoneyProbability["Money_10"] - 0.1, 2);
       this.currentMoneyProbability["Money_100"] = Math.min(this.currentMoneyProbability["Money_100"] + 0.1, 3);
       this.currentMoneyProbability["Money_1000"] = Math.min(this.currentMoneyProbability["Money_1000"] + 0.05, 1.15);
+      if (this.currentLevel % 5 === 4) {
+        let {spriteWidth, spriteHeight} = getSpriteData("Special_GoldenShamrock", this.gD);
+        
+        this.objects.push(new GameObject(
+          randomBetween(this.getLevelStart(this.currentLevel + 1), this.getLevelStart(this.currentLevel + 2)), 
+          randomBetween(50, 320), spriteWidth, spriteHeight, "Special_GoldenShamrock"
+        ));
+      }
     }
   };
   this.getLevelStart = function(level) {
     let distance = 0;
     for (let i = 1; i < level; i++) {
-      distance += (i + 1) * this.baseLevelLength;
+      distance += (i * 0.5 + 1.5) * this.baseLevelLength;
     }
     return distance;
   };
@@ -111,7 +123,9 @@ function Game(menu, gD) {
       }
     }
     
-    total *= 8;
+    if (!this.inventory.items["Item_Treasure"].active) {
+      total *= 8;
+    }
     
     random = Math.random() * total;
     
@@ -132,9 +146,9 @@ function Game(menu, gD) {
   this.addItem = function() {
     let total = 0;
     let random = 0;
-    for (let prob in this.currentMoneyProbability) {
-      if (this.currentMoneyProbability.hasOwnProperty(prob)) {
-        total += this.currentMoneyProbability[prob];
+    for (let prob in this.gD.items) {
+      if (this.gD.items.hasOwnProperty(prob)) {
+        total += this.gD.items[prob][0];
       }
     }
     
@@ -142,9 +156,9 @@ function Game(menu, gD) {
     
     random = Math.random() * total;
     
-    for (let prob in this.currentMoneyProbability) {
-      if (this.currentMoneyProbability.hasOwnProperty(prob)) {
-        random -= this.currentMoneyProbability[prob];
+    for (let prob in this.gD.items) {
+      if (this.gD.items.hasOwnProperty(prob)) {
+        random -= this.gD.items[prob][0];
         if (random <= 0) {
           let {spriteWidth, spriteHeight} = getSpriteData(prob, this.gD);
           
@@ -156,50 +170,96 @@ function Game(menu, gD) {
       }
     }
   };
+  this.finish = function() {
+    
+  };
   this.restart = function() {
-    let players = this.players;
+    let player = this.player;
     let stage = this.stage;
     
     this.init();
     
-    players.map(player => {
-      this.addPlayer(player.character, player.hat, player.glasses, player.beard, player.name);
-    }, this);
+    this.addPlayer(player.character, player.hat, player.glasses, player.beard, true, player.name);
     this.stage = stage;
   };
   this.updateKeyPresses = function() {
     let keyB = this.menu.controls.keyBindings;
     
     this.gD.newKeys.map((key, index) => {
-      if (keyB.get("Game_JumpFromPlatform")[3].includes(key)) {
-        this.player.downFromPlatform();
-      } else if (keyB.get("Game_Pause")[3].includes(key)) {
-        this.paused = !this.paused;
-      } else if (key === "KeyN") {
-        this.restart();
+      if (!this.finished) {
+        if (keyB.get("Game_Pause")[3].includes(key)) {
+          this.paused = !this.paused;
+        }
+      } else if (this.finished) {
+        if (keyB.get("Menu_NavRight")[3].includes(key)) {
+          this.updateSelection((this.selectedColumnIndex + 1) % 2);
+        } else if (keyB.get("Menu_NavLeft")[3].includes(key)) {
+          this.updateSelection((this.selectedColumnIndex + 1) % 2);
+        } else if (keyB.get("Menu_Confirm")[3].includes(key)) {
+          switch (this.selectedColumnIndex) {
+            case 1:
+              this.restart();
+              break;
+            default:
+              this.gD.currentPage = this.menu;
+              this.init();
+              break;
+          }
+        }
+      }
+      if (!this.paused && !this.finished) {
+        if (keyB.get("Game_JumpFromPlatform")[3].includes(key)) {
+          this.player.downFromPlatform();
+        } else if (keyB.get("Game_ItemStopwatch")[3].includes(key)) {
+          this.inventory.activate(this, "Item_Stopwatch");
+        } else if (keyB.get("Game_ItemStar")[3].includes(key)) {
+          this.inventory.activate(this, "Item_Star");
+        } else if (keyB.get("Game_ItemFeather")[3].includes(key)) {
+          this.inventory.activate(this, "Item_Feather");
+        } else if (keyB.get("Game_ItemTreasure")[3].includes(key)) {
+          this.inventory.activate(this, "Item_Treasure");
+        } else if (keyB.get("Game_ItemMagnet")[3].includes(key)) {
+          this.inventory.activate(this, "Item_Magnet");
+        } else if (keyB.get("Game_ItemRocket")[3].includes(key)) {
+          this.inventory.activate(this, "Item_Rocket");
+        }
       }
     }, this);
     
     Object.keys(this.gD.keys).map((key, index) => {
-      if (keyB.get("Game_Jump")[3].includes(key) && this.gD.keys[key]) {
-        this.player.jump(this, this.menu);
-      } else if (keyB.get("Game_Jump")[3].includes(key) && !this.gD.keys[key]) {
-        this.player.jumpStop();
-      }
-      
-      if (keyB.get("Game_MoveRight")[3].includes(key) && this.gD.keys[key]) {
-        this.player.moveForward(this, this.menu);
-      } else if (keyB.get("Game_MoveLeft")[3].includes(key) && this.gD.keys[key]) {
-        this.player.moveBackward(this, this.menu);
-      } else if (keyB.get("Game_MoveRight")[3].includes(key) && !this.gD.keys[key]) {
-        this.player.stopMoving(this, "forward");
-      } else if (keyB.get("Game_MoveLeft")[3].includes(key) && !this.gD.keys[key]) {
-        this.player.stopMoving(this, "backward");
+      if (!this.paused && !this.finished) {
+        if (keyB.get("Game_Jump")[3].includes(key) && this.gD.keys[key]) {
+          this.player.jump(this, this.menu);
+        } else if (keyB.get("Game_Jump")[3].includes(key) && !this.gD.keys[key]) {
+          this.player.jumpStop();
+        }
+        
+        if (keyB.get("Game_MoveRight")[3].includes(key) && this.gD.keys[key]) {
+          this.player.moveForward(this, this.menu);
+        } else if (keyB.get("Game_MoveLeft")[3].includes(key) && this.gD.keys[key]) {
+          this.player.moveBackward(this, this.menu);
+        } else if (keyB.get("Game_MoveRight")[3].includes(key) && !this.gD.keys[key]) {
+          this.player.stopMoving(this, "forward");
+        } else if (keyB.get("Game_MoveLeft")[3].includes(key) && !this.gD.keys[key]) {
+          this.player.stopMoving(this, "backward");
+        }
       }
     }, this);
   };
   this.updateMouseMoves = function() {
-
+    if (this.gD.mousePos.x >= this.endScreen.backToMenu.x && 
+        this.gD.mousePos.x <= this.endScreen.backToMenu.x + this.endScreen.backToMenu.width &&
+        this.gD.mousePos.y >= this.endScreen.backToMenu.y && 
+        this.gD.mousePos.y <= this.endScreen.backToMenu.y + this.endScreen.backToMenu.height) {
+      this.updateSelection(0);
+    }
+    
+    if (this.gD.mousePos.x >= this.endScreen.restart.x && 
+        this.gD.mousePos.x <= this.endScreen.restart.x + this.endScreen.restart.width &&
+        this.gD.mousePos.y >= this.endScreen.restart.y && 
+        this.gD.mousePos.y <= this.endScreen.restart.y + this.endScreen.restart.height) {
+      this.updateSelection(1);
+    }
   };
   this.updateClick = function() {
     let clickPos = this.gD.clicks.pop();
@@ -207,15 +267,34 @@ function Game(menu, gD) {
     if (!clickPos) {
       return;
     }
+    
+    if (clickPos.x >= this.endScreen.backToMenu.x && 
+        clickPos.x <= this.endScreen.backToMenu.x + this.endScreen.backToMenu.width &&
+        clickPos.y >= this.endScreen.backToMenu.y && 
+        clickPos.y <= this.endScreen.backToMenu.y + this.endScreen.backToMenu.height) {
+      this.gD.currentPage = this.menu;
+      this.init();
+    }
+    
+    if (clickPos.x >= this.endScreen.restart.x && 
+        clickPos.x <= this.endScreen.restart.x + this.endScreen.restart.width &&
+        clickPos.y >= this.endScreen.restart.y && 
+        clickPos.y <= this.endScreen.restart.y + this.endScreen.restart.height) {
+      this.restart();
+    }
   };
   this.updateWheelMoves = function() {
 
   };
   this.update = function() {
     if (!this.finished && !this.paused) {
+      if (this.showLevel > 0) {
+        this.showLevel--;
+      }
       this.speedLvlUp();
       this.distance += this.globalSpeed;
       this.distanceSinceLvlUp += this.globalSpeed;
+      this.inventory.update(this);
       this.inventory.setValue("distance", this.distance);
       
       this.players.map(player => {
@@ -231,9 +310,15 @@ function Game(menu, gD) {
       if (this.floors[this.floorStartIndex].x + this.floors[this.floorStartIndex].width < this.distance - 100) {
         this.floorStartIndex++;
       }
-      if (this.gD.frameNo % 30 === 0) {
+      if (this.gD.frameNo % 30 === 0 || this.inventory.items["Item_Treasure"].active) {
         this.addMoney();
       }
+      if (this.gD.frameNo % (150 - this.menu.shop.getSkillValue("item_spawn_frequency") * 4) === 0) {
+        this.addItem();
+      }
+      this.objects.map(object => {
+        object.update(this);
+      }, this);
       this.objects.map((object, index) => {
         this.player.collect(this, object, index);
       }, this);
@@ -241,12 +326,14 @@ function Game(menu, gD) {
           this.objects[this.objectStartIndex].x + this.objects[this.objectStartIndex].width < this.distance - 100) {
         this.objectStartIndex++;
       }
+      this.player.stopMoving(this, null);
+    } else if (this.finished) {
+      this.endScreen.update(this, this.gD);
     }
   };
   this.draw = function() {
     if (this.showLevel > 0) {
       drawCanvasText(this.gD.canvas.width / 2, this.gD.canvas.height / 2, this.currentLevel, "ookii", this.gD);
-      this.showLevel--;
     }
     this.players.map(player => {
       player.draw(this, this.gD);
@@ -260,6 +347,29 @@ function Game(menu, gD) {
     for (let i = this.objectStartIndex; i < this.objects.length; i++) {
       this.objects[i].draw(this, this.gD);
     }
+    if (this.paused) {
+      drawCanvasRect(0, (this.gD.canvas.height - 70) / 2, this.gD.canvas.width, 70, "darkModal", this.gD);
+      drawCanvasText(this.gD.canvas.width / 2, this.gD.canvas.height / 2, "Pause", "pageTitle", gD);
+    }
+    if (this.finished) {
+      this.endScreen.draw(this, this.gD);
+    }
+  };
+  this.updateSelection = function(columnIndex) {
+    if (this.selectedColumnIndex !== undefined) {
+      if (this.selectedColumnIndex === 0) {
+        this.endScreen.backToMenu.deselect();
+      } else {
+        this.endScreen.restart.deselect();
+      }
+    }
+    
+    if (columnIndex === 0) {
+      this.endScreen.backToMenu.select();
+    } else {
+      this.endScreen.restart.select();
+    }
+    this.selectedColumnIndex = columnIndex;
   };
 }
 
@@ -274,6 +384,7 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
   this.width = 0;
   this.height = 0;
   this.direction = null;
+  this.inventory = null;
   this.speed = 0;
   this.velocity = 0;
   this.gravity = 0.45;
@@ -287,14 +398,28 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
   this.currentFloor = null; //saves a floor on which the player is atm
   this.init = function(game, gD) {
     this.stopMoving(game, null);
+    this.inventory = game.inventory;
+  };
+  this.getHeight = function(gD) {
+    let height = 0;
+    if (this.hat !== "Collectables_Nothing") {
+      let {spriteHeight} = getSpriteData(this.hat, gD);
+      height += spriteHeight - gD.player[this.character][1].y;
+    }
+    if (this.glasses !== "Collectables_Nothing") {
+      let {spriteHeight} = getSpriteData(this.glasses, gD);
+      let topOverhead = (spriteHeight / 2) - gD.player[this.character][2].y;
+      let bottomOverhead = (spriteHeight / 2) - (this.height - gD.player[this.character][2].y);
+      height = Math.max(height, topOverhead);
+    }
   };
   this.moveForward = function(game, menu) {
     this.direction = "forward";
-    this.speed = game.globalSpeed + 3 + menu.shop.skillData["Movement speed"].getValue() * 0.4;
+    this.speed = game.globalSpeed + 3 + menu.shop.getSkillValue("movement_speed") * 0.4;
   };
   this.moveBackward = function(game, menu) {
     this.direction = "backward";
-    this.speed = game.globalSpeed - 3 - menu.shop.skillData["Movement speed"].getValue() * 0.4;
+    this.speed = game.globalSpeed - 3 - menu.shop.getSkillValue("movement_speed") * 0.4;
   };
   this.stopMoving = function(game, direction) {
     if (this.direction === direction) {
@@ -307,15 +432,22 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
     this.currentFloor = null;
     this.jumps = 1;
   };
+  this.setGravity = function(item = false) {
+    if (item) {
+      this.gravity = 0.25;
+    } else {
+      this.gravity = 0.45;
+    }
+  };
   this.jump = function(game, menu) {
-    if (!this.jumping && this.jumps < 2 + menu.shop.skillData["Jumps"].getValue()) {
+    if (!this.jumping && this.jumps < 2 + menu.shop.getSkillValue("jumps")) {
       if (game.stage.name === "Universe") {
-        this.velocity = -(9 + menu.shop.skillData["Jump height"].getValue()) / 2.9;
+        this.velocity = -(9 + menu.shop.getSkillValue("jump_height")) / 2.9;
         this.jumping = true;
       } else if (game.stage.name === "Water" && this.y + this.height >= game.gD.canvas.height / 2) {
-        this.velocity = -(9 + menu.shop.skillData["Jump height"].getValue()) / 3;
+        this.velocity = -(9 + menu.shop.getSkillValue("jump_height")) / 3;
       } else {
-        this.velocity = -(9 + menu.shop.skillData["Jump height"].getValue());
+        this.velocity = -(9 + menu.shop.getSkillValue("jump_height"));
         this.jumping = true;
       }
       this.onFloor = false;
@@ -445,7 +577,7 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
             this.outsideWater = false;
           } else {
             if (!this.outsideWater) {
-              this.velocity = -(9 + game.menu.shop.skillData["Jump Height"].getValue()) / 1.8;
+              this.velocity = -(9 + game.menu.shop.getSkillValue("jump_height")) / 1.8;
             }
             this.outsideWater = true;
           }
@@ -522,7 +654,9 @@ function GameCashVault(x, y, width, height, spriteKey, styleKey) {
 
     drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey, gD);
     drawCanvasImage(this.x + 3, this.y + Math.floor((this.height - spriteData.spriteHeight) / 2), this.spriteKey, gD);
-    drawCanvasText(this.x + this.width - 3, this.y + this.height / 2, this.getTotalCash().toString(), design.textKey, gD);
+    drawCanvasText(
+      this.x + this.width - 3, this.y + this.height / 2, this.getTotalCash().toString(), design.textKey, gD
+    );
     drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
   };
 }
@@ -535,10 +669,10 @@ function GameInventory() {
   this.init = function(game, gD) {
     let counter = 0;
     for (let item in gD.items) {
-      if (gD.items.hasOwnProperty(item)) {
+      if (gD.items.hasOwnProperty(item) && item !== "Item_Questionmark") {
         this.items[item] = new GameInventoryItem(
           60 * counter, 0, 60, 30, item,
-          gD.items[item][1] + (gD.items[item][2] * game.menu.shop.skillData["Level up items"].currentValue), "inventory"
+          gD.items[item][1] + (gD.items[item][2] * game.menu.shop.getSkillValue("level_up_items")), "inventory"
         );
         counter++;
       }
@@ -547,6 +681,9 @@ function GameInventory() {
     this.distance = new GameInventoryDistance(60 * counter + 200, 0, 220, 30, "Icon_Distance", "inventory2");
     this.hype = new GameCashVault(60 * counter + 420, 0, 220, 30, "Money_1", "inventory2");
     this.hype.init(game, gD);
+  };
+  this.activate = function(game, item) {
+    this.items[item].activate(game);
   };
   this.fill = function(amount) {
     for (let str in this.items) {
@@ -574,6 +711,13 @@ function GameInventory() {
       this.special.collect(item);
     }
   };
+  this.update = function(game) {
+    for (let item in this.items) {
+      if (this.items.hasOwnProperty(item)) {
+        this.items[item].update(game);
+      }
+    }
+  };
   this.draw = function(game, gD, ghostFactor) {
     for (let item in this.items) {
       if (this.items.hasOwnProperty(item)) {
@@ -597,32 +741,60 @@ function GameInventoryItem(x, y, width, height, itemName, maxDurability, styleKe
   this.durability = 0;
   this.amount = 0;
   this.used = 0;
+  this.velocity = 0;
   this.active = false;
-  this.activate = function() {
+  this.activate = function(game) {
     if (!this.active && this.amount > 0) {
       this.active = true;
       this.durability = this.maxDurability;
       this.amount--;
       this.used++;
+      switch (this.itemName) {
+        case "Item_Stopwatch":
+          game.globalSpeed = 0.1;
+          game.player.stopMoving(game, null);
+          break;
+        case "Item_Feather":
+          game.player.setGravity(true);
+          break;
+        default:
+      }
     }
   };
   this.update = function(game) {
     if (this.active) {
       if (this.durability > 0) {
         this.durability--;
+        if (this.itemName === "Item_Rocket") {
+          if (this.durability <= this.velocity * 5) {
+            this.velocity -= 1;
+            game.globalSpeed = Math.max(game.globalSpeed - this.velocity, Math.min(game.currentLevel * 0.5 + 1.5, 12));
+          } else if (this.maxDurability - this.durability >= this.velocity * 5 && this.velocity < 9) {
+            this.velocity += 1;
+            game.globalSpeed = Math.min(game.globalSpeed + this.velocity, 40);
+          }
+        }
       } else {
         this.active = false;
         switch (this.itemName) {
           case "Item_Stopwatch":
+            game.globalSpeed = Math.min(game.currentLevel * 0.5 + 1.5, 12);
             /*if (!game.menu.achievements.achievementList.achievements[12].finished) {
               game.menu.achievements.achievementValues[12] += (game.gD.itemBaseDur[i] + (game.menu.shop.level[i] * game.gD.itemPerLvlDur[i])) / 50;
               game.menu.achievements.achievementList.achievements[12].check(game.menu.achievements);
             }*/
             break;
           case "Item_Star":
-            /*if (game.player.y == game.gD.canvas.height - game.stages[game.stageNr].deadZoneGround - game.player.height) {
+            if (game.player.y === game.gD.canvas.height - game.stage.deadZoneGround - game.player.height) {
               game.player.onFloor = false;
-            }*/
+            }
+            break;
+          case "Item_Feather":
+            game.player.setGravity();
+            break;
+          case "Item_Rocket":
+            this.velocity = 0;
+            game.globalSpeed = Math.min(game.currentLevel * 0.5 + 1.5, 12);
             break;
           default:
             break;
@@ -636,7 +808,7 @@ function GameInventoryItem(x, y, width, height, itemName, maxDurability, styleKe
 
     drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.background, gD);
     drawCanvasRect(
-      this.x, this.y, this.width * ((this.durability - ghostFactor) / this.maxDurability), this.height, design.rectKey.progress, gD
+      this.x, this.y, this.width * (this.durability / this.maxDurability), this.height, design.rectKey.progress, gD
     );
     drawCanvasImage(this.x + 2, this.y + Math.floor((this.height - itemRef.spriteHeight) / 2), this.itemName, gD);
     drawCanvasText(this.x + this.width - 2, this.y + this.height / 2, this.amount.toString(), design.textKey, gD);
@@ -716,7 +888,10 @@ function GameInventoryDistance(x, y, width, height, spriteKey, styleKey) {
 
     drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey, gD);
     drawCanvasImage(this.x + 3, this.y + Math.floor((this.height - spriteData.spriteHeight) / 2), this.spriteKey, gD);
-    drawCanvasText(this.x + this.width - 3, this.y + this.height / 2, Math.floor(this.currentValue / 15).toString(), design.textKey, gD);
+    drawCanvasText(
+      this.x + this.width - 3, this.y + this.height / 2, Math.floor(this.currentValue / 15).toString(), 
+      design.textKey, gD
+    );
     drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
   };
 }
@@ -735,7 +910,7 @@ function GameFloor(x, y, width, type, height = 0) {
     if (this.type === "Moving") {
       this.weight = game.stage.gravity / (3 / (Math.floor((this.height / 3)) - 1));
     } else {
-      this.weight = game.stage.gravity / ((300 - 50) / (2000 - 500) * (this.width - 50) + 500);
+      this.weight = (this.width - 50) / (300 - 50) * (50 - 40) + 40;
     }
     if (this.type === "Spikes") {
       game.objects.push(new GameObject(this.x - 7, this.y - 9.5, 57, 19));
@@ -780,7 +955,10 @@ function GameObject(x, y, width, height, spriteKey = "") {
   this.height = height;
   this.spriteKey = spriteKey;
   this.update = function(game) {
-    if (spriteKey !== "" && game.inventory.items["Item_Magnet"].active) {
+    if (this.spriteKey !== "" && game.inventory.items["Item_Magnet"].active) {
+      if (this.spriteKey === "Money_1") {
+        console.log(true);
+      }
       let distX = (game.player.x + game.player.width / 2) - (this.x + this.width / 2);
       let distY = (game.player.y + game.player.height / 2) - (this.y + this.height / 2);
       let distanceToPlayer = Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2));
@@ -797,6 +975,123 @@ function GameObject(x, y, width, height, spriteKey = "") {
 
       drawCanvasImage(canvasX, this.y, this.spriteKey, gD);
     }
+  };
+}
+
+function GameEndScreen(x, y, width, height, styleKey) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.styleKey = styleKey;
+  this.tableLineHeight = 25;
+  this.backToMenu = null;
+  this.restart = null;
+  this.init = function() {
+    this.backToMenu = new CanvasButton(this.width / 2 - 205, this.height - 50, 200, 30, "Main Menu", "menu");
+    this.restart = new CanvasButton(this.width / 2 + 5, this.height - 50, 200, 30, "Neustart", "menu");
+    
+  };
+  this.update = function(game, gD) {
+    this.backToMenu.update();
+    this.restart.update();
+  };
+  this.draw = function(game, gD) {
+    let design = gD.design.elements[this.styleKey];
+    
+    drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.background, gD);
+    drawCanvasText(this.width / 2, 30, "Game Over", design.textKey.title, gD);
+    game.players.map((player, index) => {
+      let characterData = getSpriteData(player.character, gD);
+      let x = this.x + 20 + (index % 2) * 40;
+      let y = this.y + 60 + ((index + 0.5) * this.tableLineHeight) - characterData.spriteHeight / 2;
+      
+      drawCanvasImage(x, Math.floor(y), player.character, gD);
+      
+      if (player.hat !== "Collectables_Nothing") {
+        let {spriteWidth, spriteHeight} = getSpriteData(player.hat, gD);
+        drawCanvasImage(
+          x + gD.player[player.character][1].x - spriteWidth / 2, 
+          Math.floor(y + gD.player[player.character][1].y - spriteHeight), player.hat, gD
+        );
+      }
+      if (player.glasses !== "Collectables_Nothing") {
+        let {spriteWidth, spriteHeight} = getSpriteData(player.glasses, gD);
+        drawCanvasImage(
+          x + gD.player[player.character][2].x - spriteWidth / 2, 
+          Math.floor(y + gD.player[player.character][2].y - spriteHeight / 2), player.glasses, gD
+        );
+      }
+      if (player.beard !== "Collectables_Nothing") {
+        let {spriteWidth, spriteHeight} = getSpriteData(player.beard, gD);
+        drawCanvasImage(
+          x + gD.player[player.character][3].x - spriteWidth / 2, 
+          Math.floor(y + gD.player[player.character][3].y), player.beard, gD
+        );
+      }
+      
+      drawCanvasRect(
+        100, 60 + index * this.tableLineHeight, this.width - 200, this.tableLineHeight, design.rectKey.table, gD
+      );
+      drawCanvasText(
+        103, 60 + (index + 0.5) * this.tableLineHeight, 
+        player.name.length > 15 ? player.name.substr(0, 12) + "..." : 
+          player.name === "" ? "Player " + (index + 1) : player.name, 
+        design.textKey.table, gD
+      );
+      let distanceData = getSpriteData("Icon_Distance", gD);
+      
+      drawCanvasLine(
+        238, 60 + index * this.tableLineHeight, design.borderKey, gD, 238, 60 + (index + 1) * this.tableLineHeight
+      );
+      drawCanvasImage(
+        240, 60 + index * this.tableLineHeight + (this.tableLineHeight - distanceData.spriteHeight) / 2, 
+        "Icon_Distance", gD
+      );
+      drawCanvasText(
+        380, 60 + (index + 0.5) * this.tableLineHeight, Math.floor(player.inventory.getValue("distance") / 15), 
+        design.textKey.tableRight, gD
+      );
+      drawCanvasLine(
+        383, 60 + index * this.tableLineHeight, design.borderKey, gD, 383, 60 + (index + 1) * this.tableLineHeight
+      );
+      let startX = 556;
+      let startX2 = 386;
+      for (let money in player.inventory.hype.money) {
+        if (player.inventory.hype.money.hasOwnProperty(money)) {
+          let {spriteWidth, spriteHeight} = getSpriteData(money, gD);
+          
+          drawCanvasImage(
+            startX2, 60 + index * this.tableLineHeight + Math.floor((this.tableLineHeight - spriteHeight) / 2), 
+            money, gD
+          );
+          startX2 += 5;
+          
+          drawCanvasLine(
+            startX, 60 + index * this.tableLineHeight, design.borderKey, gD, startX, 
+            60 + (index + 1) * this.tableLineHeight
+          );
+          drawCanvasImage(
+            startX + 3, 60 + index * this.tableLineHeight + Math.floor((this.tableLineHeight - spriteHeight) / 2), 
+            money, gD
+          );
+          drawCanvasText(
+            startX + 83, 60 + (index + 0.5) * this.tableLineHeight, player.inventory.hype.money[money], 
+            design.textKey.tableRight, gD
+          );
+          startX += 86;
+        }
+      } 
+      drawCanvasText(
+        553, 60 + (index + 0.5) * this.tableLineHeight, player.inventory.hype.getTotalCash(), 
+        design.textKey.tableRight, gD
+      );
+      drawCanvasRectBorder(
+        100, 60 + index * this.tableLineHeight, this.width - 200, this.tableLineHeight, design.borderKey, gD
+      );
+    }, this);
+    this.backToMenu.draw(gD);
+    this.restart.draw(gD);
   };
 }
 

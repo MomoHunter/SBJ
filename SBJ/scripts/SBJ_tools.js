@@ -25,9 +25,9 @@ function factorial(number) {
   return result;
 }
 
-function sum(number) {
+function sum(number, step = 1) {
   let result = 0;
-  for (let i = 1; i <= number; i++) {
+  for (let i = 1; i <= number; i += step) {
     result += i;
   }
   return result;

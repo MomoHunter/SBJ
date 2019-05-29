@@ -46,6 +46,7 @@ function gameloop(gD, timestamp) {
 
     gD.clear();
     gD.currentPage.draw(gD.lag / gD.refreshrate);
+    drawCanvasText(3, gD.canvas.height - 7, "FPS: " + Math.round(1000 / gD.timeDiff), "fps", gD);
     gD.startTs = timestamp;
   }
 }
@@ -310,7 +311,8 @@ function GlobalDict(eventHandler) {
     "Item_Feather": [3, 360, 90, 1800],
     "Item_Treasure": [0.3, 12, 6, 4300],
     "Item_Magnet": [1.5, 240, 180, 3999],
-    "Item_Rocket": [1, 100, 75, 4955]
+    "Item_Rocket": [1, 100, 75, 4955],
+    "Item_Questionmark": [0.6]
   };
   this.money = {                     //probability, value
     "Money_1": [5, 1],
@@ -337,14 +339,14 @@ function GlobalDict(eventHandler) {
       {type: "Jump", x: 1440, y: 120.5},
       {type: "Jump", x: 1880, y: 300.5}
     ]},
-    {chance: 1, earliestLevel: 1, floors: [
+    {chance: 1, earliestLevel: 3, floors: [
       {type: "Fall", x: 120, y: 209.5},
       {type: "Spikes", x: 560, y: 170.5},
       {type: "Spikes", x: 1000, y: 209.5},
       {type: "Fall", x: 1440, y: 230.5},
       {type: "Spikes", x: 1880, y: 169.5}
     ]},
-    {chance: 0.5, earliestLevel: 1, floors: [
+    {chance: 0.5, earliestLevel: 2, floors: [
       {type: "Jump", x: 120, y: 209.5},
       {type: "Moving", x: 560, y: 301, height: 180},
       {type: "Standard", x: 1000, y: 120.5},
@@ -388,6 +390,18 @@ function GlobalDict(eventHandler) {
         textKey: "valueBig",
         borderKey: "standard"
       },
+      endScreen: {
+        rectKey: {
+          background: "endScreenModal",
+          table: "blur"
+        },
+        textKey: {
+          title: "pageTitle",
+          table: "enterNameModal",
+          tableRight: "highscoreNumber"
+        },
+        borderKey: "standard"
+      },
       objectSelection: {
         rectKey: {
           arrow: "standard",
@@ -401,6 +415,16 @@ function GlobalDict(eventHandler) {
         rectKey: {
           background: "blur",
           locked: "modal"
+        },
+        borderKey: "standard"
+      },
+      shopMoneyDisplay: {
+        rectKey: {
+          background: "blur",
+          hype: "moneyPositive"
+        },
+        textKey: {
+          headline: "normal"
         },
         borderKey: "standard"
       },
@@ -795,6 +819,9 @@ function GlobalDict(eventHandler) {
       modal: {
         backgroundColor: "44, 47, 51, 0.6"
       },
+      darkModal: {
+        backgroundColor: "22, 23, 25, 0.9"
+      },
       headline: {
         backgroundColor: "50, 200, 80, 1"
       },
@@ -851,6 +878,9 @@ function GlobalDict(eventHandler) {
       },
       shopHat: {
         backgroundColor: "129, 237, 128, 0.7"
+      },
+      endScreenModal: {
+        backgroundColor: "149, 34, 29, 0.8"
       }
     },
     circle: {
@@ -1105,6 +1135,13 @@ function GlobalDict(eventHandler) {
       date: {
         font: "10pt Consolas",
         color: "0, 0, 0, 1",
+        align: "left",
+        baseline: "alphabetic",
+        borderKey: ""
+      },
+      fps: {
+        font: "10pt Consolas",
+        color: "255, 255, 255, 1",
         align: "left",
         baseline: "alphabetic",
         borderKey: ""
