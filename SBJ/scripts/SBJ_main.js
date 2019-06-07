@@ -80,6 +80,7 @@ function mouseupEvent(event, gD) {
 }
 
 function clickEvent(event, gD) {
+  console.log(event);
   gD.clicks.push({
     "x" : (event.pageX - gD.canvas.offsetLeft),
     "y" : (event.pageY - gD.canvas.offsetTop)

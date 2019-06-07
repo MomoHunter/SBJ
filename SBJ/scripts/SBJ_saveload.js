@@ -271,6 +271,8 @@ function SaveLoad(menu, gD) {
               break;
           }
         }
+      } else if (keyB.get("NameModal_Abort")[3].includes(key)) {
+        this.gD.currentPage = this.menu;
       } else if (keyB.get("Menu_Refresh")[3].includes(key)) {
         this.reloadSavestates();
       }

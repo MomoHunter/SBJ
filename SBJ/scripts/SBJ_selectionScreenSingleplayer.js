@@ -81,6 +81,7 @@
       } else if (keyB.get("Menu_Confirm")[3].includes(key)) {
         if (this.selectedRowIndex === -1) {
           if (this.selectedColumnIndex === 0) {
+            this.menu.game.init();
             this.menu.game.setStage("Stage_Training", true);
             this.menu.game.addPlayer(
               this.selections[0].getSelected(), this.selections[1].getSelected(), this.selections[2].getSelected(),
@@ -90,6 +91,7 @@
           } else if (this.selectedColumnIndex === 1) {
             this.gD.currentPage = this.menu;
           } else {
+            this.menu.game.init();
             this.menu.game.setStage(this.selections[4].getSelected());
             this.menu.game.addPlayer(
               this.selections[0].getSelected(), this.selections[1].getSelected(), this.selections[2].getSelected(),
@@ -159,6 +161,7 @@
     
     if (clickPos.x >= this.confirmButton.x && clickPos.x <= this.confirmButton.x + this.confirmButton.width &&
         clickPos.y >= this.confirmButton.y && clickPos.y <= this.confirmButton.y + this.confirmButton.height) {
+      this.menu.game.init();
       this.menu.game.setStage(this.selections[4].getSelected());
       this.menu.game.addPlayer(
         this.selections[0].getSelected(), this.selections[1].getSelected(), this.selections[2].getSelected(),
@@ -170,6 +173,7 @@
       this.gD.currentPage = this.menu;
     } else if (clickPos.x >= this.trainingButton.x && clickPos.x <= this.trainingButton.x + this.trainingButton.width &&
                clickPos.y >= this.trainingButton.y && clickPos.y <= this.trainingButton.y + this.trainingButton.height) {
+      this.menu.game.init();
       this.menu.game.setStage("Stage_Training", true);
       this.menu.game.addPlayer(
         this.selections[0].getSelected(), this.selections[1].getSelected(), this.selections[2].getSelected(),

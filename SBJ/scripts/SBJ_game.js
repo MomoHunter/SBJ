@@ -99,17 +99,19 @@ function Game(menu, gD) {
         }
       }
     }, this);
-    
-    pieces.floors.map(floor => {
-      let newFloor = new GameFloor(
-        startX + floor.x, floor.y, 
-        startX + floor.x > this.getLevelStart(this.currentLevel + 1) ? 
-          this.getFloorWidth(this.currentLevel + 1) : this.getFloorWidth(this.currentLevel), 
-        floor.type, floor.height ? floor.height : 0
-      );
-      newFloor.init(this);
-      this.floors.push(newFloor);
-    }, this);
+
+    if (pieces !== null) {
+      pieces.floors.map(floor => {
+        let newFloor = new GameFloor(
+          startX + floor.x, floor.y,
+          startX + floor.x > this.getLevelStart(this.currentLevel + 1) ?
+            this.getFloorWidth(this.currentLevel + 1) : this.getFloorWidth(this.currentLevel),
+          floor.type, floor.height ? floor.height : 0
+        );
+        newFloor.init(this);
+        this.floors.push(newFloor);
+      }, this);
+    }
   };
   this.getFloorWidth = function(level) {
     return Math.max(50, 300 - (level - 1) * 15);
@@ -672,7 +674,8 @@ function GameInventory() {
       if (gD.items.hasOwnProperty(item) && item !== "Item_Questionmark") {
         this.items[item] = new GameInventoryItem(
           60 * counter, 0, 60, 30, item,
-          gD.items[item][1] + (gD.items[item][2] * game.menu.shop.getSkillValue("level_up_items")), "inventory"
+          gD.items[item][1] + (gD.items[item][2] *
+            game.menu.shop.getSkillValue("level_up_" + item.split("_")[1].toLowerCase())), "inventory"
         );
         counter++;
       }
