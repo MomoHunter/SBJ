@@ -17,6 +17,10 @@ function addLeadingZero(number) {
   return number >= 10 ? number.toString() : "0" + number;
 }
 
+function addPoints(number) {
+  return number.toString().replace(/\d(?=(\d{3})+($|\.))/g, '$&.');
+}
+
 function factorial(number) {
   let result = 1;
   for (let i = 1; i <= number; i++) {
@@ -107,6 +111,32 @@ function drawCanvasText(x, y, text, styleKey, gD) {
   if (design.borderKey !== "") {
     drawCanvasTextBorder(x, y, text, design.borderKey, gD);
   }
+}
+
+function drawCanvasRainbowText(x, y, text, styleKey, gD) {
+  let design = gD.design.text[styleKey];
+  let newX = x;
+
+  gD.context.textAlign = "left";
+  gD.context.textBaseline = design.baseline;
+  gD.context.font = design.font;
+
+  switch (design.align) {
+    case "center":
+      newX -= gD.context.measureText(text).width / 2;
+      break;
+    case "right":
+      newX -= gD.context.measureText(text).width;
+      break;
+    default:
+  }
+  text.split("").map((letter, index) => {
+    gD.context.fillStyle = `rgba(${design.color[(Math.floor(gD.frameNo / 8) - index) % 12]})`;
+    gD.context.fillText(letter, newX + gD.context.measureText(text.substring(0, index)).width, y);
+    if (design.borderKey !== "") {
+      drawCanvasTextBorder(x, y, text, design.borderKey, gD);
+    }
+  }, this);
 }
 
 /**

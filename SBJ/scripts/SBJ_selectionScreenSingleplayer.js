@@ -3,6 +3,7 @@
   this.gD = gD;
   this.init = function() {
     this.title = new CanvasText(this.gD.canvas.width / 2, 30, "Singleplayer", "pageTitle");
+    this.showError = false;
 
     this.selections = [
       new ObjectSelection(
@@ -41,6 +42,15 @@
     );
     
     this.updateSelection(-1, 1);
+  };
+  this.checkIfUnlocked = function() {
+    let unlocked = true;
+    this.selections.map(selection => {
+      if (!selection.data[selection.getSelected()][0]) {
+        unlocked = false;
+      }
+    }, this);
+    return unlocked;
   };
   this.updateKeyPresses = function() {
     this.gD.newKeys.map(key => {
@@ -81,23 +91,31 @@
       } else if (keyB.get("Menu_Confirm")[3].includes(key)) {
         if (this.selectedRowIndex === -1) {
           if (this.selectedColumnIndex === 0) {
-            this.menu.game.init();
-            this.menu.game.setStage("Stage_Training", true);
-            this.menu.game.addPlayer(
-              this.selections[0].getSelected(), this.selections[1].getSelected(), this.selections[2].getSelected(),
-              this.selections[3].getSelected(), true
-            );
-            this.gD.currentPage = this.menu.game;
+            if (this.checkIfUnlocked) {
+              this.menu.game.init();
+              this.menu.game.setStage("Stage_Training", true);
+              this.menu.game.addPlayer(
+                this.selections[0].getSelected(), this.selections[1].getSelected(), this.selections[2].getSelected(),
+                this.selections[3].getSelected(), true
+              );
+              this.gD.currentPage = this.menu.game;
+            } else {
+              this.showError = true;
+            }
           } else if (this.selectedColumnIndex === 1) {
             this.gD.currentPage = this.menu;
           } else {
-            this.menu.game.init();
-            this.menu.game.setStage(this.selections[4].getSelected());
-            this.menu.game.addPlayer(
-              this.selections[0].getSelected(), this.selections[1].getSelected(), this.selections[2].getSelected(),
-              this.selections[3].getSelected(), true
-            );
-            this.gD.currentPage = this.menu.game;
+            if (this.checkIfUnlocked()) {
+              this.menu.game.init();
+              this.menu.game.setStage(this.selections[4].getSelected());
+              this.menu.game.addPlayer(
+                this.selections[0].getSelected(), this.selections[1].getSelected(), this.selections[2].getSelected(),
+                this.selections[3].getSelected(), true
+              );
+              this.gD.currentPage = this.menu.game;
+            } else {
+              this.showError = true;
+            }
           }
         } else if (this.selectedRowIndex === 0) {
           this.selections[this.selectedColumnIndex].down(this.gD);
@@ -148,6 +166,9 @@
       return;
     }
 
+    if (this.showError) {
+      this.showError = false;
+    }
     
     this.selections.map(selection => {
       if (clickPos.x >= selection.x && clickPos.x <= selection.x + selection.width &&
@@ -161,25 +182,33 @@
     
     if (clickPos.x >= this.confirmButton.x && clickPos.x <= this.confirmButton.x + this.confirmButton.width &&
         clickPos.y >= this.confirmButton.y && clickPos.y <= this.confirmButton.y + this.confirmButton.height) {
-      this.menu.game.init();
-      this.menu.game.setStage(this.selections[4].getSelected());
-      this.menu.game.addPlayer(
-        this.selections[0].getSelected(), this.selections[1].getSelected(), this.selections[2].getSelected(),
-        this.selections[3].getSelected(), true
-      );
-      this.gD.currentPage = this.menu.game;
+      if (this.checkIfUnlocked()) {
+        this.menu.game.init();
+        this.menu.game.setStage(this.selections[4].getSelected());
+        this.menu.game.addPlayer(
+          this.selections[0].getSelected(), this.selections[1].getSelected(), this.selections[2].getSelected(),
+          this.selections[3].getSelected(), true
+        );
+        this.gD.currentPage = this.menu.game;
+      } else {
+        this.showError = true;
+      }
     } else if (clickPos.x >= this.backToMenu.x && clickPos.x <= this.backToMenu.x + this.backToMenu.width &&
                clickPos.y >= this.backToMenu.y && clickPos.y <= this.backToMenu.y + this.backToMenu.height) {
       this.gD.currentPage = this.menu;
     } else if (clickPos.x >= this.trainingButton.x && clickPos.x <= this.trainingButton.x + this.trainingButton.width &&
                clickPos.y >= this.trainingButton.y && clickPos.y <= this.trainingButton.y + this.trainingButton.height) {
-      this.menu.game.init();
-      this.menu.game.setStage("Stage_Training", true);
-      this.menu.game.addPlayer(
-        this.selections[0].getSelected(), this.selections[1].getSelected(), this.selections[2].getSelected(),
-        this.selections[3].getSelected(), true
-      );
-      this.gD.currentPage = this.menu.game;
+      if (this.checkIfUnlocked()) {
+        this.menu.game.init();
+        this.menu.game.setStage("Stage_Training", true);
+        this.menu.game.addPlayer(
+          this.selections[0].getSelected(), this.selections[1].getSelected(), this.selections[2].getSelected(),
+          this.selections[3].getSelected(), true
+        );
+        this.gD.currentPage = this.menu.game;
+      } else {
+        this.showError = true;
+      }
     }
   };
   this.updateWheelMoves = function() {
@@ -209,6 +238,12 @@
     this.confirmButton.draw(this.gD);
     this.backToMenu.draw(this.gD);
     this.trainingButton.draw(this.gD);
+    
+    if (this.showError) {
+      drawCanvasText(
+        this.gD.canvas.width / 2, this.gD.canvas.height - 75, "Keine gesperrten Objekte auswählen!", "error", gD
+      );
+    }
   };
   /**
    * updates the selected object and deselects the old object

@@ -26,7 +26,7 @@ function SaveLoad(menu, gD) {
     }, this);
 
     this.refreshButton = new CanvasImageButton(
-      this.gD.canvas.width - 40, 10, 30, 30, ["Icon_Refresh"], "standardImage"
+      this.gD.canvas.width - 40, 10, 30, 30, ["Icon_Refresh", "Icon_Refresh_animiert"], "standardImage"
     );
     this.backButton = new CanvasButton(
       this.gD.canvas.width / 2 - 100, this.gD.canvas.height - 50, 200, 30, "Main Menu", "menu"
@@ -271,10 +271,10 @@ function SaveLoad(menu, gD) {
               break;
           }
         }
-      } else if (keyB.get("NameModal_Abort")[3].includes(key)) {
-        this.gD.currentPage = this.menu;
       } else if (keyB.get("Menu_Refresh")[3].includes(key)) {
         this.reloadSavestates();
+      } else if (keyB.get("Menu_Back")[3].includes(key)) {
+        this.gD.currentPage = this.menu;
       }
       
       if (keyB.get("Mute_All")[3].includes(key)) {
@@ -302,7 +302,7 @@ function SaveLoad(menu, gD) {
           if (realHeight >= 60 && realHeight < 280) {
             this.updateSelection(index, this.selectedColumnIndex, false);
             if (this.gD.mousePos.x >= state.x + state.width - 20 && this.gD.mousePos.x <= state.x + state.width &&
-                this.gD.mousePos.y >= state.y && this.gD.mousePos.y <= state.y + 20) {
+                this.gD.mousePos.y >= realHeight && this.gD.mousePos.y <= realHeight + 20) {
               this.savestateDetails.setVisible();
               savestateSelected = true;
             }
@@ -327,11 +327,13 @@ function SaveLoad(menu, gD) {
       if (this.gD.mousePos.x >= button.x && this.gD.mousePos.x <= button.x + button.width &&
           this.gD.mousePos.y >= button.y && this.gD.mousePos.y <= button.y + button.height) {
         button.select();
+        button.setSprite(1);
         mouseOver = true;
       }
 
       if (!mouseOver) {
         button.deselect();
+        button.setSprite(0);
       }
     }
   };

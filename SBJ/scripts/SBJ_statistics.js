@@ -122,6 +122,11 @@ function Statistics(menu, gD) {
 
     this.updateSelection(-1, 0);
   };
+  this.handleEvent = function(eventKey, addedValue = 1) {
+    for (let element of this.statistics.values()) {
+      element.handleEvent(eventKey, addedValue);
+    }
+  };
   /**
    * checks if a key is pressed and executes commands
    */
@@ -210,6 +215,8 @@ function Statistics(menu, gD) {
     }, this);
 
     this.backToMenu.update();
+    
+    this.menu.lightUpdate();
   };
   /**
    * draws the objects onto the canvas
@@ -223,6 +230,8 @@ function Statistics(menu, gD) {
       tab.draw(this.gD, this.statistics);
     }, this);
     this.backToMenu.draw(this.gD);
+    
+    this.menu.lightDraw();
   };
   /**
    * updates the selected object and deselects the old object
@@ -252,19 +261,11 @@ function Statistics(menu, gD) {
  * @param {string}  eventKey        the event key for new values
  * @param {boolean} isResetPerRound if the value should be reset with every new value
  */
-function StatisticsData(name, eventKey, isResetPerRound) {
+function StatisticsData(name, eventKey, isFullNumber) {
   this.name = name;
   this.eventKey = eventKey;
-  this.isResetPerRound = isResetPerRound;
+  this.isFullNumber = isFullNumber;
   this.currentCount = 0;
-  /**
-   * resets the current value
-   */
-  this.resetAtRoundStart = function() {
-    if (this.isResetPerRound) {
-      this.currentCount = 0;
-    }
-  };
   /**
    * adds a new value
    * @param {string} eventKey   the event key to compare if its the same key
@@ -272,7 +273,13 @@ function StatisticsData(name, eventKey, isResetPerRound) {
    */
   this.handleEvent = function(eventKey, addedValue = 1) {
     if (this.eventKey === eventKey) {
-      this.currentCount += addedValue;
+      if (this.isFullNumber) {
+        if (this.currentCount < addedValue) {
+          this.currentCount = addedValue;
+        }
+      } else {
+        this.currentCount += addedValue;
+      }
     }
   };
 }

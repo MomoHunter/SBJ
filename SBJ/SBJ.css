@@ -34,11 +34,6 @@ body {
 }
 
 #gamearea {
-  border: 1px solid rgba(145,165,180,.6) !important;
+  border: 1px solid rgba(145,165,180,.6);
   display: block;
-}
-
-#offscreen {
-  position: absolute;
-  top: -400px;
 }

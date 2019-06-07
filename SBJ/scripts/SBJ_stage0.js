@@ -1,5 +1,6 @@
-function Stage0(game) {
+function Stage0(game, gD) {
   this.game = game;
+  this.gD = gD;
   this.name = "Training";
   this.deadZoneGround = 0;
   this.floorColorKey = "stage0Floor";
@@ -8,13 +9,13 @@ function Stage0(game) {
   this.init = function() {
 
   };
-  this.update = function(game) {
+  this.update = function() {
 
   };
-  this.drawForeground = function(game, ghostFactor) {
+  this.drawForeground = function(ghostFactor) {
 
   };
-  this.drawBackground = function(game, ghostFactor) {
+  this.drawBackground = function(ghostFactor) {
 
   };
 }

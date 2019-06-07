@@ -267,6 +267,8 @@
     this.keyEntries.map(entry => {
       entry.update();
     }, this);
+    
+    this.menu.lightUpdate();
   };
   /**
    * draws the objects onto the canvas
@@ -295,6 +297,8 @@
     this.backToMenu.draw(this.gD);
 
     drawCanvasRectBorder(190, 60, 620, 220, "standard", this.gD);
+    
+    this.menu.lightDraw();
   };
   /**
    * updates the selected object and deselects the old object

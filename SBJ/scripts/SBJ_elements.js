@@ -51,7 +51,7 @@ function CanvasRainbowText(x, y, text, styleKey) {
       default:
     }
     this.text.split("").map((letter, index) => {
-      gD.context.fillStyle = `rgba(${design.color[(this.index - index) % 12]})`;
+      gD.context.fillStyle = `rgba(${design.color[(Math.floor(gD.frameNo / 8) - index) % 12]})`;
       gD.context.fillText(letter, x + gD.context.measureText(this.text.substring(0, index)).width, this.y);
       if (design.borderKey !== "") {
         drawCanvasTextBorder(this.x, this.y, this.text, design.borderKey, gD);
@@ -165,8 +165,8 @@ function Background(y, width, height, img) {
   this.height = height;
   this.img = new Image();
   this.img.src = img;
-  this.draw = function(game, gD, ghostFactor) {
-    let temp = (game.distanceTravelled - (game.globalSpeed * ghostFactor)) % this.width;
+  this.draw = function(game, gD, ghostFactor = 0) {
+    let temp = (game.distance - (game.globalSpeed * ghostFactor)) % this.width;
     gD.context.drawImage(this.img, temp, 0, this.width - temp, this.height, 0, this.y, this.width - temp, this.height);
     gD.context.drawImage(this.img, 0, 0, temp, this.height, this.width - temp, this.y, temp, this.height);
   };
@@ -190,14 +190,14 @@ function AnimatedBackground(y, width, height, img, cycles, speed) {
   this.cycles = cycles;
   this.speed = speed;
   this.draw = function(game, gD, ghostFactor) {
-    let temp = (game.distanceTravelled - (game.globalSpeed * ghostFactor)) % this.width;
+    let temp = (game.distance - (game.globalSpeed * ghostFactor)) % this.width;
     gD.context.drawImage(
-      this.img, temp, Math.floor(game.frameCounter / this.speed) % cycles * (this.height / cycles),
-      this.width - temp, (this.height / cycles), 0, this.y, this.width - temp, (this.height / cycles)
+      this.img, temp, Math.floor(gD.frameNo / this.speed) % this.cycles * (this.height / this.cycles),
+      this.width - temp, (this.height / this.cycles), 0, this.y, this.width - temp, (this.height / this.cycles)
     );
     gD.context.drawImage(
-      this.img, 0, Math.floor(game.frameCounter / this.speed) % cycles * (this.height / cycles), temp,
-      (this.height / cycles), this.width - temp, this.y, temp, (this.height / cycles)
+      this.img, 0, Math.floor(gD.frameNo / this.speed) % this.cycles * (this.height / this.cycles), temp,
+      (this.height / this.cycles), this.width - temp, this.y, temp, (this.height / this.cycles)
     );
   };
 }

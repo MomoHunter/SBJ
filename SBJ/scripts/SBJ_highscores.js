@@ -136,13 +136,6 @@ function Highscores(menu, gD) {
         } else if (keyB.get("Mute_All")[3].includes(key)) {
           this.gD.muted = !this.gD.muted;
           this.menu.muteButton.setSprite();
-        } else if (key === "KeyK") {
-          this.addHighscore({
-            name: "test",
-            distance: 2000000,
-            cash: Math.floor(Math.random() * 50000),
-            stage: "Fortress"
-          });
         }
       }
     }, this);
@@ -239,6 +232,8 @@ function Highscores(menu, gD) {
     this.highscores.map(entry => {
       entry.update();
     }, this);
+    
+    this.menu.lightUpdate();
   };
   /**
    * draws the objects onto the canvas
@@ -263,6 +258,8 @@ function Highscores(menu, gD) {
     if (this.chooseName) {
       this.enterNameModal.draw(this.gD);
     }
+    
+    this.menu.lightDraw();
   };
   /**
    * updates the selected object and deselects the old object
@@ -505,9 +502,15 @@ function HighscoreDetails(x, y, width, height, styleKey) {
     drawCanvasRect(this.x + 250, this.y + 85, 500, 180, design.rectKey.background, gD);
 
     drawCanvasText(this.x + 500, this.y + 95, this.currentHighscore.name, design.textKey.headline, gD);
-    drawCanvasText(this.x + 256, this.y + 85 + 30, "Distance: " + this.currentHighscore.distance, design.textKey.text, gD);
-    drawCanvasText(this.x + 256, this.y + 85 + 50, "Cash: " + this.currentHighscore.cash, design.textKey.text, gD);
-    drawCanvasText(this.x + 256, this.y + 85 + 70, "Stage: " + this.currentHighscore.stage, design.textKey.text, gD);
+    drawCanvasText(this.x + 256, this.y + 85 + 30, "Distance: " + this.currentHighscore.distance + "m", design.textKey.text, gD);
+    drawCanvasText(this.x + 256, this.y + 85 + 50, "Level: " + this.currentHighscore.level, design.textKey.text, gD);
+    drawCanvasText(this.x + 256, this.y + 85 + 70, "Cash: " + this.currentHighscore.cash, design.textKey.text, gD);
+    drawCanvasText(this.x + 256, this.y + 85 + 90, "Money 1: " + this.currentHighscore.money1, design.textKey.text, gD);
+    drawCanvasText(this.x + 256, this.y + 85 + 110, "Money 10: " + this.currentHighscore.money10, design.textKey.text, gD);
+    drawCanvasText(this.x + 256, this.y + 85 + 130, "Money 100: " + this.currentHighscore.money100, design.textKey.text, gD);
+    drawCanvasText(this.x + 256, this.y + 85 + 150, "Money 1000: " + this.currentHighscore.money1000, design.textKey.text, gD);
+    drawCanvasText(this.x + 256, this.y + 85 + 170, "Bonus: " + this.currentHighscore.bonus, design.textKey.text, gD);
+    drawCanvasText(this.x + 506, this.y + 85 + 30, "Stage: " + this.currentHighscore.stage, design.textKey.text, gD);
     drawCanvasLine(this.x + 250, this.y + 85 + 20, design.borderKey, gD, this.x + this.width - 250, this.y + 105);
     drawCanvasRectBorder(this.x + 250, this.y + 85, 500, 180, design.borderKey, gD);
   };

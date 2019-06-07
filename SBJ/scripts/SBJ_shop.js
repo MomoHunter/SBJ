@@ -6,7 +6,7 @@
     this.backgroundMusic.src = "music/shop.mp3";
     this.backgroundMusic.loop = true;
     this.backgroundMusic.volume = 0.2;
-    this.hype = 100000000000000000000;
+    this.hype = 100000000000000;
     this.goldenShamrocks = 10000;
     this.movingTree = false;
     this.movingMinimap = false;
@@ -42,7 +42,7 @@
       "extra_life":             new SkillData("Extra life", true, 1, 100, 1000000, 0, 0, ["Deaths"], 1000)
     };
     this.accessories = new Map([
-      ["test", new ShopAccessory("test", "Beard", "Collectables_Beard1", 0, 0)],
+      ["test", new ShopAccessory("test", "Beard", "Collectables_Beard1", 500, 10)],
       ["test01", new ShopAccessory("test01", "Beard", "Collectables_Beard1", 0, 0)],
       ["test02", new ShopAccessory("test02", "Hat", "Collectables_Hat1", 0, 0)],
       ["test03", new ShopAccessory("test03", "Glasses", "Collectables_Glasses1", 0, 0)],
@@ -126,7 +126,7 @@
 
     this.accessoryWindow.setAccessories(this, this.dropdowns[1].currentOption);
 
-    this.moneyDisplay = new ShopMoneyDisplay(this.gD.canvas.width / 2 - 490, 60, 170, 220, "shopMoneyDisplay");
+    this.moneyDisplay = new ShopMoneyDisplay(this.gD.canvas.width / 2 - 490, 149, 170, 41, "shopMoneyDisplay");
 
     this.backToMenu = new CanvasButton(
       this.gD.canvas.width / 2 - 100, this.gD.canvas.height - 50, 200, 30, "Main Menu", "menu"
@@ -142,7 +142,7 @@
     let skillData = this.skillData[skill.key];
     let {goldenShamrock, hype} = skillData.getCost();
 
-    if (this.goldenShamrocks >= goldenShamrock && this.hype >= hype) {
+    if (this.goldenShamrocks >= goldenShamrock && this.hype >= hype && !skillData.maxed) {
       this.goldenShamrocks -= goldenShamrock;
       this.hype -= hype;
       skillData.levelUp();
@@ -150,7 +150,7 @@
     }
   };
   this.buyAccessory = function(accessory) {
-    if (this.goldenShamrocks >= accessory.costGoldenShamrock && this.hype >= accessory.costHype) {
+    if (this.goldenShamrocks >= accessory.costGoldenShamrock && this.hype >= accessory.costHype && !accessory.bought) {
       this.goldenShamrocks -= accessory.costGoldenShamrock;
       this.hype -= accessory.costHype;
       this.accessories.get(accessory.name).buy();
@@ -597,7 +597,7 @@
           clickPos.x <= this.accessoryDetails.buyButton.x + this.accessoryDetails.buyButton.width &&
           clickPos.y >= this.accessoryDetails.buyButton.y &&
           clickPos.y <= this.accessoryDetails.buyButton.y + this.accessoryDetails.buyButton.height &&
-          this.accessoryDetails.currentAccessory !== null && !this.accessoryDetails.currentAccessory.bought) {
+          this.accessoryDetails.currentAccessory !== null) {
         this.buyAccessory(this.accessoryDetails.currentAccessory);
       }
     }
@@ -623,6 +623,8 @@
     }
   };
   this.update = function() {
+    this.menu.lightUpdate();
+    
     this.tabs.map(tab => {
       tab.update(this);
     }, this);
@@ -641,6 +643,7 @@
     }, this);
 
     this.backToMenu.draw(this.gD);
+    this.menu.lightDraw();
   };
   /**
    * updates the selected object and deselects the old object
@@ -734,13 +737,14 @@ function ShopMoneyDisplay(x, y, width, height, styleKey) {
     let design = gD.design.elements[this.styleKey];
     
     drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.background, gD);
-    drawCanvasImage(this.x + 5, this.y + 5, "Money_1", gD);
-    drawCanvasImage(this.x + 10, this.y + 5, "Money_10", gD);
-    drawCanvasImage(this.x + 15, this.y + 5, "Money_100", gD);
-    drawCanvasImage(this.x + 20, this.y + 5, "Money_1000", gD);
-    drawCanvasRect(this.x + 5, this.y + 25, this.width - 10, 13, design.rectKey.hype, gD);
-    drawCanvasImage(this.x + 7, this.y + 27, "Currency_XS", gD);
-    drawCanvasRectBorder(this.x + 5, this.y + 25, this.width - 10, 13, design.borderKey, gD);
+    drawCanvasRect(this.x + 5, this.y + 5, this.width - 10, 13, design.rectKey.hype, gD);
+    drawCanvasImage(this.x + 7, this.y + 7, "Currency_XS", gD);
+    drawCanvasText(this.x + this.width - 8, this.y + 11.5, shop.hype.toString().replace(/\d(?=(\d{3})+($|\.))/g, '$&.'), design.textKey.value, gD);
+    drawCanvasRectBorder(this.x + 5, this.y + 5, this.width - 10, 13, design.borderKey, gD);
+    drawCanvasRect(this.x + 5, this.y + 23, this.width - 10, 13, design.rectKey.goldenShamrock, gD);
+    drawCanvasImage(this.x + 7, this.y + 25, "Special_GoldenShamrock_S", gD);
+    drawCanvasText(this.x + this.width - 8, this.y + 29.5, shop.goldenShamrocks.toString().replace(/\d(?=(\d{3})+($|\.))/g, '$&.'), design.textKey.value, gD);
+    drawCanvasRectBorder(this.x + 5, this.y + 23, this.width - 10, 13, design.borderKey, gD);
     drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
   };
 }
@@ -1047,7 +1051,7 @@ function ShopSkill(x, y, radius, key, spriteKey, styleKey) {
     let {spriteWidth, spriteHeight} = getSpriteData(this.spriteKey, gD);
     let newX = this.x - shiftX;
     let newY = this.y - shiftY;
-    let name = this.key.split(' ');
+    let name = skillData.name.split(' ');
 
     if (goldenShamrock > 0) {
       drawCanvasStar(newX, newY, this.radius, this.edgeFactor, this.starEdges, design.circleKey.normal, gD);

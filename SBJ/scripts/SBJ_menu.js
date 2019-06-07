@@ -9,6 +9,7 @@ function Menu(gD) {
     this.extraMC = new MenuController(this);
     this.backgroundImage = new Image();
     this.setNewBackground();
+    this.eventHandler = new EventHandler(this, this.gD);
     this.selectionScreenSP = new SelectionScreenSingleplayer(this, this.gD);
     this.selectionScreenSP.init();
     this.shop = new Shop(this, this.gD);
@@ -42,17 +43,17 @@ function Menu(gD) {
     ];
 
     this.playNavigationGrid = [
-      [{ button: "Singleplayer", action: (gD) => { gD.currentPage = this.selectionScreenSP } }],
-      [{ button: "Local MP",     action: (gD) => { gD.currentPage = this.selectionScreenLMP } }],
-      [{ button: "Online MP",    action: (gD) => { gD.currentPage = this.selectionScreenOMP } }],
+      [{ button: "Singleplayer", action: (gD) => { gD.currentPage = this.selectionScreenSP; this.showPlay = false } }],
+      [{ button: "Local MP",     action: (gD) => { gD.currentPage = this.selectionScreenLMP; this.showPlay = false } }],
+      [{ button: "Online MP",    action: (gD) => { gD.currentPage = this.selectionScreenOMP; this.showPlay = false } }],
       [{ button: "Back",         action: (gD) => { this.showPlay = false } }]
     ];
 
     this.extraNavigationGrid = [
-      [{ button: "Achievements", action: (gD) => { gD.currentPage = this.achievements } }],
-      [{ button: "Highscores",   action: (gD) => { gD.currentPage = this.highscores } }],
-      [{ button: "Controls",     action: (gD) => { gD.currentPage = this.controls } }],
-      [{ button: "Statistics",   action: (gD) => { gD.currentPage = this.statistics } }],
+      [{ button: "Achievements", action: (gD) => { gD.currentPage = this.achievements; this.showExtras = false } }],
+      [{ button: "Highscores",   action: (gD) => { gD.currentPage = this.highscores; this.showExtras = false } }],
+      [{ button: "Controls",     action: (gD) => { gD.currentPage = this.controls; this.showExtras = false } }],
+      [{ button: "Statistics",   action: (gD) => { gD.currentPage = this.statistics; this.showExtras = false } }],
       [{ button: "Back",         action: (gD) => { this.showExtras = false } }]
     ];
 
@@ -121,6 +122,9 @@ function Menu(gD) {
     let backgrounds = ["img/Titlescreen1.png"];
     this.backgroundImage.src = backgrounds[Math.floor(Math.random() * backgrounds.length)];
   };
+  this.handleEvent = function(eventKey, addedValue = 1) {
+    this.eventHandler.handleEvent(eventKey, addedValue);
+  };
   /**
    * checks if a key is pressed and executes commands
    */
@@ -131,6 +135,9 @@ function Menu(gD) {
       }
     } else {
       this.gD.newKeys.map(key => {
+        if (key === "KeyK") {
+          this.achievements.achievementNotification.addAchievement(this.achievements.achievementList[Math.floor(Math.random() * 33)]);
+        }
         if (this.showExtras) {
           this.extraMC.updateKeyPresses(key, this.gD);
           if (this.controls.keyBindings.get("Menu_Abort")[3].includes(key)) {
@@ -190,9 +197,13 @@ function Menu(gD) {
    * updates moving objects
    */
   this.update = function() {
+    this.lightUpdate();
     this.mainMC.update();
     this.playMC.update();
     this.extraMC.update();
+  };
+  this.lightUpdate = function() {
+    this.achievements.achievementNotification.update();
   };
   /**
    * draws the objects onto the canvas
@@ -215,5 +226,9 @@ function Menu(gD) {
         this.mainMC.draw(this.gD);
       }
     }
+    this.lightDraw();
+  };
+  this.lightDraw = function() {
+    this.achievements.achievementNotification.draw(this.gD);
   };
 }

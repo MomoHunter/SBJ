@@ -1,14 +1,23 @@
-function Stage1(game) {
+function Stage1(game, gD) {
   this.game = game;
-  this.wall = new Background(0, 1000, 350, "img/stage1Wall.png");
-  this.lava = new AnimatedBackground(game.gD.canvas.height - 25, 1000, 100, "img/stage1Lava.png", 4, 18);
+  this.gD = gD;
+  this.name = "Festung";
   this.deadZoneGround = 20;     //how many pixels from the bottom upwards is the deadzone
-  this.floorColor = "rgba(205, 205, 205, 1)";
+  this.floorColorKey = "stage1Floor";
   this.difficulty = 20;
-  this.gravity = 0.45;
+  this.gravity = 20.25;
   this.init = function() {
-    this.fireballObjects = [];
-    this.fireballSpawnCounter = Math.max(Math.floor(Math.random() * 600), 300);
+    this.wall = new Background(0, 1000, 350, "img/Festung_Wall.png");
+    this.lava = new AnimatedBackground(game.gD.canvas.height - 25, 1000, 100, "img/Festung_Lava.png", 4, 18);
+  };
+  this.update = function() {
+    
+  };
+  this.drawForeground = function(ghostFactor) {
+    this.lava.draw(this.game, this.gD, ghostFactor);
+  };
+  this.drawBackground = function(ghostFactor) {
+    this.wall.draw(this.game, this.gD, ghostFactor);
   };
 }
 

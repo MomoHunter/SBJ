@@ -8,10 +8,10 @@ function Game(menu, gD) {
     this.trainingMode = false;
     this.paused = false;
     this.finished = false;
-    this.baseLevelLength = 250 * 15;
+    this.baseLevelLength = 125 * 15;
     this.globalSpeed = 2;
     this.currentLevel = 1;
-    this.distance = 0;
+    this.distance = 10000;
     this.distanceSinceLvlUp = 0;
     this.floors = [new GameFloor(0, this.gD.canvas.height - 49.5, this.gD.canvas.width + 100, "Standard")];
     this.floorStartIndex = 0;
@@ -31,9 +31,14 @@ function Game(menu, gD) {
     this.endScreen.init();
     this.updateSelection(0);
   };
+  this.handleEvent = function(eventKey, addedValue = 1) {
+    if (!this.trainingMode) {
+      this.menu.handleEvent(eventKey, addedValue);
+    }
+  };
   this.setStage = function(stage, training = false) {
     let stageClass = this.gD.stages[stage][1];
-    this.stage = new stageClass(this);
+    this.stage = new stageClass(this, this.gD);
     this.stage.init();
     this.trainingMode = training;
   };
@@ -99,13 +104,13 @@ function Game(menu, gD) {
         }
       }
     }, this);
-
+    
     if (pieces !== null) {
       pieces.floors.map(floor => {
         let newFloor = new GameFloor(
-          startX + floor.x, floor.y,
-          startX + floor.x > this.getLevelStart(this.currentLevel + 1) ?
-            this.getFloorWidth(this.currentLevel + 1) : this.getFloorWidth(this.currentLevel),
+          startX + floor.x, floor.y, 
+          startX + floor.x > this.getLevelStart(this.currentLevel + 1) ? 
+            this.getFloorWidth(this.currentLevel + 1) : this.getFloorWidth(this.currentLevel), 
           floor.type, floor.height ? floor.height : 0
         );
         newFloor.init(this);
@@ -173,7 +178,23 @@ function Game(menu, gD) {
     }
   };
   this.finish = function() {
-    
+    this.menu.highscores.addHighscore({
+      name: Date().toString().substring(0, 24),
+      distance: Math.floor(this.player.inventory.getValue("distance") / 15),
+      level: this.currentLevel,
+      cash: this.player.inventory.hype.getTotalCash(),
+      money1: this.player.inventory.hype.money["Money_1"],
+      money10: this.player.inventory.hype.money["Money_10"],
+      money100: this.player.inventory.hype.money["Money_100"],
+      money1000: this.player.inventory.hype.money["Money_1000"],
+      bonus: this.player.inventory.hype.getBonus(this.player, this.stage.difficulty),
+      stage: this.stage.name
+    });
+    if (!this.trainingMode) {
+      this.menu.shop.hype += this.player.inventory.hype.getTotalCash();
+      this.menu.shop.goldenShamrocks += this.player.inventory.special.items["Special_GoldenShamrock"][1];
+    }
+    this.finished = true;
   };
   this.restart = function() {
     let player = this.player;
@@ -289,6 +310,8 @@ function Game(menu, gD) {
 
   };
   this.update = function() {
+    this.menu.lightUpdate();
+    
     if (!this.finished && !this.paused) {
       if (this.showLevel > 0) {
         this.showLevel--;
@@ -333,15 +356,17 @@ function Game(menu, gD) {
       this.endScreen.update(this, this.gD);
     }
   };
-  this.draw = function() {
+  this.draw = function(ghostFactor) {
+    this.stage.drawBackground(ghostFactor);
     if (this.showLevel > 0) {
       drawCanvasText(this.gD.canvas.width / 2, this.gD.canvas.height / 2, this.currentLevel, "ookii", this.gD);
     }
+    this.inventory.draw(this, this.gD);
+    
     this.players.map(player => {
       player.draw(this, this.gD);
     }, this);
 
-    this.inventory.draw(this, this.gD);
 
     for (let i = this.floorStartIndex; i < this.floors.length; i++) {
       this.floors[i].draw(this, this.gD);
@@ -349,6 +374,7 @@ function Game(menu, gD) {
     for (let i = this.objectStartIndex; i < this.objects.length; i++) {
       this.objects[i].draw(this, this.gD);
     }
+    this.stage.drawForeground(ghostFactor);
     if (this.paused) {
       drawCanvasRect(0, (this.gD.canvas.height - 70) / 2, this.gD.canvas.width, 70, "darkModal", this.gD);
       drawCanvasText(this.gD.canvas.width / 2, this.gD.canvas.height / 2, "Pause", "pageTitle", gD);
@@ -356,6 +382,8 @@ function Game(menu, gD) {
     if (this.finished) {
       this.endScreen.draw(this, this.gD);
     }
+    
+    this.menu.lightDraw();
   };
   this.updateSelection = function(columnIndex) {
     if (this.selectedColumnIndex !== undefined) {
@@ -414,6 +442,7 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
       let bottomOverhead = (spriteHeight / 2) - (this.height - gD.player[this.character][2].y);
       height = Math.max(height, topOverhead);
     }
+    return height;
   };
   this.moveForward = function(game, menu) {
     this.direction = "forward";
@@ -446,11 +475,19 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
       if (game.stage.name === "Universe") {
         this.velocity = -(9 + menu.shop.getSkillValue("jump_height")) / 2.9;
         this.jumping = true;
+        game.handleEvent(Events.DO_JUMP);
+        if (this.jumps === 1) {
+          game.handleEvent(Events.DO_DOUBLE_JUMP);
+        }
       } else if (game.stage.name === "Water" && this.y + this.height >= game.gD.canvas.height / 2) {
         this.velocity = -(9 + menu.shop.getSkillValue("jump_height")) / 3;
       } else {
         this.velocity = -(9 + menu.shop.getSkillValue("jump_height"));
         this.jumping = true;
+        game.handleEvent(Events.DO_JUMP);
+        if (this.jumps === 1) {
+          game.handleEvent(Events.DO_DOUBLE_JUMP);
+        }
       }
       this.onFloor = false;
     }
@@ -471,7 +508,7 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
         this.jumps = 0;
         this.jumping = false;
       } else {
-        game.finished = true;
+        game.finish();
       }
     }
 
@@ -540,7 +577,7 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
          this.y < object.y + object.height &&
          this.height + this.y > object.y) {
       if (object.spriteKey === "") {
-        game.finished = true;
+        game.finish();
       } else if (object.spriteKey.startsWith("Item") || object.spriteKey.startsWith("Special")) {
         game.inventory.collect(object.spriteKey);
         game.objects.splice(index, 1);
@@ -548,7 +585,7 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
         game.inventory.hype.addMoney(object.spriteKey);
         game.objects.splice(index, 1);
       } else if (object.spriteKey.startsWith("Enemy")) {
-        game.finished = true;
+        game.finish();
       }
     }
   };
@@ -598,6 +635,10 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
       character = "Item_Rocket";
     } else {
       drawCanvasImage(canvasX, this.y, this.character, gD);
+    }
+    if (this.y + this.height < 0) {
+      let pointerData = getSpriteData("Special_Pointer", gD);
+      drawCanvasImage(canvasX + (this.width - pointerData.spriteWidth) / 2, 0, "Special_Pointer", gD);
     }
 
     if (this.hat !== "Collectables_Nothing") {
@@ -650,6 +691,20 @@ function GameCashVault(x, y, width, height, spriteKey, styleKey) {
       return accumulator + (this.money[key] * parseInt(key.split('_')[1]));
     }, 0);
   };
+  this.getBonus = function(player, difficulty) {
+    let distanceInMeter = player.inventory.getValue("distance") / 15;
+    let minDistInMeterForMaxHype = 8000 / difficulty * 10;
+    let bonus = 0;
+    
+    if (distanceInMeter > 500) {
+      if (distanceInMeter < minDistInMeterForMaxHype) {
+        bonus = (distanceInMeter - 500) * distanceInMeter / minDistInMeterForMaxHype;
+      } else {
+        bonus = distanceInMeter - 500;
+      }
+    }
+    return Math.floor(bonus);
+  };
   this.draw = function(game, gD) {
     let design = gD.design.elements[this.styleKey];
     let spriteData = getSpriteData(this.spriteKey, gD);
@@ -657,7 +712,8 @@ function GameCashVault(x, y, width, height, spriteKey, styleKey) {
     drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey, gD);
     drawCanvasImage(this.x + 3, this.y + Math.floor((this.height - spriteData.spriteHeight) / 2), this.spriteKey, gD);
     drawCanvasText(
-      this.x + this.width - 3, this.y + this.height / 2, this.getTotalCash().toString(), design.textKey, gD
+      this.x + this.width - 3, this.y + this.height / 2, 
+      this.getTotalCash().toString().replace(/\d(?=(\d{3})+($|\.))/g, '$&.'), design.textKey, gD
     );
     drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
   };
@@ -682,7 +738,7 @@ function GameInventory() {
     }
     this.special = new GameInventorySpecial(60 * counter, 0, 200, 30, "inventory2");
     this.distance = new GameInventoryDistance(60 * counter + 200, 0, 220, 30, "Icon_Distance", "inventory2");
-    this.hype = new GameCashVault(60 * counter + 420, 0, 220, 30, "Money_1", "inventory2");
+    this.hype = new GameCashVault(60 * counter + 420, 0, 220, 30, "Currency_M", "inventory2");
     this.hype.init(game, gD);
   };
   this.activate = function(game, item) {
@@ -892,8 +948,8 @@ function GameInventoryDistance(x, y, width, height, spriteKey, styleKey) {
     drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey, gD);
     drawCanvasImage(this.x + 3, this.y + Math.floor((this.height - spriteData.spriteHeight) / 2), this.spriteKey, gD);
     drawCanvasText(
-      this.x + this.width - 3, this.y + this.height / 2, Math.floor(this.currentValue / 15).toString(), 
-      design.textKey, gD
+      this.x + this.width - 3, this.y + this.height / 2, 
+      addPoints(Math.floor(this.currentValue / 15)), design.textKey, gD
     );
     drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
   };
@@ -987,13 +1043,12 @@ function GameEndScreen(x, y, width, height, styleKey) {
   this.width = width;
   this.height = height;
   this.styleKey = styleKey;
-  this.tableLineHeight = 25;
+  this.tableLineHeight = 24;
   this.backToMenu = null;
   this.restart = null;
   this.init = function() {
     this.backToMenu = new CanvasButton(this.width / 2 - 205, this.height - 50, 200, 30, "Main Menu", "menu");
     this.restart = new CanvasButton(this.width / 2 + 5, this.height - 50, 200, 30, "Neustart", "menu");
-    
   };
   this.update = function(game, gD) {
     this.backToMenu.update();
@@ -1033,64 +1088,81 @@ function GameEndScreen(x, y, width, height, styleKey) {
         );
       }
       
+      x = 100;
+      
       drawCanvasRect(
-        100, 60 + index * this.tableLineHeight, this.width - 200, this.tableLineHeight, design.rectKey.table, gD
+        x, 60 + index * this.tableLineHeight, this.width - 150, this.tableLineHeight, design.rectKey.table, gD
       );
       drawCanvasText(
-        103, 60 + (index + 0.5) * this.tableLineHeight, 
+        x + 3, 60 + (index + 0.5) * this.tableLineHeight, 
         player.name.length > 15 ? player.name.substr(0, 12) + "..." : 
           player.name === "" ? "Player " + (index + 1) : player.name, 
         design.textKey.table, gD
       );
       let distanceData = getSpriteData("Icon_Distance", gD);
+      let currencyData = getSpriteData("Currency_S", gD);
+      
+      x += 138;
       
       drawCanvasLine(
-        238, 60 + index * this.tableLineHeight, design.borderKey, gD, 238, 60 + (index + 1) * this.tableLineHeight
+        x, 60 + index * this.tableLineHeight, design.borderKey, gD, x, 60 + (index + 1) * this.tableLineHeight
       );
       drawCanvasImage(
-        240, 60 + index * this.tableLineHeight + (this.tableLineHeight - distanceData.spriteHeight) / 2, 
+        x + 3, 60 + index * this.tableLineHeight + Math.floor((this.tableLineHeight - distanceData.spriteHeight) / 2), 
         "Icon_Distance", gD
       );
       drawCanvasText(
-        380, 60 + (index + 0.5) * this.tableLineHeight, Math.floor(player.inventory.getValue("distance") / 15), 
+        x + 133, 60 + (index + 0.5) * this.tableLineHeight, 
+        addPoints(Math.min(999999999, Math.floor(player.inventory.getValue("distance") / 15))), 
         design.textKey.tableRight, gD
       );
+      
+      x += 136;
+      
       drawCanvasLine(
-        383, 60 + index * this.tableLineHeight, design.borderKey, gD, 383, 60 + (index + 1) * this.tableLineHeight
+        x, 60 + index * this.tableLineHeight, design.borderKey, gD, x, 60 + (index + 1) * this.tableLineHeight
       );
-      let startX = 556;
-      let startX2 = 386;
+      drawCanvasImage(
+        x + 3, 60 + index * this.tableLineHeight + Math.floor((this.tableLineHeight - currencyData.spriteHeight) / 2), 
+        "Currency_S", gD
+      );
+      drawCanvasText(
+        x + 116, 60 + (index + 0.5) * this.tableLineHeight, 
+        addPoints(Math.min(999999999, player.inventory.hype.getTotalCash())), 
+        design.textKey.tableRight, gD
+      );
+      
+      x += 119;
       for (let money in player.inventory.hype.money) {
         if (player.inventory.hype.money.hasOwnProperty(money)) {
           let {spriteWidth, spriteHeight} = getSpriteData(money, gD);
           
-          drawCanvasImage(
-            startX2, 60 + index * this.tableLineHeight + Math.floor((this.tableLineHeight - spriteHeight) / 2), 
-            money, gD
-          );
-          startX2 += 5;
-          
           drawCanvasLine(
-            startX, 60 + index * this.tableLineHeight, design.borderKey, gD, startX, 
+            x, 60 + index * this.tableLineHeight, design.borderKey, gD, x, 
             60 + (index + 1) * this.tableLineHeight
           );
           drawCanvasImage(
-            startX + 3, 60 + index * this.tableLineHeight + Math.floor((this.tableLineHeight - spriteHeight) / 2), 
+            x + 3, 60 + index * this.tableLineHeight + Math.floor((this.tableLineHeight - spriteHeight) / 2), 
             money, gD
           );
           drawCanvasText(
-            startX + 83, 60 + (index + 0.5) * this.tableLineHeight, player.inventory.hype.money[money], 
-            design.textKey.tableRight, gD
+            x + 78, 60 + (index + 0.5) * this.tableLineHeight, 
+            addPoints(Math.min(9999, player.inventory.hype.money[money])), design.textKey.tableRight, gD
           );
-          startX += 86;
+          x += 81;
         }
-      } 
+      }
+      drawCanvasLine(
+        x, 60 + index * this.tableLineHeight, design.borderKey, gD, x, 60 + (index + 1) * this.tableLineHeight
+      );
+      drawCanvasRainbowText(x + 3, 60 + (index + 0.5) * this.tableLineHeight, "Bonus", "rainbowLeft", gD);
       drawCanvasText(
-        553, 60 + (index + 0.5) * this.tableLineHeight, player.inventory.hype.getTotalCash(), 
+        x + 130, 60 + (index + 0.5) * this.tableLineHeight, 
+        addPoints(Math.min(9999999, player.inventory.hype.getBonus(player, game.stage.difficulty))), 
         design.textKey.tableRight, gD
       );
       drawCanvasRectBorder(
-        100, 60 + index * this.tableLineHeight, this.width - 200, this.tableLineHeight, design.borderKey, gD
+        100, 60 + index * this.tableLineHeight, this.width - 150, this.tableLineHeight, design.borderKey, gD
       );
     }, this);
     this.backToMenu.draw(gD);

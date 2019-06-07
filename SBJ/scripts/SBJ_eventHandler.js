@@ -1,7 +1,10 @@
 function EventHandler(menu, gD) {
   this.menu = menu;
   this.gD = gD;
-
+  this.handleEvent = function(eventKey, addedValue = 1) {
+    this.menu.achievements.handleEvent(eventKey, addedValue);
+    this.menu.statistics.handleEvent(eventKey, addedValue);
+  };
 }
 
 const Events = {
@@ -54,5 +57,5 @@ const Events = {
   TIME_PLAYED: "TIME_PLAYED",
   HIGHSCORE_COLLECTED_HYPE: "HIGHSCORE_COLLECTED_HYPE",
   HIGHSCORE_TRAVELLED_DISTANCE: "HIGHSCORE_TRAVELLED_DISTANCE",
-  CREATE_SAVESTATE: "CREATE_SAVESTATE"
+  CREATE_SAVESTATE: "CREATE_SAVESTATE",
 }
