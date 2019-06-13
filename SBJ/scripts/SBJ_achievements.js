@@ -178,7 +178,7 @@
       })
     ;
 
-    var backToMenuWidth = 200;
+    let backToMenuWidth = 200;
     this.buttons.push([{
       button: new CanvasButton(
         (this.gD.canvas.width - backToMenuWidth) / 2, this.gD.canvas.height - 50,
@@ -212,7 +212,7 @@
    * checks if there was a click
    */
   this.updateClick = function() {
-    var clickPos = this.gD.clicks.pop();
+    let clickPos = this.gD.clicks.pop();
     if (clickPos) {
       this.menuController.updateClick(clickPos, this.gD);
     }
@@ -315,11 +315,11 @@ function AchievementData(name, descriptionLines, neededCount, eventKey, isFullNu
   this.handleEvent = function(achievements, eventKey, addedValue = 1) {
     if (!this.isUnlocked && this.eventKey === eventKey) {
       if (this.isFullNumber) {
-        if (this.currentCount < addedValue) {
-          this.currentCount = addedValue;
+        if (this.currentCount < +addedValue) {
+          this.currentCount = +addedValue;
         }
       } else {
-        this.currentCount += addedValue;
+        this.currentCount += +addedValue;
       }
       if (this.currentCount >= this.neededCount) {
         this.isUnlocked = true;
@@ -389,7 +389,6 @@ function AchievementBox(x, y, width, height, padding, imageSize, progressHeight)
     );
     drawCanvasRectBorder(this.x, this.y, this.width, this.height, "standard", gD);
     this.progress.draw(gD);
-    this.border = new CanvasBorder(this.x, this.y, this.width, this.height, "standard", gD);
   };
 }
 

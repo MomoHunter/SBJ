@@ -259,7 +259,7 @@ function Statistics(menu, gD) {
  * a statistic data object that inherits statistical data
  * @param {string}  name            the name of the statistic data
  * @param {string}  eventKey        the event key for new values
- * @param {boolean} isResetPerRound if the value should be reset with every new value
+ * @param {boolean} isFullNumber    if the value should not add the values up, but count the values as full numbers
  */
 function StatisticsData(name, eventKey, isFullNumber) {
   this.name = name;
@@ -274,11 +274,11 @@ function StatisticsData(name, eventKey, isFullNumber) {
   this.handleEvent = function(eventKey, addedValue = 1) {
     if (this.eventKey === eventKey) {
       if (this.isFullNumber) {
-        if (this.currentCount < addedValue) {
-          this.currentCount = addedValue;
+        if (this.currentCount < +addedValue) {
+          this.currentCount = +addedValue;
         }
       } else {
-        this.currentCount += addedValue;
+        this.currentCount += +addedValue;
       }
     }
   };

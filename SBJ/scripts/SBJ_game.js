@@ -11,9 +11,10 @@ function Game(menu, gD) {
     this.baseLevelLength = 125 * 15;
     this.globalSpeed = 2;
     this.currentLevel = 1;
-    this.distance = 10000;
+    this.distance = 0;
     this.distanceSinceLvlUp = 0;
     this.floors = [new GameFloor(0, this.gD.canvas.height - 49.5, this.gD.canvas.width + 100, "Standard")];
+    this.helpFloor = null;
     this.floorStartIndex = 0;
     this.objects = [];
     this.objectStartIndex = 0;
@@ -51,6 +52,9 @@ function Game(menu, gD) {
     this.players.push(player);
     if (main) {
       this.setPlayer(player);
+    }
+    if (this.trainingMode) {
+      this.player.inventory.fill(2);
     }
   };
   this.speedLvlUp = function() {
@@ -178,6 +182,8 @@ function Game(menu, gD) {
     }
   };
   this.finish = function() {
+    let bonus = this.player.inventory.hype.getBonus(this.player, this.stage.difficulty);
+
     this.menu.highscores.addHighscore({
       name: Date().toString().substring(0, 24),
       distance: Math.floor(this.player.inventory.getValue("distance") / 15),
@@ -187,11 +193,13 @@ function Game(menu, gD) {
       money10: this.player.inventory.hype.money["Money_10"],
       money100: this.player.inventory.hype.money["Money_100"],
       money1000: this.player.inventory.hype.money["Money_1000"],
-      bonus: this.player.inventory.hype.getBonus(this.player, this.stage.difficulty),
+      bonus: bonus,
       stage: this.stage.name
     });
     if (!this.trainingMode) {
-      this.menu.shop.hype += this.player.inventory.hype.getTotalCash();
+      this.handleEvent(Events.COLLECT_BONUS, bonus);
+      this.handleEvent(Events.DEATH);
+      this.menu.shop.hype += this.player.inventory.hype.getTotalCash() + bonus;
       this.menu.shop.goldenShamrocks += this.player.inventory.special.items["Special_GoldenShamrock"][1];
     }
     this.finished = true;
@@ -207,6 +215,26 @@ function Game(menu, gD) {
   };
   this.updateKeyPresses = function() {
     let keyB = this.menu.controls.keyBindings;
+
+    Object.keys(this.gD.keys).map((key, index) => {
+      if (!this.paused && !this.finished) {
+        if (keyB.get("Game_Jump")[3].includes(key) && this.gD.keys[key]) {
+          this.player.jump(this, this.menu);
+        } else if (keyB.get("Game_Jump")[3].includes(key) && !this.gD.keys[key]) {
+          this.player.jumpStop();
+        }
+
+        if (keyB.get("Game_MoveRight")[3].includes(key) && this.gD.keys[key]) {
+          this.player.moveForward(this, this.menu);
+        } else if (keyB.get("Game_MoveLeft")[3].includes(key) && this.gD.keys[key]) {
+          this.player.moveBackward(this, this.menu);
+        } else if (keyB.get("Game_MoveRight")[3].includes(key) && !this.gD.keys[key]) {
+          this.player.stopMoving(this, "forward");
+        } else if (keyB.get("Game_MoveLeft")[3].includes(key) && !this.gD.keys[key]) {
+          this.player.stopMoving(this, "backward");
+        }
+      }
+    }, this);
     
     this.gD.newKeys.map((key, index) => {
       if (!this.finished) {
@@ -245,26 +273,6 @@ function Game(menu, gD) {
           this.inventory.activate(this, "Item_Magnet");
         } else if (keyB.get("Game_ItemRocket")[3].includes(key)) {
           this.inventory.activate(this, "Item_Rocket");
-        }
-      }
-    }, this);
-    
-    Object.keys(this.gD.keys).map((key, index) => {
-      if (!this.paused && !this.finished) {
-        if (keyB.get("Game_Jump")[3].includes(key) && this.gD.keys[key]) {
-          this.player.jump(this, this.menu);
-        } else if (keyB.get("Game_Jump")[3].includes(key) && !this.gD.keys[key]) {
-          this.player.jumpStop();
-        }
-        
-        if (keyB.get("Game_MoveRight")[3].includes(key) && this.gD.keys[key]) {
-          this.player.moveForward(this, this.menu);
-        } else if (keyB.get("Game_MoveLeft")[3].includes(key) && this.gD.keys[key]) {
-          this.player.moveBackward(this, this.menu);
-        } else if (keyB.get("Game_MoveRight")[3].includes(key) && !this.gD.keys[key]) {
-          this.player.stopMoving(this, "forward");
-        } else if (keyB.get("Game_MoveLeft")[3].includes(key) && !this.gD.keys[key]) {
-          this.player.stopMoving(this, "backward");
         }
       }
     }, this);
@@ -548,6 +556,10 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
             this.y = this.currentFloor.y - (this.currentFloor.thickness / 2) - this.height;
             this.jumping = false;
           } else {
+            if (this.currentFloor === game.helpFloor && this.currentFloor !== null) {
+              game.floors.splice(game.floors.indexOf(game.helpFloor), 1);
+              game.helpFloor = null;
+            }
             this.currentFloor = null;
           }
         }
@@ -567,6 +579,10 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
         }
         this.aboveFloor = false;
         this.onFloor = false;
+        if (this.currentFloor === game.helpFloor && this.currentFloor !== null) {
+          game.floors.splice(game.floors.indexOf(game.helpFloor), 1);
+          game.helpFloor = null;
+        }
         this.currentFloor = null;
       }
     }
@@ -576,15 +592,31 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
          this.x + this.width > object.x &&
          this.y < object.y + object.height &&
          this.height + this.y > object.y) {
-      if (object.spriteKey === "") {
+      if (object.spriteKey === "" && !this.inventory.items["Item_Star"].active) {
         game.finish();
       } else if (object.spriteKey.startsWith("Item") || object.spriteKey.startsWith("Special")) {
         game.inventory.collect(object.spriteKey);
         game.objects.splice(index, 1);
       } else if (object.spriteKey.startsWith("Money")) {
         game.inventory.hype.addMoney(object.spriteKey);
+        game.handleEvent(Events.COLLECT_HYPE, object.spriteKey.split("_")[1]);
+        switch (object.spriteKey) {
+          case "Money_1":
+            game.handleEvent(Events.COLLECT_1_HYPE);
+            break;
+          case "Money_10":
+            game.handleEvent(Events.COLLECT_10_HYPE);
+            break;
+          case "Money_100":
+            game.handleEvent(Events.COLLECT_100_HYPE);
+            break;
+          case "Money_1000":
+            game.handleEvent(Events.COLLECT_1000_HYPE);
+            break;
+          default:
+        }
         game.objects.splice(index, 1);
-      } else if (object.spriteKey.startsWith("Enemy")) {
+      } else if (object.spriteKey.startsWith("Enemy") && !this.inventory.items["Item_Star"].active) {
         game.finish();
       }
     }
@@ -854,6 +886,8 @@ function GameInventoryItem(x, y, width, height, itemName, maxDurability, styleKe
           case "Item_Rocket":
             this.velocity = 0;
             game.globalSpeed = Math.min(game.currentLevel * 0.5 + 1.5, 12);
+            game.helpFloor = new GameFloor(game.player.x - 5, game.player.y + game.player.height + 5, 150, "Help");
+            game.floors.push(game.helpFloor);
             break;
           default:
             break;
@@ -1015,9 +1049,6 @@ function GameObject(x, y, width, height, spriteKey = "") {
   this.spriteKey = spriteKey;
   this.update = function(game) {
     if (this.spriteKey !== "" && game.inventory.items["Item_Magnet"].active) {
-      if (this.spriteKey === "Money_1") {
-        console.log(true);
-      }
       let distX = (game.player.x + game.player.width / 2) - (this.x + this.width / 2);
       let distY = (game.player.y + game.player.height / 2) - (this.y + this.height / 2);
       let distanceToPlayer = Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2));

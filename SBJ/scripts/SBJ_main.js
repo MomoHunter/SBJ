@@ -136,8 +136,8 @@ function GlobalDict(eventHandler) {
     "Collectables_Nothing": [false, 0, 77, 22, 6],
     "Currency_L": [false, 33, 0, 22, 30],
     "Currency_M": [false, 33, 31, 17, 23],
-    "Currency_S": [false, 33, 55, 12, 16],
-    "Currency_XS": [false, 33, 72, 7, 9],
+    "Currency_S": [false, 33, 55, 14, 18],
+    "Currency_XS": [false, 33, 74, 7, 9],
     "Deco_Door": [true, 56, [0, 257, 514, 771, 1028, 1285, 1542, 1799, 2056, 2313, 2570, 2827, 3084, 3341, 3598, 3855, 4112, 4369, 4626, 4883, 5140, 5397, 5654, 5911, 6168, 6425, 6682, 6939, 7196], 164, 256],
     "Deco_Stone": [true, 56, [7453, 7630, 7807, 7984, 8161, 8338, 8515, 8692, 8869], 44, 176],
     "Deco_Torch": [true, 56, [9046, 9113, 9180, 9247, 9314], 30, 66],
@@ -363,7 +363,8 @@ function GlobalDict(eventHandler) {
     "Jump": "floorJump",
     "Fall": "floorFall",
     "Spikes": "floorSpikes",
-    "Moving": "stagecolor"
+    "Moving": "stagecolor",
+    "Help": "floorHelp"
   };
   this.stages = {                    //stage class reference, unlocked
     "Stage_Training": [true, Stage0],
@@ -1015,6 +1016,11 @@ function GlobalDict(eventHandler) {
         borderColor: "173, 6, 6, 1",
         borderSize: 5,
         lineDash: []
+      },
+      floorHelp: {
+        borderColor: "255, 255, 255, 1",
+        borderSize: 5,
+        lineDash: [5, 2]
       },
       stage0Floor: {
         borderColor: "155, 155, 155, 1",
