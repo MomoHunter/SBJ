@@ -4,139 +4,139 @@
   this.achievementList = [
     new AchievementData(
       "Haste mal n Hype?", ["Sammle den ersten Hype", ""],
-      1, Events.COLLECT_HYPE, false, "collect_first_hype"
+      1, Events.COLLECT_HYPE, false, false, "collect_first_hype"
     ),
     new AchievementData(
       "$$$$", ["Sammle den ersten 1000 Hype Schein", ""],
-      1, Events.COLLECT_1000_HYPE, false, "collect_first_1000_hype"
+      1, Events.COLLECT_1000_HYPE, false, false, "collect_first_1000_hype"
     ),
     new AchievementData(
         "Er kann fliegen", ["Entdecke den Doppelsprung", ""],
-        1, Events.DO_DOUBLE_JUMP, false, "use_first_double_jump"
+        1, Events.DO_DOUBLE_JUMP, false, false, "use_first_double_jump"
     ),
     new AchievementData(
         "Gold!? Ich bin reich!!!", ["Sammle die erste Schatztruhe", ""],
-        1, Events.COLLECT_TREASURE, false, "collect_first_treasure"
+        1, Events.COLLECT_TREASURE, false, false, "collect_first_treasure"
     ),
     new AchievementData(
       "Matrix", ["Benutze 5 Stoppuhren in einer Runde", ""],
-      5, Events.USE_STOPWATCH, true, "use_five_stopwatches"
+      5, Events.USE_STOPWATCH, false, true, "use_five_stopwatches"
     ),
     new AchievementData(
       "Unverwundbar", ["Benutze 5 Sterne in einer Runde", ""],
-      5, Events.USE_STAR, true, "use_five_stars"
+      5, Events.USE_STAR, false, true, "use_five_stars"
     ),
     new AchievementData(
       "Federleicht", ["Benutze 5 Federn in einer Runde", ""],
-      5, Events.USE_FEATHER, true, "use_five_feathers"
+      5, Events.USE_FEATHER, false, true, "use_five_feathers"
     ),
     new AchievementData(
       "Lucky No5", ["Benutze 5 Schatzkisten in einer Runde", ""],
-      5, Events.USE_TREASURE, true, "use_five_treasures"
+      5, Events.USE_TREASURE, false, true, "use_five_treasures"
     ),
     new AchievementData(
       "Supermagnet", ["Benutze 5 Magnete in einer Runde", ""],
-      5, Events.USE_MAGNET, true, "use_five_magnets"
+      5, Events.USE_MAGNET, false, true, "use_five_magnets"
     ),
     new AchievementData(
       "Rocketboy", ["Benutze 5 Raketen in einer Runde", ""],
-      5, Events.USE_ROCKET, true, "use_five_rockets"
+      5, Events.USE_ROCKET, false, true, "use_five_rockets"
     ),
     new AchievementData(
       "Infinite Power", ["Benutze alle Items gleichzeitig", ""],
-      1, Events.USE_ALL_ITEMS_AT_ONCE, true, "use_all_items_at_once"
+      1, Events.USE_ALL_ITEMS_AT_ONCE, false, true, "use_all_items_at_once"
     ),
     new AchievementData(
       "Verlangsamung", ["Verlangsame die Zeit für insgesamt", "eine Stunde oder 3.600 Sekunden"],
-      3600, Events.END_OF_ROUND_TOTAL_SLOWED_TIME, false, "slow_1_hour"
+      3600, Events.END_OF_ROUND_TOTAL_SLOWED_TIME, false, false, "slow_1_hour"
     ),
     new AchievementData(
       "Outta Space", ["Verlasse 100 Mal die Spielfläche", ""],
-      100, Events.JUMP_OUT_OF_BOUNDS, false, "100_jumps_out_of_bounds"
+      100, Events.JUMP_OUT_OF_BOUNDS, false, false, "100_jumps_out_of_bounds"
     ),
     new AchievementData(
       "Tagelöhner", ["Sammle 100 Hype in einer Runde", ""],
-      100, Events.COLLECT_HYPE, true, "collect_100_hype"
+      100, Events.COLLECT_HYPE, false, true, "collect_100_hype"
     ),
     new AchievementData(
       "Ein neuer PC", ["Sammle 2.000 Hype in einer Runde", ""],
-      2000, Events.COLLECT_HYPE, true, "collect_2000_hype"
+      2000, Events.COLLECT_HYPE, false, true, "collect_2000_hype"
     ),
     new AchievementData(
       "It's over 9000!!", ["Sammle 9.001 Hype in einer Runde", ""],
-      9001, Events.COLLECT_HYPE, true, "collect_9001_hype"
+      9001, Events.COLLECT_HYPE, false, true, "collect_9001_hype"
     ),
     new AchievementData(
       "24k Magic", ["Sammle 24.000 Hype in einer Runde", ""],
-      24000, Events.COLLECT_HYPE, true, "collect_24000_hype"
+      24000, Events.COLLECT_HYPE, false, true, "collect_24000_hype"
     ),
     new AchievementData(
       "1000m Sprint", ["Lege eine Distanz von 1.000m", "in einer Runde zurück"],
-      1000, Events.END_OF_ROUND_TOTAL_TRAVELLED_DISTANCE, true, "travel_1000_in_one_round"
+      1000, Events.END_OF_ROUND_TOTAL_TRAVELLED_DISTANCE, true, true, "travel_1000_in_one_round"
     ),
     new AchievementData(
       "5Km Rennen", ["Lege eine Distanz von 5.000m", "in einer Runde zurück"],
-      5000, Events.END_OF_ROUND_TOTAL_TRAVELLED_DISTANCE, true, "travel_5000_in_one_round"
+      5000, Events.END_OF_ROUND_TOTAL_TRAVELLED_DISTANCE, true, true, "travel_5000_in_one_round"
     ),
     new AchievementData(
       "Ausdauerprofi", ["Lege eine Distanz von 10.000m", "in einer Runde zurück"],
-      10000, Events.END_OF_ROUND_TOTAL_TRAVELLED_DISTANCE, true, "travel_10000_in_one_round"
+      10000, Events.END_OF_ROUND_TOTAL_TRAVELLED_DISTANCE, true, true, "travel_10000_in_one_round"
     ),
     new AchievementData(
       "Geisterfahrer", ["Lege insgesamt 5.000m in die", "falsche Richtung zurück"],
-      5000, Events.END_OF_ROUND_TOTAL_REVERSE_DISTANCE, false, "travel_5000_reverse"
+      5000, Events.END_OF_ROUND_TOTAL_REVERSE_DISTANCE, false, false, "travel_5000_reverse"
     ),
     new AchievementData(
       "Flummi", ["Springe insgesamt 100.000 Mal", ""],
-      100000, Events.DO_JUMP, false, "jump_100000"
+      100000, Events.DO_JUMP, false, false, "jump_100000"
     ),
     new AchievementData(
       "In letzter Sekunde", ["Setze einen Stern ein,", "kurz bevor du die Lava berührst"],
-      1, Events.STAR_BEFORE_LAVA, false, "star_before_lava"
+      1, Events.STAR_BEFORE_LAVA, false, false, "star_before_lava"
     ),
     new AchievementData(
       "Upgrade", ["Level ein Item", ""],
-      1, Events.LVL_ITEM, false, "lvl_item"
+      1, Events.LVL_ITEM, false, false, "lvl_item"
     ),
     new AchievementData(
       "To the Max", ["Level ein Item auf das Maximum", ""],
-      1, Events.LVL_ITEM_MAX, false, "lvl_one_item_max"
+      1, Events.LVL_ITEM_MAX, false, false, "lvl_one_item_max"
     ),
     new AchievementData(
       "Maximize", ["Level alle Items auf das Maximum", ""],
-      5, Events.LVL_ITEM_MAX, false, "lvl_all_items_max"
+      5, Events.LVL_ITEM_MAX, false, false, "lvl_all_items_max"
     ),
     new AchievementData(
       "YOU DIED", ["Sterbe 1.000 Mal", ""],
-      1000, Events.DEATH, false, "die_1000"
+      1000, Events.DEATH, false, false, "die_1000"
     ),
     new AchievementData(
       "Gutverdiener", ["Sammle insgesamt 1.000.000 Hype", ""],
-      1000000, Events.COLLECT_HYPE, false, "collect_1000000_hype"
+      1000000, Events.COLLECT_HYPE, false, false, "collect_1000000_hype"
     ),
     new AchievementData(
       "Endlich reich", ["Besitze 1.000.000 Hype", ""],
-      1000000, Events.SET_OWNED_HYPE, false, "own_1000000_hype"
+      1000000, Events.SET_OWNED_HYPE, true, false, "own_1000000_hype"
     ),
     new AchievementData(
       "I would walk 500 Miles", ["Lege eine gesamte Distanz von", "804.672m zurück"],
-      804672, Events.END_OF_ROUND_TOTAL_TRAVELLED_DISTANCE, false, "travel_one_mile"
+      804672, Events.END_OF_ROUND_TOTAL_TRAVELLED_DISTANCE, false, false, "travel_one_mile"
     ),
     new AchievementData(
       "Glücksbringer", ["Sammle das erste goldene Kleeblatt", ""],
-      1, Events.COLLECT_GOLDEN_SHAMROCK, false, "collect_first_golden_shamrock"
+      1, Events.COLLECT_GOLDEN_SHAMROCK, false, false, "collect_first_golden_shamrock"
     ),
     new AchievementData(
       "Wow, so viel Glück", ["Sammle 25 goldene Kleeblätter", ""],
-      25, Events.COLLECT_GOLDEN_SHAMROCK, false, "collect_25_golden_shamrocks"
+      25, Events.COLLECT_GOLDEN_SHAMROCK, false, false, "collect_25_golden_shamrocks"
     ),
     new AchievementData(
       "50:50", ["Sammle 50 goldene Kleeblätter", ""],
-      50, Events.COLLECT_GOLDEN_SHAMROCK, false, "collect_50_golden_shamrocks"
+      50, Events.COLLECT_GOLDEN_SHAMROCK, false, false, "collect_50_golden_shamrocks"
     ),
     new AchievementData(
       "Für immer Glück", ["Sammle 100 goldene Kleeblätter", ""],
-      100, Events.COLLECT_GOLDEN_SHAMROCK, false, "collect_100_golden_shamrocks"
+      100, Events.COLLECT_GOLDEN_SHAMROCK, false, false, "collect_100_golden_shamrocks"
     )
   ];
 
@@ -242,12 +242,21 @@
   };
   /**
    * handle updates of achievement values for game-events
-   * @param {AchievementEventKeys} eventKey the game-event which happened (i.e. END_OF_ROUND_TOTAL_TRAVELLED_DISTANCE)
+   * @param {Events} eventKey the game-event which happened (i.e. END_OF_ROUND_TOTAL_TRAVELLED_DISTANCE)
    * @param {number} addedValue respective value of the game-event (i.e. 1700) or defaults to 1 in case of a simple
    * event without a value (i.e. for USE_STOPWATCH)
    */
   this.handleEvent = function(eventKey, addedValue = 1) {
     this.achievementList.map(achievement => achievement.handleEvent(this, eventKey, addedValue), this);
+    this.gD.save.achievements = this.getSaveData();
+  };
+
+  this.resetPerRound = function() {
+    this.achievementList.map(achievement => {
+      if (achievement.isResetPerRound) {
+        achievement.resetPerRound(this);
+      }
+    }, this);
     this.gD.save.achievements = this.getSaveData();
   };
 
@@ -267,43 +276,16 @@
   };
 }
 
-/**
- * A game-event for which achievement values can be affected
- * @enum {string}
- */
-const AchievementEventKeys = {
-  COLLECT_HYPE: "COLLECT_HYPE",
-  COLLECT_1000_HYPE: "COLLECT_1000_HYPE",
-  COLLECT_TREASURE: "COLLECT_TREASURE",
-  COLLECT_GOLDEN_SHAMROCK: "COLLECT_GOLDEN_SHAMROCK",
-  DO_JUMP: "DO_JUMP",
-  DO_DOUBLE_JUMP: "DO_DOUBLE_JUMP",
-  USE_STOPWATCH: "USE_STOPWATCH",
-  USE_FIVE_STARS: "USE_FIVE_STARS",
-  USE_FEATHER: "USE_FEATHER",
-  USE_TREASURE: "USE_TREASURE",
-  USE_MAGNET: "USE_MAGNET",
-  USE_ROCKET: "USE_ROCKET",
-  USE_ALL_ITEMS_AT_ONCE: "USE_ALL_ITEMS_AT_ONCE",
-  JUMP_OUT_OF_BOUNDS: "JUMP_OUT_OF_BOUNDS",
-  STAR_BEFORE_LAVA: "STAR_BEFORE_LAVA",
-  DEATH: "DEATH",
-  END_OF_ROUND_TOTAL_SLOWED_TIME: "END_OF_ROUND_TOTAL_SLOWED_TIME",
-  END_OF_ROUND_TOTAL_TRAVELLED_DISTANCE: "END_OF_ROUND_TOTAL_TRAVELLED_DISTANCE",
-  END_OF_ROUND_TOTAL_REVERSE_DISTANCE: "END_OF_ROUND_TOTAL_REVERSE_DISTANCE",
-  SET_OWNED_HYPE: "SET_OWNED_HYPE",
-  LVL_ITEM: "LVL_ITEM",
-  LVL_ITEM_MAX: "LVL_ITEM_MAX"
-};
-
-function AchievementData(name, descriptionLines, neededCount, eventKey, isFullNumber, spriteKey) {
+function AchievementData(name, descriptionLines, neededCount, eventKey, isFullNumber, isResetPerRound, spriteKey) {
   this.name = name;
   this.descriptionLines = descriptionLines;
   this.neededCount = neededCount;
   this.eventKey = eventKey;
   this.isFullNumber = isFullNumber;
+  this.isResetPerRound = isResetPerRound;
   this.spriteKey = spriteKey;
   this.currentCount = 0;
+  this.roundCount = 0;
   this.button = null;
   this.isUnlocked = false;
   this.setButton = function(button) {
@@ -312,9 +294,29 @@ function AchievementData(name, descriptionLines, neededCount, eventKey, isFullNu
   this.getSpriteKey = function() {
     return this.isUnlocked ? this.spriteKey : "locked";
   };
+  this.resetPerRound = function(achievements) {
+    if (this.roundCount > this.currentCount) {
+      this.currentCount = this.roundCount;
+      if (this.currentCount >= this.neededCount) {
+        this.isUnlocked = true;
+        this.currentCount = this.neededCount;
+        achievements.achievementNotification.addAchievement(this);
+        this.button.setSprite(1);
+      }
+    }
+    this.roundCount = 0;
+  };
   this.handleEvent = function(achievements, eventKey, addedValue = 1) {
     if (!this.isUnlocked && this.eventKey === eventKey) {
-      if (this.isFullNumber) {
+      if (this.isResetPerRound) {
+        if (this.isFullNumber) {
+          if (this.roundCount < +addedValue) {
+            this.roundCount = +addedValue;
+          }
+        } else {
+          this.roundCount += +addedValue;
+        }
+      } else if (this.isFullNumber) {
         if (this.currentCount < +addedValue) {
           this.currentCount = +addedValue;
         }
@@ -333,7 +335,7 @@ function AchievementData(name, descriptionLines, neededCount, eventKey, isFullNu
   this.setSaveData = function(data) {
     [this.isUnlocked, this.currentCount] = data;
   };
-  this.getSaveData = function () {
+  this.getSaveData = function() {
     return [this.isUnlocked, this.currentCount];
   };
 }

@@ -14,32 +14,32 @@
     this.currentlyMarked = null;
     this.scrollHeight = 0;
     this.skillData = {          //funktion einbinden, die den aktuellen Wert zurückgibt
-      "unlock_skilltree":       new SkillData("Unlock the Skilltree", false, 1, 0, 1000, 0, 0, [], 0),
-      "level_up_items":         new SkillData("Level up Items", false, 1, 0, 10000, 0, 0, ["unlock_skilltree"], 1),
-      "level_up_stopwatch":     new SkillData("Stopwatch level up", true, 99, 0, 3250, 0, 110, ["level_up_items"], 1),
-      "level_up_star":          new SkillData("Star level up", true, 99, 0, 6720, 0, 210, ["level_up_items"], 1),
-      "level_up_feather":       new SkillData("Feather level up", true, 99, 0, 3000, 0, 120, ["level_up_items"], 1),
-      "level_up_treasure":      new SkillData("Treasure level up", true, 99, 0, 5550, 0, 220, ["level_up_items"], 1),
-      "level_up_magnet":        new SkillData("Magnet level up", true, 99, 0, 4100, 0, 170, ["level_up_items"], 1),
-      "level_up_rocket":        new SkillData("Rocket level up", true, 99, 0, 6020, 0, 199, ["level_up_items"], 1),
-      "start_amount_stopwatch": new SkillData("Stopwatches at start", true, 2, 12, 75000, 6, 12500, ["level_up_stopwatch"], 50),
-      "start_amount_star":      new SkillData("Stars at start", true, 2, 45, 179000, 22, 55000, ["level_up_star"], 50),
-      "start_amount_feather":   new SkillData("Feathers at start", true, 2, 16, 87000, 8, 22000, ["level_up_feather"], 50),
-      "start_amount_treasure":  new SkillData("Treasures at start", true, 2, 50, 200000, 25, 100000, ["level_up_treasure"], 50),
-      "start_amount_magnet":    new SkillData("Magnets at start", true, 2, 32, 130000, 16, 62000, ["level_up_magnet"], 50),
-      "start_amount_rocket":    new SkillData("Rockets at start", true, 2, 39, 166666, 19, 66666, ["level_up_rocket"], 50),
+      "unlock_skilltree":       new SkillData("Unlock the Skilltree", false, 1, 1, 0, 1000, 0, 0, [], 0),
+      "level_up_items":         new SkillData("Level up Items", false, 1, 1, 0, 10000, 0, 0, ["unlock_skilltree"], 1),
+      "level_up_stopwatch":     new SkillData("Stopwatch level up", true, 60, 99, 0, 3250, 0, 110, ["level_up_items"], 1),
+      "level_up_star":          new SkillData("Star level up", true, 120, 99, 0, 6720, 0, 210, ["level_up_items"], 1),
+      "level_up_feather":       new SkillData("Feather level up", true, 90, 99, 0, 3000, 0, 120, ["level_up_items"], 1),
+      "level_up_treasure":      new SkillData("Treasure level up", true, 6, 99, 0, 5550, 0, 220, ["level_up_items"], 1),
+      "level_up_magnet":        new SkillData("Magnet level up", true, 180, 99, 0, 4100, 0, 170, ["level_up_items"], 1),
+      "level_up_rocket":        new SkillData("Rocket level up", true, 75, 99, 0, 6020, 0, 199, ["level_up_items"], 1),
+      "start_amount_stopwatch": new SkillData("Stopwatches at start", true, 1, 2, 12, 75000, 6, 12500, ["level_up_stopwatch"], 50),
+      "start_amount_star":      new SkillData("Stars at start", true, 1, 2, 45, 179000, 22, 55000, ["level_up_star"], 50),
+      "start_amount_feather":   new SkillData("Feathers at start", true, 1, 2, 16, 87000, 8, 22000, ["level_up_feather"], 50),
+      "start_amount_treasure":  new SkillData("Treasures at start", true, 1, 2, 50, 200000, 25, 100000, ["level_up_treasure"], 50),
+      "start_amount_magnet":    new SkillData("Magnets at start", true, 1, 2, 32, 130000, 16, 62000, ["level_up_magnet"], 50),
+      "start_amount_rocket":    new SkillData("Rockets at start", true, 1, 2, 39, 166666, 19, 66666, ["level_up_rocket"], 50),
       "item_spawn_frequency":   new SkillData(
-        "Item spawn frequency", true, 10, 5, 33000, 3, 6780, [
+        "Item spawn frequency", true, 4, 10, 5, 33000, 3, 6780, [
           "level_up_stopwatch", "level_up_star", "level_up_feather",
           "level_up_treasure", "level_up_magnet", "level_up_rocket"
         ], 100
       ),
-      "money_multiplier":       new SkillData("Money multiplier", true, 100, 0, 3000, 0, 1700, ["unlock_skilltree"], 1),
-      "character_upgrades":     new SkillData("Character upgrades", false, 1, 0, 10000, 0, 0, ["unlock_skilltree"], 1),
-      "movement_speed":         new SkillData("Movement speed", true, 10, 0, 42000, 0, 8000, ["character_upgrades"], 1),
-      "jump_height":            new SkillData("Jump height", true, 5, 0, 44000, 0, 12000, ["character_upgrades"], 1),
-      "jumps":                  new SkillData("Jumps", true, 3, 8, 25000, 8, 35000, ["character_upgrades"], 1),
-      "extra_life":             new SkillData("Extra life", true, 1, 100, 1000000, 0, 0, ["Deaths"], 1000)
+      "money_multiplier":       new SkillData("Money multiplier", true, 4, 100, 0, 3000, 0, 1700, ["unlock_skilltree"], 1),
+      "character_upgrades":     new SkillData("Character upgrades", false,1,  1, 0, 10000, 0, 0, ["unlock_skilltree"], 1),
+      "movement_speed":         new SkillData("Movement speed", true, 0.4, 10, 0, 42000, 0, 8000, ["character_upgrades"], 1),
+      "jump_height":            new SkillData("Jump height", true, 1, 5, 0, 44000, 0, 12000, ["character_upgrades"], 1),
+      "jumps":                  new SkillData("Jumps", true, 1, 3, 8, 25000, 8, 35000, ["character_upgrades"], 1),
+      "extra_life":             new SkillData("Extra life", true, 1, 1, 100, 1000000, 0, 0, ["Deaths"], 1000)
     };
     this.accessories = new Map([
       ["test", new ShopAccessory("test", "Beard", "Collectables_Beard1", 500, 10)],
@@ -749,9 +749,10 @@ function ShopMoneyDisplay(x, y, width, height, styleKey) {
   };
 }
 
-function SkillData(name, showValue, maxValue, costGoldenShamrock, costHype, costUpgradeGoldenShamrock, costUpgradeMoney, unlockedBy, unlockedAt) {
+function SkillData(name, showValue, basePoints, maxValue, costGoldenShamrock, costHype, costUpgradeGoldenShamrock, costUpgradeMoney, unlockedBy, unlockedAt) {
   this.name = name;
   this.showValue = showValue;
+  this.basePoints = basePoints;
   this.maxValue = maxValue;
   this.costGoldenShamrock = costGoldenShamrock;
   this.costHype = costHype;
@@ -763,7 +764,7 @@ function SkillData(name, showValue, maxValue, costGoldenShamrock, costHype, cost
   this.unlocked = false;
   this.maxed = false;
   this.getValue = function() {
-    return this.currentValue;
+    return this.currentValue * this.basePoints;
   };
   this.checkUnlock = function(shop) {
     let levels = 0;

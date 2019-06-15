@@ -199,6 +199,7 @@ function Game(menu, gD) {
     if (!this.trainingMode) {
       this.handleEvent(Events.COLLECT_BONUS, bonus);
       this.handleEvent(Events.DEATH);
+      this.menu.achievements.resetPerRound();
       this.menu.shop.hype += this.player.inventory.hype.getTotalCash() + bonus;
       this.menu.shop.goldenShamrocks += this.player.inventory.special.items["Special_GoldenShamrock"][1];
     }
@@ -346,7 +347,7 @@ function Game(menu, gD) {
       if (this.gD.frameNo % 30 === 0 || this.inventory.items["Item_Treasure"].active) {
         this.addMoney();
       }
-      if (this.gD.frameNo % (150 - this.menu.shop.getSkillValue("item_spawn_frequency") * 4) === 0) {
+      if (this.gD.frameNo % (150 - this.menu.shop.getSkillValue("item_spawn_frequency")) === 0) {
         this.addItem();
       }
       this.objects.map(object => {
@@ -454,11 +455,11 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
   };
   this.moveForward = function(game, menu) {
     this.direction = "forward";
-    this.speed = game.globalSpeed + 3 + menu.shop.getSkillValue("movement_speed") * 0.4;
+    this.speed = game.globalSpeed + 3 + menu.shop.getSkillValue("movement_speed");
   };
   this.moveBackward = function(game, menu) {
     this.direction = "backward";
-    this.speed = game.globalSpeed - 3 - menu.shop.getSkillValue("movement_speed") * 0.4;
+    this.speed = game.globalSpeed - 3 - menu.shop.getSkillValue("movement_speed");
   };
   this.stopMoving = function(game, direction) {
     if (this.direction === direction) {
