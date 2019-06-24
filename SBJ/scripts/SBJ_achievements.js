@@ -44,7 +44,7 @@
     ),
     new AchievementData(
       "Infinite Power", ["Benutze alle Items gleichzeitig", ""],
-      1, Events.USE_ALL_ITEMS_AT_ONCE, false, true, "use_all_items_at_once"
+      6, Events.USE_ALL_ITEMS_AT_ONCE, false, false, "use_all_items_at_once"
     ),
     new AchievementData(
       "Verlangsamung", ["Verlangsame die Zeit für insgesamt", "eine Stunde oder 3.600 Sekunden"],

@@ -596,6 +596,53 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
       if (object.spriteKey === "" && !this.inventory.items["Item_Star"].active) {
         game.finish();
       } else if (object.spriteKey.startsWith("Item") || object.spriteKey.startsWith("Special")) {
+        switch (object.spriteKey.split("_")[1]) {
+          case "Stopwatch":
+            game.handleEvent(Events.COLLECT_ITEM);
+            game.handleEvent(Events.COLLECT_STOPWATCH);
+            break;
+          case "Star":
+            game.handleEvent(Events.COLLECT_ITEM);
+            game.handleEvent(Events.COLLECT_STAR);
+            break;
+          case "Feather":
+            game.handleEvent(Events.COLLECT_ITEM);
+            game.handleEvent(Events.COLLECT_FEATHER);
+            break;
+          case "Treasure":
+            game.handleEvent(Events.COLLECT_ITEM);
+            game.handleEvent(Events.COLLECT_TREASURE);
+            break;
+          case "Magnet":
+            game.handleEvent(Events.COLLECT_ITEM);
+            game.handleEvent(Events.COLLECT_MAGNET);
+            break;
+          case "Rocket":
+            game.handleEvent(Events.COLLECT_ITEM);
+            game.handleEvent(Events.COLLECT_ROCKET);
+            break;
+          case "Questionmark":
+            game.handleEvent(Events.COLLECT_ITEM);
+            game.handleEvent(Events.COLLECT_QUESTIONMARK);
+            break;
+          case "Goldenshamrock":
+            game.handleEvent(Events.COLLECT_GOLDEN_SHAMROCK);
+            break;
+          case "GreenKey":
+            game.handleEvent(Events.COLLECT_GREENKEY);
+            break;
+          case "BlueKey":
+            game.handleEvent(Events.COLLECT_BLUEKEY);
+            break;
+          case "YellowKey":
+            game.handleEvent(Events.COLLECT_YELLOWKEY);
+            break;
+          case "RedKey":
+            game.handleEvent(Events.COLLECT_REDKEY);
+            break;
+          default:
+            break;
+        }
         game.inventory.collect(object.spriteKey);
         game.objects.splice(index, 1);
       } else if (object.spriteKey.startsWith("Money")) {
@@ -775,6 +822,8 @@ function GameInventory() {
     this.hype.init(game, gD);
   };
   this.activate = function(game, item) {
+    game.handleEvent(Events.USE_ITEM);
+    game.handleEvent(Events["USE_" + item.split("_")[1]]);
     this.items[item].activate(game);
   };
   this.fill = function(amount) {
@@ -804,11 +853,16 @@ function GameInventory() {
     }
   };
   this.update = function(game) {
+    let active = 0;
     for (let item in this.items) {
       if (this.items.hasOwnProperty(item)) {
         this.items[item].update(game);
+        if (this.items[item].active) {
+          active++;
+        }
       }
     }
+    game.handleEvent(Events.USE_ALL_ITEMS_AT_ONCE, active);
   };
   this.draw = function(game, gD, ghostFactor) {
     for (let item in this.items) {
@@ -871,10 +925,6 @@ function GameInventoryItem(x, y, width, height, itemName, maxDurability, styleKe
         switch (this.itemName) {
           case "Item_Stopwatch":
             game.globalSpeed = Math.min(game.currentLevel * 0.5 + 1.5, 12);
-            /*if (!game.menu.achievements.achievementList.achievements[12].finished) {
-              game.menu.achievements.achievementValues[12] += (game.gD.itemBaseDur[i] + (game.menu.shop.level[i] * game.gD.itemPerLvlDur[i])) / 50;
-              game.menu.achievements.achievementList.achievements[12].check(game.menu.achievements);
-            }*/
             break;
           case "Item_Star":
             if (game.player.y === game.gD.canvas.height - game.stage.deadZoneGround - game.player.height) {

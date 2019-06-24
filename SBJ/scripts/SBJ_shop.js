@@ -138,6 +138,9 @@
     this.scrollHeight = elements * 25;
     this.scrollbar.scroll(elements);
   };
+  this.handleEvent = function(eventKey, addedValue = 1) {
+      this.menu.handleEvent(eventKey, addedValue);
+  };
   this.levelSkills = function(skill) {
     let skillData = this.skillData[skill.key];
     let {goldenShamrock, hype} = skillData.getCost();
@@ -145,6 +148,7 @@
     if (this.goldenShamrocks >= goldenShamrock && this.hype >= hype && !skillData.maxed) {
       this.goldenShamrocks -= goldenShamrock;
       this.hype -= hype;
+      this.handleEvent(Events.MONEY_SPENT, hype);
       skillData.levelUp();
       this.checkUnlocks();
     }
@@ -153,6 +157,23 @@
     if (this.goldenShamrocks >= accessory.costGoldenShamrock && this.hype >= accessory.costHype && !accessory.bought) {
       this.goldenShamrocks -= accessory.costGoldenShamrock;
       this.hype -= accessory.costHype;
+      this.handleEvent(Events.MONEY_SPENT, accessory.costHype);
+      switch (accessory.category) {
+        case "Beard":
+          this.handleEvent(Events.COLLECT_BEARD);
+          break;
+        case "Hat":
+          this.handleEvent(Events.COLLECT_HAT);
+          break;
+        case "Glasses":
+          this.handleEvent(Events.COLLECT_GLASSES);
+          break;
+        case "Skin":
+          this.handleEvent(Events.COLLECT_SKIN);
+          break;
+        default:
+          break;
+      }
       this.accessories.get(accessory.name).buy();
       accessory.buy();
     }
