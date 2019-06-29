@@ -126,7 +126,7 @@ function MenuController(menu) {
   this.draw = function(gD) {
     this.nG.map(buttonRow => {
       buttonRow.map(buttonObject => {
-        buttonObject.button.draw(gD, menu);
+        buttonObject.button.draw(gD);
       }, this);
     }, this);
 

@@ -306,7 +306,7 @@ function Game(menu, gD) {
       }
       if (!this.paused && !this.finished && !this.showConfirmation) {
         if (keyB.get("Game_JumpFromPlatform")[3].includes(key)) {
-          this.player.downFromPlatform();
+          this.player.downFromPlatform(this);
         } else if (keyB.get("Game_ItemStopwatch")[3].includes(key)) {
           this.inventory.activate(this, "Item_Stopwatch");
         } else if (keyB.get("Game_ItemStar")[3].includes(key)) {
@@ -539,10 +539,14 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
       this.direction = null;
     }
   };
-  this.downFromPlatform = function() {
+  this.downFromPlatform = function(game) {
     this.onFloor = false;
     this.currentFloor = null;
     this.jumps = 1;
+    if (game.helpFloor !== null) {
+      game.floors.splice(game.floors.indexOf(game.helpFloor), 1);
+      game.helpFloor = null;
+    }
   };
   this.setGravity = function(item = false) {
     if (item) {
@@ -569,6 +573,10 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
         if (this.jumps === 1) {
           game.handleEvent(Events.DO_DOUBLE_JUMP);
         }
+      }
+      if (game.helpFloor !== null) {
+        game.floors.splice(game.floors.indexOf(game.helpFloor), 1);
+        game.helpFloor = null;
       }
       this.onFloor = false;
     }

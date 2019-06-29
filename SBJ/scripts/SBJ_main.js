@@ -56,6 +56,7 @@ function keydownEvent(event, gD) {
   gD.newKeys.push(event.code);
   gD.events.push(event);
   console.log(event.code);
+  console.log(event);
 }
 
 function keyupEvent(event, gD) {
@@ -231,7 +232,7 @@ function GlobalDict(eventHandler) {
     "Reward_collect_first_hype": [false, 544, 287, 40, 40],
     "Reward_collect_first_treasure": [false, 544, 328, 40, 40],
     "Reward_die_1000": [false, 544, 369, 40, 40],
-    "Reward_locked": [false, 544, 410, 40, 40],
+    "Reward_locked": [false, 544, 410, 31, 40],
     "Reward_slow_1_hour": [false, 544, 451, 40, 40],
     "Reward_use_all_items_at_once": [false, 544, 492, 40, 40],
     "Reward_use_first_double_jump": [false, 544, 533, 40, 40],
@@ -251,7 +252,7 @@ function GlobalDict(eventHandler) {
     "Reward_B_collect_first_hype": [false, 585, 567, 80, 80],
     "Reward_B_collect_first_treasure": [false, 585, 648, 80, 80],
     "Reward_B_die_1000": [false, 585, 729, 80, 80],
-    "Reward_B_locked": [false, 585, 810, 80, 80],
+    "Reward_B_locked": [false, 585, 810, 62, 80],
     "Reward_B_slow_1_hour": [false, 585, 891, 80, 80],
     "Reward_B_use_all_items_at_once": [false, 585, 972, 80, 80],
     "Reward_B_use_first_double_jump": [false, 585, 1053, 80, 80],
