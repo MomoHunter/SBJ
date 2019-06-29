@@ -1,1 +1,0 @@
-function Savestate1545596725573(){this.name='Testsave';this.file='Savestate2.txt';this.spriteKey='Item_Star';this.date=1545596725573;this.version='v3.0.0';this.data='e30=';}

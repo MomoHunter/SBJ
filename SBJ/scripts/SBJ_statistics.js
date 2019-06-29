@@ -7,7 +7,7 @@ function Statistics(menu, gD) {
   this.init = function() {
     this.statistics = new Map([
       ["time_played", new StatisticsData("Zeit gespielt", Events.TIME_PLAYED, false)],
-      ["money_collected", new StatisticsData("Geld gesammelt", Events.COLLECT_HYPE, false)],
+      ["money_collected", new StatisticsData("Geld gesammelt", Events.COLLECT_HYPE_WITH_BONUS, false)],
       ["money_1000_collected", new StatisticsData("1000er Scheine gesammelt", Events.COLLECT_1000_HYPE, false)],
       ["money_100_collected", new StatisticsData("100er Scheine gesammelt", Events.COLLECT_100_HYPE, false)],
       ["money_10_collected", new StatisticsData("10er Scheine gesammelt", Events.COLLECT_10_HYPE, false)],
@@ -38,10 +38,10 @@ function Statistics(menu, gD) {
       ["player_beards_collected", new StatisticsData("Bärte gesammelt", Events.COLLECT_BEARD, false)],
       ["player_glasses_collected", new StatisticsData("Brillen gesammelt", Events.COLLECT_GLASSES, false)],
       ["player_skins_collected", new StatisticsData("Skins gesammelt", Events.COLLECT_SKIN, false)],
-      ["game_bluekeys_collected", new StatisticsData("Schlüssel gesammelt", Events.COLLECT_BLUEKEY, false)],
-      ["game_redkeys_collected", new StatisticsData("Schlüssel gesammelt", Events.COLLECT_REDKEY, false)],
-      ["game_greenkeys_collected", new StatisticsData("Schlüssel gesammelt", Events.COLLECT_GREENKEY, false)],
-      ["game_yellowkeys_collected", new StatisticsData("Schlüssel gesammelt", Events.COLLECT_YELLOWKEY, false)],
+      ["game_bluekeys_collected", new StatisticsData("Blaue Schlüssel gesammelt", Events.COLLECT_BLUEKEY, false)],
+      ["game_redkeys_collected", new StatisticsData("Rote Schlüssel gesammelt", Events.COLLECT_REDKEY, false)],
+      ["game_greenkeys_collected", new StatisticsData("Grüne Schlüssel gesammelt", Events.COLLECT_GREENKEY, false)],
+      ["game_yellowkeys_collected", new StatisticsData("Gelbe Schlüssel gesammelt", Events.COLLECT_YELLOWKEY, false)],
       ["game_minigames_won", new StatisticsData("Minispiele gewonnen", Events.MINIGAME_WON, false)],
       ["game_minigames_lost", new StatisticsData("Minispiele verloren", Events.MINIGAME_LOST, false)],
       ["game_minigames_activated", new StatisticsData("Minispiele aktiviert", Events.MINIGAME_ACTIVATED, false)],
@@ -125,6 +125,20 @@ function Statistics(menu, gD) {
   this.handleEvent = function(eventKey, addedValue = 1) {
     for (let element of this.statistics.values()) {
       element.handleEvent(eventKey, addedValue);
+    }
+  };
+  this.getSaveData = function() {
+    let saveData = {};
+    for (let [key, value] of this.statistics) {
+      saveData[key] = value.getSaveData();
+    }
+    return saveData;
+  };
+  this.setSaveData = function(data) {
+    for (let e in data) {
+      if (data.hasOwnProperty(e)) {
+        this.statistics.get(e).setSaveData(data[e]);
+      }
     }
   };
   /**
@@ -281,6 +295,12 @@ function StatisticsData(name, eventKey, isFullNumber) {
         this.currentCount += +addedValue;
       }
     }
+  };
+  this.getSaveData = function() {
+    return this.currentCount;
+  };
+  this.setSaveData = function(data) {
+    this.currentCount = data;
   };
 }
 

@@ -98,6 +98,7 @@
                 this.selections[0].getSelected(), this.selections[1].getSelected(), this.selections[2].getSelected(),
                 this.selections[3].getSelected(), true
               );
+              this.menu.game.setStartTime();
               this.gD.currentPage = this.menu.game;
             } else {
               this.showError = true;
@@ -112,6 +113,7 @@
                 this.selections[0].getSelected(), this.selections[1].getSelected(), this.selections[2].getSelected(),
                 this.selections[3].getSelected(), true
               );
+              this.menu.game.setStartTime();
               this.gD.currentPage = this.menu.game;
             } else {
               this.showError = true;
@@ -189,6 +191,7 @@
           this.selections[0].getSelected(), this.selections[1].getSelected(), this.selections[2].getSelected(),
           this.selections[3].getSelected(), true
         );
+        this.menu.game.setStartTime();
         this.gD.currentPage = this.menu.game;
       } else {
         this.showError = true;
@@ -205,6 +208,7 @@
           this.selections[0].getSelected(), this.selections[1].getSelected(), this.selections[2].getSelected(),
           this.selections[3].getSelected(), true
         );
+        this.menu.game.setStartTime();
         this.gD.currentPage = this.menu.game;
       } else {
         this.showError = true;

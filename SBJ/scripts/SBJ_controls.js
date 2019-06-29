@@ -15,6 +15,8 @@
       ["Menu_Back", ["Menü", "zur vorherigen Seite gehen", ["Escape"], ["Escape"]]],
       ["Menu_Abort", ["Menü", "Tätigkeit abbrechen", ["Escape"], ["Escape"]]],
       ["Menu_Refresh", ["Menü", "Daten neu laden", ["R"], ["KeyR"]]],
+      ["NameModal_NavDown", ["Namen Modal", "Navigation runter", [String.fromCharCode(8595)], ["ArrowDown"]]],
+      ["NameModal_NavUp", ["Namen Modal", "Navigation hoch", [String.fromCharCode(8593)], ["ArrowUp"]]],
       ["NameModal_NavRight", ["Namen Modal", "Navigation rechts", [String.fromCharCode(8594)], ["ArrowRight"]]],
       ["NameModal_NavLeft", ["Namen Modal", "Navigation links", [String.fromCharCode(8592)], ["ArrowLeft"]]],
       ["NameModal_DeleteLeft", ["Namen Modal", "Linkes Zeichen löschen", [" " + String.fromCharCode(8612) + " "], ["Backspace"]]],
@@ -95,6 +97,12 @@
     this.backToMenu = new CanvasButton(this.gD.canvas.width / 2 - 100, this.gD.canvas.height - 50, 200, 30, "Main Menu", "menu");
 
     this.updateSelection(-1, 0, false);
+  };
+  this.getSaveData = function() {
+    return Array.from(this.keyBindings.entries());
+  };
+  this.setSaveData = function(data) {
+    this.keyBindings = new Map(data);
   };
   /**
    * activates the new key mode and prepares for a new key

@@ -44,11 +44,11 @@
     ),
     new AchievementData(
       "Infinite Power", ["Benutze alle Items gleichzeitig", ""],
-      6, Events.USE_ALL_ITEMS_AT_ONCE, false, false, "use_all_items_at_once"
+      6, Events.USE_ALL_ITEMS_AT_ONCE, true, false, "use_all_items_at_once"
     ),
     new AchievementData(
       "Verlangsamung", ["Verlangsame die Zeit für insgesamt", "eine Stunde oder 3.600 Sekunden"],
-      3600, Events.END_OF_ROUND_TOTAL_SLOWED_TIME, false, false, "slow_1_hour"
+      3600, Events.SLOWED_TIME, false, false, "slow_1_hour"
     ),
     new AchievementData(
       "Outta Space", ["Verlasse 100 Mal die Spielfläche", ""],
@@ -72,19 +72,15 @@
     ),
     new AchievementData(
       "1000m Sprint", ["Lege eine Distanz von 1.000m", "in einer Runde zurück"],
-      1000, Events.END_OF_ROUND_TOTAL_TRAVELLED_DISTANCE, true, true, "travel_1000_in_one_round"
+      1000, Events.END_OF_ROUND_TOTAL_TRAVELLED_DISTANCE, true, false, "travel_1000_in_one_round"
     ),
     new AchievementData(
       "5Km Rennen", ["Lege eine Distanz von 5.000m", "in einer Runde zurück"],
-      5000, Events.END_OF_ROUND_TOTAL_TRAVELLED_DISTANCE, true, true, "travel_5000_in_one_round"
+      5000, Events.END_OF_ROUND_TOTAL_TRAVELLED_DISTANCE, true, false, "travel_5000_in_one_round"
     ),
     new AchievementData(
       "Ausdauerprofi", ["Lege eine Distanz von 10.000m", "in einer Runde zurück"],
-      10000, Events.END_OF_ROUND_TOTAL_TRAVELLED_DISTANCE, true, true, "travel_10000_in_one_round"
-    ),
-    new AchievementData(
-      "Geisterfahrer", ["Lege insgesamt 5.000m in die", "falsche Richtung zurück"],
-      5000, Events.END_OF_ROUND_TOTAL_REVERSE_DISTANCE, false, false, "travel_5000_reverse"
+      10000, Events.END_OF_ROUND_TOTAL_TRAVELLED_DISTANCE, true, false, "travel_10000_in_one_round"
     ),
     new AchievementData(
       "Flummi", ["Springe insgesamt 100.000 Mal", ""],
@@ -100,11 +96,11 @@
     ),
     new AchievementData(
       "To the Max", ["Level ein Item auf das Maximum", ""],
-      1, Events.LVL_ITEM_MAX, false, false, "lvl_one_item_max"
+      100, Events.LVL_ITEM_MAX, true, false, "lvl_one_item_max"
     ),
     new AchievementData(
       "Maximize", ["Level alle Items auf das Maximum", ""],
-      5, Events.LVL_ITEM_MAX, false, false, "lvl_all_items_max"
+      600, Events.LVL_ITEM, false, false, "lvl_all_items_max"
     ),
     new AchievementData(
       "YOU DIED", ["Sterbe 1.000 Mal", ""],
@@ -265,7 +261,12 @@
    * @param {Array<[boolean, number]>} dataList
    */
   this.setSaveData = function(dataList) {
-    dataList.map((data, i) => this.achievementList[i].setSaveData(data), this);
+    dataList.map((data, i) => {
+      this.achievementList[i].setSaveData(data);
+      if (data[0]) {
+        this.achievementList[i].button.setSprite(1);
+      }
+    }, this);
   };
   /**
    * get the achievement values to persist them as a saved state

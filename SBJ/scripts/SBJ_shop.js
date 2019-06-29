@@ -6,76 +6,112 @@
     this.backgroundMusic.src = "music/shop.mp3";
     this.backgroundMusic.loop = true;
     this.backgroundMusic.volume = 0.2;
-    this.hype = 0;
-    this.goldenShamrocks = 0;
+    this.hype = 100000;
+    this.goldenShamrocks = 24;
     this.movingTree = false;
     this.movingMinimap = false;
-    this.movingCounter = 0;           //counts how many frames moving was activated to prevent wrong clicks
+    this.movingCounter = 0;           //counts how many frames moving was activated to prevent unintentional clicks
     this.currentlyMarked = null;
     this.scrollHeight = 0;
     this.skillData = {          //funktion einbinden, die den aktuellen Wert zurückgibt
-      "unlock_skilltree":       new SkillData("Unlock the Skilltree", false, 1, 1, 0, 1000, 0, 0, [], 0),
-      "level_up_items":         new SkillData("Level up Items", false, 1, 1, 0, 10000, 0, 0, ["unlock_skilltree"], 1),
-      "level_up_stopwatch":     new SkillData("Stopwatch level up", true, 60, 99, 0, 3250, 0, 110, ["level_up_items"], 1),
-      "level_up_star":          new SkillData("Star level up", true, 120, 99, 0, 6720, 0, 210, ["level_up_items"], 1),
-      "level_up_feather":       new SkillData("Feather level up", true, 90, 99, 0, 3000, 0, 120, ["level_up_items"], 1),
-      "level_up_treasure":      new SkillData("Treasure level up", true, 6, 99, 0, 5550, 0, 220, ["level_up_items"], 1),
-      "level_up_magnet":        new SkillData("Magnet level up", true, 180, 99, 0, 4100, 0, 170, ["level_up_items"], 1),
-      "level_up_rocket":        new SkillData("Rocket level up", true, 75, 99, 0, 6020, 0, 199, ["level_up_items"], 1),
-      "start_amount_stopwatch": new SkillData("Stopwatches at start", true, 1, 2, 12, 75000, 6, 12500, ["level_up_stopwatch"], 50),
-      "start_amount_star":      new SkillData("Stars at start", true, 1, 2, 45, 179000, 22, 55000, ["level_up_star"], 50),
-      "start_amount_feather":   new SkillData("Feathers at start", true, 1, 2, 16, 87000, 8, 22000, ["level_up_feather"], 50),
-      "start_amount_treasure":  new SkillData("Treasures at start", true, 1, 2, 50, 200000, 25, 100000, ["level_up_treasure"], 50),
-      "start_amount_magnet":    new SkillData("Magnets at start", true, 1, 2, 32, 130000, 16, 62000, ["level_up_magnet"], 50),
-      "start_amount_rocket":    new SkillData("Rockets at start", true, 1, 2, 39, 166666, 19, 66666, ["level_up_rocket"], 50),
-      "item_spawn_frequency":   new SkillData(
-        "Item spawn frequency", true, 4, 10, 5, 33000, 3, 6780, [
+      "unlock_skilltree": new SkillData(
+        "Unlock the Skilltree", false, (level) => {return level;}, 1, 
+        (level) => {return 1000;}, (level) => {return 0;}, [], 0
+      ),
+      "level_up_items": new SkillData(
+        "Level up Items", false, (level) => {return level;}, 1, (level) => {return 10000;}, 
+        (level) => {return 0;}, ["unlock_skilltree"], 1
+      ),
+      "level_up_stopwatch": new SkillData(
+        "Stopwatch level up", true, (level) => {return 120 + level * 5;}, 100, 
+        (level) => {return 10000 + Math.pow(level * 50, 1.4);}, (level) => {return 0;}, ["level_up_items"], 1
+      ),
+      "level_up_star": new SkillData(
+        "Star level up", true, (level) => {return Math.floor(150 + level * 11.5);}, 100, 
+        (level) => {return 35000 + Math.pow(level * 40, 1.6);}, (level) => {return 0;}, ["level_up_items"], 1
+      ),
+      "level_up_feather": new SkillData(
+        "Feather level up", true, (level) => {return 300 + level * 6;}, 100, 
+        (level) => {return 15000 + Math.pow(level * 35, 1.5);}, (level) => {return 0;}, ["level_up_items"], 1
+      ),
+      "level_up_treasure": new SkillData(
+        "Treasure level up", true, (level) => {return Math.floor(20 + level * 0.8);}, 100, 
+        (level) => {return 50000 + Math.pow(level * 55, 1.6);}, (level) => {return 0;}, ["level_up_items"], 1
+      ),
+      "level_up_magnet": new SkillData(
+        "Magnet level up", true, (level) => {return 240 + level * 16;}, 100, 
+        (level) => {return 25000 + Math.pow(level * 50, 1.5);}, (level) => {return 0;}, ["level_up_items"], 1
+      ),
+      "level_up_rocket": new SkillData(
+        "Rocket level up", true, (level) => {return 100 + level * 4;}, 100, 
+        (level) => {return 30000 + Math.pow(level * 70, 1.5);}, (level) => {return 0;}, ["level_up_items"], 1
+      ),
+      "start_amount_stopwatch": new SkillData(
+        "Stopwatches at start", true, (level) => {return level;}, 2, 
+        (level) => {return 80000 + level * 60000;}, (level) => {return 12 + level * 6}, ["level_up_stopwatch"], 50
+      ),
+      "start_amount_star": new SkillData(
+        "Stars at start", true, (level) => {return level;}, 2,
+        (level) => {return 250000 + level * 166666;}, (level) => {return 45 + level * 22;}, ["level_up_star"], 50
+      ),
+      "start_amount_feather": new SkillData(
+        "Feathers at start", true, (level) => {return level;}, 2,
+        (level) => {return 100000 + level * 66666;}, (level) => {return 16 + level * 8;}, ["level_up_feather"], 50
+      ),
+      "start_amount_treasure": new SkillData(
+        "Treasures at start", true, (level) => {return level;}, 2,
+        (level) => {return 400000 + level * 266666;}, (level) => {return 50 + level * 25;}, ["level_up_treasure"], 50
+      ),
+      "start_amount_magnet": new SkillData(
+        "Magnets at start", true, (level) => {return level;}, 2,
+        (level) => {return 180000 + level * 120000;}, (level) => {return 32 + level * 16;}, ["level_up_magnet"], 50
+      ),
+      "start_amount_rocket": new SkillData(
+        "Rockets at start", true, (level) => {return level;}, 2,
+        (level) => {return 270000 + level * 180000;}, (level) => {return 39 + level * 19;}, ["level_up_rocket"], 50
+      ),
+      "item_spawn_frequency": new SkillData(
+        "Item spawn frequency", true, (level) => {return 300 - level * 20;}, 10, 
+        (level) => {return 12500 + Math.pow(level * 12, 3);}, (level) => {return 6 + Math.pow(level, 3.5);}, [
           "level_up_stopwatch", "level_up_star", "level_up_feather",
           "level_up_treasure", "level_up_magnet", "level_up_rocket"
-        ], 100
+        ], 200
       ),
-      "money_multiplier":       new SkillData("Money multiplier", true, 4, 100, 0, 3000, 0, 1700, ["unlock_skilltree"], 1),
-      "character_upgrades":     new SkillData("Character upgrades", false,1,  1, 0, 10000, 0, 0, ["unlock_skilltree"], 1),
-      "movement_speed":         new SkillData("Movement speed", true, 0.4, 10, 0, 42000, 0, 8000, ["character_upgrades"], 1),
-      "jump_height":            new SkillData("Jump height", true, 1, 5, 0, 44000, 0, 12000, ["character_upgrades"], 1),
-      "jumps":                  new SkillData("Jumps", true, 1, 3, 8, 25000, 8, 35000, ["character_upgrades"], 1),
-      "extra_life":             new SkillData("Extra life", true, 1, 1, 100, 1000000, 0, 0, ["Deaths"], 1000)
+      "money_multiplier": new SkillData(
+        "Money multiplier", true, (level) => {return 1 + level * 0.09;}, 100, 
+        (level) => {return 5000 + Math.pow(level * 10, 2);}, (level) => {return 0;}, ["unlock_skilltree"], 1
+      ),
+      "character_upgrades": new SkillData(
+        "Character upgrades", false, (level) => {return level;}, 1, (level) => {return 10000;}, 
+        (level) => {return 0;}, ["unlock_skilltree"], 1
+      ),
+      "movement_speed": new SkillData(
+        "Movement speed", true, (level) => {return 3 + level * 0.4;}, 10,
+        (level) => {return 17500 + Math.pow(level * 8, 2.5);}, (level) => {return 0;}, ["character_upgrades"], 1
+      ),
+      "jump_height": new SkillData(
+        "Jump height", true, (level) => {return -(9 + level);}, 5,
+        (level) => {return 22000 + Math.pow(level * 6, 3.5);}, (level) => {return 0;}, ["character_upgrades"], 1
+      ),
+      "jumps": new SkillData(
+        "Jumps", true, (level) => {return 2 + level;}, 3,
+        (level) => {return 100000 + level * 100000;}, (level) => {return 10 + level * 10;}, ["character_upgrades"], 1
+      ),
+      "extra_life": new SkillData(
+        "Extra life", true, (level) => {return level;}, 1, (level) => {return 10000000;}, 
+        (level) => {return 5000;}, ["Deaths"], 1000
+      )
     };
     this.accessories = new Map([
-      ["test", new ShopAccessory("test", "Beard", "Collectables_Beard1", 500, 10)],
-      ["test01", new ShopAccessory("test01", "Beard", "Collectables_Beard1", 0, 0)],
-      ["test02", new ShopAccessory("test02", "Hat", "Collectables_Hat1", 0, 0)],
-      ["test03", new ShopAccessory("test03", "Glasses", "Collectables_Glasses1", 0, 0)],
-      ["test04", new ShopAccessory("test04", "Beard", "Collectables_Beard1", 0, 0)],
-      ["test05", new ShopAccessory("test05", "Glasses", "Collectables_Glasses1", 0, 0)],
-      ["test06", new ShopAccessory("test06", "Hat", "Collectables_Hat1", 0, 0)],
-      ["test07", new ShopAccessory("test07", "Beard", "Collectables_Beard1", 0, 0)],
-      ["test08", new ShopAccessory("test08", "Beard", "Collectables_Beard1", 0, 0)],
-      ["test09", new ShopAccessory("test09", "Glasses", "Collectables_Glasses1", 0, 0)],
-      ["test10", new ShopAccessory("test10", "Beard", "Collectables_Beard1", 0, 0)],
-      ["test11", new ShopAccessory("test11", "Hat", "Collectables_Hat1", 0, 0)],
-      ["test12", new ShopAccessory("test12", "Beard", "Collectables_Beard1", 0, 0)],
-      ["test13", new ShopAccessory("test13", "Glasses", "Collectables_Glasses1", 0, 0)],
-      ["test14", new ShopAccessory("test14", "Beard", "Collectables_Beard1", 0, 0)],
-      ["test15", new ShopAccessory("test15", "Hat", "Collectables_Hat1", 0, 0)],
-      ["test16", new ShopAccessory("test16", "Beard", "Collectables_Beard1", 0, 0)],
-      ["test17", new ShopAccessory("test17", "Glasses", "Collectables_Glasses1", 0, 0)],
-      ["test18", new ShopAccessory("test18", "Glasses", "Collectables_Glasses1", 0, 0)],
-      ["test19", new ShopAccessory("test19", "Beard", "Collectables_Beard1", 0, 0)],
-      ["test20", new ShopAccessory("test20", "Hat", "Collectables_Hat1", 0, 0)],
-      ["test21", new ShopAccessory("test21", "Beard", "Collectables_Beard1", 0, 0)],
-      ["test22", new ShopAccessory("test22", "Glasses", "Collectables_Glasses1", 0, 0)],
-      ["test23", new ShopAccessory("test23", "Hat", "Collectables_Hat1", 0, 0)],
-      ["test24", new ShopAccessory("test24", "Beard", "Collectables_Beard1", 0, 0)],
-      ["test25", new ShopAccessory("test25", "Glasses", "Collectables_Glasses1", 0, 0)],
-      ["test26", new ShopAccessory("test26", "Hat", "Collectables_Hat1", 0, 0)],
-      ["test27", new ShopAccessory("test27", "Beard", "Collectables_Beard1", 0, 0)],
-      ["test28", new ShopAccessory("test28", "Beard", "Collectables_Beard1", 0, 0)],
-      ["test29", new ShopAccessory("test29", "Hat", "Collectables_Hat1", 0, 0)],
-      ["test30", new ShopAccessory("test30", "Glasses", "Collectables_Glasses1", 0, 0)],
-      ["test31", new ShopAccessory("test31", "Hat", "Collectables_Hat1", 0, 0)],
-      ["test32", new ShopAccessory("test32", "Hat", "Collectables_Hat1", 0, 0)],
-      ["test33", new ShopAccessory("test33", "Hat", "Collectables_Hat1", 0, 0)]
+      ["Fancy Beard", new ShopAccessory("Fancy Beard", "Beard", "Collectables_Beard1", 500, 0)],
+      ["Zylinder", new ShopAccessory("Zylinder", "Hat", "Collectables_Hat1", 400, 0)],
+      ["Sunglasses", new ShopAccessory("Sunglasses", "Glasses", "Collectables_Glasses1", 750, 0)],
+      ["Longjohn", new ShopAccessory("Longjohn", "Skin", "Player_Longjohn", 2000, 0)],
+      ["Disgusty", new ShopAccessory("Disgusty", "Skin", "Player_Disgusty", 8000, 0)],
+      ["Speedy", new ShopAccessory("Speedy", "Skin", "Player_Speedy", 15000, 0)],
+      ["Strooper", new ShopAccessory("Strooper", "Skin", "Player_Strooper", 30000, 0)],
+      ["Magician", new ShopAccessory("Magician", "Skin", "Player_Magician", 50000, 0)],
+      ["Afroman", new ShopAccessory("Afroman", "Skin", "Player_Afroman", 200000, 20)]
     ]);
 
     this.checkUnlocks();
@@ -83,7 +119,7 @@
 
     this.title = new CanvasText(this.gD.canvas.width / 2, 30, "Shop", "pageTitle");
 
-    this.tabs = ["Item_B_Questionmark", "Item_B_Questionmark"];
+    this.tabs = ["Icon_Skilltree", "Icon_Accessories"];
     this.tabs.map((icon, index) => {
       this.tabs[index] = new CanvasTab(
         this.gD.canvas.width / 2 - 310, 60, 620, 220, index, 2, icon, "standardTab"
@@ -109,7 +145,7 @@
         ], "shopDropdown"
       ),
       new ShopDropdownMenu(
-        this.gD.canvas.width / 2 - 33, 70, 200, 16, ["Hat", "Glasses", "Beard", "Only buyable"], "shopDropdown", true
+        this.gD.canvas.width / 2 - 33, 70, 200, 16, ["Hat", "Glasses", "Beard", "Skin", "Only buyable"], "shopDropdown", true
       )
     ];
     this.tabs[1].objects.push(this.dropdowns[0]);
@@ -141,16 +177,60 @@
   this.handleEvent = function(eventKey, addedValue = 1) {
       this.menu.handleEvent(eventKey, addedValue);
   };
+  this.getSaveData = function() {
+    let skillSaveData = {};
+    let accessorySaveData = {};
+    
+    for (let e in this.skillData) {
+      if (this.skillData.hasOwnProperty(e)) {
+        skillSaveData[e] = this.skillData[e].getSaveData();
+      }
+    }
+    for (let [key, value] of this.accessories) {
+      accessorySaveData[key] = this.accessories.get(key).getSaveData();
+    }
+    
+    return {
+      "skillData": skillSaveData,
+      "accessories": accessorySaveData,
+      "hype": this.hype,
+      "goldenShamrocks": this.goldenShamrocks
+    };
+  };
+  this.setSaveData = function(data) {
+    for (let e in this.skillData) {
+      if (this.skillData.hasOwnProperty(e)) {
+        this.skillData[e].setSaveData(data.skillData[e]);
+      }
+    }
+    
+    for (let e in data.accessories) {
+      if (data.accessories.hasOwnProperty(e)) {
+        this.accessories.get(e).setSaveData(data.accessories[e]);
+      }
+    }
+    this.hype = data.hype;
+    this.goldenShamrocks = data.goldenShamrocks;
+    this.accessoryWindow.setAccessories(this, this.dropdowns[1].currentOption);
+  };
+  this.addHype = function(amount) {
+    this.hype += amount;
+    this.handleEvent(Events.SET_OWNED_HYPE, this.hype);
+  };
   this.levelSkills = function(skill) {
     let skillData = this.skillData[skill.key];
     let {goldenShamrock, hype} = skillData.getCost();
 
-    if (this.goldenShamrocks >= goldenShamrock && this.hype >= hype && !skillData.maxed) {
+    if (this.goldenShamrocks >= goldenShamrock && this.hype >= hype && !skillData.maxed && skillData.unlocked) {
       this.goldenShamrocks -= goldenShamrock;
       this.hype -= hype;
       this.handleEvent(Events.MONEY_SPENT, hype);
       skillData.levelUp();
       this.checkUnlocks();
+      if (skill.key.startsWith("level") && skill.key !== "level_up_items") {
+        this.handleEvent(Events.LVL_ITEM);
+        this.handleEvent(Events.LVL_ITEM_MAX, skillData.currentLevel);
+      }
     }
   };
   this.buyAccessory = function(accessory) {
@@ -161,15 +241,19 @@
       switch (accessory.category) {
         case "Beard":
           this.handleEvent(Events.COLLECT_BEARD);
+          this.gD.collectables[accessory.spriteKey][0] = true;
           break;
         case "Hat":
           this.handleEvent(Events.COLLECT_HAT);
+          this.gD.collectables[accessory.spriteKey][0] = true;
           break;
         case "Glasses":
           this.handleEvent(Events.COLLECT_GLASSES);
+          this.gD.collectables[accessory.spriteKey][0] = true;
           break;
         case "Skin":
           this.handleEvent(Events.COLLECT_SKIN);
+          this.gD.player[accessory.spriteKey][0] = true;
           break;
         default:
           break;
@@ -247,7 +331,8 @@
           } else {
             this.updateSelection(this.selectedTabIndex, this.selectedRowIndex + 1, this.selectedColumnIndex);
           }
-        } else if (this.selectedRowIndex === Math.floor((this.accessoryWindow.accessories.length - this.selectedColumnIndex) / 11) + 1) {
+        } else if (this.selectedRowIndex === 
+                   Math.floor((this.accessoryWindow.accessories.length - this.selectedColumnIndex) / 11) + 1) {
           if (this.selectedColumnIndex !== 12) {
             if (this.selectedColumnIndex > 2) {
               this.updateSelection(this.selectedTabIndex, 0, 3);
@@ -770,22 +855,20 @@ function ShopMoneyDisplay(x, y, width, height, styleKey) {
   };
 }
 
-function SkillData(name, showValue, basePoints, maxValue, costGoldenShamrock, costHype, costUpgradeGoldenShamrock, costUpgradeMoney, unlockedBy, unlockedAt) {
+function SkillData(name, showValue, valueFunction, maxValue, costHypeFunction, costGSFunction, unlockedBy, unlockedAt) {
   this.name = name;
   this.showValue = showValue;
-  this.basePoints = basePoints;
+  this.valueFunction = valueFunction;
   this.maxValue = maxValue;
-  this.costGoldenShamrock = costGoldenShamrock;
-  this.costHype = costHype;
-  this.costUpgradeGoldenShamrock = costUpgradeGoldenShamrock;
-  this.costUpgradeMoney = costUpgradeMoney;
+  this.costHypeFunction = costHypeFunction;
+  this.costGSFunction = costGSFunction;
   this.unlockedBy = unlockedBy;
   this.unlockedAt = unlockedAt;
-  this.currentValue = 0;
+  this.currentLevel = 0;
   this.unlocked = false;
   this.maxed = false;
   this.getValue = function() {
-    return this.currentValue * this.basePoints;
+    return this.valueFunction(this.currentLevel);
   };
   this.checkUnlock = function(shop) {
     let levels = 0;
@@ -796,7 +879,7 @@ function SkillData(name, showValue, basePoints, maxValue, costGoldenShamrock, co
           levels = shop.menu.statistics.statistics.get("player_deaths").currentCount;
         }
       } else {
-        levels += shop.skillData[key].currentValue;
+        levels += shop.skillData[key].currentLevel;
       }
     }, this);
 
@@ -805,18 +888,24 @@ function SkillData(name, showValue, basePoints, maxValue, costGoldenShamrock, co
     }
   };
   this.levelUp = function() {
-    if (this.currentValue < this.maxValue && this.unlocked) {
-      this.currentValue++;
-      if (this.currentValue >= this.maxValue) {
+    if (this.currentLevel < this.maxValue && this.unlocked) {
+      this.currentLevel++;
+      if (this.currentLevel >= this.maxValue) {
         this.maxed = true;
       }
     }
   };
   this.getCost = function() {
     return {
-      goldenShamrock: this.costGoldenShamrock + this.costUpgradeGoldenShamrock * this.currentValue,
-      hype: this.costHype + this.costUpgradeMoney * this.currentValue
+      goldenShamrock: Math.floor(this.costGSFunction(this.currentLevel)),
+      hype: Math.floor(this.costHypeFunction(this.currentLevel))
     };
+  };
+  this.getSaveData = function() {
+    return [this.unlocked, this.maxed, this.currentLevel];
+  };
+  this.setSaveData = function(data) {
+    [this.unlocked, this.maxed, this.currentLevel] = data;
   };
 }
 
@@ -1101,9 +1190,9 @@ function ShopSkill(x, y, radius, key, spriteKey, styleKey) {
       }
       drawCanvasRectRound(newX - 30, newY + 5, 60, 16, 8, design.rectKey, gD);
       if (skillData.maxValue > 9) {
-        drawCanvasText(newX, newY + 14, addLeadingZero(skillData.currentValue) + "/" + skillData.maxValue, design.textKey, gD);
+        drawCanvasText(newX, newY + 14, addLeadingZero(skillData.currentLevel) + "/" + skillData.maxValue, design.textKey, gD);
       } else {
-        drawCanvasText(newX, newY + 14, skillData.currentValue + "/" + skillData.maxValue, design.textKey, gD);
+        drawCanvasText(newX, newY + 14, skillData.currentLevel + "/" + skillData.maxValue, design.textKey, gD);
       }
       drawCanvasRectRoundBorder(newX - 30, newY + 5, 60, 16, 8, design.borderKey.normal, gD);
     } else {
@@ -1209,6 +1298,12 @@ function ShopAccessory(name, category, spriteKey, costHype, costGoldenShamrock) 
   this.bought = false;
   this.buy = function() {
     this.bought = true;
+  };
+  this.getSaveData = function() {
+    return this.bought;
+  };
+  this.setSaveData = function(data) {
+    this.bought = data;
   };
 }
 
@@ -1429,8 +1524,8 @@ function ShopAccessoryWindow(x, y, width, height, styleKey) {
         design.rectKey.accessory.standard, gD
       );
       drawCanvasImage(
-        this.x + 22 - (spriteData.spriteWidth / 2) + (index % 11) * 50,
-        this.y + 47 - (spriteData.spriteHeight / 2) + Math.floor(index / 11) * 75 - shop.scrollHeight,
+        this.x + 22 - Math.floor(spriteData.spriteWidth / 2) + (index % 11) * 50,
+        this.y + 47 - Math.floor(spriteData.spriteHeight / 2) + Math.floor(index / 11) * 75 - shop.scrollHeight,
         accessory.spriteKey, gD
       );
       drawCanvasRectBorder(
@@ -1673,12 +1768,13 @@ function ShopAccessoryDetails(x, y, width, height, styleKey) {
       return;
     }
 
-    let {spriteWidth, spriteHeight} = getSpriteData(this.currentAccessory.spriteKey + "_B", gD);
+    let spriteKey = this.currentAccessory.spriteKey.split("_");
+    let {spriteWidth, spriteHeight} = getSpriteData(spriteKey[0] + "_B_" + spriteKey[1], gD);
 
     drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.background, gD);
     drawCanvasRect(this.x + 60, this.y + 10, 60, 60, design.rectKey.window, gD);
     drawCanvasImage(
-      this.x + (this.width - spriteWidth) / 2, this.y + 40 - spriteHeight / 2, this.currentAccessory.spriteKey + "_B", gD
+      this.x + (this.width - spriteWidth) / 2, this.y + 40 - spriteHeight / 2, spriteKey[0] + "_B_" + spriteKey[1], gD
     );
     drawCanvasRectBorder(this.x + 60, this.y + 10, 60, 60, design.borderKey, gD);
     drawCanvasText(this.x + this.width / 2, this.y + 85, this.currentAccessory.name, design.textKey.name, gD);

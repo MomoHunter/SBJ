@@ -9,7 +9,7 @@ function SaveLoad(menu, gD) {
     this.savestates = [];
     this.buttons = ["Save", "Main Menu", "Load"];
     this.scrollHeight = 0;
-    this.enterName = false;
+    this.chooseName = false;
     this.choosePicture = false;
     this.loaded = false;
 
@@ -37,11 +37,19 @@ function SaveLoad(menu, gD) {
 
     this.savestateDetails = new SLSavestateDetails(0, 0, this.gD.canvas.width, this.gD.canvas.height, "savestateDetails");
 
-    this.enterNameModal = new CanvasEnterNameModal(0, 0, this.gD.canvas.width, this.gD.canvas.height, "enterNameModal");
-    this.choosePictureModal = new CanvasChoosePictureModal(0, 0, this.gD.canvas.width, this.gD.canvas.height, "choosePictureModal");
+    this.enterNameModal = new CanvasEnterNameModal(
+      this.gD.canvas.width / 2 - 207, this.gD.canvas.height / 2 - 45, 414, 90, "enterNameModal"
+    );
+    this.enterNameModal.init();
+    this.choosePictureModal = new CanvasChoosePictureModal(
+      this.gD.canvas.width / 2 - 227, this.gD.canvas.height / 2 - 117, 455, 235, "choosePictureModal"
+    );
     this.choosePictureModal.init(this.gD);
 
     this.updateSelection(-1, 1, false);
+  };
+  this.handleEvent = function(eventKey, addedValue = 1) {
+    this.menu.handleEvent(eventKey, addedValue);
   };
   /**
    * loads the next savestate-file that starts with 'Savestate' and the number from this.filesLoaded
@@ -105,16 +113,28 @@ function SaveLoad(menu, gD) {
     try {
       this.gD.save = JSON.parse(b64DecodeUnicode(this.savestates[this.selectedSavestate].savestate.data));
       if (this.gD.save.keyBindings) {
-        this.menu.controls.keyBindings = new Map(this.gD.save.keyBindings);
+        this.menu.controls.setSaveData(this.gD.save.keyBindings);
       }
       if (this.gD.save.achievements) {
         this.menu.achievements.setSaveData(this.gD.save.achievements);
       }
       if (this.gD.save.highscores) {
-        this.menu.highscores.highscores = this.gD.save.highscores;
+        this.menu.highscores.setSaveData(this.gD.save.highscores);
       }
       if (this.gD.save.statistics) {
-        this.menu.statistics.statistics = new Map(this.gD.save.statistics);
+        this.menu.statistics.setSaveData(this.gD.save.statistics);
+      }
+      if (this.gD.save.shop) {
+        this.menu.shop.setSaveData(this.gD.save.shop);
+      }
+      if (this.gD.save.gD) {
+        this.gD.setSaveData(this.gD.save.gD);
+      }
+      if (this.gD.save.stages) {
+        this.gD.stages = this.gD.save.stages;
+      }
+      if (this.gD.save.player) {
+        this.gD.player = this.gD.save.player;
       }
       this.infoText.text = "Erfolgreich geladen!";
       console.log("Erfolgreich geladen!");
@@ -145,6 +165,7 @@ function SaveLoad(menu, gD) {
    */
   this.createSavestate = function(name, spriteKey) {
     let data = [];
+    this.handleEvent(Events.CREATE_SAVESTATE);
     this.refreshSavedata();
     data.push("this.name='" + name + "';");
     data.push("this.file='Savestate" + this.filesLoaded + ".txt';");
@@ -172,9 +193,11 @@ function SaveLoad(menu, gD) {
    */
   this.refreshSavedata = function() {
     this.gD.save.achievements = this.menu.achievements.getSaveData();
-    this.gD.save.keyBindings = Array.from(this.menu.controls.keyBindings.entries());
-    this.gD.save.highscores = this.menu.highscores.highscores;
-    this.gD.save.statistics = Array.from(this.menu.statistics.statistics.entries());
+    this.gD.save.keyBindings = this.menu.controls.getSaveData();
+    this.gD.save.highscores = this.menu.highscores.getSaveData();
+    this.gD.save.statistics = this.menu.statistics.getSaveData();
+    this.gD.save.shop = this.menu.shop.getSaveData();
+    this.gD.save.gD = this.gD.getSaveData();
   };
   /**
    * checks if a key is pressed and executes commands
@@ -193,34 +216,61 @@ function SaveLoad(menu, gD) {
       } else if (this.choosePicture) {
         this.choosePictureModal.updateKeyPresses(keyB, key);
         if (keyB.get("Menu_Confirm")[3].includes(key)) {
-          let button = this.choosePictureModal.getSelectedButton();
-          if (this.enterNameModal.text === "") {
-            let date = new Date();
-            this.createSavestate(date.toLocaleString('de-DE', {weekday:'short'}) + " " + date.toLocaleString('de-DE'), button.spriteKey);
+          if (this.choosePictureModal.getSelectedButton() !== null) {
+            this.choosePictureModal.updateMark();
+          } else if (this.choosePictureModal.selectedColumnIndex === 0) {
+            let key = this.choosePictureModal.getMarkedSpriteKey();
+            if (key !== "") {
+              if (this.enterNameModal.text === "") {
+                let date = new Date();
+                this.createSavestate(
+                  date.toLocaleString('de-DE', {weekday: 'short'}) + " " + date.toLocaleString('de-DE'), key
+                );
+              } else {
+                this.createSavestate(this.enterNameModal.text, key);
+              }
+              this.chooseName = false;
+              this.choosePicture = false;
+              this.gD.currentPage = this.menu;
+            }
           } else {
-            this.createSavestate(this.enterNameModal.text, button.spriteKey);
+            this.choosePicture = false;
           }
-          this.enterName = false;
-          this.choosePicture = false;
-          this.gD.currentPage = this.menu;
         } else if (keyB.get("Menu_Abort")[3].includes(key)) {
-          this.enterName = false;
+          this.chooseName = false;
           this.choosePicture = false;
         }
-      } else if (this.enterName) {
-        if (keyB.get("NameModal_NavRight")[3].includes(key)) {
-          this.enterNameModal.moveCursor(1);
+      } else if (this.chooseName) {
+        if (keyB.get("NameModal_NavDown")[3].includes(key)) {
+          this.enterNameModal.select(this.enterNameModal.selected === 0 ? 1 : 0);
+        } else if (keyB.get("NameModal_NavUp")[3].includes(key)) {
+          this.enterNameModal.select(this.enterNameModal.selected === 0 ? 1 : 0);
+        } else if (keyB.get("NameModal_NavRight")[3].includes(key)) {
+          if (this.enterNameModal.selected === 0) {
+            this.enterNameModal.moveCursor(1);
+          } else {
+            this.enterNameModal.select((this.enterNameModal.selected) % 2 + 1);
+          }
         } else if (keyB.get("NameModal_NavLeft")[3].includes(key)) {
-          this.enterNameModal.moveCursor(-1);
-        } else if (keyB.get("NameModal_DeleteLeft")[3].includes(key)) {
+          if (this.enterNameModal.selected === 0) {
+            this.enterNameModal.moveCursor(-1);
+          } else {
+            this.enterNameModal.select((this.enterNameModal.selected) % 2 + 1);
+          }
+        } else if (keyB.get("NameModal_DeleteLeft")[3].includes(key) && this.enterNameModal.selected === 0) {
           this.enterNameModal.deleteCharacter(-1);
-        } else if (keyB.get("NameModal_DeleteRight")[3].includes(key)) {
+        } else if (keyB.get("NameModal_DeleteRight")[3].includes(key) && this.enterNameModal.selected === 0) {
           this.enterNameModal.deleteCharacter(1);
         } else if (keyB.get("NameModal_Confirm")[3].includes(key)) {
-          this.choosePicture = true;
+          if (this.enterNameModal.selected === 1) {
+            this.choosePicture = true;
+          } else if (this.enterNameModal.selected === 2) {
+            this.chooseName = false;
+          }
+          this.enterNameModal.select(0);
         } else if (keyB.get("NameModal_Abort")[3].includes(key)) {
-          this.enterName = false;
-        } else {
+          this.chooseName = false;
+        } else if (this.enterNameModal.selected === 0) {
           let event = this.gD.events[index];
           if (event.key.length === 1) {
             this.enterNameModal.addCharacter(event.key);
@@ -260,8 +310,9 @@ function SaveLoad(menu, gD) {
         } else {
           switch (columnIndex) {
             case 0:
-              this.enterName = true;
+              this.chooseName = true;
               this.enterNameModal.text = "";
+              this.choosePictureModal.markedButton = null;
               break;
             case 1:
               this.gD.currentPage = this.menu;
@@ -287,12 +338,25 @@ function SaveLoad(menu, gD) {
    * checks, if the mouse was moved, what the mouse hit 
    */
   this.updateMouseMoves = function() {
-    if (this.loaded || (this.enterName && !this.choosePicture)) {
+    if (this.loaded) {
       return;
     }
 
     if (this.choosePicture) {
       this.choosePictureModal.updateMouseMoves(this.gD);
+    } else if (this.chooseName) {
+      if (this.gD.mousePos.x >= this.enterNameModal.x + 5 && 
+          this.gD.mousePos.x <= this.enterNameModal.x + this.enterNameModal.width - 5 &&
+          this.gD.mousePos.y >= this.enterNameModal.y + 30 &&
+          this.gD.mousePos.y <= this.enterNameModal.y + 50) {
+        this.enterNameModal.select(0);
+      }
+      this.enterNameModal.buttons.map((button, index) => {
+        if (this.gD.mousePos.x >= button.x && this.gD.mousePos.x <= button.x + button.width &&
+            this.gD.mousePos.y >= button.y && this.gD.mousePos.y <= button.y + button.height) {
+          this.enterNameModal.select(index + 1);
+        }
+      }, this);
     } else {
       let savestateSelected = false;
       this.savestates.map((state, index) => {
@@ -351,26 +415,55 @@ function SaveLoad(menu, gD) {
           clickPos.x <= this.choosePictureModal.innerX + this.choosePictureModal.innerWidth &&
           clickPos.y >= this.choosePictureModal.innerY &&
           clickPos.y <= this.choosePictureModal.innerY + this.choosePictureModal.innerHeight) {
-        let button = this.choosePictureModal.getSelectedButton();
-        if (this.enterNameModal.text === "") {
-          let date = new Date();
-          this.createSavestate(
-            date.toLocaleString('de-DE', {weekday: 'short'}) + " " + date.toLocaleString('de-DE'),
-            button.spriteKey
-          );
-        } else {
-          this.createSavestate(this.enterNameModal.text, button.spriteKey);
+        this.choosePictureModal.updateMark();
+      }
+      this.choosePictureModal.buttons.map((button, index) => {
+        if (clickPos.x >= button.x && clickPos.x <= button.x + button.width &&
+            clickPos.y >= button.y && clickPos.y <= button.y + button.height) {
+          if (index === 0) {
+            let key = this.choosePictureModal.getMarkedSpriteKey();
+            if (key !== "") {
+              if (this.enterNameModal.text === "") {
+                let date = new Date();
+                this.createSavestate(
+                  date.toLocaleString('de-DE', {weekday: 'short'}) + " " + date.toLocaleString('de-DE'), key
+                );
+              } else {
+                this.createSavestate(this.enterNameModal.text, key);
+              }
+              this.chooseName = false;
+              this.choosePicture = false;
+              this.choosePictureModal.markedButton = null;
+              this.gD.currentPage = this.menu;
+            }
+          } else {
+            this.choosePicture = false;
+          }
         }
+      }, this);
+      if (!(clickPos.x >= this.choosePictureModal.x &&
+            clickPos.x <= this.choosePictureModal.x + this.choosePictureModal.width &&
+            clickPos.y >= this.choosePictureModal.y &&
+            clickPos.y <= this.choosePictureModal.y + this.choosePictureModal.height)) {
+        this.choosePicture = false;
       }
-      this.enterName = false;
-      this.choosePicture = false;
-    } else if (this.enterName) {
-      if (!(clickPos.x >= this.enterNameModal.innerX &&
-          clickPos.x <= this.enterNameModal.innerX + this.enterNameModal.innerWidth &&
-          clickPos.y >= this.enterNameModal.innerY &&
-          clickPos.y <= this.enterNameModal.innerY + this.enterNameModal.innerHeight)) {
-        this.enterName = false;
+    } else if (this.chooseName) {
+      if (!(clickPos.x >= this.enterNameModal.x &&
+            clickPos.x <= this.enterNameModal.x + this.enterNameModal.width &&
+            clickPos.y >= this.enterNameModal.y &&
+            clickPos.y <= this.enterNameModal.y + this.enterNameModal.height)) {
+        this.chooseName = false;
       }
+      this.enterNameModal.buttons.map((button, index) => {
+        if (clickPos.x >= button.x && clickPos.x <= button.x + button.width &&
+            clickPos.y >= button.y && clickPos.y <= button.y + button.height) {
+          if (index === 0) {
+            this.choosePicture = true;
+          } else {
+            this.chooseName = false;
+          }
+        }
+      }, this);
     } else if (this.loaded) {
       let button = this.backButton;
       if (clickPos.x >= button.x && clickPos.x <= button.x + button.width &&
@@ -394,8 +487,9 @@ function SaveLoad(menu, gD) {
             clickPos.y >= button.y && clickPos.y <= button.y + button.height) {
           switch (index) {
             case 0:
-              this.enterName = true;
+              this.chooseName = true;
               this.enterNameModal.text = "";
+              this.choosePictureModal.markedButton = null;
               break;
             case 1:
               this.gD.currentPage = this.menu;
@@ -420,20 +514,35 @@ function SaveLoad(menu, gD) {
    */
   this.updateWheelMoves = function() {
     let wheelMove = this.gD.wheelMovements.pop();
-    if (this.loaded || this.enterName || this.choosePicture) {
+    if (this.loaded || (this.chooseName && !this.choosePicture)) {
       return;
     }
-
-    if (wheelMove < 0) {
-      this.vScroll(Math.max(
-        (this.scrollHeight / 55) - 1, 
-        0
-      ));
-    } else if (wheelMove > 0) {
-      this.vScroll(Math.min(
-        (this.scrollHeight / 55) + 1, 
-        (this.savestates[this.savestates.length - 1].y - 225) / 55
-      ));
+    
+    if (this.choosePicture) {
+      if (wheelMove < 0) {
+        this.choosePictureModal.vScroll(Math.max(
+          (this.choosePictureModal.scrollHeight / (this.choosePictureModal.buttonSize / 2)) - 1, 
+          0
+        ));
+      } else if (wheelMove > 0) {
+        let pB = this.choosePictureModal.pictureButtons;
+        this.choosePictureModal.vScroll(Math.min(
+          (this.choosePictureModal.scrollHeight / (this.choosePictureModal.buttonSize / 2)) + 1, 
+          (pB[pB.length - 1][pB[pB.length - 1].length - 1].y - 198) / (this.choosePictureModal.buttonSize / 2)
+        ));
+      }
+    } else {
+      if (wheelMove < 0) {
+        this.vScroll(Math.max(
+          (this.scrollHeight / 55) - 1, 
+          0
+        ));
+      } else if (wheelMove > 0) {
+        this.vScroll(Math.min(
+          (this.scrollHeight / 55) + 1, 
+          (this.savestates[this.savestates.length - 1].y - 225) / 55
+        ));
+      }
     }
   };
   /**
@@ -442,6 +551,8 @@ function SaveLoad(menu, gD) {
   this.update = function() {
     if (this.choosePicture) {
       this.choosePictureModal.update();
+    } else if(this.chooseName) {
+      this.enterNameModal.update();
     } else {
       this.buttons.map(button => {
         button.update();
@@ -482,7 +593,7 @@ function SaveLoad(menu, gD) {
       this.refreshButton.draw(this.gD);
       this.savestateDetails.draw(this.gD);
 
-      if (this.enterName) {
+      if (this.chooseName) {
         this.enterNameModal.draw(this.gD);
       }
       if (this.choosePicture) {
@@ -663,7 +774,7 @@ function SLSavestate(x, y, width, height, styleKey, savestate) {
     );
     drawCanvasText(this.x + 60, this.y + 9 - saveLoad.scrollHeight, "Name: " + this.savestate.name, design.textKey.text, gD);
     drawCanvasText(this.x + 60, this.y + 21 - saveLoad.scrollHeight, "Date: " + date, design.textKey.text, gD);
-    drawCanvasText(this.x + 60, this.y + 34 - saveLoad.scrollHeight, "Datei: " + this.savestate.file, design.textKey.text, gD);
+    drawCanvasText(this.x + 60, this.y + 34 - saveLoad.scrollHeight, "File: " + this.savestate.file, design.textKey.text, gD);
     drawCanvasText(this.x + 60, this.y + 46 - saveLoad.scrollHeight, "Version: " + this.savestate.version, design.textKey.text, gD);
     drawCanvasImage(this.x + this.width - info.spriteWidth - (20 - info.spriteWidth) / 2, this.y + (20 - info.spriteHeight) / 2 - saveLoad.scrollHeight, "Icon_Info", gD);
     drawCanvasLine(this.x + 55, this.y - saveLoad.scrollHeight, design.borderKey, gD, this.x + 55, this.y + this.height - saveLoad.scrollHeight);

@@ -13,9 +13,14 @@ function Highscores(menu, gD) {
 
     this.headline = new HighscoreHeadline(this.gD.canvas.width / 2 - 310, 60, 620, 20, "Highscores", "highscoresHeadline");
 
-    this.highscoreDetails = new HighscoreDetails(0, 0, this.gD.canvas.width, this.gD.canvas.height, "highscoresDetails");
+    this.highscoreDetails = new HighscoreDetails(
+      0, 0, this.gD.canvas.width, this.gD.canvas.height, "highscoresDetails"
+    );
 
-    this.enterNameModal = new CanvasEnterNameModal(0, 0, this.gD.canvas.width, this.gD.canvas.height, "enterNameModal");
+    this.enterNameModal = new CanvasEnterNameModal(
+      this.gD.canvas.width / 2 - 207, this.gD.canvas.height / 2 - 45, 414, 90, "enterNameModal"
+    );
+    this.enterNameModal.init();
 
     this.scrollBar = new CanvasScrollBar(this.gD.canvas.width / 2 + 320, 80, 200, 20, this.highscores.length, "scrollBarStandard");
 
@@ -24,6 +29,13 @@ function Highscores(menu, gD) {
     );
 
     this.updateSelection(-1, 0, false);
+  };
+  this.getSaveData = function() {
+    return this.highscores.map(highscore => highscore.getSaveData());
+  };
+  this.setSaveData = function(data) {
+    this.highscores = [];
+    data.map(highscore => this.addHighscore(highscore), this);
   };
   /**
    * adds a new highscore to the list and cuts at 100 highscores
@@ -78,19 +90,36 @@ function Highscores(menu, gD) {
       let columnIndex = this.selectedColumnIndex;
 
       if (this.chooseName) {
-        if (keyB.get("NameModal_NavRight")[3].includes(key)) {
-          this.enterNameModal.moveCursor(1);
+        if (keyB.get("NameModal_NavDown")[3].includes(key)) {
+          this.enterNameModal.select(this.enterNameModal.selected === 0 ? 1 : 0);
+        } else if (keyB.get("NameModal_NavUp")[3].includes(key)) {
+          this.enterNameModal.select(this.enterNameModal.selected === 0 ? 1 : 0);
+        } else if (keyB.get("NameModal_NavRight")[3].includes(key)) {
+          if (this.enterNameModal.selected === 0) {
+            this.enterNameModal.moveCursor(1);
+          } else {
+            this.enterNameModal.select((this.enterNameModal.selected) % 2 + 1);
+          }
         } else if (keyB.get("NameModal_NavLeft")[3].includes(key)) {
-          this.enterNameModal.moveCursor(-1);
-        } else if (keyB.get("NameModal_DeleteLeft")[3].includes(key)) {
+          if (this.enterNameModal.selected === 0) {
+            this.enterNameModal.moveCursor(-1);
+          } else {
+            this.enterNameModal.select((this.enterNameModal.selected) % 2 + 1);
+          }
+        } else if (keyB.get("NameModal_DeleteLeft")[3].includes(key) && this.enterNameModal.selected === 0) {
           this.enterNameModal.deleteCharacter(-1);
-        } else if (keyB.get("NameModal_DeleteRight")[3].includes(key)) {
+        } else if (keyB.get("NameModal_DeleteRight")[3].includes(key) && this.enterNameModal.selected === 0) {
           this.enterNameModal.deleteCharacter(1);
         } else if (keyB.get("NameModal_Confirm")[3].includes(key)) {
-          this.setNewName();
+          if (this.enterNameModal.selected === 1) {
+            this.setNewName;
+          } else if (this.enterNameModal.selected === 2) {
+            this.chooseName = false;
+          }
+          this.enterNameModal.select(0);
         } else if (keyB.get("NameModal_Abort")[3].includes(key)) {
           this.chooseName = false;
-        } else {
+        } else if (this.enterNameModal.selected === 0) {
           let event = this.gD.events[index];
           if (event.key.length === 1) {
             this.enterNameModal.addCharacter(event.key);
@@ -145,30 +174,42 @@ function Highscores(menu, gD) {
    */
   this.updateMouseMoves = function() {
     if (this.chooseName) {
-      return;
-    }
-
-    let highscoreSelected = false;
-    this.highscores.map((entry, index) => {
-      let realHeight = entry.y - this.scrollHeight;
-      if (this.gD.mousePos.x >= entry.x && this.gD.mousePos.x <= entry.x + entry.width &&
-          this.gD.mousePos.y >= realHeight && this.gD.mousePos.y <= realHeight + entry.height) {
-        if (realHeight >= 80 && realHeight < 280) {
-          this.updateSelection(index, this.selectedColumnIndex, false);
-          if (this.gD.mousePos.x >= entry.x + entry.width - 20 && this.gD.mousePos.x <= entry.x + entry.width) {
-            this.highscoreDetails.setVisible();
-            highscoreSelected = true;
+      if (this.gD.mousePos.x >= this.enterNameModal.x + 5 && 
+          this.gD.mousePos.x <= this.enterNameModal.x + this.enterNameModal.width - 5 &&
+          this.gD.mousePos.y >= this.enterNameModal.y + 30 &&
+          this.gD.mousePos.y <= this.enterNameModal.y + 50) {
+        this.enterNameModal.select(0);
+      }
+      this.enterNameModal.buttons.map((button, index) => {
+        if (this.gD.mousePos.x >= button.x && this.gD.mousePos.x <= button.x + button.width &&
+            this.gD.mousePos.y >= button.y && this.gD.mousePos.y <= button.y + button.height) {
+          this.enterNameModal.select(index + 1);
+        }
+      }, this);
+    } else {
+      let highscoreSelected = false;
+      
+      this.highscores.map((entry, index) => {
+        let realHeight = entry.y - this.scrollHeight;
+        if (this.gD.mousePos.x >= entry.x && this.gD.mousePos.x <= entry.x + entry.width &&
+            this.gD.mousePos.y >= realHeight && this.gD.mousePos.y <= realHeight + entry.height) {
+          if (realHeight >= 80 && realHeight < 280) {
+            this.updateSelection(index, this.selectedColumnIndex, false);
+            if (this.gD.mousePos.x >= entry.x + entry.width - 20 && this.gD.mousePos.x <= entry.x + entry.width) {
+              this.highscoreDetails.setVisible();
+              highscoreSelected = true;
+            }
           }
         }
+      }, this);
+      if (!highscoreSelected) {
+        this.highscoreDetails.setInvisible();
       }
-    }, this);
-    if (!highscoreSelected) {
-      this.highscoreDetails.setInvisible();
-    }
 
-    if (this.gD.mousePos.x >= this.backToMenu.x && this.gD.mousePos.x <= this.backToMenu.x + this.backToMenu.width &&
-        this.gD.mousePos.y >= this.backToMenu.y && this.gD.mousePos.y <= this.backToMenu.y + this.backToMenu.height) {
-      this.updateSelection(-1, this.selectedColumnIndex, false);
+      if (this.gD.mousePos.x >= this.backToMenu.x && this.gD.mousePos.x <= this.backToMenu.x + this.backToMenu.width &&
+          this.gD.mousePos.y >= this.backToMenu.y && this.gD.mousePos.y <= this.backToMenu.y + this.backToMenu.height) {
+        this.updateSelection(-1, this.selectedColumnIndex, false);
+      }
     }
   };
   /**
@@ -181,10 +222,22 @@ function Highscores(menu, gD) {
     }
     
     if (this.chooseName) {
-      if (!(clickPos.x >= this.enterNameModal.innerX && clickPos.x <= this.enterNameModal.innerX + this.enterNameModal.innerWidth &&
-            clickPos.y >= this.enterNameModal.innerY && clickPos.y <= this.enterNameModal.innerY + this.enterNameModal.innerHeight)) {
+      if (!(clickPos.x >= this.enterNameModal.x &&
+            clickPos.x <= this.enterNameModal.x + this.enterNameModal.width &&
+            clickPos.y >= this.enterNameModal.y &&
+            clickPos.y <= this.enterNameModal.y + this.enterNameModal.height)) {
         this.chooseName = false;
       }
+      this.enterNameModal.buttons.map((button, index) => {
+        if (clickPos.x >= button.x && clickPos.x <= button.x + button.width &&
+            clickPos.y >= button.y && clickPos.y <= button.y + button.height) {
+          if (index === 0) {
+            this.setNewName();
+          } else {
+            this.chooseName = false;
+          }
+        }
+      }, this);
     } else {
       this.highscores.map((entry, index) => {
         let realHeight = entry.y - this.scrollHeight;
@@ -232,6 +285,8 @@ function Highscores(menu, gD) {
     this.highscores.map(entry => {
       entry.update();
     }, this);
+    
+    this.enterNameModal.update();
     
     this.menu.lightUpdate();
   };
@@ -457,6 +512,9 @@ function HighscoreEntry(x, y, width, height, highscore, place, styleKey) {
     );
     drawCanvasRectBorder(this.x, this.y - highscores.scrollHeight, this.width, this.height, design.borderKey, gD);
   };
+  this.getSaveData = function() {
+    return this.highscore;
+  };
 }
 
 /**
@@ -493,13 +551,20 @@ function HighscoreDetails(x, y, width, height, styleKey) {
    * @param {GlobalDict} gD the global dictionary
    */
   this.draw = function(gD) {
-    let design = gD.design.elements[this.styleKey];
     if (this.currentHighscore === null || !this.visible) {
       return;
     }
+    
+    let design = null;
+    design = gD.design.elements[this.styleKey];
 
     drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.modal, gD);
-    drawCanvasRect(this.x + 250, this.y + 85, 500, 180, design.rectKey.background, gD);
+    drawCanvasRect(
+      this.x + 250, this.y + 85, 500, 180, 
+      design.rectKey[this.currentHighscore.stage] ? design.rectKey[this.currentHighscore.stage] : 
+        design.rectKey.background, 
+      gD
+    );
 
     drawCanvasText(this.x + 500, this.y + 95, this.currentHighscore.name, design.textKey.headline, gD);
     drawCanvasText(this.x + 256, this.y + 85 + 30, "Distance: " + this.currentHighscore.distance + "m", design.textKey.text, gD);
