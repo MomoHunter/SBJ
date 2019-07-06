@@ -6,7 +6,7 @@
     this.backgroundMusic.src = "music/shop.mp3";
     this.backgroundMusic.loop = true;
     this.backgroundMusic.volume = 0.2;
-    this.hype = 100000;
+    this.hype = 1000000000;
     this.goldenShamrocks = 24;
     this.movingTree = false;
     this.movingMinimap = false;
@@ -710,7 +710,7 @@
   };
   this.updateWheelMoves = function() {
     let wheelMove = this.gD.wheelMovements.pop();
-    if (!wheelMove) {
+    if (!wheelMove || this.accessoryWindow.accessories.length < 23) {
       return;
     }
     

@@ -69,7 +69,7 @@ function updateStage2(game, stage) {
   if (stage.planeSpawnCounter <= 0) {
     addPlane(stage, game.gD);
   }
-  if (stage.planeObjects[0] != undefined && stage.planeObjects[0].x + stage.planeObjects[0].width < 0) {
+  if (stage.planeObjects[0] !== undefined && stage.planeObjects[0].x + stage.planeObjects[0].width < 0) {
     stage.planeObjects.shift();
   }
 

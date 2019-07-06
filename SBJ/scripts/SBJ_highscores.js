@@ -111,8 +111,8 @@ function Highscores(menu, gD) {
         } else if (keyB.get("NameModal_DeleteRight")[3].includes(key) && this.enterNameModal.selected === 0) {
           this.enterNameModal.deleteCharacter(1);
         } else if (keyB.get("NameModal_Confirm")[3].includes(key)) {
-          if (this.enterNameModal.selected === 1) {
-            this.setNewName;
+          if (this.enterNameModal.selected === 1 || this.enterNameModal.selected === 0) {
+            this.setNewName();
           } else if (this.enterNameModal.selected === 2) {
             this.chooseName = false;
           }
@@ -260,7 +260,7 @@ function Highscores(menu, gD) {
    */
   this.updateWheelMoves = function() {
     let wheelMove = this.gD.wheelMovements.pop();
-    if (!wheelMove || this.highscores.length === 0) {
+    if (!wheelMove || this.highscores.length < 11) {
       return;
     }
 

@@ -44,8 +44,8 @@ function Menu(gD) {
 
     this.playNavigationGrid = [
       [{ button: "Singleplayer", action: (gD) => { gD.currentPage = this.selectionScreenSP; this.showPlay = false } }],
-      [{ button: "Local MP",     action: (gD) => { gD.currentPage = this.selectionScreenLMP; this.showPlay = false } }],
-      [{ button: "Online MP",    action: (gD) => { gD.currentPage = this.selectionScreenOMP; this.showPlay = false } }],
+      [{ button: "Local MP",     action: (gD) => { /*gD.currentPage = this.selectionScreenLMP;*/ this.showPlay = false } }],
+      [{ button: "Online MP",    action: (gD) => { /*gD.currentPage = this.selectionScreenOMP;*/ this.showPlay = false } }],
       [{ button: "Back",         action: (gD) => { this.showPlay = false } }]
     ];
 
@@ -57,9 +57,9 @@ function Menu(gD) {
       [{ button: "Back",         action: (gD) => { this.showExtras = false } }]
     ];
 
-    var actionToDo;
+    let actionToDo;
     if (window.location.hash) {
-      var hashLocation = decodeURIComponent(window.location.hash.substring(1)).toLowerCase(); // remove leading #
+      let hashLocation = decodeURIComponent(window.location.hash.substring(1)).toLowerCase(); // remove leading #
       [...this.mainNavigationGrid, ...this.extraNavigationGrid, ...this.playNavigationGrid].map(dataRow => {
         dataRow.map(data => {
           if (data.button.toLowerCase() === hashLocation) {

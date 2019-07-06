@@ -7,13 +7,34 @@ function Stage1(game, gD) {
   this.difficulty = 20;
   this.gravity = 20.25;
   this.init = function() {
+    this.fireballs = [];
     this.wall = new Background(0, 1000, 350, "img/Festung_Wall.png");
-    this.lava = new AnimatedBackground(game.gD.canvas.height - 25, 1000, 100, "img/Festung_Lava.png", 4, 18);
+    this.lava = new AnimatedBackground(this.gD.canvas.height - 25, 1000, 100, "img/Festung_Lava.png", 4, 18);
+  };
+  this.addFireball = function() {
+    let random = Math.random();
+    if (random < 0.15) {
+      let {spriteWidth, spriteHeight} = getSpriteData("Enemy_Fireball", this.gD);
+      this.fireballs.push(new Stage1Fireball(
+        this.game.distance + this.gD.canvas.width + randomBetween(0, 300),
+        100, spriteWidth, spriteHeight, "Enemy_Fireball"
+      ));
+    }
   };
   this.update = function() {
-    
+    this.fireballs.map(fireball => {
+      fireball.update(this.gD);
+      this.game.player.collect(game, fireball);
+    }, this);
+
+    if (this.gD.frameNo % 50 === 0 && this.game.currentLevel >= 2) {
+      this.addFireball();
+    }
   };
   this.drawForeground = function() {
+    this.fireballs.map(fireball => {
+      fireball.draw(this.game, this.gD);
+    }, this);
     this.lava.draw(this.game, this.gD);
   };
   this.drawBackground = function() {
@@ -21,20 +42,17 @@ function Stage1(game, gD) {
   };
 }
 
-function Stage1Fireball(x, y, width, height) {
+function Stage1Fireball(x, y, width, height, spriteKey) {
   this.x = x;
   this.y = y;
   this.width = width;
   this.height = height;
+  this.spriteKey = spriteKey;
   this.gravity = 0.2;
   this.velocity = 0;
   this.jumpCounter = 0;
   this.outsideCanvas = false;
-  this.draw = function(game, gD) {
-    gD.context.drawImage(gD.spritesheet, gD.spriteDict["Fireball"][0], gD.spriteDict["Fireball"][1], gD.spriteDict["Fireball"][2], gD.spriteDict["Fireball"][3],
-      this.x, this.y, gD.spriteDict["Fireball"][2], gD.spriteDict["Fireball"][3]);
-  };
-  this.newPos = function(game, gD) {
+  this.update = function (gD) {
     if (this.y > gD.canvas.height && !this.outsideCanvas) {
       this.y = gD.canvas.height;
       this.outsideCanvas = true;
@@ -51,8 +69,11 @@ function Stage1Fireball(x, y, width, height) {
       this.velocity += this.gravity;
       this.y += this.velocity;
     }
+  };
+  this.draw = function(game, gD) {
+    let canvasX = this.x - game.distance;
 
-    this.x += game.globalSpeed;
+    drawCanvasImage(canvasX, this.y, this.spriteKey, gD);
   };
 }
 

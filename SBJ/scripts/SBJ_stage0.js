@@ -12,10 +12,10 @@ function Stage0(game, gD) {
   this.update = function() {
 
   };
-  this.drawForeground = function(ghostFactor) {
+  this.drawForeground = function() {
 
   };
-  this.drawBackground = function(ghostFactor) {
+  this.drawBackground = function() {
 
   };
 }

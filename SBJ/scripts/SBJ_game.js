@@ -130,9 +130,6 @@ function Game(menu, gD) {
       }, this);
     }
   };
-  this.getFloorWidth = function(level) {
-    return Math.max(50, 300 - (level - 1) * 15);
-  };
   this.addMoney = function() {
     let total = 0;
     let random = 0;
@@ -189,15 +186,37 @@ function Game(menu, gD) {
       }
     }
   };
-  this.getRankSpriteKey = function(player) {
-    let ranks = ["Special_Rank_C", "Special_Rank_B", "Special_Rank_A", "Special_Rank_S", "Special_Rank_SS", "Special_Rank_SSS"];
+  this.getMatchPoints = function(player) {
     let distancePoints = player.inventory.getValue("distance") / this.getLevelStart(20) * 5;
     let itemPoints = player.inventory.getItemsCollected() / 100 * 5;
     let moneyPoints = player.inventory.getTotalHype(this) / 50000 * 5;
     let specials = player.inventory.getSpecialsAmount();
     let specialPoints = specials.gs + Math.floor(specials.keys / 4);
-    let points = distancePoints * 0.4 + itemPoints * 0.2 + moneyPoints * 0.28 + specialPoints * 0.12;
-    return ranks[Math.min(Math.floor(points), 5)];
+    return distancePoints * 0.4 + itemPoints * 0.2 + moneyPoints * 0.28 + specialPoints * 0.12;
+  };
+  this.getBonus = function(player) {
+    switch (Math.floor(this.getMatchPoints(player))) {
+      case 0:
+        return 0;
+      case 1:
+        return 30 * this.stage.difficulty;
+      case 2:
+        return 200 * this.stage.difficulty;
+      case 3:
+        return 500 * this.stage.difficulty;
+      case 4:
+        return 969 * this.stage.difficulty;
+      case 5:
+        return 1500 * this.stage.difficulty;
+      case 6:
+        return 3750 * this.stage.difficulty;
+      default:
+        return 10000 * this.stage.difficulty;
+    }
+  };
+  this.getRankSpriteKey = function(player) {
+    let ranks = ["Special_Rank_C", "Special_Rank_B", "Special_Rank_A", "Special_Rank_S", "Special_Rank_SS", "Special_Rank_SSS"];
+    return ranks[Math.min(Math.floor(this.getMatchPoints(player)), 5)];
   };
   this.continues = function() {
     this.player.x = this.distance + 50;
@@ -214,7 +233,7 @@ function Game(menu, gD) {
     if (this.menu.shop.getSkillValue("extra_life") === 1 && !this.continued && !this.showConfirmation) {
       this.showConfirmation = true;
     } else {
-      let bonus = this.player.inventory.hype.getBonus(this.player, this.stage.difficulty);
+      let bonus = this.getBonus(this.player);
 
       this.menu.highscores.addHighscore({
         name: Date().toString().substring(0, 24),
@@ -414,6 +433,7 @@ function Game(menu, gD) {
       this.players.map(player => {
         player.update(this, this.gD);
       }, this);
+      this.stage.update();
       this.floors.map(floor => {
         floor.update(this, this.gD);
       }, this);
@@ -688,11 +708,11 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
       }
     }
   };
-  this.collect = function(game, object, index) {                   //checks if an object is touched by the player
+  this.collect = function(game, object, index = -1) {                   //checks if an object is touched by the player
     if (this.x < object.x + object.width &&
-         this.x + this.width > object.x &&
-         this.y < object.y + object.height &&
-         this.height + this.y > object.y) {
+        this.x + this.width > object.x &&
+        this.y < object.y + object.height &&
+        this.height + this.y > object.y) {
       if (object.spriteKey === "" && !this.inventory.items["Item_Star"].active) {
         game.finish();
       } else if (object.spriteKey.startsWith("Item") || object.spriteKey.startsWith("Special")) {
@@ -744,7 +764,9 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
             break;
         }
         game.inventory.collect(object.spriteKey);
-        game.objects.splice(index, 1);
+        if (index !== -1) {
+          game.objects.splice(index, 1);
+        }
       } else if (object.spriteKey.startsWith("Money")) {
         game.inventory.hype.addMoney(object.spriteKey);
         game.handleEvent(Events.COLLECT_HYPE, object.spriteKey.split("_")[1]);
@@ -763,7 +785,9 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
             break;
           default:
         }
-        game.objects.splice(index, 1);
+        if (index !== -1) {
+          game.objects.splice(index, 1);
+        }
       } else if (object.spriteKey.startsWith("Enemy") && !this.inventory.items["Item_Star"].active) {
         game.finish();
       }
@@ -871,20 +895,6 @@ function GameCashVault(x, y, width, height, spriteKey, styleKey) {
     return Object.keys(this.money).reduce((accumulator, key) => {
       return accumulator + (this.money[key] * parseInt(key.split('_')[1]));
     }, 0) * game.menu.shop.getSkillValue("money_multiplier");
-  };
-  this.getBonus = function(player, difficulty) {
-    let distanceInMeter = player.inventory.getValue("distance") / 15;
-    let minDistInMeterForMaxHype = 8000 / difficulty * 10;
-    let bonus = 0;
-    
-    if (distanceInMeter > 500) {
-      if (distanceInMeter < minDistInMeterForMaxHype) {
-        bonus = (distanceInMeter - 500) * distanceInMeter / minDistInMeterForMaxHype;
-      } else {
-        bonus = distanceInMeter - 500;
-      }
-    }
-    return Math.floor(bonus);
   };
   this.draw = function(game, gD) {
     let design = gD.design.elements[this.styleKey];
@@ -1415,7 +1425,7 @@ function GameEndScreen(x, y, width, height, styleKey) {
       drawCanvasRainbowText(x + 3, 60 + (index + 0.5) * this.tableLineHeight, "Bonus", "rainbowLeft", gD);
       drawCanvasText(
         x + 130, 60 + (index + 0.5) * this.tableLineHeight, 
-        addPoints(Math.min(9999999, player.inventory.hype.getBonus(player, game.stage.difficulty))), 
+        addPoints(Math.min(9999999, game.getBonus(player))),
         design.textKey.tableRight, gD
       );
       drawCanvasRectBorder(
