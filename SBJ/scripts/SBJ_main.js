@@ -45,13 +45,16 @@ function gameloop(gD, timestamp) {
     }
 
     gD.clear();
-    gD.currentPage.draw(gD.lag / gD.refreshrate);
+    gD.currentPage.draw();
     drawCanvasText(3, gD.canvas.height - 7, "FPS: " + Math.round(1000 / gD.timeDiff), "fps", gD);
     gD.startTs = timestamp;
   }
 }
 
 function keydownEvent(event, gD) {
+  if (checkIfEdgeBrowser()) {
+    event.code = convertToCode(event.key);
+  }
   gD.keys[event.code] = true;
   gD.newKeys.push(event.code);
   gD.events.push(event);
@@ -59,6 +62,9 @@ function keydownEvent(event, gD) {
 }
 
 function keyupEvent(event, gD) {
+  if (checkIfEdgeBrowser()) {
+    event.code = convertToCode(event.key);
+  }
   gD.keys[event.code] = false;
 }
 
@@ -88,6 +94,50 @@ function clickEvent(event, gD) {
 
 function wheelEvent(event, gD) {
   gD.wheelMovements.push(event.deltaY);
+}
+
+function checkIfEdgeBrowser() {
+  return /Edge\/\d./i.test(navigator.userAgent);
+}
+
+function convertToCode(key) {
+  let code = '';
+  let numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+  let letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
+                 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'y','z'];
+  let others = {
+    "ArrowUp": "ArrowUp",
+    "ArrowDown": "ArrowDown",
+    "ArrowLeft": "ArrowLeft",
+    "ArrowRight": "ArrowRight",
+    " ": "Space",
+    "<": "IntlBackslash",
+    "ß": "Minus",
+    "Shift": "Shift",
+    "Control": "Control",
+    "+": "BracketRight",
+    "ü": "BracketLeft",
+    "ä": "Quote",
+    "ö": "Semicolon",
+    ".": "Period",
+    ",": "Comma",
+    "-": "Slash",
+    "#": "Backslash",
+    "Backspace": "Backspace",
+    "Tab": "Tab",
+    "CapsLock": "CapsLock",
+    "Enter": "Enter",
+    "Delete": "Delete",
+    "Escape": "Escape"
+  };
+  if (numbers.includes(key)) {
+    code = 'Digit' + key;
+  } else if (letters.includes(key.toLowerCase())) {
+    code = 'Key' + key.toUpperCase();
+  } else if (others[key]) {
+    code = others[key];
+  }
+  return code;
 }
 
 function GlobalDict(eventHandler) {
@@ -333,7 +383,7 @@ function GlobalDict(eventHandler) {
     "Money_1000": [0.05, 1000]
   };
   this.floorPieces = [             //x starts at the end of the previous floors
-    {chance: 1, earliestLevel: 1, floors: [
+    {chance: 30, earliestLevel: 1, floors: [
       {type: "Standard", x: 100, y: 280.5, width: 180},
       {type: "Standard", x: 250, y: 260.5, width: 180},
       {type: "Standard", x: 400, y: 240.5, width: 180},
@@ -344,7 +394,7 @@ function GlobalDict(eventHandler) {
       {type: "Standard", x: 1150, y: 140.5, width: 180},
       {type: "Standard", x: 1300, y: 120.5, width: 180}
     ]},
-    {chance: 100, earliestLevel: 1, floors: [
+    {chance: 30, earliestLevel: 1, floors: [
       {type: "Standard", x: 100, y: 200.5, width: 100},
       {type: "Standard", x: 200, y: 200.5, width: 100},
     ]},

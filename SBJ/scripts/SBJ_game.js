@@ -447,15 +447,15 @@ function Game(menu, gD) {
       this.endScreen.update(this, this.gD);
     }
   };
-  this.draw = function(ghostFactor) {
-    this.stage.drawBackground(ghostFactor);
+  this.draw = function() {
+    this.stage.drawBackground();
     if (this.showLevel > 0) {
       drawCanvasText(this.gD.canvas.width / 2, this.gD.canvas.height / 2, this.currentLevel, "ookii", this.gD);
     }
     this.inventory.draw(this, this.gD);
     
     this.players.map(player => {
-      player.draw(this, this.gD, ghostFactor);
+      player.draw(this, this.gD);
     }, this);
 
 
@@ -465,7 +465,7 @@ function Game(menu, gD) {
     for (let i = this.objectStartIndex; i < this.objects.length; i++) {
       this.objects[i].draw(this, this.gD);
     }
-    this.stage.drawForeground(ghostFactor);
+    this.stage.drawForeground();
     if (this.paused) {
       drawCanvasRect(0, (this.gD.canvas.height - 70) / 2, this.gD.canvas.width, 70, "darkModal", this.gD);
       drawCanvasText(this.gD.canvas.width / 2, this.gD.canvas.height / 2, "Pause", "pageTitle", gD);
@@ -666,7 +666,7 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
         }
         if (this.y + this.height <= floor.y - (floor.thickness / 2)) {
           this.aboveFloor = true;
-          if (this.currentFloor === null || floor.y - this.y <= this.currentFloor.y - this.y) {
+          if (this.currentFloor === null || floor.y - this.y < this.currentFloor.y - this.y) {
             this.currentFloor = floor;
             break;
           }
@@ -807,12 +807,12 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
     }
     this.hitWalls(game, gD);
   };
-  this.draw = function(game, gD, ghostFactor) {
-    let canvasX = this.x - game.distance + game.globalSpeed * ghostFactor;
-    let canvasY = this.y + this.velocity * ghostFactor;
+  this.draw = function(game, gD) {
+    let canvasX = this.x - game.distance;
+    let canvasY = this.y;
     let character = this.character;
     if (game.inventory.items["Item_Rocket"].active) {
-      drawCanvasImage(canvasX, this.y + ((this.y - 50) / 40) * ghostFactor, "Item_Rocket", gD);
+      drawCanvasImage(canvasX, canvasY, "Item_Rocket", gD);
       character = "Item_Rocket";
     } else {
       drawCanvasImage(canvasX, canvasY, this.character, gD);
@@ -985,10 +985,10 @@ function GameInventory() {
     }
     game.handleEvent(Events.USE_ALL_ITEMS_AT_ONCE, active);
   };
-  this.draw = function(game, gD, ghostFactor) {
+  this.draw = function(game, gD) {
     for (let item in this.items) {
       if (this.items.hasOwnProperty(item)) {
-        this.items[item].draw(game, gD, ghostFactor);
+        this.items[item].draw(game, gD);
       }
     }
     this.special.draw(gD);
@@ -1070,7 +1070,7 @@ function GameInventoryItem(x, y, width, height, itemName, maxDurability, styleKe
       }
     }
   };
-  this.draw = function(game, gD, ghostFactor) {
+  this.draw = function(game, gD) {
     let design = gD.design.elements[this.styleKey];
     let itemRef = getSpriteData(this.itemName, gD);
 
@@ -1210,7 +1210,7 @@ function GameFloor(x, y, width, type, height = 0) {
       this.isFalling = !this.isFalling;
     }
   };
-  this.draw = function(game, gD, ghostFactor) {
+  this.draw = function(game, gD) {
     let canvasX = this.x - game.distance;
     let spikesLeft = getSpriteData("Deco_Spikes_Left", gD);
     let spikesRight = getSpriteData("Deco_Spikes_Right", gD);
@@ -1247,7 +1247,7 @@ function GameObject(x, y, width, height, spriteKey = "") {
       }
     }
   };
-  this.draw = function(game, gD, ghostFactor) {
+  this.draw = function(game, gD) {
     if (this.spriteKey !== "") {
       let canvasX = this.x - game.distance;
       let spriteData = getSpriteData(this.spriteKey, gD);

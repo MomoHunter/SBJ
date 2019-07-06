@@ -165,8 +165,8 @@ function Background(y, width, height, img) {
   this.height = height;
   this.img = new Image();
   this.img.src = img;
-  this.draw = function(game, gD, ghostFactor = 0) {
-    let temp = (game.distance - (game.globalSpeed * ghostFactor)) % this.width;
+  this.draw = function(game, gD) {
+    let temp = game.distance % this.width;
     if (game.finished || game.paused) {
       temp = game.distance % this.width;
     }
@@ -192,8 +192,8 @@ function AnimatedBackground(y, width, height, img, cycles, speed) {
   this.img.src = img;
   this.cycles = cycles;
   this.speed = speed;
-  this.draw = function(game, gD, ghostFactor) {
-    let temp = (game.distance - (game.globalSpeed * ghostFactor)) % this.width;
+  this.draw = function(game, gD) {
+    let temp = game.distance % this.width;
     if (game.finished || game.paused) {
       temp = game.distance % this.width;
     }

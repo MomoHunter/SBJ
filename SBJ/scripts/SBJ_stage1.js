@@ -13,11 +13,11 @@ function Stage1(game, gD) {
   this.update = function() {
     
   };
-  this.drawForeground = function(ghostFactor) {
-    this.lava.draw(this.game, this.gD, ghostFactor);
+  this.drawForeground = function() {
+    this.lava.draw(this.game, this.gD);
   };
-  this.drawBackground = function(ghostFactor) {
-    this.wall.draw(this.game, this.gD, ghostFactor);
+  this.drawBackground = function() {
+    this.wall.draw(this.game, this.gD);
   };
 }
 
@@ -30,9 +30,9 @@ function Stage1Fireball(x, y, width, height) {
   this.velocity = 0;
   this.jumpCounter = 0;
   this.outsideCanvas = false;
-  this.draw = function(game, gD, ghostFactor) {
+  this.draw = function(game, gD) {
     gD.context.drawImage(gD.spritesheet, gD.spriteDict["Fireball"][0], gD.spriteDict["Fireball"][1], gD.spriteDict["Fireball"][2], gD.spriteDict["Fireball"][3],
-      this.x + (game.globalSpeed * ghostFactor), this.y + (this.velocity * ghostFactor), gD.spriteDict["Fireball"][2], gD.spriteDict["Fireball"][3]);
+      this.x, this.y, gD.spriteDict["Fireball"][2], gD.spriteDict["Fireball"][3]);
   };
   this.newPos = function(game, gD) {
     if (this.y > gD.canvas.height && !this.outsideCanvas) {
@@ -41,7 +41,7 @@ function Stage1Fireball(x, y, width, height) {
       this.jumpCounter = 70;
     } else if (this.outsideCanvas) {
       this.jumpCounter--;
-      if (this.jumpCounter == 0) {
+      if (this.jumpCounter === 0) {
         this.outsideCanvas = false;
         this.velocity = -10;
         this.velocity += this.gravity;
@@ -73,7 +73,7 @@ function updateStage1(game, stage) {
   if (stage.fireballSpawnCounter <= 0) {
     addFireball(stage, game.gD);
   }
-  if (stage.fireballObjects[0] != undefined && stage.fireballObjects[0].x + stage.fireballObjects[0].width < 0) {
+  if (stage.fireballObjects[0] !== undefined && stage.fireballObjects[0].x + stage.fireballObjects[0].width < 0) {
     stage.fireballObjects.shift();
   }
 
@@ -85,16 +85,16 @@ function updateStage1(game, stage) {
   }
 }
 
-function drawBackgroundStage1(game, stage, ghostFactor) {
-  stage.wall.draw(game, game.gD, ghostFactor);
+function drawBackgroundStage1(game, stage) {
+  stage.wall.draw(game, game.gD);
 
-  game.player.draw(game, game.gD, ghostFactor);
+  game.player.draw(game, game.gD);
 
-  for (var i = 0; i < stage.fireballObjects.length; i++) {
-    stage.fireballObjects[i].draw(game, game.gD, ghostFactor);
+  for (let i = 0; i < stage.fireballObjects.length; i++) {
+    stage.fireballObjects[i].draw(game, game.gD);
   }
 }
 
-function drawForegroundStage1(game, stage, ghostFactor) {
-  stage.lava.draw(game, game.gD, ghostFactor);
+function drawForegroundStage1(game, stage) {
+  stage.lava.draw(game, game.gD);
 }

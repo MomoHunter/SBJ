@@ -55,13 +55,15 @@
       "Slash": "-",
       "ShiftRight": String.fromCharCode(8679) + " R",
       "ShiftLeft": String.fromCharCode(8679) + " L",
+      "Shift": String.fromCharCode(8679),
       "IntlBackslash": "<",
       "Backquote": "^",
       "Equal": "´",
       "CapsLock": String.fromCharCode(8681),
       "Tab": " " + String.fromCharCode(8633) + " ",
       "ControlRight": "Strg R",
-      "ControlLeft": "Strg L"
+      "ControlLeft": "Strg L",
+      "Control": "Strg"
     };
 
     this.keyEntryHeadlines = [];
