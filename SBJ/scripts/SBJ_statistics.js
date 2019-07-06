@@ -280,6 +280,7 @@ function StatisticsData(name, eventKey, isFullNumber) {
   this.eventKey = eventKey;
   this.isFullNumber = isFullNumber;
   this.currentCount = 0;
+  this.currentValues = {}; //only used with money notes
   /**
    * adds a new value
    * @param {string} eventKey   the event key to compare if its the same key
@@ -287,7 +288,11 @@ function StatisticsData(name, eventKey, isFullNumber) {
    */
   this.handleEvent = function(eventKey, addedValue = 1) {
     if (this.eventKey === eventKey) {
-      if (this.isFullNumber) {
+      if ([Events.COLLECT_1000_HYPE, Events.COLLECT_100_HYPE, Events.COLLECT_10_HYPE, Events.COLLECT_1_HYPE].includes(eventKey)) {
+        this.currentValues[addedValue[0]] === undefined ? 
+          this.currentValues[addedValue[0]] = 1 : this.currentValues[addedValue[0]] += 1;
+        this.currentCount++;
+      } else if (this.isFullNumber) {
         if (this.currentCount < +addedValue) {
           this.currentCount = +addedValue;
         }
@@ -297,10 +302,18 @@ function StatisticsData(name, eventKey, isFullNumber) {
     }
   };
   this.getSaveData = function() {
-    return this.currentCount;
+    if ([Events.COLLECT_1000_HYPE, Events.COLLECT_100_HYPE, Events.COLLECT_10_HYPE, Events.COLLECT_1_HYPE].includes(this.eventKey)) {
+      this.currentValues;
+    } else {
+      return this.currentCount;
+    }
   };
   this.setSaveData = function(data) {
-    this.currentCount = data;
+    if ([Events.COLLECT_1000_HYPE, Events.COLLECT_100_HYPE, Events.COLLECT_10_HYPE, Events.COLLECT_1_HYPE].includes(this.eventKey)) {
+      this.currentValues = data;
+    } else { 
+      this.currentCount = data;
+    }
   };
 }
 
@@ -551,14 +564,37 @@ function StatisticsMoneyField(x, y, width, height, key, styleKey, spriteKey) {
     let value = data.currentCount;
 
     switch (this.key) {
+      case "money_1_collected":
+        value = 0;
+        for (let e in data.currentValues) {
+          if (data.currentValues.hasOwnProperty(e)) {
+            value += e * data.currentValues[e];
+          }
+        }
+        break;
       case "money_10_collected":
-        value *= 10;
+        value = 0;
+        for (let e in data.currentValues) {
+          if (data.currentValues.hasOwnProperty(e)) {
+            value += e * data.currentValues[e] * 10;
+          }
+        }
         break;
       case "money_100_collected":
-        value *= 100;
+        value = 0;
+        for (let e in data.currentValues) {
+          if (data.currentValues.hasOwnProperty(e)) {
+            value += e * data.currentValues[e] * 100;
+          }
+        }
         break;
       case "money_1000_collected":
-        value *= 1000;
+        value = 0;
+        for (let e in data.currentValues) {
+          if (data.currentValues.hasOwnProperty(e)) {
+            value += e * data.currentValues[e] * 1000;
+          }
+        }
         break;
       default:
     }
@@ -566,7 +602,7 @@ function StatisticsMoneyField(x, y, width, height, key, styleKey, spriteKey) {
     if (isNaN(value)) {
       value = 0;
     }
-
+    
     drawCanvasText(this.x + 3, this.y + this.height - 3, data.name, design.textKey.label, gD);
     drawCanvasText(
       this.x + this.width - 225, this.y + this.height - 3, value.toFixed(2) + "%", design.textKey.number, gD
@@ -574,7 +610,7 @@ function StatisticsMoneyField(x, y, width, height, key, styleKey, spriteKey) {
     drawCanvasRect(this.x + this.width - 220, this.y, 220, this.height, design.rectKey, gD);
     drawCanvasText(
       this.x + this.width - 3, this.y + this.height - 3,
-      data.currentCount.toString().replace(/\d(?=(\d{3})+($|\.))/g, '$&.'), design.textKey.number, gD
+      Math.floor(data.currentCount).toString().replace(/\d(?=(\d{3})+($|\.))/g, '$&.'), design.textKey.number, gD
     );
     drawCanvasImage(this.x + this.width - 218, this.y + (this.height - spriteHeight) / 2, this.spriteKey, gD);
     drawCanvasRectBorder(this.x + this.width - 220, this.y, 220, this.height, design.borderKey, gD);
@@ -681,15 +717,39 @@ function StatisticsBar(x, y, width, height, mainKey, keys, styleKey) {
   this.update = function(statistics) {
     this.keys.map((key, index) => {
       let value = statistics.get(key).currentCount;
+      let data = statistics.get(key);
       switch (key) {
+        case "money_1_collected":
+          value = 0;
+          for (let e in data.currentValues) {
+            if (data.currentValues.hasOwnProperty(e)) {
+              value += e * data.currentValues[e];
+            }
+          }
+          break;
         case "money_10_collected":
-          value *= 10;
+          value = 0;
+          for (let e in data.currentValues) {
+            if (data.currentValues.hasOwnProperty(e)) {
+              value += e * data.currentValues[e] * 10;
+            }
+          }
           break;
         case "money_100_collected":
-          value *= 100;
+          value = 0;
+          for (let e in data.currentValues) {
+            if (data.currentValues.hasOwnProperty(e)) {
+              value += e * data.currentValues[e] * 100;
+            }
+          }
           break;
         case "money_1000_collected":
-          value *= 1000;
+          value = 0;
+          for (let e in data.currentValues) {
+            if (data.currentValues.hasOwnProperty(e)) {
+              value += e * data.currentValues[e] * 1000;
+            }
+          }
           break;
         default:
       }

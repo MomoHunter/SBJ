@@ -408,7 +408,7 @@ function ProgressBar(x, y, width, height, goal = 0, current = 0) {
     drawCanvasRect(this.x, this.y, this.width * (this.current / this.goal), this.height, "progress", gD);
     drawCanvasText(
         this.x + this.width / 2, this.y + this.height / 2,
-        `${this.current} / ${this.goal}`,
+        `${Math.floor(this.current)} / ${this.goal}`,
         "normal", gD
     );
   };

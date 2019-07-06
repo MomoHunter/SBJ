@@ -91,7 +91,7 @@
       } else if (keyB.get("Menu_Confirm")[3].includes(key)) {
         if (this.selectedRowIndex === -1) {
           if (this.selectedColumnIndex === 0) {
-            if (this.checkIfUnlocked) {
+            if (this.checkIfUnlocked()) {
               this.menu.game.init();
               this.menu.game.setStage("Stage_Training", true);
               this.menu.game.addPlayer(
@@ -100,8 +100,6 @@
               );
               this.menu.game.setStartTime();
               this.gD.currentPage = this.menu.game;
-            } else {
-              this.showError = true;
             }
           } else if (this.selectedColumnIndex === 1) {
             this.gD.currentPage = this.menu;
@@ -115,8 +113,6 @@
               );
               this.menu.game.setStartTime();
               this.gD.currentPage = this.menu.game;
-            } else {
-              this.showError = true;
             }
           }
         } else if (this.selectedRowIndex === 0) {
@@ -167,10 +163,6 @@
     if (!clickPos) {
       return;
     }
-
-    if (this.showError) {
-      this.showError = false;
-    }
     
     this.selections.map(selection => {
       if (clickPos.x >= selection.x && clickPos.x <= selection.x + selection.width &&
@@ -193,8 +185,6 @@
         );
         this.menu.game.setStartTime();
         this.gD.currentPage = this.menu.game;
-      } else {
-        this.showError = true;
       }
     } else if (clickPos.x >= this.backToMenu.x && clickPos.x <= this.backToMenu.x + this.backToMenu.width &&
                clickPos.y >= this.backToMenu.y && clickPos.y <= this.backToMenu.y + this.backToMenu.height) {
@@ -210,8 +200,6 @@
         );
         this.menu.game.setStartTime();
         this.gD.currentPage = this.menu.game;
-      } else {
-        this.showError = true;
       }
     }
   };
@@ -226,6 +214,12 @@
     this.confirmButton.update();
     this.backToMenu.update();
     this.trainingButton.update();
+    
+    if (!this.checkIfUnlocked()) {
+      this.showError = true;
+    } else {
+      this.showError = false;
+    }
   };
   this.draw = function() {
     this.gD.context.drawImage(this.menu.backgroundImage, 0, 0);

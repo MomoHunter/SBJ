@@ -565,6 +565,7 @@ function SaveLoad(menu, gD) {
       this.refreshButton.update();
       this.backButton.update();
     }
+    this.menu.lightUpdate();
   };
   /**
    * draws the objects onto the canvas
@@ -600,6 +601,8 @@ function SaveLoad(menu, gD) {
         this.choosePictureModal.draw(this.gD);
       }
     }
+    
+    this.menu.lightDraw();
   };
   /**
    * updates the selected object and deselects the old object

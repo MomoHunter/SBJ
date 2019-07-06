@@ -189,6 +189,16 @@ function Game(menu, gD) {
       }
     }
   };
+  this.getRankSpriteKey = function(player) {
+    let ranks = ["Special_Rank_C", "Special_Rank_B", "Special_Rank_A", "Special_Rank_S", "Special_Rank_SS", "Special_Rank_SSS"];
+    let distancePoints = player.inventory.getValue("distance") / this.getLevelStart(20) * 5;
+    let itemPoints = player.inventory.getItemsCollected() / 100 * 5;
+    let moneyPoints = player.inventory.getTotalHype(this) / 50000 * 5;
+    let specials = player.inventory.getSpecialsAmount();
+    let specialPoints = specials.gs + Math.floor(specials.keys / 4);
+    let points = distancePoints * 0.4 + itemPoints * 0.2 + moneyPoints * 0.28 + specialPoints * 0.12;
+    return ranks[Math.min(Math.floor(points), 5)];
+  };
   this.continues = function() {
     this.player.x = this.distance + 50;
     this.player.y = 50;
@@ -210,7 +220,7 @@ function Game(menu, gD) {
         name: Date().toString().substring(0, 24),
         distance: Math.floor(this.player.inventory.getValue("distance") / 15),
         level: this.currentLevel,
-        cash: this.player.inventory.hype.getTotalCash(this),
+        cash: this.player.inventory.getTotalHype(this),
         money1: this.player.inventory.hype.money["Money_1"],
         money10: this.player.inventory.hype.money["Money_10"],
         money100: this.player.inventory.hype.money["Money_100"],
@@ -221,16 +231,16 @@ function Game(menu, gD) {
       if (!this.trainingMode) {
         this.handleEvent(Events.COLLECT_BONUS, bonus);
         this.handleEvent(Events.DEATH);
-        this.handleEvent(Events.HIGHSCORE_COLLECTED_HYPE, this.player.inventory.hype.getTotalCash(this));
+        this.handleEvent(Events.HIGHSCORE_COLLECTED_HYPE, Math.floor(this.player.inventory.getTotalHype(this)));
         this.handleEvent(Events.HIGHSCORE_TRAVELLED_DISTANCE, Math.floor(this.player.inventory.getValue("distance") / 15));
         this.handleEvent(
           Events.END_OF_ROUND_TOTAL_TRAVELLED_DISTANCE, 
           Math.floor(this.player.inventory.getValue("distance") / 15)
         );
-        this.handleEvent(Events.COLLECT_HYPE_WITH_BONUS, this.player.inventory.hype.getTotalCash(this) + bonus);
+        this.handleEvent(Events.COLLECT_HYPE_WITH_BONUS, this.player.inventory.getTotalHype(this) + bonus);
         this.handleEvent(Events.TIME_PLAYED, (Date.now() - this.startTime) / 1000);
         this.menu.achievements.resetPerRound();
-        this.menu.shop.addHype(this.player.inventory.hype.getTotalCash(this) + bonus);
+        this.menu.shop.addHype(this.player.inventory.getTotalHype(this) + bonus);
         this.menu.shop.goldenShamrocks += this.player.inventory.special.items["Special_GoldenShamrock"][1];
       }
       this.showConfirmation = false;
@@ -251,6 +261,7 @@ function Game(menu, gD) {
   };
   this.updateKeyPresses = function() {
     let keyB = this.menu.controls.keyBindings;
+    let activated = false;
 
     Object.keys(this.gD.keys).map((key, index) => {
       if (!this.paused && !this.finished) {
@@ -262,11 +273,13 @@ function Game(menu, gD) {
 
         if (keyB.get("Game_MoveRight")[3].includes(key) && this.gD.keys[key]) {
           this.player.moveForward(this, this.menu);
+          activated = true;
         } else if (keyB.get("Game_MoveLeft")[3].includes(key) && this.gD.keys[key]) {
           this.player.moveBackward(this, this.menu);
-        } else if (keyB.get("Game_MoveRight")[3].includes(key) && !this.gD.keys[key]) {
+          activated = true;
+        } else if (keyB.get("Game_MoveRight")[3].includes(key) && !this.gD.keys[key] && !activated) {
           this.player.stopMoving(this, "forward");
-        } else if (keyB.get("Game_MoveLeft")[3].includes(key) && !this.gD.keys[key]) {
+        } else if (keyB.get("Game_MoveLeft")[3].includes(key) && !this.gD.keys[key] && !activated) {
           this.player.stopMoving(this, "backward");
         }
       }
@@ -411,7 +424,7 @@ function Game(menu, gD) {
       if (this.floors[this.floorStartIndex].x + this.floors[this.floorStartIndex].width < this.distance - 100) {
         this.floorStartIndex++;
       }
-      if (this.gD.frameNo % 30 === 0 || this.inventory.items["Item_Treasure"].active) {
+      if (this.gD.frameNo % 25 === 0 || this.inventory.items["Item_Treasure"].active) {
         this.addMoney();
       }
       if (this.gD.frameNo % this.menu.shop.getSkillValue("item_spawn_frequency") === 0) {
@@ -442,7 +455,7 @@ function Game(menu, gD) {
     this.inventory.draw(this, this.gD);
     
     this.players.map(player => {
-      player.draw(this, this.gD);
+      player.draw(this, this.gD, ghostFactor);
     }, this);
 
 
@@ -651,9 +664,9 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
             this.currentFloor = null;
           }
         }
-        if (this.y + this.height < floor.y - (floor.thickness / 2)) {
+        if (this.y + this.height <= floor.y - (floor.thickness / 2)) {
           this.aboveFloor = true;
-          if (this.currentFloor === null || floor.y - this.y < this.currentFloor.y - this.y) {
+          if (this.currentFloor === null || floor.y - this.y <= this.currentFloor.y - this.y) {
             this.currentFloor = floor;
             break;
           }
@@ -737,16 +750,16 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
         game.handleEvent(Events.COLLECT_HYPE, object.spriteKey.split("_")[1]);
         switch (object.spriteKey) {
           case "Money_1":
-            game.handleEvent(Events.COLLECT_1_HYPE);
+            game.handleEvent(Events.COLLECT_1_HYPE, [game.menu.shop.getSkillValue("money_multiplier")]);
             break;
           case "Money_10":
-            game.handleEvent(Events.COLLECT_10_HYPE);
+            game.handleEvent(Events.COLLECT_10_HYPE, [game.menu.shop.getSkillValue("money_multiplier")]);
             break;
           case "Money_100":
-            game.handleEvent(Events.COLLECT_100_HYPE);
+            game.handleEvent(Events.COLLECT_100_HYPE, [game.menu.shop.getSkillValue("money_multiplier")]);
             break;
           case "Money_1000":
-            game.handleEvent(Events.COLLECT_1000_HYPE);
+            game.handleEvent(Events.COLLECT_1000_HYPE, [game.menu.shop.getSkillValue("money_multiplier")]);
             break;
           default:
         }
@@ -794,14 +807,15 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
     }
     this.hitWalls(game, gD);
   };
-  this.draw = function(game, gD) {
-    let canvasX = this.x - game.distance;
+  this.draw = function(game, gD, ghostFactor) {
+    let canvasX = this.x - game.distance + game.globalSpeed * ghostFactor;
+    let canvasY = this.y + this.velocity * ghostFactor;
     let character = this.character;
     if (game.inventory.items["Item_Rocket"].active) {
-      drawCanvasImage(canvasX, this.y, "Item_Rocket", gD);
+      drawCanvasImage(canvasX, this.y + ((this.y - 50) / 40) * ghostFactor, "Item_Rocket", gD);
       character = "Item_Rocket";
     } else {
-      drawCanvasImage(canvasX, this.y, this.character, gD);
+      drawCanvasImage(canvasX, canvasY, this.character, gD);
     }
     if (this.y + this.height < 0) {
       let pointerData = getSpriteData("Special_Pointer", gD);
@@ -812,21 +826,21 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
       let hatData = getSpriteData(this.hat, gD);
       drawCanvasImage(
         canvasX + gD.player[character][1].x - hatData.spriteWidth / 2, 
-        this.y + gD.player[character][1].y - hatData.spriteHeight, this.hat, gD
+        canvasY + gD.player[character][1].y - hatData.spriteHeight, this.hat, gD
       );
     }
     if (this.glasses !== "Collectables_Nothing") {
       let glassesData = getSpriteData(this.glasses, gD);
       drawCanvasImage(
         canvasX + gD.player[character][2].x - glassesData.spriteWidth / 2, 
-        this.y + gD.player[character][2].y - glassesData.spriteHeight / 2, this.glasses, gD
+        canvasY + gD.player[character][2].y - glassesData.spriteHeight / 2, this.glasses, gD
       );
     }
     if (this.beard !== "Collectables_Nothing") {
       let beardData = getSpriteData(this.beard, gD);
       drawCanvasImage(
         canvasX + gD.player[character][3].x - beardData.spriteWidth / 2, 
-        this.y + gD.player[character][3].y, this.beard, gD
+        canvasY + gD.player[character][3].y, this.beard, gD
       );
     }
   };
@@ -854,9 +868,9 @@ function GameCashVault(x, y, width, height, spriteKey, styleKey) {
    * @return {number} returns the total cash
    */
   this.getTotalCash = function(game) {
-    return Math.floor(Object.keys(this.money).reduce((accumulator, key) => {
+    return Object.keys(this.money).reduce((accumulator, key) => {
       return accumulator + (this.money[key] * parseInt(key.split('_')[1]));
-    }, 0) * game.menu.shop.getSkillValue("money_multiplier"));
+    }, 0) * game.menu.shop.getSkillValue("money_multiplier");
   };
   this.getBonus = function(player, difficulty) {
     let distanceInMeter = player.inventory.getValue("distance") / 15;
@@ -880,7 +894,7 @@ function GameCashVault(x, y, width, height, spriteKey, styleKey) {
     drawCanvasImage(this.x + 3, this.y + Math.floor((this.height - spriteData.spriteHeight) / 2), this.spriteKey, gD);
     drawCanvasText(
       this.x + this.width - 3, this.y + this.height / 2, 
-      this.getTotalCash(game).toString().replace(/\d(?=(\d{3})+($|\.))/g, '$&.'), design.textKey, gD
+      Math.floor(this.getTotalCash(game)).toString().replace(/\d(?=(\d{3})+($|\.))/g, '$&.'), design.textKey, gD
     );
     drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
   };
@@ -932,6 +946,22 @@ function GameInventory() {
   };
   this.getValue = function(variable) {
     return this[variable].getCurrentValue();
+  };
+  this.getTotalHype = function(game) {
+    return this.hype.getTotalCash(game);
+  };
+  this.getItemsCollected = function() {
+    let collected = 0;
+    for (let item in this.items) {
+      if (this.items.hasOwnProperty(item)) {
+        collected += this.items[item].amount;
+        collected += this.items[item].used;
+      }
+    }
+    return collected;
+  };
+  this.getSpecialsAmount = function() {
+    return this.special.getSpecialsAmount();
   };
   this.collect = function(item) {
     if (item === "Item_Questionmark") {
@@ -1073,6 +1103,20 @@ function GameInventorySpecial(x, y, width, height, styleKey) {
     } else {
       this.items[item] = true;
     }
+  };
+  this.getSpecialsAmount = function() {
+    let amount = { keys: 0, gs: 0 };
+    if (this.items["Special_BlueKey"])
+      amount.keys++;
+    if (this.items["Special_GreenKey"])
+      amount.keys++;
+    if (this.items["Special_RedKey"])
+      amount.keys++;
+    if (this.items["Special_YellowKey"])
+      amount.keys++;
+    if (this.items["Special_GoldenShamrock"][0])
+      amount.gs = this.items["Special_GoldenShamrock"][1];
+    return amount;
   };
   this.draw = function(gD) {
     let design = gD.design.elements[this.styleKey];
@@ -1275,6 +1319,9 @@ function GameEndScreen(x, y, width, height, styleKey) {
       let characterData = getSpriteData(player.character, gD);
       let x = this.x + 20 + (index % 2) * 40;
       let y = this.y + 60 + ((index + 0.5) * this.tableLineHeight) - characterData.spriteHeight / 2;
+      let distanceData = getSpriteData("Icon_Distance", gD);
+      let currencyData = getSpriteData("Currency_S", gD);
+      let rankData = getSpriteData(game.getRankSpriteKey(player), gD);
       
       drawCanvasImage(x, Math.floor(y), player.character, gD);
       
@@ -1311,8 +1358,6 @@ function GameEndScreen(x, y, width, height, styleKey) {
           player.name === "" ? "Player " + (index + 1) : player.name, 
         design.textKey.table, gD
       );
-      let distanceData = getSpriteData("Icon_Distance", gD);
-      let currencyData = getSpriteData("Currency_S", gD);
       
       x += 138;
       
@@ -1340,7 +1385,7 @@ function GameEndScreen(x, y, width, height, styleKey) {
       );
       drawCanvasText(
         x + 116, 60 + (index + 0.5) * this.tableLineHeight, 
-        addPoints(Math.min(999999999, player.inventory.hype.getTotalCash(game))), 
+        addPoints(Math.min(999999999, Math.floor(player.inventory.getTotalHype(game)))), 
         design.textKey.tableRight, gD
       );
       
@@ -1376,6 +1421,8 @@ function GameEndScreen(x, y, width, height, styleKey) {
       drawCanvasRectBorder(
         100, 60 + index * this.tableLineHeight, this.width - 150, this.tableLineHeight, design.borderKey, gD
       );
+      
+      drawCanvasImage(x + 136, 60 + (index + 0.5) * this.tableLineHeight - rankData.spriteHeight / 2, rankData.key, gD);
     }, this);
     this.backToMenu.draw(gD);
     this.restart.draw(gD);

@@ -19,7 +19,7 @@
         (level) => {return 1000;}, (level) => {return 0;}, [], 0
       ),
       "level_up_items": new SkillData(
-        "Level up Items", false, (level) => {return level;}, 1, (level) => {return 10000;}, 
+        "Level up Items", false, (level) => {return level;}, 1, (level) => {return 2000;}, 
         (level) => {return 0;}, ["unlock_skilltree"], 1
       ),
       "level_up_stopwatch": new SkillData(
@@ -71,7 +71,7 @@
         (level) => {return 270000 + level * 180000;}, (level) => {return 39 + level * 19;}, ["level_up_rocket"], 50
       ),
       "item_spawn_frequency": new SkillData(
-        "Item spawn frequency", true, (level) => {return 300 - level * 20;}, 10, 
+        "Item spawn frequency", true, (level) => {return 250 - level * 15;}, 10, 
         (level) => {return 12500 + Math.pow(level * 12, 3);}, (level) => {return 6 + Math.pow(level, 3.5);}, [
           "level_up_stopwatch", "level_up_star", "level_up_feather",
           "level_up_treasure", "level_up_magnet", "level_up_rocket"
@@ -82,7 +82,7 @@
         (level) => {return 5000 + Math.pow(level * 10, 2);}, (level) => {return 0;}, ["unlock_skilltree"], 1
       ),
       "character_upgrades": new SkillData(
-        "Character upgrades", false, (level) => {return level;}, 1, (level) => {return 10000;}, 
+        "Character upgrades", false, (level) => {return level;}, 1, (level) => {return 3000;}, 
         (level) => {return 0;}, ["unlock_skilltree"], 1
       ),
       "movement_speed": new SkillData(
@@ -1271,12 +1271,12 @@ function SkillInfoBox(x, y, width, height, styleKey) {
       drawCanvasImage(newX - this.width / 2 + 3, newY + this.radius + 27, "Special_GoldenShamrock", gD);
       drawCanvasText(
         newX + this.width / 2 - 3, newY + this.radius + 37,
-        goldenShamrock.toString().replace(/\d(?=(\d{3})+($|\.))/g, '$&.'), design.textKey.text, gD
+        goldenShamrock.toString().replace(/\d(?=(\d{3})+($|\.))/g, '$&.'), shop.goldenShamrocks < goldenShamrock ? design.textKey.noMoney : design.textKey.text, gD
       );
       drawCanvasImage(Math.floor(newX - this.width / 2 + 3), Math.floor(newY + this.radius + 49), "Currency_S", gD);
       drawCanvasText(
         newX + this.width / 2 - 3, newY + this.radius + 59,
-        hype.toString().replace(/\d(?=(\d{3})+($|\.))/g, '$&.'), design.textKey.text, gD
+        hype.toString().replace(/\d(?=(\d{3})+($|\.))/g, '$&.'), shop.hype < hype ? design.textKey.noMoney : design.textKey.text, gD
       );
       drawCanvasLine(newX - this.width / 2, newY + this.radius + 25, design.borderKey, gD, newX + this.width / 2, newY + this.radius + 25);
       drawCanvasPolygonBorder(
