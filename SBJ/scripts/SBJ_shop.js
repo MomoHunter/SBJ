@@ -7,7 +7,7 @@
     this.backgroundMusic.loop = true;
     this.backgroundMusic.volume = 0.2;
     this.hype = 1000000000;
-    this.goldenShamrocks = 24;
+    this.goldenShamrocks = 2400;
     this.movingTree = false;
     this.movingMinimap = false;
     this.movingCounter = 0;           //counts how many frames moving was activated to prevent unintentional clicks

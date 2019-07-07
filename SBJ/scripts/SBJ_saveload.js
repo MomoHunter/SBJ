@@ -514,7 +514,7 @@ function SaveLoad(menu, gD) {
    */
   this.updateWheelMoves = function() {
     let wheelMove = this.gD.wheelMovements.pop();
-    if (this.loaded || (this.chooseName && !this.choosePicture) || this.savestates.length < 5) {
+    if (this.loaded || (this.chooseName && !this.choosePicture)) {
       return;
     }
     
@@ -531,7 +531,7 @@ function SaveLoad(menu, gD) {
           (pB[pB.length - 1][pB[pB.length - 1].length - 1].y - 198) / (this.choosePictureModal.buttonSize / 2)
         ));
       }
-    } else {
+    } else if (this.savestates.length < 5) {
       if (wheelMove < 0) {
         this.vScroll(Math.max(
           (this.scrollHeight / 55) - 1, 

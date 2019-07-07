@@ -383,7 +383,7 @@ function GlobalDict(eventHandler) {
     "Money_1000": [0.05, 1000]
   };
   this.floorPieces = [             //x starts at the end of the previous floors
-    {chance: 30, earliestLevel: 1, floors: [
+    {chance: 1, earliestLevel: 1, floors: [
       {type: "Standard", x: 100, y: 280.5, width: 180},
       {type: "Standard", x: 250, y: 260.5, width: 180},
       {type: "Standard", x: 400, y: 240.5, width: 180},
@@ -394,7 +394,7 @@ function GlobalDict(eventHandler) {
       {type: "Standard", x: 1150, y: 140.5, width: 180},
       {type: "Standard", x: 1300, y: 120.5, width: 180}
     ]},
-    {chance: 30, earliestLevel: 1, floors: [
+    {chance: 1, earliestLevel: 1, floors: [
       {type: "Standard", x: 100, y: 200.5, width: 100},
       {type: "Standard", x: 200, y: 200.5, width: 100},
     ]},

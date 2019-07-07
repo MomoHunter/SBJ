@@ -11,7 +11,7 @@
       ["Menu_NavUp", ["Menü", "Navigation hoch", ["W", String.fromCharCode(8593)], ["KeyW", "ArrowUp"]]],
       ["Menu_NavRight", ["Menü", "Navigation rechts", ["D", String.fromCharCode(8594)], ["KeyD", "ArrowRight"]]],
       ["Menu_NavLeft", ["Menü", "Navigation links", ["A", String.fromCharCode(8592)], ["KeyA", "ArrowLeft"]]],
-      ["Menu_Confirm", ["Menü", "Bestätigen", ["Enter", "Space"], ["Enter", "Space"]]],
+      ["Menu_Confirm", ["Menü", "Bestätigen", ["Enter"], ["Enter"]]],
       ["Menu_Back", ["Menü", "zur vorherigen Seite gehen", ["Escape"], ["Escape"]]],
       ["Menu_Abort", ["Menü", "Tätigkeit abbrechen", ["Escape"], ["Escape"]]],
       ["Menu_Refresh", ["Menü", "Daten neu laden", ["R"], ["KeyR"]]],

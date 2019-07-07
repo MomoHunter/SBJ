@@ -713,7 +713,7 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
         this.x + this.width > object.x &&
         this.y < object.y + object.height &&
         this.height + this.y > object.y) {
-      if (object.spriteKey === "" && !this.inventory.items["Item_Star"].active) {
+      if (object.spriteKey === "" && !this.inventory.items["Item_Star"].active && !this.inventory.items["Item_Rocket"].active) {
         game.finish();
       } else if (object.spriteKey.startsWith("Item") || object.spriteKey.startsWith("Special")) {
         switch (object.spriteKey.split("_")[1]) {
@@ -763,12 +763,12 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
           default:
             break;
         }
-        game.inventory.collect(object.spriteKey);
+        this.inventory.collect(object.spriteKey);
         if (index !== -1) {
           game.objects.splice(index, 1);
         }
       } else if (object.spriteKey.startsWith("Money")) {
-        game.inventory.hype.addMoney(object.spriteKey);
+        this.inventory.hype.addMoney(object.spriteKey);
         game.handleEvent(Events.COLLECT_HYPE, object.spriteKey.split("_")[1]);
         switch (object.spriteKey) {
           case "Money_1":
@@ -788,7 +788,7 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
         if (index !== -1) {
           game.objects.splice(index, 1);
         }
-      } else if (object.spriteKey.startsWith("Enemy") && !this.inventory.items["Item_Star"].active) {
+      } else if (object.spriteKey.startsWith("Enemy") && !this.inventory.items["Item_Star"].active && !this.inventory.items["Item_Rocket"].active) {
         game.finish();
       }
     }
@@ -799,7 +799,7 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
     this.width = spriteData.spriteWidth;
     this.height = spriteData.spriteHeight;
     
-    if (game.inventory.items["Item_Rocket"].active) {
+    if (this.inventory.items["Item_Rocket"].active) {
       this.x += this.speed;//Math.min(Math.pow((-game.itemTimer[5] + 5 + (max / 2)) / (max / 5), 4) - 40, Math.ceil(game.globalBaseSpeed - (game. distanceTravelled * 0.00015))); //-((-x + 5 + (max/2)) / (max/5))^4+40 max is the max durability of the item
       this.y -= (this.y - 50) / 40;
       this.onFloor = false;
@@ -835,7 +835,7 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
     let canvasX = this.x - game.distance;
     let canvasY = this.y;
     let character = this.character;
-    if (game.inventory.items["Item_Rocket"].active) {
+    if (this.inventory.items["Item_Rocket"].active) {
       drawCanvasImage(canvasX, canvasY, "Item_Rocket", gD);
       character = "Item_Rocket";
     } else {
