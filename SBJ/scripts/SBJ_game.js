@@ -848,7 +848,7 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
         } else {
           if (!(this.inventory.items["Item_Feather"].active && this.velocity > 2) ||
                !this.inventory.items["Item_Feather"].active) {
-            this.velocity += this.gravity - 0.1;
+            this.velocity += Math.max(this.gravity - 0.1, 0.05);
           }
         }
         if (game.stage.name === "Water") {

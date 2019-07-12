@@ -286,7 +286,11 @@
     this.gD.newKeys.map(key => {
       let keyB = this.menu.controls.keyBindings;
       if (keyB.get("Menu_Back")[3].includes(key)) {
-        this.gD.currentPage = this.menu;
+        if (!(this.tabs[0].selected && this.skillInfo)) {
+          this.gD.currentPage = this.menu;
+        }
+        this.skillInfoBox.setSkill(this, null);
+        this.skillInfo = false;
       } else if (keyB.get("Menu_NavUp")[3].includes(key)) {
         if (this.selectedColumnIndex === 0) {
           if (this.selectedRowIndex === -1) {
@@ -462,6 +466,8 @@
       } else if (keyB.get("Menu_Confirm")[3].includes(key)) {
         if (this.selectedRowIndex === -1) {
           this.gD.currentPage = this.menu;
+          this.skillInfoBox.setSkill(this, null);
+          this.skillInfo = false;
         } else if (this.selectedTabIndex === 1) {
           if (this.selectedRowIndex === 0 && (this.selectedColumnIndex === 1 || this.selectedColumnIndex === 2)) {
             if (this.dropdowns[this.selectedColumnIndex - 1].opened) {
@@ -667,6 +673,8 @@
     if (clickPos.x >= this.backToMenu.x && clickPos.x <= this.backToMenu.x + this.backToMenu.width &&
         clickPos.y >= this.backToMenu.y && clickPos.y <= this.backToMenu.y + this.backToMenu.height) {
       this.gD.currentPage = this.menu;
+      this.skillInfoBox.setSkill(this, null);
+      this.skillInfo = false;
     }
 
     if (this.tabs[0].selected) {
