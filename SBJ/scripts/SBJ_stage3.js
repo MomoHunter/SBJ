@@ -1,55 +1,84 @@
-function Stage3(game) {
+function Stage3(game, gD) {
   this.game = game;
+  this.gD = gD;
+  this.name = "Water";
   this.deadZoneGround = 0;
-  this.ocean = new Image();
-  this.ocean.src = "img/stage3Ocean.png"
-  this.foregroundWaves = new Image();
-  this.foregroundWaves.src = "img/stage3Waves.png";
-  this.floorColor = "rgba(239, 217, 165, 1)";
+  this.floorColorKey = "stage3Floor";
   this.difficulty = 60;
+  this.gravity = 20.25;
   this.init = function() {
-    this.birdObjects = [];
+    this.birds = [];
+    this.ocean = new AnimatedBackground(0, 1000, 2800, "img/Water_Ocean.png", 8, 20);
+    this.waves = new AnimatedBackground(170, 1000, 1440, "img/Water_Waves.png", 8, 20);
+    /*this.birdObjects = [];
     this.fishObjects = [];
     this.jumpingFishObjects = [];
     this.bubbleSpotObjects = [];
     this.birdSpawnCounter = Math.max(Math.floor(Math.random() * 1000), 400);
     this.fishSpawnCounter = Math.max(Math.floor(Math.random() * 1000), 400);
     this.jumpingFishSpawnCounter = Math.max(Math.floor(Math.random() * 1000), 400);
-    this.bubbleSpotSpawnCounter = Math.max(Math.floor(Math.random() * 1400), 300);
+    this.bubbleSpotSpawnCounter = Math.max(Math.floor(Math.random() * 1400), 300);*/
+  };
+  this.addBird = function() {
+    let random = Math.random();
+    if (random < 0.15) {
+      if (random < 0.075) {
+        let {spriteWidth, spriteHeight} = getSpriteData("Enemy_Bird_Left", this.gD);
+        this.birds.push(new Stage3Bird(
+          this.game.distance + 1100, randomBetween(50, 150), spriteWidth, spriteHeight, "Enemy_Bird_Left", "backward"
+        ));
+      } else {
+        let {spriteWidth, spriteHeight} = getSpriteData("Enemy_Bird_Right", this.gD);
+        this.birds.push(new Stage3Bird(
+          this.game.distance - 100, randomBetween(50, 150), spriteWidth, spriteHeight, "Enemy_Bird_Right", "forward"
+        ));
+      }
+    }
+  };
+  this.update = function() {
+    if (this.game.player.y + this.game.player.height > this.gD.canvas.height / 2) {
+      this.gravity = 4.5;
+    } else {
+      this.gravity = 20.25;
+    }
+    this.birds.map(bird => {
+      bird.update(this.game);
+      this.game.player.collect(game, bird);
+    }, this);
+    
+    if (this.gD.frameNo % 60 === 0 && this.game.currentLevel >= 1) {
+      this.addBird();
+    }
+  };
+  this.drawForeground = function() {
+    this.waves.draw(this.game, this.gD);
+    this.birds.map(bird => {
+      bird.draw(this.game, this.gD);
+    }, this);
+  };
+  this.drawBackground = function() {
+    this.ocean.draw(this.game, this.gD);
   };
 }
 
-function Stage3Bird(x, y, width, height, direction) {
+function Stage3Bird(x, y, width, height, spriteKey, direction) {
   this.x = x;
   this.y = y;
   this.width = width;
   this.height = height;
+  this.spriteKey = spriteKey;
   this.direction = direction;
-  this.draw = function(game, gD, ghostFactor) {
-    if (this.direction > 0) {
-      if ((game.distanceTravelled % 50) < 25) {
-        gD.context.drawImage(gD.spritesheet, 
-          gD.spriteDict["Bird2B"][0], gD.spriteDict["Bird2B"][1], gD.spriteDict["Bird2B"][2], gD.spriteDict["Bird2B"][3],
-          this.x + (game.globalSpeed * this.direction * ghostFactor), this.y + 6, gD.spriteDict["Bird2B"][2], gD.spriteDict["Bird2B"][3]);
-      } else {
-        gD.context.drawImage(gD.spritesheet, 
-          gD.spriteDict["Bird1B"][0], gD.spriteDict["Bird1B"][1], gD.spriteDict["Bird1B"][2], gD.spriteDict["Bird1B"][3],
-          this.x + (game.globalSpeed * this.direction * ghostFactor), this.y, gD.spriteDict["Bird1B"][2], gD.spriteDict["Bird1B"][3]);
-      }
+  this.update = function(game) {
+    if (this.direction === "forward") {
+      this.x += game.globalSpeed * 1.5;
     } else {
-      if ((game.distanceTravelled % 50) < 25) {
-        gD.context.drawImage(gD.spritesheet, 
-          gD.spriteDict["Bird2F"][0], gD.spriteDict["Bird2F"][1], gD.spriteDict["Bird2F"][2], gD.spriteDict["Bird2F"][3],
-          this.x + (game.globalSpeed * this.direction * ghostFactor), this.y + 6, gD.spriteDict["Bird2F"][2], gD.spriteDict["Bird2F"][3]);
-      } else {
-        gD.context.drawImage(gD.spritesheet, 
-          gD.spriteDict["Bird1F"][0], gD.spriteDict["Bird1F"][1], gD.spriteDict["Bird1F"][2], gD.spriteDict["Bird1F"][3],
-          this.x + (game.globalSpeed * this.direction * ghostFactor), this.y, gD.spriteDict["Bird1F"][2], gD.spriteDict["Bird1F"][3]);
-      }
+      this.x -= game.globalSpeed * 0.5;
     }
   };
-  this.newPos = function(game) {
-    this.x += game.globalSpeed * 1.5 * this.direction;
+  this.draw = function(game, gD) {
+    let canvasX = this.x - game.distance;
+    
+    drawCanvasImage(canvasX, this.y, this.spriteKey, gD);
   };
 }
 

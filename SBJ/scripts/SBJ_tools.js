@@ -21,6 +21,10 @@ function addPoints(number) {
   return number.toString().replace(/\d(?=(\d{3})+($|\.))/g, '$&.');
 }
 
+function roundTwo(number) {
+  return Math.round(number * 100) / 100;
+}
+
 function factorial(number) {
   let result = 1;
   for (let i = 1; i <= number; i++) {
@@ -162,9 +166,10 @@ function drawCanvasTextBorder(x, y, text, styleKey, gD) {
  * @param {number} x x-coordinate of the top-left corner
  * @param {number} y y-coordinate of the top-left corner
  * @param {string} spriteKey defines which sprite should be drawn
+ * @param {number} rotation  gives the rotation in degree
  * @param {GlobalDict} gD
  */
-function drawCanvasImage(x, y, spriteKey, gD) {
+function drawCanvasImage(x, y, spriteKey, gD, rotation = 0) {
   if (spriteKey === null) {
     return;
   }
@@ -176,13 +181,25 @@ function drawCanvasImage(x, y, spriteKey, gD) {
     let frameNo = Math.floor(gD.frameNo / 8) % spriteY.length;
     spriteY = spriteY[frameNo];
   }
-
-  gD.context.drawImage(
-    gD.spritesheet,
-    spriteX, spriteY, spriteWidth, spriteHeight,
-    x, y, spriteWidth, spriteHeight
-  );
-}/**
+  if (rotation !== 0) {
+    gD.context.translate(x + spriteWidth / 2, y + spriteHeight / 2);
+    gD.context.rotate(rotation / 180 * Math.PI);
+    gD.context.drawImage(
+      gD.spritesheet,
+      spriteX, spriteY, spriteWidth, spriteHeight,
+      -spriteWidth / 2, -spriteHeight / 2, spriteWidth, spriteHeight
+    );
+    gD.context.rotate(-(rotation / 180 * Math.PI));
+    gD.context.translate(-(x + spriteWidth / 2), -(y + spriteHeight / 2));
+  } else {
+    gD.context.drawImage(
+      gD.spritesheet,
+      spriteX, spriteY, spriteWidth, spriteHeight,
+      x, y, spriteWidth, spriteHeight
+    );
+  }
+}
+/**
  * Draw a Sprite-Image onto the used canvas.
  * Its size is determined by the defined data of the given Sprite.
  * @param {number} x          x-coordinate of the top-left corner

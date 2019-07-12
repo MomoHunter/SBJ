@@ -136,6 +136,9 @@ function SaveLoad(menu, gD) {
       if (this.gD.save.player) {
         this.gD.player = this.gD.save.player;
       }
+      if (this.gD.save.selectionScreen) {
+        this.menu.selectionScreenSP.setSaveData(this.gD.save.selectionScreen);
+      }
       this.infoText.text = "Erfolgreich geladen!";
       console.log("Erfolgreich geladen!");
     } catch (e) {
@@ -198,6 +201,7 @@ function SaveLoad(menu, gD) {
     this.gD.save.statistics = this.menu.statistics.getSaveData();
     this.gD.save.shop = this.menu.shop.getSaveData();
     this.gD.save.gD = this.gD.getSaveData();
+    this.gD.save.selectionScreen = this.menu.selectionScreenSP.getSaveData();
   };
   /**
    * checks if a key is pressed and executes commands

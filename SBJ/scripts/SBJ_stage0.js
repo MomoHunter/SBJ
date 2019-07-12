@@ -7,7 +7,8 @@ function Stage0(game, gD) {
   this.difficulty = 5;
   this.gravity = 20.25;
   this.init = function() {
-
+    this.manual = new Image();
+    this.manual.src = "img/Manual_Game.png";
   };
   this.update = function() {
 
@@ -16,6 +17,12 @@ function Stage0(game, gD) {
 
   };
   this.drawBackground = function() {
-
+    if (this.game.showTutorial) {
+      this.gD.context.drawImage(
+        this.manual,
+        Math.floor((this.gD.canvas.width - this.manual.width) / 2), 
+        Math.floor((this.gD.canvas.height - this.manual.height) / 2)
+      );
+    }
   };
 }

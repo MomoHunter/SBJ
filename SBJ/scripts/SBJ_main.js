@@ -232,6 +232,7 @@ function GlobalDict(eventHandler) {
     "Item_Star": [true, 348, [916, 936, 956, 976, 996, 1016, 1036, 1056, 1076, 1096, 1116, 1136, 1156, 1176, 1196], 18, 19],
     "Item_Stopwatch": [true, 348, [1216, 1236, 1256, 1276, 1296, 1316, 1336, 1356], 15, 19],
     "Item_Treasure": [true, 348, [1376, 1390, 1404, 1418, 1432, 1446, 1460, 1474, 1488, 1502, 1516, 1530, 1544, 1558, 1572, 1586], 20, 13],
+    "Item_Frame": [false, 342, 1600, 24, 24],
     "Item_B_Feather": [true, 369, [0, 41, 82, 123, 164, 205, 246, 287, 328, 369], 32, 40],
     "Item_B_Magnet": [true, 369, [410, 451, 492, 533, 574, 615, 656, 697], 34, 40],
     "Item_B_Questionmark": [true, 369, [738, 775, 812, 849, 886, 923, 960, 997, 1034, 1071, 1108, 1145, 1182, 1219, 1256, 1293, 1330, 1367, 1404, 1441, 1478, 1515], 28, 36],
@@ -354,7 +355,7 @@ function GlobalDict(eventHandler) {
     "Stage_B_Fortress": [false, 835, 194, 400, 140],
     "Stage_B_Training": [false, 835, 335, 112, 52],
     "Stage_B_Universe": [false, 835, 388, 112, 52],
-    "Stage_B_Water": [false, 835, 441, 112, 52]
+    "Stage_B_Water": [false, 835, 441, 400, 140]
   };
   // end spriteDict
   this.player = {                    //The data for the different playermodels with: unlocked, bottom middle of hat, middle of glasses, top middle of beard
@@ -417,6 +418,22 @@ function GlobalDict(eventHandler) {
       {type: "Standard", x: 100, y: 210.5, width: 1000},
       {type: "Standard", x: 100, y: 120.5, width: 1000}
     ]},
+    {chance: 1, earliestLevel: 1, floors: [
+      {type: "Standard", x: 110, y: 140.5, width: 155},
+      {type: "Moving", x: 400, y: 180, width: 140, height: 90},
+      {type: "Standard", x: 760, y: 280.5, width: 200},
+      {type: "Standard", x: 1130, y: 120.5, width: 50},
+      {type: "Standard", x: 1320, y: 110.5, width: 50},
+      {type: "Standard", x: 1510, y: 100.5, width: 50}
+    ]},
+    {chance: 1, earliestLevel: 3, floors: [
+      {type: "Standard", x: 90, y: 197.5, width: 300},
+      {type: "Standard", x: 520, y: 120.5, width: 50},
+      {type: "Standard", x: 700, y: 280.5, width: 50},
+      {type: "Standard", x: 880, y: 180.5, width: 50},
+      {type: "Standard", x: 1060, y: 80.5, width: 50},
+      {type: "Standard", x: 1460, y: 144.5, width: 50}
+    ]},
     {chance: 1, earliestLevel: 2, floors: [
       {type: "Jump", x: 100, y: 300.5, width: 200},
       {type: "Standard", x: 400, y: 120.5, width: 180},
@@ -468,8 +485,8 @@ function GlobalDict(eventHandler) {
   this.stages = {                    //unlocked, stage class reference
     "Stage_Training": [true, Stage0],
     "Stage_Fortress": [true, Stage1],
-    "Stage_Air": [false, "Stage2"],
-    "Stage_Water": [false, "Stage3"],
+    "Stage_Air": [true, Stage2],
+    "Stage_Water": [true, Stage3],
     "Stage_Forest": [false, "Stage4"],
     "Stage_Universe": [false, "Stage5"]
   };
@@ -607,6 +624,24 @@ function GlobalDict(eventHandler) {
         rectKey: "standard",
         textKey: {
           headline: "normalBold",
+          text: "highscoreNumber",
+          noMoney: "noMoney"
+        },
+        borderKey: "standard"
+      },
+      skillInfoBox: {
+        rectKey: {
+          background: "blur",
+          icon: "standard",
+          progress: "progress"
+        },
+        circleKey: {
+          normal: "white",
+          selected: "selected"
+        },
+        textKey: {
+          headline: "normalBold",
+          label: "enterNameModal",
           text: "highscoreNumber",
           noMoney: "noMoney"
         },
@@ -898,7 +933,8 @@ function GlobalDict(eventHandler) {
       menu: {
         rectKey: {
           standard: "standard",
-          selected: "selected"
+          selected: "selected",
+          deactivated: "magnet"
         },
         textKey: "menuButton",
         borderKey: "standard"
@@ -1134,6 +1170,16 @@ function GlobalDict(eventHandler) {
       },
       stage1Floor: {
         borderColor: "205, 205, 205, 1",
+        borderSize: 5,
+        lineDash: []
+      },
+      stage2Floor: {
+        borderColor: "124, 124, 124, 1",
+        borderSize: 5,
+        lineDash: []
+      },
+      stage3Floor: {
+        borderColor: "239, 217, 165, 1",
         borderSize: 5,
         lineDash: []
       }

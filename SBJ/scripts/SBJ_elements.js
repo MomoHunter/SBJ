@@ -159,18 +159,18 @@ function CanvasScrollBar(x, y, height, elementHeight, elementsCount, styleKey) {
  * @param {number} height height of the background image on the canvas
  * @param {string} img    the src of the image
  */
-function Background(y, width, height, img) {
+function Background(y, width, height, img, slowness = 1) {
   this.y = y;
   this.width = width;
   this.height = height;
   this.img = new Image();
   this.img.src = img;
+  this.slowness = slowness;
   this.draw = function(game, gD) {
-    let temp = game.distance % this.width;
-    if (game.finished || game.paused) {
-      temp = game.distance % this.width;
-    }
-    gD.context.drawImage(this.img, temp, 0, this.width - temp, this.height, 0, this.y, this.width - temp, this.height);
+    let temp = (game.distance / this.slowness) % this.width;
+    gD.context.drawImage(
+      this.img, temp, 0, this.width - temp, this.height, 0, this.y, this.width - temp, this.height
+    );
     gD.context.drawImage(this.img, 0, 0, temp, this.height, this.width - temp, this.y, temp, this.height);
   };
 }
@@ -194,9 +194,6 @@ function AnimatedBackground(y, width, height, img, cycles, speed) {
   this.speed = speed;
   this.draw = function(game, gD) {
     let temp = game.distance % this.width;
-    if (game.finished || game.paused) {
-      temp = game.distance % this.width;
-    }
     gD.context.drawImage(
       this.img, temp, Math.floor(gD.frameNo / this.speed) % this.cycles * (this.height / this.cycles),
       this.width - temp, (this.height / this.cycles), 0, this.y, this.width - temp, (this.height / this.cycles)
@@ -217,13 +214,14 @@ function AnimatedBackground(y, width, height, img, cycles, speed) {
  * @param {string} text     the text to write on the button
  * @param {string} styleKey the design to use for the button
  */
-function CanvasButton(x, y, width, height, text, styleKey) {
+function CanvasButton(x, y, width, height, text, styleKey, activated = true) {
   this.x = x;
   this.y = y;
   this.width = width;
   this.height = height;
   this.text = text;
   this.styleKey = styleKey;
+  this.activated = activated;
   this.arrowWidth = 0;
   this.arrowHeight = 0;
   this.animationSpeed = 12;
@@ -233,6 +231,9 @@ function CanvasButton(x, y, width, height, text, styleKey) {
   };
   this.deselect = function() {
     this.selected = false;
+  };
+  this.activate = function() {
+    this.activated = true;
   };
   this.update = function() {
     if (this.selected) {
@@ -266,21 +267,29 @@ function CanvasButton(x, y, width, height, text, styleKey) {
     let centerX = this.x + this.width / 2;
     let centerY = this.y + this.height / 2;
 
-    drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.standard, gD);
-    drawCanvasPolygon(
-      centerX + this.arrowWidth / 2, centerY - this.arrowHeight / 2, design.rectKey.selected, gD,
-      centerX + Math.min(this.arrowWidth / 2 + this.arrowHeight / 2, this.width / 2),
-        centerY - Math.max((this.arrowWidth / 2 + this.arrowHeight / 2) - this.width / 2, 0),
-      centerX + Math.min(this.arrowWidth / 2 + this.arrowHeight / 2, this.width / 2),
-        centerY + Math.max((this.arrowWidth / 2 + this.arrowHeight / 2) - this.width / 2, 0),
-      centerX + this.arrowWidth / 2, centerY + this.arrowHeight / 2,
-      centerX - this.arrowWidth / 2, centerY + this.arrowHeight / 2,
-      centerX - Math.min(this.arrowWidth / 2 + this.arrowHeight / 2, this.width / 2),
-        centerY + Math.max((this.arrowWidth / 2 + this.arrowHeight / 2) - this.width / 2, 0),
-      centerX - Math.min(this.arrowWidth / 2 + this.arrowHeight / 2, this.width / 2),
-        centerY - Math.max((this.arrowWidth / 2 + this.arrowHeight / 2) - this.width / 2, 0),
-      centerX - this.arrowWidth / 2, centerY - this.arrowHeight / 2
+    drawCanvasRect(
+      this.x, this.y, this.width, this.height, 
+      this.activated ? design.rectKey.standard : design.rectKey.deactivated, gD
     );
+    if (this.activated) {
+      drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.standard, gD);
+      drawCanvasPolygon(
+        centerX + this.arrowWidth / 2, centerY - this.arrowHeight / 2, design.rectKey.selected, gD,
+        centerX + Math.min(this.arrowWidth / 2 + this.arrowHeight / 2, this.width / 2),
+          centerY - Math.max((this.arrowWidth / 2 + this.arrowHeight / 2) - this.width / 2, 0),
+        centerX + Math.min(this.arrowWidth / 2 + this.arrowHeight / 2, this.width / 2),
+          centerY + Math.max((this.arrowWidth / 2 + this.arrowHeight / 2) - this.width / 2, 0),
+        centerX + this.arrowWidth / 2, centerY + this.arrowHeight / 2,
+        centerX - this.arrowWidth / 2, centerY + this.arrowHeight / 2,
+        centerX - Math.min(this.arrowWidth / 2 + this.arrowHeight / 2, this.width / 2),
+          centerY + Math.max((this.arrowWidth / 2 + this.arrowHeight / 2) - this.width / 2, 0),
+        centerX - Math.min(this.arrowWidth / 2 + this.arrowHeight / 2, this.width / 2),
+          centerY - Math.max((this.arrowWidth / 2 + this.arrowHeight / 2) - this.width / 2, 0),
+        centerX - this.arrowWidth / 2, centerY - this.arrowHeight / 2
+      );
+    } else {
+      drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.deactivated, gD);
+    }
     drawCanvasText(this.x + this.width / 2, this.y + this.height / 2, this.text, design.textKey, gD);
     drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
   };

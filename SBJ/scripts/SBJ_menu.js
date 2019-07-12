@@ -12,6 +12,8 @@ function Menu(gD) {
     this.eventHandler = new EventHandler(this, this.gD);
     this.selectionScreenSP = new SelectionScreenSingleplayer(this, this.gD);
     this.selectionScreenSP.init();
+    this.statistics = new Statistics(this, this.gD);
+    this.statistics.init();
     this.shop = new Shop(this, this.gD);
     this.shop.init();
     this.game = new Game(this, this.gD);
@@ -22,8 +24,6 @@ function Menu(gD) {
     this.highscores.init();
     this.controls = new Controls(this, this.gD);
     this.controls.init();
-    this.statistics = new Statistics(this, this.gD);
-    this.statistics.init();
     this.saveLoad = new SaveLoad(this, this.gD);
     this.saveLoad.init();
 
@@ -44,8 +44,8 @@ function Menu(gD) {
 
     this.playNavigationGrid = [
       [{ button: "Singleplayer", action: (gD) => { gD.currentPage = this.selectionScreenSP; this.showPlay = false } }],
-      [{ button: "Local MP",     action: (gD) => { /*gD.currentPage = this.selectionScreenLMP;*/ this.showPlay = false } }],
-      [{ button: "Online MP",    action: (gD) => { /*gD.currentPage = this.selectionScreenOMP;*/ this.showPlay = false } }],
+      [{ button: "Local MP",     action: (gD) => { /*gD.currentPage = this.selectionScreenLMP; this.showPlay = false*/ } }],
+      [{ button: "Online MP",    action: (gD) => { /*gD.currentPage = this.selectionScreenOMP; this.showPlay = false*/ } }],
       [{ button: "Back",         action: (gD) => { this.showPlay = false } }]
     ];
 
@@ -79,9 +79,15 @@ function Menu(gD) {
 
     this.playNavigationGrid.map((buttonRow, rowIndex) => {
       buttonRow.map((buttonObject, columnIndex) => {
-        buttonObject.button = new CanvasButton(
-            this.gD.canvas.width / 2 - 100, 150 + 37 * rowIndex, 200, 30, buttonObject.button, "menu"
-        );
+        if (buttonObject.button === "Local MP" || buttonObject.button === "Online MP") {
+          buttonObject.button = new CanvasButton(
+            this.gD.canvas.width / 2 - 100, 150 + 37 * rowIndex, 200, 30, buttonObject.button, "menu", false
+          );
+        } else {
+          buttonObject.button = new CanvasButton(
+              this.gD.canvas.width / 2 - 100, 150 + 37 * rowIndex, 200, 30, buttonObject.button, "menu"
+          );
+        }
       }, this);
     }, this);
 

@@ -29,6 +29,8 @@
       ["Game_MoveLeft", ["Spiel", "Rückwärts bewegen", ["A", String.fromCharCode(8592)], ["KeyA", "ArrowLeft"]]],
       ["Game_JumpFromPlatform", ["Spiel", "Von der Plattform runterspringen", ["S", String.fromCharCode(8595)], ["KeyS", "ArrowDown"]]],
       ["Game_Jump", ["Spiel", "Springen", ["Space"], ["Space"]]],
+      ["Game_Restart", ["Spiel", "Neustart", ["R"], ["KeyR"]]],
+      ["Game_Tutorial", ["Spiel", "Tutorial ausblenden", ["I"], ["KeyI"]]],
       ["Game_ItemStopwatch", ["Spiel", "Stoppuhr benutzen", ["1"], ["Digit1"]]],
       ["Game_ItemStar", ["Spiel", "Stern benutzen", ["2"], ["Digit2"]]],
       ["Game_ItemFeather", ["Spiel", "Feder benutzen", ["3"], ["Digit3"]]],

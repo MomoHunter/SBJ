@@ -18,10 +18,11 @@ function Game(menu, gD) {
     this.floors = [new GameFloor(0, this.gD.canvas.height - 49.5, this.gD.canvas.width + 100, "Standard")];
     this.helpFloor = null;
     this.floorStartIndex = 0;
-    this.objects = [];
+    this.objects = [new GameObject(1070, 278, 30, 40, "Money_1")];
     this.objectStartIndex = 0;
     this.showLevel = 180;
     this.showConfirmation = false;
+    this.showTutorial = true;
     this.currentMoneyProbability = {};
     for (let money in this.gD.money) {
       if (this.gD.money.hasOwnProperty(money)) {
@@ -75,10 +76,12 @@ function Game(menu, gD) {
       if (!this.inventory.items["Item_Stopwatch"].active && !this.inventory.items["Item_Rocket"].active) {
         this.globalSpeed = Math.min(this.currentLevel * 0.5 + 1.5, 12);
       }
-      this.currentMoneyProbability["Money_1"] = Math.max(this.currentMoneyProbability["Money_1"] - 0.1, 3);
-      this.currentMoneyProbability["Money_10"] = Math.max(this.currentMoneyProbability["Money_10"] - 0.1, 2);
-      this.currentMoneyProbability["Money_100"] = Math.min(this.currentMoneyProbability["Money_100"] + 0.1, 3);
-      this.currentMoneyProbability["Money_1000"] = Math.min(this.currentMoneyProbability["Money_1000"] + 0.05, 1.15);
+      if (this.currentLevel <= 20) {
+        this.currentMoneyProbability["Money_1"] = this.currentMoneyProbability["Money_1"] - 0.1;
+        this.currentMoneyProbability["Money_10"] = this.currentMoneyProbability["Money_10"] - 0.1;
+        this.currentMoneyProbability["Money_100"] = this.currentMoneyProbability["Money_100"] + 0.1;
+        this.currentMoneyProbability["Money_1000"] = this.currentMoneyProbability["Money_1000"] + 0.05;
+      }
       if (this.currentLevel % 5 === 4) {
         let {spriteWidth, spriteHeight} = getSpriteData("Special_GoldenShamrock", this.gD);
         
@@ -139,10 +142,6 @@ function Game(menu, gD) {
       }
     }
     
-    if (!this.inventory.items["Item_Treasure"].active) {
-      total *= 8;
-    }
-    
     random = Math.random() * total;
     
     for (let prob in this.currentMoneyProbability) {
@@ -150,11 +149,19 @@ function Game(menu, gD) {
         random -= this.currentMoneyProbability[prob];
         if (random <= 0) {
           let {spriteWidth, spriteHeight} = getSpriteData(prob, this.gD);
-          
-          this.objects.push(new GameObject(
-            this.distance + 1000 + randomBetween(10, 150), randomBetween(50, 320), spriteWidth, spriteHeight, prob
-          ));
-          break;
+          if (this.inventory.items["Item_Treasure"].active) {
+            this.objects.push(new GameObject(
+              this.distance + this.gD.canvas.width + randomBetween(150, 300), randomBetween(50, 310),
+              spriteWidth, spriteHeight, prob
+            ));
+            break;
+          } else {
+            this.objects.push(new GameObject(
+              this.distance + this.gD.canvas.width + randomBetween(150, 1100), randomBetween(50, 310),
+              spriteWidth, spriteHeight, prob
+            ));
+            break;
+          }
         }
       }
     }
@@ -168,7 +175,11 @@ function Game(menu, gD) {
       }
     }
     
-    total *= 8;
+    if (this.inventory.items["Item_Treasure"].active) {
+      total *= this.menu.shop.getSkillValue("item_spawn_frequency") * 4;
+    } else {
+      total *= this.menu.shop.getSkillValue("item_spawn_frequency");
+    }
     
     random = Math.random() * total;
     
@@ -178,9 +189,11 @@ function Game(menu, gD) {
         if (random <= 0) {
           let {spriteWidth, spriteHeight} = getSpriteData(prob, this.gD);
           
-          this.objects.push(new GameObject(
-            this.distance + 1000 + randomBetween(10, 150), randomBetween(50, 310), spriteWidth, spriteHeight, prob
-          ));
+          let newItem = new GameObject(
+            this.distance + this.gD.canvas.width + randomBetween(110, 250), randomBetween(50, 310), spriteWidth, spriteHeight, prob
+          );
+          newItem.init(this.gD);
+          this.objects.push(newItem);
           break;
         }
       }
@@ -215,7 +228,8 @@ function Game(menu, gD) {
     }
   };
   this.getRankSpriteKey = function(player) {
-    let ranks = ["Special_Rank_C", "Special_Rank_B", "Special_Rank_A", "Special_Rank_S", "Special_Rank_SS", "Special_Rank_SSS"];
+    let ranks = ["Special_Rank_C", "Special_Rank_B", "Special_Rank_A", 
+                 "Special_Rank_S", "Special_Rank_SS", "Special_Rank_SSS"];
     return ranks[Math.min(Math.floor(this.getMatchPoints(player)), 5)];
   };
   this.continues = function() {
@@ -251,7 +265,10 @@ function Game(menu, gD) {
         this.handleEvent(Events.COLLECT_BONUS, bonus);
         this.handleEvent(Events.DEATH);
         this.handleEvent(Events.HIGHSCORE_COLLECTED_HYPE, Math.floor(this.player.inventory.getTotalHype(this)));
-        this.handleEvent(Events.HIGHSCORE_TRAVELLED_DISTANCE, Math.floor(this.player.inventory.getValue("distance") / 15));
+        this.handleEvent(
+          Events.HIGHSCORE_TRAVELLED_DISTANCE, 
+          Math.floor(this.player.inventory.getValue("distance") / 15)
+        );
         this.handleEvent(
           Events.END_OF_ROUND_TOTAL_TRAVELLED_DISTANCE, 
           Math.floor(this.player.inventory.getValue("distance") / 15)
@@ -273,9 +290,8 @@ function Game(menu, gD) {
     
     this.init();
     
-    this.trainingMode = trainingMode;
+    this.setStage("Stage_" + stage.name, trainingMode);
     this.addPlayer(player.character, player.hat, player.glasses, player.beard, true, player.name);
-    this.stage = stage;
     this.setStartTime();
   };
   this.updateKeyPresses = function() {
@@ -334,6 +350,8 @@ function Game(menu, gD) {
               this.init();
               break;
           }
+        } else if (keyB.get("Game_Restart")[3].includes(key)) {
+          this.restart();
         }
       }
       if (!this.paused && !this.finished && !this.showConfirmation) {
@@ -351,6 +369,10 @@ function Game(menu, gD) {
           this.inventory.activate(this, "Item_Magnet");
         } else if (keyB.get("Game_ItemRocket")[3].includes(key)) {
           this.inventory.activate(this, "Item_Rocket");
+        } else if (keyB.get("Game_Restart")[3].includes(key)) {
+          this.restart();
+        } else if (keyB.get("Game_Tutorial")[3].includes(key)) {
+          this.showTutorial = !this.showTutorial;
         }
       }
     }, this);
@@ -444,19 +466,20 @@ function Game(menu, gD) {
       if (this.floors[this.floorStartIndex].x + this.floors[this.floorStartIndex].width < this.distance - 100) {
         this.floorStartIndex++;
       }
-      if (this.gD.frameNo % 25 === 0 || this.inventory.items["Item_Treasure"].active) {
+      if (this.objects[this.objects.length - 1].x + this.objects[this.objects.length - 1].width < this.distance + 1100 || 
+          this.inventory.items["Item_Treasure"].active) {
         this.addMoney();
-      }
-      if (this.gD.frameNo % this.menu.shop.getSkillValue("item_spawn_frequency") === 0) {
         this.addItem();
       }
-      this.objects.map(object => {
-        object.update(this);
-      }, this);
-      this.objects.map((object, index) => {
-        this.player.collect(this, object, index);
-      }, this);
-      if (this.objects.length > 0 && this.objectStartIndex < this.objects.length &&
+      if (this.objects[this.objectStartIndex].x + this.objects[this.objectStartIndex].width < this.distance - 100) {
+        this.objectStartIndex++;
+      }
+      
+      for (let i = this.objectStartIndex; i < this.objects.length; i++) {
+        this.objects[i].update(this);
+        this.player.collect(this, this.objects[i], i);
+      };
+      if (this.objectStartIndex < this.objects.length &&
           this.objects[this.objectStartIndex].x + this.objects[this.objectStartIndex].width < this.distance - 100) {
         this.objectStartIndex++;
       }
@@ -486,6 +509,7 @@ function Game(menu, gD) {
       this.objects[i].draw(this, this.gD);
     }
     this.stage.drawForeground();
+    
     if (this.paused) {
       drawCanvasRect(0, (this.gD.canvas.height - 70) / 2, this.gD.canvas.width, 70, "darkModal", this.gD);
       drawCanvasText(this.gD.canvas.width / 2, this.gD.canvas.height / 2, "Pause", "pageTitle", gD);
@@ -531,6 +555,7 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
   this.inventory = null;
   this.speed = 0;
   this.velocity = 0;
+  this.weight = 45;
   this.gravity = 0.45;
   this.jumps = 0;
   this.jumping = false;
@@ -581,14 +606,17 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
       game.helpFloor = null;
     }
   };
-  this.setGravity = function(item = false) {
-    if (item) {
+  this.setGravity = function(game) {
+    if (this.inventory.items["Item_Feather"].active) {
       this.gravity = 0.25;
     } else {
-      this.gravity = 0.45;
+      this.gravity = game.stage.gravity / this.weight;
     }
   };
   this.jump = function(game, menu) {
+    if (game.stage.name === "Water" && this.y + this.height >= game.gD.canvas.height / 2) {
+      this.jumps = 0;
+    }
     if (!this.jumping && this.jumps < menu.shop.getSkillValue("jumps")) {
       if (game.stage.name === "Universe") {
         this.velocity = menu.shop.getSkillValue("jump_height") / 2.9;
@@ -713,7 +741,8 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
         this.x + this.width > object.x &&
         this.y < object.y + object.height &&
         this.height + this.y > object.y) {
-      if (object.spriteKey === "" && !this.inventory.items["Item_Star"].active && !this.inventory.items["Item_Rocket"].active) {
+      if (object.spriteKey === "" && !this.inventory.items["Item_Star"].active && 
+          !this.inventory.items["Item_Rocket"].active) {
         game.finish();
       } else if (object.spriteKey.startsWith("Item") || object.spriteKey.startsWith("Special")) {
         switch (object.spriteKey.split("_")[1]) {
@@ -788,7 +817,8 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
         if (index !== -1) {
           game.objects.splice(index, 1);
         }
-      } else if (object.spriteKey.startsWith("Enemy") && !this.inventory.items["Item_Star"].active && !this.inventory.items["Item_Rocket"].active) {
+      } else if (object.spriteKey.startsWith("Enemy") && !this.inventory.items["Item_Star"].active && 
+                 !this.inventory.items["Item_Rocket"].active) {
         game.finish();
       }
     }
@@ -799,8 +829,10 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
     this.width = spriteData.spriteWidth;
     this.height = spriteData.spriteHeight;
     
+    this.setGravity(game);
+    
     if (this.inventory.items["Item_Rocket"].active) {
-      this.x += this.speed;//Math.min(Math.pow((-game.itemTimer[5] + 5 + (max / 2)) / (max / 5), 4) - 40, Math.ceil(game.globalBaseSpeed - (game. distanceTravelled * 0.00015))); //-((-x + 5 + (max/2)) / (max/5))^4+40 max is the max durability of the item
+      this.x += this.speed;
       this.y -= (this.y - 50) / 40;
       this.onFloor = false;
       this.velocity = 0;
@@ -1031,9 +1063,6 @@ function GameInventoryItem(x, y, width, height, itemName, maxDurability, styleKe
           game.globalSpeed = 0.1;
           game.player.stopMoving(game, null);
           break;
-        case "Item_Feather":
-          game.player.setGravity(true);
-          break;
         default:
       }
     }
@@ -1062,9 +1091,6 @@ function GameInventoryItem(x, y, width, height, itemName, maxDurability, styleKe
             if (game.player.y === game.gD.canvas.height - game.stage.deadZoneGround - game.player.height) {
               game.player.onFloor = false;
             }
-            break;
-          case "Item_Feather":
-            game.player.setGravity();
             break;
           case "Item_Rocket":
             this.velocity = 0;
@@ -1200,7 +1226,7 @@ function GameFloor(x, y, width, type, height = 0) {
   this.isFalling = false;
   this.init = function(game) {
     if (this.type === "Moving") {
-      this.weight = game.stage.gravity / (3 / (Math.floor((this.height / 3)) - 1));
+      this.weight = 20.25 / (3 / (Math.floor((this.height / 3)) - 1));
     } else {
       this.weight = (this.width - 50) / (300 - 50) * (50 - 40) + 40;
     }
@@ -1211,10 +1237,12 @@ function GameFloor(x, y, width, type, height = 0) {
   };
   this.update = function(game, gD) {
     this.y += this.velocity;
-    if (this.isFalling) {
+    if (this.isFalling && this.type === "Moving") {
+      this.velocity += 20.25 / this.weight;
+    } else if (this.isFalling) {
       this.velocity += game.stage.gravity / this.weight;
     } else if (!this.isFalling && this.type === "Moving") {
-      this.velocity -= game.stage.gravity / this.weight;
+      this.velocity -= 20.25 / this.weight;
     }
     if (this.type === "Moving" && (this.velocity > 3 || this.velocity < -3)) {
       this.isFalling = !this.isFalling;
@@ -1246,6 +1274,15 @@ function GameObject(x, y, width, height, spriteKey = "") {
   this.width = width;
   this.height = height;
   this.spriteKey = spriteKey;
+  this.addItemFrame = false;
+  this.init = function(gD) {
+    if (this.spriteKey.startsWith("Item")) {
+      let {spriteWidth, spriteHeight} = getSpriteData("Item_Frame", gD);
+      this.addItemFrame = true;
+      this.width = spriteWidth;
+      this.height = spriteHeight;
+    }
+  };
   this.update = function(game) {
     if (this.spriteKey !== "" && game.inventory.items["Item_Magnet"].active) {
       let distX = (game.player.x + game.player.width / 2) - (this.x + this.width / 2);
@@ -1262,7 +1299,16 @@ function GameObject(x, y, width, height, spriteKey = "") {
       let canvasX = this.x - game.distance;
       let spriteData = getSpriteData(this.spriteKey, gD);
 
-      drawCanvasImage(canvasX, this.y, this.spriteKey, gD);
+      if (this.addItemFrame) {
+        drawCanvasImage(canvasX, this.y, "Item_Frame", gD);
+        drawCanvasImage(
+          canvasX + Math.floor((this.width - spriteData.spriteWidth) / 2), 
+          this.y + Math.floor((this.height - spriteData.spriteHeight) / 2),
+          this.spriteKey, gD
+        );
+      } else {
+        drawCanvasImage(canvasX, this.y, this.spriteKey, gD);
+      }
     }
   };
 }

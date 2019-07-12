@@ -6,100 +6,102 @@
     this.backgroundMusic.src = "music/shop.mp3";
     this.backgroundMusic.loop = true;
     this.backgroundMusic.volume = 0.2;
-    this.hype = 1000000000;
+    this.hype = 4000000000;
     this.goldenShamrocks = 2400;
     this.movingTree = false;
     this.movingMinimap = false;
+    this.movingSkillLevel = false;
     this.movingCounter = 0;           //counts how many frames moving was activated to prevent unintentional clicks
+    this.skillInfo = false;
     this.currentlyMarked = null;
     this.scrollHeight = 0;
     this.skillData = {          //funktion einbinden, die den aktuellen Wert zurückgibt
       "unlock_skilltree": new SkillData(
         "Unlock the Skilltree", false, (level) => {return level;}, 1, 
-        (level) => {return 1000;}, (level) => {return 0;}, [], 0
+        (level) => {return 1000;}, (level) => {return 0;}, [], 0, false
       ),
       "level_up_items": new SkillData(
         "Level up Items", false, (level) => {return level;}, 1, (level) => {return 2000;}, 
-        (level) => {return 0;}, ["unlock_skilltree"], 1
+        (level) => {return 0;}, ["unlock_skilltree"], 1, false
       ),
       "level_up_stopwatch": new SkillData(
         "Stopwatch level up", true, (level) => {return 120 + level * 5;}, 100, 
-        (level) => {return 10000 + Math.pow(level * 50, 1.4);}, (level) => {return 0;}, ["level_up_items"], 1
+        (level) => {return 10000 + Math.pow(level * 50, 1.4);}, (level) => {return 0;}, ["level_up_items"], 1, true
       ),
       "level_up_star": new SkillData(
         "Star level up", true, (level) => {return Math.floor(150 + level * 11.5);}, 100, 
-        (level) => {return 35000 + Math.pow(level * 40, 1.6);}, (level) => {return 0;}, ["level_up_items"], 1
+        (level) => {return 35000 + Math.pow(level * 40, 1.6);}, (level) => {return 0;}, ["level_up_items"], 1, true
       ),
       "level_up_feather": new SkillData(
         "Feather level up", true, (level) => {return 300 + level * 6;}, 100, 
-        (level) => {return 15000 + Math.pow(level * 35, 1.5);}, (level) => {return 0;}, ["level_up_items"], 1
+        (level) => {return 15000 + Math.pow(level * 35, 1.5);}, (level) => {return 0;}, ["level_up_items"], 1, true
       ),
       "level_up_treasure": new SkillData(
-        "Treasure level up", true, (level) => {return Math.floor(20 + level * 0.8);}, 100, 
-        (level) => {return 50000 + Math.pow(level * 55, 1.6);}, (level) => {return 0;}, ["level_up_items"], 1
+        "Treasure level up", true, (level) => {return Math.floor(20 + level);}, 100, 
+        (level) => {return 50000 + Math.pow(level * 55, 1.6);}, (level) => {return 0;}, ["level_up_items"], 1, true
       ),
       "level_up_magnet": new SkillData(
         "Magnet level up", true, (level) => {return 240 + level * 16;}, 100, 
-        (level) => {return 25000 + Math.pow(level * 50, 1.5);}, (level) => {return 0;}, ["level_up_items"], 1
+        (level) => {return 25000 + Math.pow(level * 50, 1.5);}, (level) => {return 0;}, ["level_up_items"], 1, true
       ),
       "level_up_rocket": new SkillData(
         "Rocket level up", true, (level) => {return 100 + level * 4;}, 100, 
-        (level) => {return 30000 + Math.pow(level * 70, 1.5);}, (level) => {return 0;}, ["level_up_items"], 1
+        (level) => {return 30000 + Math.pow(level * 70, 1.5);}, (level) => {return 0;}, ["level_up_items"], 1, true
       ),
       "start_amount_stopwatch": new SkillData(
         "Stopwatches at start", true, (level) => {return level;}, 2, 
-        (level) => {return 80000 + level * 60000;}, (level) => {return 12 + level * 6}, ["level_up_stopwatch"], 50
+        (level) => {return 80000 + level * 60000;}, (level) => {return 12 + level * 6}, ["level_up_stopwatch"], 50, true
       ),
       "start_amount_star": new SkillData(
         "Stars at start", true, (level) => {return level;}, 2,
-        (level) => {return 250000 + level * 166666;}, (level) => {return 45 + level * 22;}, ["level_up_star"], 50
+        (level) => {return 250000 + level * 166666;}, (level) => {return 45 + level * 22;}, ["level_up_star"], 50, true
       ),
       "start_amount_feather": new SkillData(
         "Feathers at start", true, (level) => {return level;}, 2,
-        (level) => {return 100000 + level * 66666;}, (level) => {return 16 + level * 8;}, ["level_up_feather"], 50
+        (level) => {return 100000 + level * 66666;}, (level) => {return 16 + level * 8;}, ["level_up_feather"], 50, true
       ),
       "start_amount_treasure": new SkillData(
         "Treasures at start", true, (level) => {return level;}, 2,
-        (level) => {return 400000 + level * 266666;}, (level) => {return 50 + level * 25;}, ["level_up_treasure"], 50
+        (level) => {return 400000 + level * 266666;}, (level) => {return 50 + level * 25;}, ["level_up_treasure"], 50, true
       ),
       "start_amount_magnet": new SkillData(
-        "Magnets at start", true, (level) => {return level;}, 2,
-        (level) => {return 180000 + level * 120000;}, (level) => {return 32 + level * 16;}, ["level_up_magnet"], 50
+        "Magnets at start", true, (level) => {return level;}, 2, (level) => {return 180000 + level * 120000;}, 
+        (level) => {return 32 + level * 16;}, ["level_up_magnet"], 50, true
       ),
       "start_amount_rocket": new SkillData(
-        "Rockets at start", true, (level) => {return level;}, 2,
-        (level) => {return 270000 + level * 180000;}, (level) => {return 39 + level * 19;}, ["level_up_rocket"], 50
+        "Rockets at start", true, (level) => {return level;}, 2, (level) => {return 270000 + level * 180000;}, 
+        (level) => {return 39 + level * 19;}, ["level_up_rocket"], 50, true
       ),
       "item_spawn_frequency": new SkillData(
-        "Item spawn frequency", true, (level) => {return 250 - level * 15;}, 10, 
+        "Item spawn frequency", true, (level) => {return 15 - level;}, 10, 
         (level) => {return 12500 + Math.pow(level * 12, 3);}, (level) => {return 6 + Math.pow(level, 3.5);}, [
           "level_up_stopwatch", "level_up_star", "level_up_feather",
           "level_up_treasure", "level_up_magnet", "level_up_rocket"
-        ], 200
+        ], 200, true
       ),
       "money_multiplier": new SkillData(
         "Money multiplier", true, (level) => {return 1 + level * 0.09;}, 100, 
-        (level) => {return 5000 + Math.pow(level * 10, 2);}, (level) => {return 0;}, ["unlock_skilltree"], 1
+        (level) => {return 5000 + Math.pow(level * 10, 2);}, (level) => {return 0;}, ["unlock_skilltree"], 1, true
       ),
       "character_upgrades": new SkillData(
         "Character upgrades", false, (level) => {return level;}, 1, (level) => {return 3000;}, 
-        (level) => {return 0;}, ["unlock_skilltree"], 1
+        (level) => {return 0;}, ["unlock_skilltree"], 1, false
       ),
       "movement_speed": new SkillData(
         "Movement speed", true, (level) => {return 3 + level * 0.4;}, 10,
-        (level) => {return 17500 + Math.pow(level * 8, 2.5);}, (level) => {return 0;}, ["character_upgrades"], 1
+        (level) => {return 17500 + Math.pow(level * 8, 2.5);}, (level) => {return 0;}, ["character_upgrades"], 1, true
       ),
       "jump_height": new SkillData(
         "Jump height", true, (level) => {return -(9 + level);}, 5,
-        (level) => {return 22000 + Math.pow(level * 6, 3.5);}, (level) => {return 0;}, ["character_upgrades"], 1
+        (level) => {return 22000 + Math.pow(level * 6, 3.5);}, (level) => {return 0;}, ["character_upgrades"], 1, true
       ),
       "jumps": new SkillData(
-        "Jumps", true, (level) => {return 2 + level;}, 3,
-        (level) => {return 100000 + level * 100000;}, (level) => {return 10 + level * 10;}, ["character_upgrades"], 1
+        "Jumps", true, (level) => {return 2 + level;}, 3, (level) => {return 100000 + level * 100000;}, 
+        (level) => {return 10 + level * 10;}, ["character_upgrades"], 1, true
       ),
       "extra_life": new SkillData(
         "Extra life", true, (level) => {return level;}, 1, (level) => {return 10000000;}, 
-        (level) => {return 5000;}, ["Deaths"], 1000
+        (level) => {return 5000;}, ["Deaths"], 1000, false
       )
     };
     this.accessories = new Map([
@@ -116,7 +118,6 @@
 
     this.checkUnlocks();
 
-
     this.title = new CanvasText(this.gD.canvas.width / 2, 30, "Shop", "pageTitle");
 
     this.tabs = ["Icon_Skilltree", "Icon_Accessories"];
@@ -130,6 +131,9 @@
     this.skillTree = new ShopSkillTree(this.gD.canvas.width / 2 - 245, 70, 545, 200, "skillTree");
     this.skillTree.init(this);
     this.tabs[0].objects.push(this.skillTree);
+    this.skillInfoBox = new SkillInfoBox(this.gD.canvas.width / 2 - 180, 85, 415, 170, "skillInfoBox");
+    this.skillInfoBox.init();
+    this.tabs[0].objects.push(this.skillInfoBox);
 
     this.accessoryWindow = new ShopAccessoryWindow(this.gD.canvas.width / 2 - 245, 70, 545, 200, "accessoryWindow");
     this.tabs[1].objects.push(this.accessoryWindow);
@@ -217,20 +221,26 @@
     this.hype += amount;
     this.handleEvent(Events.SET_OWNED_HYPE, this.hype);
   };
-  this.levelSkills = function(skill) {
-    let skillData = this.skillData[skill.key];
-    let {goldenShamrock, hype} = skillData.getCost();
-
-    if (this.goldenShamrocks >= goldenShamrock && this.hype >= hype && !skillData.maxed && skillData.unlocked) {
-      this.goldenShamrocks -= goldenShamrock;
-      this.hype -= hype;
-      this.handleEvent(Events.MONEY_SPENT, hype);
-      skillData.levelUp();
-      this.checkUnlocks();
-      if (skill.key.startsWith("level") && skill.key !== "level_up_items") {
-        this.handleEvent(Events.LVL_ITEM);
-        this.handleEvent(Events.LVL_ITEM_MAX, skillData.currentLevel);
+  this.levelSkills = function() {
+    if (this.goldenShamrocks >= this.skillInfoBox.costs.goldenShamrock && this.hype >= this.skillInfoBox.costs.hype && 
+        this.skillInfoBox.skillData.unlocked) {
+      if (this.skillInfoBox.shownLevel < this.skillInfoBox.skillData.currentLevel && 
+          !this.skillInfoBox.skillData.sellable) {
+        return false;
       }
+      this.goldenShamrocks -= this.skillInfoBox.costs.goldenShamrock;
+      this.hype -= this.skillInfoBox.costs.hype;
+      this.handleEvent(Events.MONEY_SPENT, this.skillInfoBox.costs.hype);
+      this.skillInfoBox.skillData.levelUp(this.skillInfoBox.shownLevel);
+      this.checkUnlocks();
+      if (this.skillInfoBox.currentSkill.key.startsWith("level") && 
+          this.skillInfoBox.currentSkill.key !== "level_up_items") {
+        this.handleEvent(Events.LVL_ITEM);
+        this.handleEvent(Events.LVL_ITEM_MAX, this.skillInfoBox.skillData.currentLevel);
+      }
+      return true;
+    } else {
+      return false;
     }
   };
   this.buyAccessory = function(accessory) {
@@ -349,7 +359,9 @@
           );
         }
       } else if (keyB.get("Menu_NavRight")[3].includes(key)) {
-        if (this.selectedTabIndex === 1) {
+        if (this.skillInfo && this.skillInfoBox.selected === -1) {
+          this.skillInfoBox.setCircle(Math.min(this.skillInfoBox.shownLevel + 1, this.skillInfoBox.skillData.maxValue));
+        } else if (this.selectedTabIndex === 1) {
           if (this.selectedColumnIndex === 1 && this.dropdowns[0].opened) {
             if (this.selectedRowIndex > this.dropdowns[1].options.length) {
               this.updateSelection(this.selectedTabIndex, this.dropdowns[1].options.length, 2);
@@ -391,7 +403,9 @@
           }
         }
       } else if (keyB.get("Menu_NavLeft")[3].includes(key)) {
-        if (this.selectedTabIndex === 1) {
+        if (this.skillInfo && this.skillInfoBox.selected === -1) {
+          this.skillInfoBox.setCircle(Math.max(this.skillInfoBox.shownLevel - 1, 0));
+        } else if (this.selectedTabIndex === 1) {
           if (this.selectedColumnIndex === 2 && this.dropdowns[1].opened) {
             if (this.selectedRowIndex > this.dropdowns[0].options.length) {
               this.updateSelection(this.selectedTabIndex, this.dropdowns[0].options.length, 1);
@@ -503,7 +517,6 @@
     let mouseDown = this.gD.mouseDown.pop();
     let mouseUp = this.gD.mouseUp.pop();
     let dropdownOpen = false;
-
     if (!this.movingTree && !this.movingMinimap) {
       this.tabs.map((tab, index) => {
         if (this.gD.mousePos.x >= tab.x && this.gD.mousePos.x <= tab.x + tab.tabHeadWidth &&
@@ -540,31 +553,58 @@
                this.gD.mousePos.y <= this.skillTree.minimap.windowY + this.skillTree.minimap.windowHeight) {
       this.movingMinimap = true;
     }
-
+    
     if (this.tabs[0].selected) {
-      if (this.movingTree) {
-        this.skillTree.moveTree(gD.mousePos.x - gD.referenceMousePos.x, gD.mousePos.y - gD.referenceMousePos.y);
-        this.reset = true;
-      } else if (this.movingMinimap) {
-        this.skillTree.moveTree(
-          -(gD.mousePos.x - gD.referenceMousePos.x) / this.skillTree.minimap.scaleFactor,
-          -(gD.mousePos.y - gD.referenceMousePos.y) / this.skillTree.minimap.scaleFactor
-        );
-        this.reset = true;
-      } else if (this.reset) {
-        this.skillTree.setCurrentPos();
-        this.reset = false;
-      }
-
-      this.skillTree.skills.map(skill => {
-        let skillX = skill.x - (this.skillTree.currentPosX - this.skillTree.moveX);
-        let skillY = skill.y - (this.skillTree.currentPosY - this.skillTree.moveY);
-        if (Math.sqrt((this.gD.mousePos.x - skillX) ** 2 + (this.gD.mousePos.y - skillY) ** 2) <= skill.radius) {
-          skill.select();
+      if (this.skillInfo) {
+        if (this.movingSkillLevel) {
+          if (!mouseUp) {
+            this.skillInfoBox.moveCircle(this.gD.mousePos.x);
+            this.skillInfoBox.setCircle(-1, false);
+          } else {
+            this.movingSkillLevel = false;
+            this.skillInfoBox.setCircle();
+          }
         } else {
-          skill.deselect();
+          this.skillInfoBox.buttons.map((button, index) => {
+            if (this.gD.mousePos.x >= button.x && this.gD.mousePos.x <= button.x + button.width &&
+                this.gD.mousePos.y >= button.y && this.gD.mousePos.y <= button.y + button.height) {
+              this.skillInfoBox.selectButton(index);
+            }
+          }, this);
+          
+          if (Math.sqrt((this.gD.mousePos.x - this.skillInfoBox.circleCenterX) ** 2 + 
+              (this.gD.mousePos.y - this.skillInfoBox.circleCenterY) ** 2) <= 5) {
+            this.skillInfoBox.selectButton(-1);
+            if (mouseDown) {
+              this.movingSkillLevel = true;
+            }
+          }
         }
-      }, this);
+      } else {
+        if (this.movingTree) {
+          this.skillTree.moveTree(gD.mousePos.x - gD.referenceMousePos.x, gD.mousePos.y - gD.referenceMousePos.y);
+          this.reset = true;
+        } else if (this.movingMinimap) {
+          this.skillTree.moveTree(
+            -(gD.mousePos.x - gD.referenceMousePos.x) / this.skillTree.minimap.scaleFactor,
+            -(gD.mousePos.y - gD.referenceMousePos.y) / this.skillTree.minimap.scaleFactor
+          );
+          this.reset = true;
+        } else if (this.reset) {
+          this.skillTree.setCurrentPos();
+          this.reset = false;
+        }
+
+        this.skillTree.skills.map(skill => {
+          let skillX = skill.x - (this.skillTree.currentPosX - this.skillTree.moveX);
+          let skillY = skill.y - (this.skillTree.currentPosY - this.skillTree.moveY);
+          if (Math.sqrt((this.gD.mousePos.x - skillX) ** 2 + (this.gD.mousePos.y - skillY) ** 2) <= skill.radius) {
+            skill.select();
+          } else {
+            skill.deselect();
+          }
+        }, this);
+      }
     } else if (this.tabs[1].selected) {
       if (this.gD.mousePos.x >= this.resetButton.x && this.gD.mousePos.x <= this.resetButton.x + this.resetButton.width &&
           this.gD.mousePos.y >= this.resetButton.y && this.gD.mousePos.y <= this.resetButton.y + this.resetButton.height) {
@@ -620,18 +660,43 @@
     }
 
     if (clickPos.x >= this.backToMenu.x && clickPos.x <= this.backToMenu.x + this.backToMenu.width &&
-      clickPos.y >= this.backToMenu.y && clickPos.y <= this.backToMenu.y + this.backToMenu.height) {
+        clickPos.y >= this.backToMenu.y && clickPos.y <= this.backToMenu.y + this.backToMenu.height) {
       this.gD.currentPage = this.menu;
     }
 
     if (this.tabs[0].selected) {
-      this.skillTree.skills.map(skill => {
-        let skillX = skill.x - (this.skillTree.currentPosX - this.skillTree.moveX);
-        let skillY = skill.y - (this.skillTree.currentPosY - this.skillTree.moveY);
-        if (Math.sqrt((this.gD.mousePos.x - skillX) ** 2 + (this.gD.mousePos.y - skillY) ** 2) <= skill.radius) {
-          this.levelSkills(skill);
+      if (this.skillInfo) {
+        this.skillInfoBox.buttons.map((button, index) => {
+          if (clickPos.x >= button.x && clickPos.x <= button.x + button.width &&
+              clickPos.y >= button.y && clickPos.y <= button.y + button.height) {
+            let success = true;
+            if (index === 0) {
+              success = this.levelSkills();
+            }
+            if (success) {
+              this.skillInfoBox.setSkill(this, null);
+              this.skillInfo = false;
+            }
+          }
+        }, this);
+        
+        if (clickPos.x >= this.skillInfoBox.barX && clickPos.x <= this.skillInfoBox.barX + this.skillInfoBox.barWidth &&
+            clickPos.y >= this.skillInfoBox.barY - 2 && 
+            clickPos.y <= this.skillInfoBox.barY + this.skillInfoBox.barHeight + 2) {
+          this.skillInfoBox.moveCircle(clickPos.x);
+          this.skillInfoBox.setCircle();
         }
-      }, this);
+      } else {
+        this.skillTree.skills.map(skill => {
+          let skillX = skill.x - (this.skillTree.currentPosX - this.skillTree.moveX);
+          let skillY = skill.y - (this.skillTree.currentPosY - this.skillTree.moveY);
+          if (Math.sqrt((this.gD.mousePos.x - skillX) ** 2 + (this.gD.mousePos.y - skillY) ** 2) <= skill.radius && 
+              this.skillData[skill.key].unlocked) {
+            this.skillInfoBox.setSkill(this, skill);
+            this.skillInfo = true;
+          }
+        }, this);
+      }
     } else if (this.tabs[1].selected) {
       if (clickPos.x >= this.resetButton.x && clickPos.x <= this.resetButton.x + this.resetButton.width &&
           clickPos.y >= this.resetButton.y && clickPos.y <= this.resetButton.y + this.resetButton.height) {
@@ -855,7 +920,7 @@ function ShopMoneyDisplay(x, y, width, height, styleKey) {
   };
 }
 
-function SkillData(name, showValue, valueFunction, maxValue, costHypeFunction, costGSFunction, unlockedBy, unlockedAt) {
+function SkillData(name, showValue, valueFunction, maxValue, costHypeFunction, costGSFunction, unlockedBy, unlockedAt, sellable) {
   this.name = name;
   this.showValue = showValue;
   this.valueFunction = valueFunction;
@@ -864,11 +929,12 @@ function SkillData(name, showValue, valueFunction, maxValue, costHypeFunction, c
   this.costGSFunction = costGSFunction;
   this.unlockedBy = unlockedBy;
   this.unlockedAt = unlockedAt;
+  this.sellable = sellable;
   this.currentLevel = 0;
   this.unlocked = false;
   this.maxed = false;
-  this.getValue = function() {
-    return this.valueFunction(this.currentLevel);
+  this.getValue = function(level = this.currentLevel) {
+    return this.valueFunction(level);
   };
   this.checkUnlock = function(shop) {
     let levels = 0;
@@ -887,18 +953,21 @@ function SkillData(name, showValue, valueFunction, maxValue, costHypeFunction, c
       this.unlocked = true;
     }
   };
-  this.levelUp = function() {
-    if (this.currentLevel < this.maxValue && this.unlocked) {
-      this.currentLevel++;
+  this.levelUp = function(level = (this.currentLevel + 1)) {
+    if (this.unlocked) {
+      this.currentLevel = level;
       if (this.currentLevel >= this.maxValue) {
         this.maxed = true;
+        this.currentLevel = this.maxValue;
+      } else {
+        this.maxed = false;
       }
     }
   };
-  this.getCost = function() {
+  this.getCost = function(level = this.currentLevel) {
     return {
-      goldenShamrock: Math.floor(this.costGSFunction(this.currentLevel)),
-      hype: Math.floor(this.costHypeFunction(this.currentLevel))
+      goldenShamrock: Math.floor(this.costGSFunction(level)),
+      hype: Math.floor(this.costHypeFunction(level))
     };
   };
   this.getSaveData = function() {
@@ -921,11 +990,9 @@ function ShopSkillTree(x, y, width, height, styleKey) {
   this.moveY = 0;
   this.currentPosX = 500 - width / 2;
   this.currentPosY = 0;
-  this.infoBox = null;
   this.lines = [];
   this.skills = [];
   this.init = function(shop) {
-    this.infoBox = new SkillInfoBox(600, 50, 200, 69, "shopSkillInfo");
     this.skills.push(new ShopSkill(this.x + 475, this.y + 80, 40, "unlock_skilltree", "", "shopSkillStandard"));
     this.skills.push(new ShopSkill(this.x + 140, this.y + 190, 40, "money_multiplier", "", "shopSkillMoney"));
     this.lines.push({startX: 475, startY: 80, endX: 140, endY: 190});
@@ -1011,11 +1078,7 @@ function ShopSkillTree(x, y, width, height, styleKey) {
     }, this);
     this.skills.map(skill => {
       skill.draw(gD, shop, this.currentPosX - this.moveX, this.currentPosY - this.moveY);
-      if (skill.selected) {
-        this.infoBox.setSkill(skill);
-      }
     }, this);
-    this.infoBox.draw(gD, shop, this.currentPosX - this.moveX, this.currentPosY - this.moveY);
 
     gD.context.restore();
     drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
@@ -1237,55 +1300,150 @@ function SkillInfoBox(x, y, width, height, styleKey) {
   this.height = height;
   this.styleKey = styleKey;
   this.currentSkill = null;
-  this.radius = null;
-  this.setSkill = function(skill) {
-    this.currentSkill = skill;
-    this.x = skill.x;
-    this.y = skill.y;
-    this.radius = skill.radius;
+  this.skillData = null;
+  this.barX = x + 10;
+  this.barY = y + height - 80;
+  this.barWidth = width - 20;
+  this.barHeight = 5;
+  this.circleCenterX = x + 12;
+  this.circleCenterY = y + height - 77.5;
+  this.shownLevel = 0;
+  this.costs = {
+    "goldenShamrock": 0,
+    "hype": 0
   };
-  this.draw = function(gD, shop, shiftX, shiftY) {
-    let design = gD.design.elements[this.styleKey];
-    let newX = this.x - shiftX;
-    let newY = this.y - shiftY;
-
+  this.selected = 0;
+  this.init = function() {
+    this.buttons = [
+      new CanvasButton(this.x + this.width / 2 - 202.5, this.y + this.height - 35, 200, 30, "Buy", "menu"),
+      new CanvasButton(this.x + this.width / 2 + 2.5, this.y + this.height - 35, 200, 30, "Back", "menu")
+    ];
+    
+    this.buttons[this.selected].select();
+  };
+  this.selectButton = function(index) {
+    if (index !== this.selected) {
+      if (index === -1) {
+        this.buttons[this.selected].deselect();
+      } else if (this.selected === -1) {
+        this.buttons[index].select();
+      } else {
+        this.buttons[index].select();
+        this.buttons[this.selected].deselect();
+      }
+      this.selected = index;
+    }
+  };
+  this.moveCircle = function(newX) {
+    if (newX < this.barX + 2) {
+      this.circleCenterX = this.barX + 2;
+    } else if (newX > this.barX + this.barWidth - 2) {
+      this.circleCenterX = this.barX + this.barWidth - 2;
+    } else {
+      this.circleCenterX = newX;
+    }
+  };
+  this.setCircle = function(level = -1, changeCircleX = true) {
+    let width = (this.barWidth - 4) / this.skillData.maxValue;
+    let amount = (this.circleCenterX - (this.barX + 2)) / width;
+    if (level !== -1) {
+      amount = level;
+    }
+    if (changeCircleX) {
+      this.circleCenterX = (this.barX + 2) + Math.round(amount) * width;
+    }
+    this.shownLevel = Math.round(amount);
+    this.getCosts();
+  };
+  this.setSkill = function(shop, skill) {
+    this.currentSkill = skill;
+    if (skill === null) {
+      this.setCircle(0);
+      this.skillData = null;
+    } else {
+      this.skillData = shop.skillData[skill.key];
+      this.setCircle(this.skillData.currentLevel);
+    }
+  };
+  this.getCosts = function() {
+    let gs = 0;
+    let hype = 0;
+    
+    if (this.skillData.currentLevel > this.shownLevel) {
+      for (let i = this.shownLevel; i < this.skillData.currentLevel; i++) {
+        let costs = this.skillData.getCost(i);
+        gs -= costs.goldenShamrock * 0.5;
+        hype -= costs.hype * 0.5;
+      }
+    } else {
+      for (let i = this.skillData.currentLevel; i < this.shownLevel; i++) {
+        let costs = this.skillData.getCost(i);
+        gs += costs.goldenShamrock;
+        hype += costs.hype;
+      }
+    }
+    this.costs.goldenShamrock = Math.round(gs);
+    this.costs.hype = Math.round(hype);
+  };
+  this.update = function() {
+    this.buttons.map(button => {
+      button.update();
+    }, this);
+  };
+  this.draw = function(gD, shop) {
     if (this.currentSkill === null) {
       return;
     }
-
-    let skillData = shop.skillData[this.currentSkill.key];
-    let {goldenShamrock, hype} = skillData.getCost();
-
-    if (skillData.maxed) {
-      return;
-    }
-
-    if (this.currentSkill.selected && skillData.unlocked) {
-      drawCanvasPolygon(
-        newX, newY + this.radius, design.rectKey, gD, newX + 5, newY + this.radius + 5,
-        newX + this.width / 2, newY + this.radius + 5, newX + this.width / 2, newY + this.radius + this.height,
-        newX - this.width / 2, newY + this.radius + this.height, newX - this.width / 2, newY + this.radius + 5,
-        newX - 5, newY + this.radius + 5
-      );
-      drawCanvasText(newX, newY + this.radius + 15, skillData.name, design.textKey.headline, gD);
-      drawCanvasImage(newX - this.width / 2 + 3, newY + this.radius + 27, "Special_GoldenShamrock", gD);
-      drawCanvasText(
-        newX + this.width / 2 - 3, newY + this.radius + 37,
-        goldenShamrock.toString().replace(/\d(?=(\d{3})+($|\.))/g, '$&.'), shop.goldenShamrocks < goldenShamrock ? design.textKey.noMoney : design.textKey.text, gD
-      );
-      drawCanvasImage(Math.floor(newX - this.width / 2 + 3), Math.floor(newY + this.radius + 49), "Currency_S", gD);
-      drawCanvasText(
-        newX + this.width / 2 - 3, newY + this.radius + 59,
-        hype.toString().replace(/\d(?=(\d{3})+($|\.))/g, '$&.'), shop.hype < hype ? design.textKey.noMoney : design.textKey.text, gD
-      );
-      drawCanvasLine(newX - this.width / 2, newY + this.radius + 25, design.borderKey, gD, newX + this.width / 2, newY + this.radius + 25);
-      drawCanvasPolygonBorder(
-        newX, newY + this.radius, design.borderKey, gD, newX + 5, newY + this.radius + 5,
-        newX + this.width / 2, newY + this.radius + 5, newX + this.width / 2, newY + this.radius + this.height,
-        newX - this.width / 2, newY + this.radius + this.height, newX - this.width / 2, newY + this.radius + 5,
-        newX - 5, newY + this.radius + 5
-      );
-    }
+    
+    let design = gD.design.elements[this.styleKey];
+    let iconData = getSpriteData(this.currentSkill.spriteKey, gD);
+    let gsData = getSpriteData("Special_GoldenShamrock", gD);
+    let currencyData = getSpriteData("Currency_S", gD);
+    
+    drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.background, gD);
+    drawCanvasRect(this.x, this.y, 40, 40, design.rectKey.icon, gD);
+    drawCanvasImage(
+      Math.floor(this.x + (40 - iconData.spriteWidth) / 2), Math.floor(this.y + (40 - iconData.spriteHeight) / 2), 
+      iconData.key, gD
+    );
+    drawCanvasText(this.x + this.width / 2, this.y + 20, this.skillData.name, design.textKey.headline, gD);
+    
+    drawCanvasLine(this.x, this.y + 40, design.borderKey, gD, this.x + this.width, this.y + 40);
+    drawCanvasText(this.x + 3, this.y + 50, "Level", design.textKey.label, gD);
+    drawCanvasText(this.x + this.width - 3, this.y + 50, this.skillData.currentLevel + " " + String.fromCharCode(8594) + " " + this.shownLevel, design.textKey.text, gD);
+    
+    drawCanvasText(this.x + 3, this.y + 70, "Wert", design.textKey.label, gD);
+    drawCanvasText(this.x + this.width - 3, this.y + 70, roundTwo(this.skillData.getValue()) + " " + String.fromCharCode(8594) + " " + roundTwo(this.skillData.getValue(this.shownLevel)), design.textKey.text, gD);
+    
+    
+    
+    drawCanvasImage(this.x + 3, this.y + 115 - Math.floor(currencyData.spriteHeight / 2), currencyData.key, gD);
+    drawCanvasText(
+      this.x + Math.floor(this.width / 2) - 3, this.y + 115, addPoints(this.costs.hype), 
+      this.costs.hype > shop.hype ? design.textKey.noMoney : design.textKey.text, gD
+    );
+    drawCanvasImage(this.x + Math.floor(this.width / 2) + 3, this.y + 115 - Math.floor(gsData.spriteHeight / 2), gsData.key, gD);
+    drawCanvasText(
+      this.x + this.width - 3, this.y + 115, addPoints(this.costs.goldenShamrock), 
+      this.costs.goldenShamrock > shop.goldenShamrocks ? design.textKey.noMoney : design.textKey.text, gD
+    );
+    
+    drawCanvasRect(this.barX, this.barY, this.barWidth, this.barHeight, design.rectKey.icon, gD);
+    drawCanvasRect(
+      this.barX, this.barY, this.circleCenterX - (this.x + 10), this.barHeight, design.rectKey.progress, gD
+    );
+    drawCanvasRectBorder(this.barX, this.barY, this.barWidth, this.barHeight, design.borderKey, gD);
+    drawCanvasCircle(
+      this.circleCenterX, this.circleCenterY, 5, 
+      this.selected === -1 ? design.circleKey.selected : design.circleKey.normal, gD
+    );
+    drawCanvasCircleBorder(this.circleCenterX, this.circleCenterY, 5, design.borderKey, gD);
+    drawCanvasRectBorder(this.x, this.y, 40, 40, design.borderKey, gD);
+    drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
+    
+    this.buttons.map(button => {
+      button.draw(gD);
+    }, this);
   };
 }
 

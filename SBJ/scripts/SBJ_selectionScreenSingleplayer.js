@@ -32,7 +32,7 @@
     this.selectionPreview = new SelectionPreview(this.gD.canvas.width / 2 - 400, 90, 800, 160, "selectionPreview");
     
     this.confirmButton = new CanvasButton(
-      (this.gD.canvas.width / 2) + 110, this.gD.canvas.height - 50, 200, 30, "Start", "menu"
+      (this.gD.canvas.width / 2) + 110, this.gD.canvas.height - 50, 200, 30, "Start", "menu", false
     );
     this.backToMenu = new CanvasButton(
       (this.gD.canvas.width / 2) - 100, this.gD.canvas.height - 50, 200, 30, "Main Menu", "menu"
@@ -51,6 +51,12 @@
       }
     }, this);
     return unlocked;
+  };
+  this.setSaveData = function(data) {
+    this.confirmButton.activated = data;
+  };
+  this.getSaveData = function(data) {
+    return this.confirmButton.activated;
   };
   this.updateKeyPresses = function() {
     this.gD.newKeys.map(key => {
@@ -92,6 +98,7 @@
         if (this.selectedRowIndex === -1) {
           if (this.selectedColumnIndex === 0) {
             if (this.checkIfUnlocked()) {
+              this.confirmButton.activate();
               this.menu.game.init();
               this.menu.game.setStage("Stage_Training", true);
               this.menu.game.addPlayer(
@@ -104,7 +111,7 @@
           } else if (this.selectedColumnIndex === 1) {
             this.gD.currentPage = this.menu;
           } else {
-            if (this.checkIfUnlocked()) {
+            if (this.checkIfUnlocked() && this.confirmButton.activated) {
               this.menu.game.init();
               this.menu.game.setStage(this.selections[4].getSelected());
               this.menu.game.addPlayer(
@@ -176,7 +183,7 @@
     
     if (clickPos.x >= this.confirmButton.x && clickPos.x <= this.confirmButton.x + this.confirmButton.width &&
         clickPos.y >= this.confirmButton.y && clickPos.y <= this.confirmButton.y + this.confirmButton.height) {
-      if (this.checkIfUnlocked()) {
+      if (this.checkIfUnlocked() && this.confirmButton.activated) {
         this.menu.game.init();
         this.menu.game.setStage(this.selections[4].getSelected());
         this.menu.game.addPlayer(
@@ -192,6 +199,7 @@
     } else if (clickPos.x >= this.trainingButton.x && clickPos.x <= this.trainingButton.x + this.trainingButton.width &&
                clickPos.y >= this.trainingButton.y && clickPos.y <= this.trainingButton.y + this.trainingButton.height) {
       if (this.checkIfUnlocked()) {
+        this.confirmButton.activate();
         this.menu.game.init();
         this.menu.game.setStage("Stage_Training", true);
         this.menu.game.addPlayer(
