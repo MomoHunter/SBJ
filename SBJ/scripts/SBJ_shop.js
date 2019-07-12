@@ -578,6 +578,11 @@
             if (mouseDown) {
               this.movingSkillLevel = true;
             }
+          } else if (this.gD.mousePos.x >= this.skillInfoBox.barX &&
+                     this.gD.mousePos.x <= this.skillInfoBox.barX + this.skillInfoBox.barWidth &&
+                     this.gD.mousePos.y >= this.skillInfoBox.barY - 2 &&
+                     this.gD.mousePos.y <= this.skillInfoBox.barY + this.skillInfoBox.barHeight + 2) {
+            this.skillInfoBox.selectButton(-1);
           }
         }
       } else {

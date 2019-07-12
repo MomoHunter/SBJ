@@ -843,7 +843,14 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
         this.y = this.currentFloor.y - (this.currentFloor.thickness / 2) - this.height + this.currentFloor.velocity;
       } else if (!this.onFloor || (this.currentFloor !== null && this.currentFloor.type === "Fall")) {
         this.y += this.velocity;
-        this.velocity += this.gravity;
+        if (this.velocity <= 0) {
+          this.velocity += this.gravity;
+        } else {
+          if (!(this.inventory.items["Item_Feather"].active && this.velocity > 2) ||
+               !this.inventory.items["Item_Feather"].active) {
+            this.velocity += this.gravity - 0.1;
+          }
+        }
         if (game.stage.name === "Water") {
           if (this.y + this.height > game.gD.canvas.height / 2) {
             if (this.outsideWater) {
@@ -875,7 +882,7 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
     }
     if (this.y + this.height < 0) {
       let pointerData = getSpriteData("Special_Pointer", gD);
-      drawCanvasImage(canvasX + (this.width - pointerData.spriteWidth) / 2, 0, "Special_Pointer", gD);
+      drawCanvasImage(canvasX + (this.width - pointerData.spriteWidth) / 2, 30, "Special_Pointer", gD);
     }
 
     if (this.hat !== "Collectables_Nothing") {
