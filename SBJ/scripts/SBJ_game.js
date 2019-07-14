@@ -106,7 +106,7 @@ function Game(menu, gD) {
     let startX = this.floors[this.floors.length - 1].x + this.floors[this.floors.length - 1].width;
     
     this.gD.floorPieces.map(floorPiece => {
-      if (floorPiece.earliestLevel <= this.currentLevel) {
+      if (floorPiece.earliestLevel <= this.currentLevel && floorPiece.stages.includes(this.stage.name)) {
         total += floorPiece.chance;
       }
     }, this);
@@ -114,7 +114,7 @@ function Game(menu, gD) {
     random = Math.random() * total;
  
     this.gD.floorPieces.map(floorPiece => {
-      if (floorPiece.earliestLevel <= this.currentLevel) {
+      if (floorPiece.earliestLevel <= this.currentLevel && floorPiece.stages.includes(this.stage.name)) {
         random -= floorPiece.chance;
         if (random <= 0 && pieces === null) {
           pieces = floorPiece;

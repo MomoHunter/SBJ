@@ -8,16 +8,9 @@ function Stage3(game, gD) {
   this.gravity = 20.25;
   this.init = function() {
     this.birds = [];
+    this.birdStartIndex = 0;
     this.ocean = new AnimatedBackground(0, 1000, 2800, "img/Water_Ocean.png", 8, 20);
     this.waves = new AnimatedBackground(170, 1000, 1440, "img/Water_Waves.png", 8, 20);
-    /*this.birdObjects = [];
-    this.fishObjects = [];
-    this.jumpingFishObjects = [];
-    this.bubbleSpotObjects = [];
-    this.birdSpawnCounter = Math.max(Math.floor(Math.random() * 1000), 400);
-    this.fishSpawnCounter = Math.max(Math.floor(Math.random() * 1000), 400);
-    this.jumpingFishSpawnCounter = Math.max(Math.floor(Math.random() * 1000), 400);
-    this.bubbleSpotSpawnCounter = Math.max(Math.floor(Math.random() * 1400), 300);*/
   };
   this.addBird = function() {
     let random = Math.random();
@@ -45,6 +38,12 @@ function Stage3(game, gD) {
       bird.update(this.game);
       this.game.player.collect(game, bird);
     }, this);
+
+    let direction = this.birds[this.birds.length - 1].direction;
+
+    if (direction === "forward" && this.birds[this.birds.length - 1].x > this.game.distance - 100) {
+      
+    }
     
     if (this.gD.frameNo % 60 === 0 && this.game.currentLevel >= 1) {
       this.addBird();
