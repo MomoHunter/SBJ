@@ -18,12 +18,14 @@ function Stage3(game, gD) {
       if (random < 0.075) {
         let {spriteWidth, spriteHeight} = getSpriteData("Enemy_Bird_Left", this.gD);
         this.birds.push(new Stage3Bird(
-          this.game.distance + 1100, randomBetween(50, 150), spriteWidth, spriteHeight, "Enemy_Bird_Left", "backward"
+          this.game.distance + 1100 + randomBetween(150, 1500), randomBetween(50, 150),
+          spriteWidth, spriteHeight, "Enemy_Bird_Left", "backward"
         ));
       } else {
         let {spriteWidth, spriteHeight} = getSpriteData("Enemy_Bird_Right", this.gD);
         this.birds.push(new Stage3Bird(
-          this.game.distance - 100, randomBetween(50, 150), spriteWidth, spriteHeight, "Enemy_Bird_Right", "forward"
+          this.game.distance - 100 - randomBetween(150, 1500), randomBetween(50, 150),
+          spriteWidth, spriteHeight, "Enemy_Bird_Right", "forward"
         ));
       }
     }
@@ -39,14 +41,20 @@ function Stage3(game, gD) {
       this.game.player.collect(game, bird);
     }, this);
 
-    let direction = this.birds[this.birds.length - 1].direction;
-
-    if (direction === "forward" && this.birds[this.birds.length - 1].x > this.game.distance - 100) {
-      
-    }
-    
-    if (this.gD.frameNo % 60 === 0 && this.game.currentLevel >= 1) {
+    if (this.birds.length === 0 || (this.birds[this.birds.length - 1].direction === "forward" &&
+        this.birds[this.birds.length - 1].x > this.game.distance - 100)) {
       this.addBird();
+    } else if (this.birds[this.birds.length - 1].direction === "backward" &&
+               this.birds[this.birds.length - 1].x < this.game.distance + this.gD.canvas.width + 100) {
+      this.addBird();
+    }
+
+    if (this.birds.length > 0 && this.birds[this.birdStartIndex].direction === "forward" &&
+        this.birds[this.birdStartIndex].x > this.game.distance + this.gD.canvas.width + 100) {
+      this.birdStartIndex++;
+    } else if (this.birds.length > 0 && this.birds[this.birdStartIndex].direction === "backward" &&
+               this.birds[this.birdStartIndex].x < this.game.distance - 100) {
+      this.birdStartIndex++;
     }
   };
   this.drawForeground = function() {
