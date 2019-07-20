@@ -7,9 +7,10 @@ function main() {
   window.addEventListener('mousemove', event => mousemoveEvent(event, globalDict));
   window.addEventListener('mousedown', event => mousedownEvent(event, globalDict));
   window.addEventListener('mouseup', event => mouseupEvent(event, globalDict));
-  window.addEventListener('touchstart', event => mousedownEvent(event, globalDict));
-  window.addEventListener('touchmove', event => mousemoveEvent(event, globalDict));
-  window.addEventListener('touchend', event => mouseupEvent(event, globalDict));
+  window.addEventListener('touchstart', event => touchstartEvent(event, globalDict));
+  window.addEventListener('touchmove', event => touchmoveEvent(event, globalDict));
+  window.addEventListener('touchend', event => touchendEvent(event, globalDict));
+  window.addEventListener('touchcancel', event => touchcancelEvent(event, globalDict));
   window.addEventListener('click', event => clickEvent(event, globalDict));
   window.addEventListener('wheel', event => wheelEvent(event, globalDict));
   globalDict.currentPage = menu;
@@ -115,6 +116,22 @@ function clickEvent(event, gD) {
 
 function wheelEvent(event, gD) {
   gD.wheelMovements.push(event.deltaY);
+}
+
+function touchstartEvent(event, gD) {
+
+}
+
+function touchmoveEvent(event, gD) {
+
+}
+
+function touchendEvent(event, gD) {
+
+}
+
+function touchcancelEvent(event, gD) {
+
 }
 
 function checkIfEdgeBrowser() {
@@ -1259,7 +1276,7 @@ function GlobalDict(eventHandler) {
         borderKey: ""
       },
       menuButton: {
-        font: "15pt Showcard Gothic, Impact",
+        font: "15pt Showcard Gothic, 'Luckiest Guy', Impact",
         color: "0, 0, 0, 0.6",
         align: "center",
         baseline: "middle",
@@ -1329,7 +1346,7 @@ function GlobalDict(eventHandler) {
         borderKey: ""
       },
       ookii: {
-        font: "150pt Showcard Gothic, Impact",
+        font: "150pt Showcard Gothic, 'Luckiest Guy', Impact",
         color: "255, 255, 255, 0.7",
         align: "center",
         baseline: "middle",
@@ -1343,21 +1360,21 @@ function GlobalDict(eventHandler) {
         borderKey: ""
       },
       title: {
-        font: "40pt Showcard Gothic, Impact",
+        font: "40pt Showcard Gothic, 'Luckiest Guy', Impact",
         color: "200, 200, 200, 1",
         align: "center",
         baseline: "middle",
         borderKey: "big"
       },
       pageTitle: {
-        font: "32pt Showcard Gothic, Impact",
+        font: "32pt Showcard Gothic, 'Luckiest Guy', Impact",
         color: "200, 200, 200, 1",
         align: "center",
         baseline: "middle",
         borderKey: "standard"
       },
       instruction: {
-        font: "15pt Showcard Gothic, Impact",
+        font: "15pt Showcard Gothic, 'Luckiest Guy', Impact",
         color: "200, 200, 200, 1",
         align: "center",
         baseline: "middle",

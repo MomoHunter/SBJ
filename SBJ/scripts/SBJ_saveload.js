@@ -225,6 +225,7 @@ function SaveLoad(menu, gD) {
     data.version = this.menu.version.text;
     data.data = b64EncodeUnicode(JSON.stringify(this.gD.save));
     window.localStorage.setItem("Savestate" + Date.now(), JSON.stringify(data));
+    this.reloadSavestates();
   };
   /**
    * initiates the download of a savestate-file
