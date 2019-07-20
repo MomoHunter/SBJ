@@ -38,7 +38,8 @@
         <td><div id="keyR" class="button" ontouchstart="generateEvents('keydown', 'KeyR', 'R')"
                  ontouchend="generateEvents('keyup', 'KeyR', 'R')">R</div></td>
         <td colspan="2"><div id="clear" class="button" ontouchstart="document.getElementById('inputField').value = ''">Clear</div></td>
-        <td colspan="3"><input type="text" id="inputField" placeholder="Eingabefeld" /></td>
+        <td colspan="3"><input type="text" id="inputField" placeholder="Eingabefeld"
+                               oninput="generateEvents('keydown', convertToCode(this.value.substring(this.value.length - 1, this.value.length)), this.value.substring(this.value.length - 1, this.value.length))" /></td>
         <td><div id="Digit1" class="button" ontouchstart="generateEvents('keydown', 'Digit1', '1')"
                  ontouchend="generateEvents('keyup', 'Digit1', '1')">1</div></td>
         <td><div id="Digit4" class="button" ontouchstart="generateEvents('keydown', 'Digit4', '4')"
