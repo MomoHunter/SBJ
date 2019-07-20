@@ -7,6 +7,9 @@ function main() {
   window.addEventListener('mousemove', event => mousemoveEvent(event, globalDict));
   window.addEventListener('mousedown', event => mousedownEvent(event, globalDict));
   window.addEventListener('mouseup', event => mouseupEvent(event, globalDict));
+  window.addEventListener('touchstart', event => mousedownEvent(event, globalDict));
+  window.addEventListener('touchmove', event => mousemoveEvent(event, globalDict));
+  window.addEventListener('touchend', event => mouseupEvent(event, globalDict));
   window.addEventListener('click', event => clickEvent(event, globalDict));
   window.addEventListener('wheel', event => wheelEvent(event, globalDict));
   globalDict.currentPage = menu;
