@@ -3,33 +3,85 @@
   <head>
     <title>Super Block Jump</title>
     <meta charset="UTF-8">
+    <link rel="shortcut icon" href="img/SBJ_Icon.png" type="image/x-icon">
     <link rel="stylesheet" type="text/css" href="SBJ.css">
+    <link rel="manifest" href="SBJ.webmanifest">
   </head>
   <body onload="main();">
-    <script type="text/javascript" src="SBJ_main.js"></script>
-    <script type="text/javascript" src="SBJ_menu.js"></script>
-    <script type="text/javascript" src="SBJ_selectionScreen.js"></script>
-    <script type="text/javascript" src="SBJ_game.js"></script>
-    <script type="text/javascript" src="SBJ_stage0.js"></script>
-    <script type="text/javascript" src="SBJ_stage1.js"></script>
-    <script type="text/javascript" src="SBJ_stage2.js"></script>
-    <script type="text/javascript" src="SBJ_stage3.js"></script>
-    <script type="text/javascript" src="SBJ_stage4.js"></script>
-    <script type="text/javascript" src="SBJ_stage5.js"></script>
-    <script type="text/javascript" src="SBJ_shop.js"></script>
-    <script type="text/javascript" src="SBJ_achievements.js"></script>
-    <script type="text/javascript" src="SBJ_save.js"></script>
-    <script type="text/javascript" src="SBJ_load.js"></script>
-    <script type="text/javascript" src="SBJ_highscores.js"></script>
-    <script type="text/javascript" src="SBJ_controls.js"></script>
-    <script type="text/javascript" src="SBJ_tools.js"></script>
-    <div id="game">
-      <div id="gameHeadline">
-        Super Block Jump
-      </div>
-      <div id="start">Start</div>
-      <canvas id="gamearea" width="1000" height="350">
-      </canvas>
-    </div>
+    <script type="text/javascript" src="scripts/SBJ_main.js"></script>
+    <script type="text/javascript" src="scripts/SBJ_menu.js"></script>
+    <script type="text/javascript" src="scripts/SBJ_menuController.js"></script>
+    <script type="text/javascript" src="scripts/SBJ_highscores.js"></script>
+    <script type="text/javascript" src="scripts/SBJ_saveload.js"></script>
+    <script type="text/javascript" src="scripts/SBJ_statistics.js"></script>
+    <script type="text/javascript" src="scripts/SBJ_controls.js"></script>
+    <script type="text/javascript" src="scripts/SBJ_tools.js"></script>
+    <script type="text/javascript" src="scripts/SBJ_elements.js"></script>
+    <script type="text/javascript" src="scripts/SBJ_achievements.js"></script>
+    <script type="text/javascript" src="scripts/SBJ_eventHandler.js"></script>
+    <script type="text/javascript" src="scripts/SBJ_shop.js"></script>
+    <script type="text/javascript" src="scripts/SBJ_selectionScreenSingleplayer.js"></script>
+    <script type="text/javascript" src="scripts/SBJ_game.js"></script>
+    <script type="text/javascript" src="scripts/SBJ_stage0.js"></script>
+    <script type="text/javascript" src="scripts/SBJ_stage1.js"></script>
+    <script type="text/javascript" src="scripts/SBJ_stage2.js"></script>
+    <script type="text/javascript" src="scripts/SBJ_stage3.js"></script>
+    <script type="text/javascript" src="scripts/SBJ_stage4.js"></script>
+    <script type="text/javascript" src="scripts/SBJ_stage5.js"></script>
+    <canvas id="gamearea" width="1000" height="350"></canvas>
+    <table cellspacing="10">
+      <tr>
+        <td></td>
+        <td></td>
+        <td><div id="keyI" class="button" onmousedown="generateEvents('keydown', 'KeyI', 'I')" 
+                 onmouseup="generateEvents('keyup', 'KeyI', 'I')">I</div></td>
+        <td><div id="keyR" class="button" onmousedown="generateEvents('keydown', 'KeyR', 'R')" 
+                 onmouseup="generateEvents('keyup', 'KeyR', 'R')">R</div></td>
+        <td colspan="2"><div id="clear" class="button" onmousedown="document.getElementById('inputField').value = ''">Clear</div></td>
+        <td colspan="3"><input type="text" id="inputField" placeholder="Eingabefeld"></input></td>
+        <td><div id="Digit1" class="button" onmousedown="generateEvents('keydown', 'Digit1', '1')" 
+                 onmouseup="generateEvents('keyup', 'Digit1', '1')">1</div></td>
+        <td><div id="Digit4" class="button" onmousedown="generateEvents('keydown', 'Digit4', '4')" 
+                 onmouseup="generateEvents('keyup', 'Digit4', '4')">4</div></td>
+        <td><div id="Esc" class="button" onmousedown="generateEvents('keydown', 'Escape', 'Escape')" 
+                 onmouseup="generateEvents('keyup', 'Escape', 'Escape')">Esc</div></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td><div id="ArrowUp" class="button" onmousedown="generateEvents('keydown', 'ArrowUp', 'ArrowUp')" 
+                 onmouseup="generateEvents('keyup', 'ArrowUp', 'ArrowUp')">↑</div></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td class="long"></td>
+        <td><div id="Digit2" class="button" onmousedown="generateEvents('keydown', 'Digit2', '2')" 
+                 onmouseup="generateEvents('keyup', 'Digit2', '2')">2</div></td>
+        <td><div id="Digit5" class="button" onmousedown="generateEvents('keydown', 'Digit5', '5')" 
+                 onmouseup="generateEvents('keyup', 'Digit5', '5')">5</div></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><div id="ArrowLeft" class="button" onmousedown="generateEvents('keydown', 'ArrowLeft', 'ArrowLeft')" 
+                 onmouseup="generateEvents('keyup', 'ArrowLeft', 'ArrowLeft')">←</div></td>
+        <td><div id="ArrowDown" class="button" onmousedown="generateEvents('keydown', 'ArrowDown', 'ArrowDown')" 
+                 onmouseup="generateEvents('keyup', 'ArrowDown', 'ArrowDown')">↓</div></td>
+        <td><div id="ArrowRight" class="button" onmousedown="generateEvents('keydown', 'ArrowRight', 'ArrowRight')" 
+                 onmouseup="generateEvents('keyup', 'ArrowRight', 'ArrowRight')">→</div></td>
+        <td colspan="6"><div id="Space" class="button" onmousedown="generateEvents('keydown', 'Space', 'Space')" 
+                 onmouseup="generateEvents('keyup', 'Space', 'Space')">Space</div></td>
+        <td><div id="Digit3" class="button" onmousedown="generateEvents('keydown', 'Digit3', '3')" 
+                 onmouseup="generateEvents('keyup', 'Digit3', '3')">3</div></td>
+        <td><div id="Digit6" class="button" onmousedown="generateEvents('keydown', 'Digit6', '6')" 
+                 onmouseup="generateEvents('keyup', 'Digit6', '6')">6</div></td>
+        <td></td>
+      </tr>
+    </table>
+    
+    
+    
+    
   </body>
 </html>

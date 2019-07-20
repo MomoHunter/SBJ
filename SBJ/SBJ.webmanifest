@@ -1,0 +1,15 @@
+{
+  "background_color": "#2C2F33",
+  "description": "A jump'n'run written in Javascript",
+  "display": "fullscreen",
+  "icons": [
+    {
+      "src": "img/SBJ_Icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "name": "Super Block Jump",
+  "short_name": "SBJ",
+  "start_url": "SBJ.html"
+}
