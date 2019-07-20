@@ -1,4 +1,5 @@
 function main() {
+  registerServiceWorker();
   var globalDict = new GlobalDict(new EventHandler());
   var menu = new Menu(globalDict);
   window.addEventListener('keydown', event => keydownEvent(event, globalDict));
@@ -11,6 +12,23 @@ function main() {
   globalDict.currentPage = menu;
   menu.init();
   globalDict.raf = requestAnimationFrame(timestamp => gameloop(globalDict, timestamp));
+}
+
+function registerServiceWorker() {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/scripts/SBJ_worker.js')
+    .then(function(reg) {
+      // registration worked
+      console.log('Registration succeeded. Scope is ' + reg.scope);
+    }).catch(function(error) {
+      // registration failed
+      console.log('Registration failed with ' + error);
+    });
+  }
+}
+
+function generateEvents(type, code, key) {
+  window.dispatchEvent(new KeyboardEvent(type, {'code': code, 'key': key}));
 }
 
 function gameloop(gD, timestamp) {
@@ -225,6 +243,7 @@ function GlobalDict(eventHandler) {
     "Icon_Sound_off": [false, 279, 1109, 24, 22],
     "Icon_Sound_on": [false, 279, 1132, 24, 22],
     "Icon_Statistic": [true, 279, [1155, 1196, 1237, 1278, 1319, 1360, 1401, 1442, 1483], 40, 40],
+    "Icon_Trash": [false, 279, 1524, 13, 16],
     "Item_Feather": [true, 348, [0, 21, 42, 63, 84, 105, 126, 147, 168, 189], 16, 20],
     "Item_Frame": [false, 348, 210, 24, 24],
     "Item_Magnet": [true, 348, [235, 256, 277, 298, 319, 340, 361, 382], 17, 20],
@@ -309,14 +328,15 @@ function GlobalDict(eventHandler) {
     "Reward_B_use_five_stars": [false, 579, 1377, 80, 80],
     "Reward_B_use_five_stopwatches": [false, 579, 1458, 80, 80],
     "Reward_B_use_five_treasures": [false, 579, 1539, 80, 80],
-    "Skill_Feather_level_up": [true, 660, [0, 21, 42, 63, 84, 105, 126, 147, 168, 189, 210, 231, 252, 273, 294, 315, 336, 357, 378, 399], 30, 20],
-    "Skill_Magnet_level_up": [true, 660, [420, 441, 462, 483, 504, 525, 546, 567, 588, 609, 630, 651, 672, 693, 714, 735], 31, 20],
-    "Skill_Rocket_level_up": [true, 660, [756, 776, 796, 816, 836, 856, 876, 896, 916, 936, 956, 976, 996, 1016, 1036, 1056], 34, 19],
-    "Skill_Stars_at_start": [true, 660, [1076, 1093, 1110, 1127, 1144, 1161, 1178, 1195, 1212, 1229, 1246, 1263, 1280], 40, 16],
-    "Skill_Star_level_up": [true, 660, [1297, 1317, 1337, 1357, 1377, 1397, 1417, 1437, 1457, 1477, 1497, 1517, 1537, 1557, 1577], 32, 19],
-    "Skill_Stopwatches_at_start": [true, 660, [1597, 1614, 1631, 1648, 1665, 1682, 1699, 1716, 1733, 1750, 1767, 1784, 1801, 1818, 1835, 1852], 40, 16],
-    "Skill_Stopwatch_level_up": [true, 660, [1869, 1889, 1909, 1929, 1949, 1969, 1989, 2009, 2029, 2049, 2069, 2089, 2109, 2129, 2149, 2169], 29, 19],
-    "Skill_Treasure_level_up": [true, 660, [2189, 2209, 2229, 2249, 2269, 2289, 2309, 2329, 2349, 2369, 2389, 2409, 2429, 2449, 2469, 2489], 34, 19],
+    "Skill_Feathers_at_start": [false, 660, 0, 40, 16],
+    "Skill_Feather_level_up": [true, 660, [17, 38, 59, 80, 101, 122, 143, 164, 185, 206, 227, 248, 269, 290, 311, 332, 353, 374, 395, 416], 30, 20],
+    "Skill_Magnet_level_up": [true, 660, [437, 458, 479, 500, 521, 542, 563, 584, 605, 626, 647, 668, 689, 710, 731, 752], 31, 20],
+    "Skill_Rocket_level_up": [true, 660, [773, 793, 813, 833, 853, 873, 893, 913, 933, 953, 973, 993, 1013, 1033, 1053, 1073], 34, 19],
+    "Skill_Stars_at_start": [true, 660, [1093, 1110, 1127, 1144, 1161, 1178, 1195, 1212, 1229, 1246, 1263, 1280, 1297], 40, 16],
+    "Skill_Star_level_up": [true, 660, [1314, 1334, 1354, 1374, 1394, 1414, 1434, 1454, 1474, 1494, 1514, 1534, 1554, 1574, 1594], 32, 19],
+    "Skill_Stopwatches_at_start": [true, 660, [1614, 1631, 1648, 1665, 1682, 1699, 1716, 1733, 1750, 1767, 1784, 1801, 1818, 1835, 1852, 1869], 40, 16],
+    "Skill_Stopwatch_level_up": [true, 660, [1886, 1906, 1926, 1946, 1966, 1986, 2006, 2026, 2046, 2066, 2086, 2106, 2126, 2146, 2166, 2186], 29, 19],
+    "Skill_Treasure_level_up": [true, 660, [2206, 2226, 2246, 2266, 2286, 2306, 2326, 2346, 2366, 2386, 2406, 2426, 2446, 2466, 2486, 2506], 34, 19],
     "Special_BlueKey": [false, 701, 0, 11, 22],
     "Special_BlueKey_G": [false, 701, 23, 11, 22],
     "Special_GoldenShamrock": [true, 701, [46, 66, 86, 106, 126, 146, 166, 186], 15, 19],
@@ -395,18 +415,18 @@ function GlobalDict(eventHandler) {
       {type: "Standard", x: 1150, y: 140.5, width: 180},
       {type: "Standard", x: 1300, y: 120.5, width: 180}
     ]},
-    {chance: 1, earliestLevel: 1, stages: ["Training", "Fortress", "Air", "Forest", "Universe"], floors: [
+    {chance: 1, earliestLevel: 1, stages: ["Training", "Fortress", "Air", "Water", "Forest", "Universe"], floors: [
       {type: "Standard", x: 100, y: 200.5, width: 100},
       {type: "Standard", x: 200, y: 200.5, width: 100},
     ]},
-    {chance: 1, earliestLevel: 1, stages: ["Training", "Fortress", "Air", "Forest", "Universe"], floors: [
+    {chance: 1, earliestLevel: 1, stages: ["Training", "Fortress", "Air", "Water", "Forest", "Universe"], floors: [
       {type: "Standard", x: 150, y: 300.5, width: 215},
       {type: "Standard", x: 470, y: 190.5, width: 140},
       {type: "Standard", x: 710, y: 160.5, width: 80},
       {type: "Standard", x: 940, y: 285.5, width: 175},
       {type: "Standard", x: 1250, y: 140.5, width: 114}
     ]},
-    {chance: 1, earliestLevel: 1, stages: ["Training", "Fortress", "Air", "Forest", "Universe"], floors: [
+    {chance: 1, earliestLevel: 1, stages: ["Training", "Fortress", "Air", "Water", "Forest", "Universe"], floors: [
       {type: "Standard", x: 133, y: 244.5, width: 189},
       {type: "Standard", x: 450, y: 190.5, width: 166},
       {type: "Standard", x: 744, y: 250.5, width: 199},
@@ -418,7 +438,7 @@ function GlobalDict(eventHandler) {
       {type: "Standard", x: 100, y: 210.5, width: 1000},
       {type: "Standard", x: 100, y: 120.5, width: 1000}
     ]},
-    {chance: 1, earliestLevel: 1, stages: ["Training", "Fortress", "Air", "Forest", "Universe"], floors: [
+    {chance: 1, earliestLevel: 1, stages: ["Training", "Fortress", "Air", "Water", "Forest", "Universe"], floors: [
       {type: "Standard", x: 110, y: 140.5, width: 155},
       {type: "Moving", x: 400, y: 180, width: 140, height: 90},
       {type: "Standard", x: 760, y: 280.5, width: 200},
@@ -426,7 +446,7 @@ function GlobalDict(eventHandler) {
       {type: "Standard", x: 1320, y: 110.5, width: 50},
       {type: "Standard", x: 1510, y: 100.5, width: 50}
     ]},
-    {chance: 1, earliestLevel: 3, stages: ["Training", "Fortress", "Air", "Forest", "Universe"], floors: [
+    {chance: 1, earliestLevel: 3, stages: ["Training", "Fortress", "Air", "Water", "Forest", "Universe"], floors: [
       {type: "Standard", x: 90, y: 197.5, width: 300},
       {type: "Standard", x: 520, y: 120.5, width: 50},
       {type: "Standard", x: 700, y: 280.5, width: 50},
@@ -446,14 +466,14 @@ function GlobalDict(eventHandler) {
       {type: "Standard", x: 1450, y: 260.5, width: 180},
       {type: "Standard", x: 1600, y: 280.5, width: 180}
     ]},
-    {chance: 1, earliestLevel: 2, stages: ["Training", "Fortress", "Air", "Forest", "Universe"], floors: [
+    {chance: 1, earliestLevel: 2, stages: ["Training", "Fortress", "Air", "Water", "Forest", "Universe"], floors: [
       {type: "Jump", x: 130, y: 299.5, width: 150},
       {type: "Jump", x: 410, y: 120.5, width: 150},
       {type: "Jump", x: 690, y: 300.5, width: 150},
       {type: "Jump", x: 970, y: 120.5, width: 150},
       {type: "Jump", x: 1250, y: 300.5, width: 150}
     ]},
-    {chance: 0.5, earliestLevel: 2, stages: ["Training", "Fortress", "Air", "Forest", "Universe"], floors: [
+    {chance: 0.5, earliestLevel: 2, stages: ["Training", "Fortress", "Air", "Water", "Forest", "Universe"], floors: [
       {type: "Jump", x: 120, y: 209.5, width: 100},
       {type: "Moving", x: 440, y: 301, width: 100, height: 180},
       {type: "Standard", x: 660, y: 120.5, width: 100},
@@ -731,6 +751,17 @@ function GlobalDict(eventHandler) {
         },
         borderKey: "standard"
       },
+      savestateLS: {
+        rectKey: {
+          standard: "specialSavestate",
+          selected: "selected",
+          marked: "marked"
+        },
+        textKey: {
+          text: "savestate"
+        },
+        borderKey: "standard"
+      },
       savestateDetails: {
         rectKey: {
           modal: "modal",
@@ -741,6 +772,28 @@ function GlobalDict(eventHandler) {
           text: "enterNameModal",
           version: "value",
           date: "date"
+        },
+        borderKey: "standard"
+      },
+      savestateConfirmWindow: {
+        rectKey: {
+          background: "blur",
+          info: "standard"
+        },
+        textKey: {
+          headline: "normal",
+          info: "verySmall"
+        },
+        borderKey: {
+          standard: "standard",
+          info: "selected"
+        }
+      },
+      confirmationWindow: {
+        rectKey: "blur",
+        textKey: {
+          headline: "normalBold",
+          normal: "normal"
         },
         borderKey: "standard"
       },
@@ -977,6 +1030,9 @@ function GlobalDict(eventHandler) {
       },
       headline: {
         backgroundColor: "50, 200, 80, 1"
+      },
+      specialSavestate: {
+        backgroundColor: "166, 249, 157, 0.7"
       },
       progress: {
         backgroundColor: "0, 129, 57, 0.7"

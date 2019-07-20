@@ -396,6 +396,58 @@ function CanvasImageButton(x, y, width, height, spriteKeys, styleKey) {
   };
 }
 
+function CanvasConfirmationWindow(x, y, width, height, text, styleKey) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.text = text;
+  this.styleKey = styleKey;
+  this.selected = null;
+  this.init = function() {
+    this.buttons = [
+      new CanvasButton(this.x + this.width / 2 - 305, this.y + this.height - 35, 200, 30, "Confirm", "menu"),
+      new CanvasButton(this.x + this.width / 2 - 100, this.y + this.height - 35, 200, 30, "Not now", "menu"),
+      new CanvasButton(this.x + this.width / 2 + 105, this.y + this.height - 35, 200, 30, "Back", "menu")
+    ];
+    
+    this.select(0);
+  };
+  this.select = function(index) {
+    if (this.selected !== null) {
+      this.buttons[this.selected].deselect();
+    }
+    this.buttons[index].select();
+    this.selected = index;
+  };
+  this.update = function() {
+    this.buttons.map(button => {
+      button.update();
+    }, this);
+  };
+  this.draw = function(gD) {
+    let design = gD.design.elements[this.styleKey];
+    
+    drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey, gD);
+    this.text.map((text, index) => {
+      if (index === 0) {
+        drawCanvasText(
+          this.x + this.width / 2, this.y + 15, text, design.textKey.headline, gD
+        );
+      } else {
+        drawCanvasText(
+          this.x + this.width / 2, this.y + 20 + index * 20, text, design.textKey.normal, gD
+        );
+      }
+    }, this);
+    
+    this.buttons.map(button => {
+      button.draw(gD);
+    }, this);
+    drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
+  };
+}
+
 /**
  * A modal for entering a name on the canvas
  * @param {number} x        x-coordinate of the top-left corner of the modal on the canvas
@@ -683,6 +735,11 @@ function CanvasChoosePictureModal(x, y, width, height, styleKey) {
       }
       this.markedButton = newButton;
     }
+  };
+  this.resetMark = function() {
+    this.updateMark();
+    this.markedButton = null;
+    this.updateSelection(0, 0);
   };
   this.update = function() {
     this.pictureButtons.map((buttonRow, rowIndex) => {

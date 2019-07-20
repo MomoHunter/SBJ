@@ -6,8 +6,8 @@
     this.backgroundMusic.src = "music/shop.mp3";
     this.backgroundMusic.loop = true;
     this.backgroundMusic.volume = 0.2;
-    this.hype = 4000000000;
-    this.goldenShamrocks = 2400;
+    this.hype = 0;
+    this.goldenShamrocks = 0;
     this.movingTree = false;
     this.movingMinimap = false;
     this.movingSkillLevel = false;
@@ -1369,13 +1369,15 @@ function SkillInfoBox(x, y, width, height, styleKey) {
     this.getCosts();
   };
   this.setSkill = function(shop, skill) {
-    this.currentSkill = skill;
-    if (skill === null) {
-      this.setCircle(0);
-      this.skillData = null;
-    } else {
-      this.skillData = shop.skillData[skill.key];
-      this.setCircle(this.skillData.currentLevel);
+    if (!(this.currentSkill === null && skill === null)) {
+      this.currentSkill = skill;
+      if (skill === null) {
+        this.setCircle(0);
+        this.skillData = null;
+      } else {
+        this.skillData = shop.skillData[skill.key];
+        this.setCircle(this.skillData.currentLevel);
+      }
     }
   };
   this.getCosts = function() {

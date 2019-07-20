@@ -15,6 +15,7 @@
       ["Menu_Back", ["Menü", "zur vorherigen Seite gehen", ["Escape"], ["Escape"]]],
       ["Menu_Abort", ["Menü", "Tätigkeit abbrechen", ["Escape"], ["Escape"]]],
       ["Menu_Refresh", ["Menü", "Daten neu laden", ["R"], ["KeyR"]]],
+      ["Menu_Delete", ["Menü", "Lokalen Speicherstand löschen", ["Delete"], ["Delete"]]],
       ["NameModal_NavDown", ["Namen Modal", "Navigation runter", [String.fromCharCode(8595)], ["ArrowDown"]]],
       ["NameModal_NavUp", ["Namen Modal", "Navigation hoch", [String.fromCharCode(8593)], ["ArrowUp"]]],
       ["NameModal_NavRight", ["Namen Modal", "Navigation rechts", [String.fromCharCode(8594)], ["ArrowRight"]]],

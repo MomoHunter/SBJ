@@ -200,7 +200,7 @@ function Game(menu, gD) {
     }
   };
   this.getMatchPoints = function(player) {
-    let distancePoints = player.inventory.getValue("distance") / this.getLevelStart(20) * 5;
+    let distancePoints = this.currentLevel / 20 * 5;
     let itemPoints = player.inventory.getItemsCollected() / 100 * 5;
     let moneyPoints = player.inventory.getTotalHype(this) / 50000 * 5;
     let specials = player.inventory.getSpecialsAmount();
@@ -687,7 +687,11 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
               !gD.keys[game.menu.controls.keyBindings.get("Game_JumpFromPlatform")[3][1]]) {
             switch (this.currentFloor.type) {
               case "Jump":
-                this.velocity = -this.velocity * 0.85;
+                if (this.inventory.items["Item_Feather"].active) {
+                  this.velocity = -5;
+                } else {
+                  this.velocity = -this.velocity * 0.9;
+                }
                 this.jumps = 1;
                 break;
               case "Fall":

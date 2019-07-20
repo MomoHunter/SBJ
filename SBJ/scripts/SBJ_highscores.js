@@ -225,7 +225,9 @@ function Highscores(menu, gD) {
       if (!(clickPos.x >= this.enterNameModal.x &&
             clickPos.x <= this.enterNameModal.x + this.enterNameModal.width &&
             clickPos.y >= this.enterNameModal.y &&
-            clickPos.y <= this.enterNameModal.y + this.enterNameModal.height)) {
+            clickPos.y <= this.enterNameModal.y + this.enterNameModal.height) &&
+            clickPos.x >= 0 && clickPos.x <= this.gD.canvas.width && 
+            clickPos.y >= 0 && clickPos.y <= this.gD.canvas.height) {
         this.chooseName = false;
       }
       this.enterNameModal.buttons.map((button, index) => {

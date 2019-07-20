@@ -18,14 +18,14 @@ function Stage2(game, gD) {
     let planeKey = planeKeys[Math.floor(Math.random() * 4)];
     let {spriteWidth, spriteHeight} = getSpriteData(planeKey, this.gD); 
     this.planes.push(new Stage2Plane(
-      this.game.distance + this.gD.canvas.width + randomBetween(900, 2500), randomBetween(50, 300),
+      this.game.distance + this.gD.canvas.width + randomBetween(900, 2500), randomBetween(50, 300), 
       spriteWidth, spriteHeight, randomBetween(0.5, 1), planeKey
     ));
   };
   this.addRocket = function() {
     let {spriteWidth, spriteHeight} = getSpriteData("Enemy_Rocket", this.gD);
     this.rockets.push(new Stage2Rocket(
-      this.game.distance + randomBetween(1800, 4000), 351, spriteWidth,
+      this.game.distance + randomBetween(1800, 4000), 351, spriteWidth, 
       spriteHeight, randomBetween(150, 165), "Enemy_Rocket"
     ));
   };
