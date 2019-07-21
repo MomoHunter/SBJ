@@ -124,8 +124,8 @@ function wheelEvent(event, gD) {
 }
 
 function touchstartEvent(event, gD) {
+  document.getElementById("output").innerText += JSON.stringify(event) + " ";
   event.changedTouches.map(touch => {
-    document.getElementById("output").innerText += touch.identifier + " ";
     if (touch.identifier === 1) {
       gD.mouseDown.push(true);
     }
