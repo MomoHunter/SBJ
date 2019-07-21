@@ -563,7 +563,6 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
   this.aboveFloor = false;
   this.outsideWater = false;
   this.outsideCanvas = false;
-  this.distanceBackwards = 0;
   this.currentFloor = null; //saves a floor on which the player is atm
   this.init = function(game, gD) {
     this.stopMoving(game, null);

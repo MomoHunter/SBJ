@@ -20,7 +20,7 @@ table td {
 }
 
 .long {
-  width: 340px;
+  width: 320px;
 }
 
 .button {
@@ -49,6 +49,16 @@ table td {
 .button:hover {
   color: black;
   background-color: #99AAB5;
+}
+
+#onButton {
+  width: 300px;
+  height: 75px;
+  margin: 42px 350px;
+}
+
+#keyboard {
+  display: none;
 }
 
 #inputField {

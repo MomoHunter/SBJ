@@ -31,6 +31,11 @@ function registerServiceWorker() {
   }
 }
 
+function showKeyboard() {
+  document.getElementById("onButton").style.display = "none";
+  document.getElementById("keyboard").style.display = "block";
+}
+
 function generateEvents(type, code, key) {
   window.dispatchEvent(new KeyboardEvent(type, {'code': code, 'key': key}));
 }

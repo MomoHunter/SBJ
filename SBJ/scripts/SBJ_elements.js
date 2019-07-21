@@ -522,6 +522,10 @@ function CanvasEnterNameModal(x, y, width, height, styleKey) {
     this.buttons.map(button => {
       button.update();
     }, this);
+    if (document.getElementById("keyboard").style.display === "block" &&
+        document.getElementById("inputField") === document.activeElement) {
+      this.text = document.getElementById("inputField").value;
+    }
   };
   this.draw = function(gD) {
     this.counter++;
