@@ -1,7 +1,7 @@
 function main() {
   registerServiceWorker();
-  var globalDict = new GlobalDict(new EventHandler());
-  var menu = new Menu(globalDict);
+  let globalDict = new GlobalDict(new EventHandler());
+  let menu = new Menu(globalDict);
   window.addEventListener('keydown', event => keydownEvent(event, globalDict));
   window.addEventListener('keyup', event => keyupEvent(event, globalDict));
   window.addEventListener('mousemove', event => mousemoveEvent(event, globalDict));
@@ -124,19 +124,32 @@ function wheelEvent(event, gD) {
 }
 
 function touchstartEvent(event, gD) {
-
+  if (event.identifier === 0) {
+    gD.mouseDown.push(true);
+  }
 }
 
 function touchmoveEvent(event, gD) {
-
+  event.preventDefault();
+  if (event.identifier === 0) {
+    gD.lastMousePos = copy(gD.mousePos);
+    gD.mousePos = {
+      "x" : (event.pageX - gD.canvas.offsetLeft),
+      "y" : (event.pageY - gD.canvas.offsetTop)
+    };
+  }
 }
 
 function touchendEvent(event, gD) {
-
+  if (event.identifier === 0) {
+    gD.mouseUp.push(true);
+  }
 }
 
 function touchcancelEvent(event, gD) {
-
+  if (event.identifier === 0) {
+    gD.mouseUp.push(true);
+  }
 }
 
 function checkIfEdgeBrowser() {

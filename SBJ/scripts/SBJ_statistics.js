@@ -117,6 +117,7 @@ function Statistics(menu, gD) {
     this.tabs[3].objects.push(new StatisticsItemField(this.gD.canvas.width / 2 + 33, 200, 267, 22, "player_beards_collected", "itemStandard"));
     this.tabs[3].objects.push(new StatisticsItemField(this.gD.canvas.width / 2 - 245, 226, 267, 22, "player_glasses_collected", "itemStandard"));
     this.tabs[3].objects.push(new StatisticsItemField(this.gD.canvas.width / 2 + 33, 226, 267, 22, "player_skins_collected", "itemStandard"));
+    this.tabs[3].objects.push(new StatisticsItemField(this.gD.canvas.width / 2 - 245, 252, 545, 22, "savestates_created", "itemStandard"));
 
     this.backToMenu = new CanvasButton(this.gD.canvas.width / 2 - 100, this.gD.canvas.height - 50, 200, 30, "Main Menu", "menu");
 
