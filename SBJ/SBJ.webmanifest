@@ -2,6 +2,7 @@
   "background_color": "#2C2F33",
   "description": "A jump'n'run written in Javascript",
   "display": "fullscreen",
+  "orientation":  "landscape",
   "icons": [
     {
       "src": "img/SBJ_Icon.png",
