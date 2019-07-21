@@ -481,9 +481,12 @@ function SaveLoad(menu, gD) {
       } else if (keyB.get("Menu_Refresh")[3].includes(key)) {
         this.reloadSavestates();
       } else if (keyB.get("Menu_Delete")[3].includes(key)) {
+        let local = this.savestates[this.selectedRowIndex].savestate.file === "LocalStorage";
         this.savestates[this.selectedRowIndex].deleteThis(this);
         this.reloadSavestates();
-        this.changed = true;
+        if (!local) {
+          this.changed = true;
+        }
       } else if (keyB.get("Menu_Back")[3].includes(key)) {
         this.gD.currentPage = this.menu;
       }
@@ -727,9 +730,12 @@ function SaveLoad(menu, gD) {
             this.markSavestate(index);
             if (clickPos.x >= state.x + state.width - 40 && clickPos.x <= state.x + state.width - 20 &&
                 clickPos.y >= realHeight && clickPos.y <= realHeight + 20) {
+              let local = state.savestate.file === "LocalStorage";
               state.deleteThis(this);
               this.reloadSavestates();
-              this.changed = true;
+              if (!local) {
+                this.changed = true;
+              }
             }
           }
         }

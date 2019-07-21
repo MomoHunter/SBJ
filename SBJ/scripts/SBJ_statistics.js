@@ -304,7 +304,7 @@ function StatisticsData(name, eventKey, isFullNumber) {
   };
   this.getSaveData = function() {
     if ([Events.COLLECT_1000_HYPE, Events.COLLECT_100_HYPE, Events.COLLECT_10_HYPE, Events.COLLECT_1_HYPE].includes(this.eventKey)) {
-      this.currentValues;
+      return this.currentValues;
     } else {
       return this.currentCount;
     }

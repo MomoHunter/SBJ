@@ -243,8 +243,9 @@ function Game(menu, gD) {
     this.showConfirmation = false;
     this.continued = true;
   };
-  this.finish = function() {
-    if (this.menu.shop.getSkillValue("extra_life") === 1 && !this.continued && !this.showConfirmation) {
+  this.finish = function(withRestart = true) {
+    if (this.menu.shop.getSkillValue("extra_life") === 1 && !this.continued &&
+        !this.showConfirmation && withRestart) {
       this.showConfirmation = true;
     } else {
       let bonus = this.getBonus(this.player);
@@ -283,7 +284,10 @@ function Game(menu, gD) {
       this.finished = true;
     }
   };
-  this.restart = function() {
+  this.restart = function(withFinish = false) {
+    if (withFinish) {
+      this.finish(false);
+    }
     let player = this.player;
     let stage = this.stage;
     let trainingMode = this.trainingMode;
@@ -370,7 +374,7 @@ function Game(menu, gD) {
         } else if (keyB.get("Game_ItemRocket")[3].includes(key)) {
           this.inventory.activate(this, "Item_Rocket");
         } else if (keyB.get("Game_Restart")[3].includes(key)) {
-          this.restart();
+          this.restart(true);
         } else if (keyB.get("Game_Tutorial")[3].includes(key)) {
           this.showTutorial = !this.showTutorial;
         }
@@ -801,7 +805,10 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
         }
       } else if (object.spriteKey.startsWith("Money")) {
         this.inventory.hype.addMoney(object.spriteKey);
-        game.handleEvent(Events.COLLECT_HYPE, object.spriteKey.split("_")[1]);
+        game.handleEvent(
+          Events.COLLECT_HYPE,
+          object.spriteKey.split("_")[1] * game.menu.shop.getSkillValue("money_multiplier")
+        );
         switch (object.spriteKey) {
           case "Money_1":
             game.handleEvent(Events.COLLECT_1_HYPE, [game.menu.shop.getSkillValue("money_multiplier")]);

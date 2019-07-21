@@ -108,7 +108,7 @@
     ),
     new AchievementData(
       "Gutverdiener", ["Sammle insgesamt 1.000.000 Hype", ""],
-      1000000, Events.COLLECT_HYPE, false, false, "collect_1000000_hype"
+      1000000, Events.COLLECT_HYPE_WITH_BONUS, false, false, "collect_1000000_hype"
     ),
     new AchievementData(
       "Endlich reich", ["Besitze 1.000.000 Hype", ""],
