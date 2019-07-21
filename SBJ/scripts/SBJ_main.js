@@ -125,7 +125,8 @@ function wheelEvent(event, gD) {
 
 function touchstartEvent(event, gD) {
   event.changedTouches.map(touch => {
-    if (touch.identifier === 0) {
+    document.getElementById("output").innerText += touch.identifier + " ";
+    if (touch.identifier === 1) {
       gD.mouseDown.push(true);
     }
   }, this);
@@ -134,7 +135,7 @@ function touchstartEvent(event, gD) {
 function touchmoveEvent(event, gD) {
   event.preventDefault();
   event.changedTouches.map(touch => {
-    if (touch.identifier === 0) {
+    if (touch.identifier === 1) {
       gD.lastMousePos = copy(gD.mousePos);
       gD.mousePos = {
         "x" : (touch.pageX - gD.canvas.offsetLeft),
@@ -146,7 +147,7 @@ function touchmoveEvent(event, gD) {
 
 function touchendEvent(event, gD) {
   event.changedTouches.map(touch => {
-    if (touch.identifier === 0) {
+    if (touch.identifier === 1) {
       gD.mouseUp.push(true);
     }
   }, this);
@@ -154,7 +155,7 @@ function touchendEvent(event, gD) {
 
 function touchcancelEvent(event, gD) {
   event.changedTouches.map(touch => {
-    if (touch.identifier === 0) {
+    if (touch.identifier === 1) {
       gD.mouseUp.push(true);
     }
   }, this);
