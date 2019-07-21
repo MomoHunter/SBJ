@@ -124,32 +124,40 @@ function wheelEvent(event, gD) {
 }
 
 function touchstartEvent(event, gD) {
-  if (event.identifier === 0) {
-    gD.mouseDown.push(true);
-  }
+  event.changedTouches.map(touch => {
+    if (touch.identifier === 0) {
+      gD.mouseDown.push(true);
+    }
+  }, this);
 }
 
 function touchmoveEvent(event, gD) {
   event.preventDefault();
-  if (event.identifier === 0) {
-    gD.lastMousePos = copy(gD.mousePos);
-    gD.mousePos = {
-      "x" : (event.pageX - gD.canvas.offsetLeft),
-      "y" : (event.pageY - gD.canvas.offsetTop)
-    };
-  }
+  event.changedTouches.map(touch => {
+    if (touch.identifier === 0) {
+      gD.lastMousePos = copy(gD.mousePos);
+      gD.mousePos = {
+        "x" : (touch.pageX - gD.canvas.offsetLeft),
+        "y" : (touch.pageY - gD.canvas.offsetTop)
+      };
+    }
+  }, this);
 }
 
 function touchendEvent(event, gD) {
-  if (event.identifier === 0) {
-    gD.mouseUp.push(true);
-  }
+  event.changedTouches.map(touch => {
+    if (touch.identifier === 0) {
+      gD.mouseUp.push(true);
+    }
+  }, this);
 }
 
 function touchcancelEvent(event, gD) {
-  if (event.identifier === 0) {
-    gD.mouseUp.push(true);
-  }
+  event.changedTouches.map(touch => {
+    if (touch.identifier === 0) {
+      gD.mouseUp.push(true);
+    }
+  }, this);
 }
 
 function checkIfEdgeBrowser() {
