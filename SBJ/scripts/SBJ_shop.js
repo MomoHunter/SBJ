@@ -597,14 +597,12 @@
         if (this.movingTree) {
           this.skillTree.moveTree(gD.mousePos.x - gD.referenceMousePos.x, gD.mousePos.y - gD.referenceMousePos.y);
           this.reset = true;
-          console.log("3");
         } else if (this.movingMinimap) {
           this.skillTree.moveTree(
             -(gD.mousePos.x - gD.referenceMousePos.x) / this.skillTree.minimap.scaleFactor,
             -(gD.mousePos.y - gD.referenceMousePos.y) / this.skillTree.minimap.scaleFactor
           );
           this.reset = true;
-          console.log("2");
         } else if (this.reset) {
           this.skillTree.setCurrentPos();
           this.reset = false;
@@ -726,7 +724,6 @@
             -(clickPos.x - (this.skillTree.minimap.windowX + this.skillTree.minimap.windowWidth / 2)) / this.skillTree.minimap.scaleFactor,
             -(clickPos.y - (this.skillTree.minimap.windowY + this.skillTree.minimap.windowHeight / 2)) / this.skillTree.minimap.scaleFactor
           );
-          console.log("1");
           this.skillTree.setCurrentPos();
         }
       }
@@ -1077,7 +1074,6 @@ function ShopSkillTree(x, y, width, height, styleKey) {
     this.moveY = 0;
   };
   this.moveTree = function(x, y) {
-    console.log(x, y);
     this.moveX = x;
     if (this.currentPosX - this.moveX > this.treeWidth - this.width) {
       this.moveX = this.width - this.treeWidth + this.currentPosX;
@@ -1091,7 +1087,6 @@ function ShopSkillTree(x, y, width, height, styleKey) {
     } else if (this.currentPosY - this.moveY < 0) {
       this.moveY = 0 + this.currentPosY;
     }
-    console.log(this.moveX, this.moveY);
   };
   this.update = function() {
     this.skills.map(skill => {
