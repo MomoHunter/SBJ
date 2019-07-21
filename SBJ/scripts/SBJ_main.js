@@ -124,41 +124,43 @@ function wheelEvent(event, gD) {
 }
 
 function touchstartEvent(event, gD) {
-  document.getElementById("output").innerText += JSON.stringify(event) + " ";
-  event.changedTouches.map(touch => {
-    if (touch.identifier === 1) {
+  let touches = event.changedTouches;
+  for (let i = 0; i < touches.length; i++) {
+    if (touches[i].identifier === 0) {
       gD.mouseDown.push(true);
     }
-  }, this);
+  }
 }
 
 function touchmoveEvent(event, gD) {
-  event.preventDefault();
-  event.changedTouches.map(touch => {
-    if (touch.identifier === 1) {
+  let touches = event.changedTouches;
+  for (let i = 0; i < touches.length; i++) {
+    if (touches[i].identifier === 0) {
       gD.lastMousePos = copy(gD.mousePos);
       gD.mousePos = {
-        "x" : (touch.pageX - gD.canvas.offsetLeft),
-        "y" : (touch.pageY - gD.canvas.offsetTop)
+        "x" : (touches[i].pageX - gD.canvas.offsetLeft),
+        "y" : (touches[i].pageY - gD.canvas.offsetTop)
       };
     }
-  }, this);
+  }
 }
 
 function touchendEvent(event, gD) {
-  event.changedTouches.map(touch => {
-    if (touch.identifier === 1) {
+  let touches = event.changedTouches;
+  for (let i = 0; i < touches.length; i++) {
+    if (touches[i].identifier === 0) {
       gD.mouseUp.push(true);
     }
-  }, this);
+  }
 }
 
 function touchcancelEvent(event, gD) {
-  event.changedTouches.map(touch => {
-    if (touch.identifier === 1) {
+  let touches = event.changedTouches;
+  for (let i = 0; i < touches.length; i++) {
+    if (touches[i].identifier === 0) {
       gD.mouseUp.push(true);
     }
-  }, this);
+  }
 }
 
 function checkIfEdgeBrowser() {
