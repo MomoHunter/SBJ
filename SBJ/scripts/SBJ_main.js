@@ -60,6 +60,7 @@ function gameloop(gD, timestamp) {
       gD.events = [];
       gD.mouseDown = [];
       gD.mouseUp = [];
+      gD.touchEnd = [];
       gD.lastMousePos = copy(gD.mousePos);
       gD.clicks = [];
       gD.wheelMovements = [];
@@ -150,6 +151,7 @@ function touchendEvent(event, gD) {
   for (let i = 0; i < touches.length; i++) {
     if (touches[i].identifier === 0) {
       gD.mouseUp.push(true);
+      gD.touchEnd.push(true);
     }
   }
 }
@@ -217,6 +219,7 @@ function GlobalDict(eventHandler) {
   this.mousePos = {"x": 0, "y": 0};
   this.mouseDown = [];
   this.mouseUp = [];
+  this.touchEnd = [];
   this.lastMousePos = {"x": 0, "y": 0};
   this.referenceMousePos = {"x": 0, "y": 0};
   this.clicks = [];
