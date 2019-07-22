@@ -312,6 +312,12 @@ function StatisticsData(name, eventKey, isFullNumber) {
   this.setSaveData = function(data) {
     if ([Events.COLLECT_1000_HYPE, Events.COLLECT_100_HYPE, Events.COLLECT_10_HYPE, Events.COLLECT_1_HYPE].includes(this.eventKey)) {
       this.currentValues = data;
+
+      for (let e in this.currentValues) {
+        if (this.currentValues.hasOwnProperty(e)) {
+          this.currentCount += this.currentValues[e];
+        }
+      }
     } else { 
       this.currentCount = data;
     }
