@@ -16,8 +16,8 @@ function Stage1(game, gD) {
     this.torchStartIndex = 0;
     this.prisonStartIndex = 0;
     
-    this.wall = new Background(0, 1000, 350, "img/Festung_Wall.png");
-    this.lava = new AnimatedBackground(this.gD.canvas.height - 25, 1000, 100, "img/Festung_Lava.png", 4, 18);
+    this.wall = new Background(0, 1000, 350, "img/Fortress_Wall.png");
+    this.lava = new AnimatedBackground(this.gD.canvas.height - 25, 1000, 100, "img/Fortress_Lava.png", 4, 18);
   };
   this.addFireball = function() {
     let {spriteWidth, spriteHeight} = getSpriteData("Enemy_Fireball", this.gD);
