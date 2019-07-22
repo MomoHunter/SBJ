@@ -1,4 +1,4 @@
-function main() {
+﻿ction main() {
   registerServiceWorker();
   let globalDict = new GlobalDict(new EventHandler());
   let menu = new Menu(globalDict);
@@ -20,7 +20,7 @@ function main() {
 
 function registerServiceWorker() {
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/scripts/SBJ_worker.js')
+    navigator.serviceWorker.register('./scripts/SBJ_worker.js')
     .then(function(reg) {
       // registration worked
       console.log('Registration succeeded. Scope is ' + reg.scope);
