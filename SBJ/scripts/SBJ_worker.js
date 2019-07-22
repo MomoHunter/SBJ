@@ -1,4 +1,4 @@
-self.addEventListener('install', (event) => {
+this.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open('v3.0.0').then((cache) => {
       return cache.addAll([
@@ -44,13 +44,13 @@ self.addEventListener('install', (event) => {
   );
 });
 
-self.addEventListener('fetch', (event) => {
+this.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request)
   );
 });
 
-self.addEventListener('activate', (event) => {
+this.addEventListener('activate', (event) => {
   var cacheKeeplist = ['v3.0.0'];
 
   event.waitUntil(
