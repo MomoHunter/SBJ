@@ -1,4 +1,4 @@
-﻿ction main() {
+﻿function main() {
   registerServiceWorker();
   let globalDict = new GlobalDict(new EventHandler());
   let menu = new Menu(globalDict);
