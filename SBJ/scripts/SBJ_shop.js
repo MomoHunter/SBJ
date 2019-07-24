@@ -940,11 +940,11 @@ function ShopMoneyDisplay(x, y, width, height, styleKey) {
     drawCanvasRect(this.x, this.y, this.width, this.height, design.rectKey.background, gD);
     drawCanvasRect(this.x + 5, this.y + 5, this.width - 10, 13, design.rectKey.hype, gD);
     drawCanvasImage(this.x + 7, this.y + 7, "Currency_XS", gD);
-    drawCanvasText(this.x + this.width - 8, this.y + 11.5, shop.hype.toString().replace(/\d(?=(\d{3})+($|\.))/g, '$&.'), design.textKey.value, gD);
+    drawCanvasText(this.x + this.width - 8, this.y + 11.5, addPoints(Math.floor(shop.hype)), design.textKey.value, gD);
     drawCanvasRectBorder(this.x + 5, this.y + 5, this.width - 10, 13, design.borderKey, gD);
     drawCanvasRect(this.x + 5, this.y + 23, this.width - 10, 13, design.rectKey.goldenShamrock, gD);
     drawCanvasImage(this.x + 7, this.y + 25, "Special_GoldenShamrock_S", gD);
-    drawCanvasText(this.x + this.width - 8, this.y + 29.5, shop.goldenShamrocks.toString().replace(/\d(?=(\d{3})+($|\.))/g, '$&.'), design.textKey.value, gD);
+    drawCanvasText(this.x + this.width - 8, this.y + 29.5, addPoints(shop.goldenShamrocks), design.textKey.value, gD);
     drawCanvasRectBorder(this.x + 5, this.y + 23, this.width - 10, 13, design.borderKey, gD);
     drawCanvasRectBorder(this.x, this.y, this.width, this.height, design.borderKey, gD);
   };
