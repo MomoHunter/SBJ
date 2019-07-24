@@ -22,7 +22,7 @@ function Stage1(game, gD) {
   this.addFireball = function() {
     let {spriteWidth, spriteHeight} = getSpriteData("Enemy_Fireball", this.gD);
     this.fireballs.push(new Stage1Fireball(
-      this.game.distance + this.gD.canvas.width + randomBetween(200, 2000),
+      this.game.distance + this.gD.canvas.width + randomBetween(400, 6000),
       100, spriteWidth, spriteHeight, "Enemy_Fireball"
     ));
   };
