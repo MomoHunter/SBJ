@@ -157,7 +157,7 @@ function Game(menu, gD) {
             break;
           } else {
             this.objects.push(new GameObject(
-              this.distance + this.gD.canvas.width + randomBetween(150, 1100), randomBetween(50, 310),
+              this.distance + this.gD.canvas.width + randomBetween(150, 950), randomBetween(50, 310),
               spriteWidth, spriteHeight, prob
             ));
             break;
