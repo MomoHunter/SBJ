@@ -1,5 +1,8 @@
 ﻿function main() {
   registerServiceWorker();
+  if (window.innerHeight < 560) {
+    document.body.style.width = (window.innerWidth + (560 / window.innerHeight)) + "px"
+  }
   document.getElementById('output').innerText = window.innerWidth + " " + window.innerHeight + " " + document.documentElement.clientWidth + " " + document.documentElement.clientHeight;
   let globalDict = new GlobalDict(new EventHandler());
   let menu = new Menu(globalDict);
