@@ -1,5 +1,6 @@
 ﻿function main() {
   registerServiceWorker();
+  document.getElementById('output').innerText = window.innerWidth + " " + window.innerHeight + " " + document.documentElement.clientWidth + " " + document.documentElement.clientHeight;
   let globalDict = new GlobalDict(new EventHandler());
   let menu = new Menu(globalDict);
   window.addEventListener('keydown', event => keydownEvent(event, globalDict));
