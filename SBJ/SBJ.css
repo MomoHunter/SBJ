@@ -47,7 +47,7 @@ table td {
                                   supported by Chrome and Opera */
 }
 
-.button:hover {
+.button:active {
   color: black;
   background-color: #99AAB5;
 }
