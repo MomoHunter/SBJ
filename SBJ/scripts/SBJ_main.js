@@ -1,8 +1,8 @@
 ﻿function main() {
   registerServiceWorker();
   let viewport = document.querySelector("[name~=viewport][content]");
-  if (window.innerWidth < 1002 || window.innerHeight < 560) {
-    let scale = Math.min(window.innerWidth / 1002, window.innerHeight / 560);
+  if (window.innerWidth < 1002 || window.innerHeight < 530) {
+    let scale = Math.min(window.innerWidth / 1002, window.innerHeight / 530);
     viewport.content = "width=device-width, initial-scale=1, minimum-scale=" + scale + ", maximum-scale=" + scale;
   }
   let globalDict = new GlobalDict(new EventHandler());
