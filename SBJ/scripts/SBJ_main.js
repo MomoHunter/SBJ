@@ -5,7 +5,6 @@
     let scale = Math.min(window.innerWidth / 1002, window.innerHeight / 560);
     viewport.content = "width=device-width, initial-scale=1, minimum-scale=" + scale + ", maximum-scale=" + scale;
   }
-  document.getElementById('output').innerText = window.innerWidth + " " + window.innerHeight + " " + document.documentElement.clientWidth + " " + document.documentElement.clientHeight;
   let globalDict = new GlobalDict(new EventHandler());
   let menu = new Menu(globalDict);
   window.addEventListener('keydown', event => keydownEvent(event, globalDict));
