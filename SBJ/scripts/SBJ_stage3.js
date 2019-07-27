@@ -11,6 +11,8 @@ function Stage3(game, gD) {
     this.birdStartIndex = 0;
     this.bubbles = [];
     this.bubbleStartIndex = 0;
+    this.fishes = [];
+    this.fishStartIndex = 0;
     this.smallFishes = [];
     this.smallFishStartIndex = 0;
     this.ocean = new AnimatedBackground(0, 1000, 2800, "img/Water_Ocean.png", 8, 20);
@@ -38,6 +40,16 @@ function Stage3(game, gD) {
     if (Math.random() < 0.15) {
       this.bubbles.push(new Stage3BubbleSpot(
         this.game.distance + 100 + randomBetween(1500, 5500), this.gD.canvas.height, randomBetween(50, 100)
+      ));
+    }
+  };
+  this.addFish = function() {
+    if (Math.random() < 0.11) {
+      let sprites = ["Enemy_Fish_Blue", "Enemy_Fish_Green", "Enemy_Fish_Nemo", "Enemy_Fish_Red"];
+      let {spriteWidth, spriteHeight, key} = getSpriteData(sprites[Math.floor(Math.random() * sprites.length)], gD);
+      this.fishes.push(new Stage3Fish(
+        this.game.distance + this.gD.canvas.width + randomBetween(250, 1450),
+        randomBetween(200, 310), spriteWidth, spriteHeight, key
       ));
     }
   };
@@ -76,10 +88,14 @@ function Stage3(game, gD) {
     }
     for (let i = this.birdStartIndex; i < this.birds.length; i++) {
       this.birds[i].update(this.game);
-      this.game.player.collect(game, this.birds[i]);
+      this.game.player.collect(this.game, this.birds[i]);
     }
     for (let i = this.bubbleStartIndex; i < this.bubbles.length; i++) {
       this.bubbles[i].update(this.gD);
+    }
+    for (let i = this.fishStartIndex; i < this.fishes.length; i++) {
+      this.fishes[i].update(this.game);
+      this.game.player.collect(this.game, this.fishes[i]);
     }
     for (let i = this.smallFishStartIndex; i < this.smallFishes.length; i++) {
       this.smallFishes[i].update(this.game);
@@ -92,10 +108,15 @@ function Stage3(game, gD) {
                this.birds[this.birds.length - 1].x < this.game.distance + this.gD.canvas.width + 100) {
       this.addBird();
     }
-    if ((this.bubbles.length === 0 || 
-        this.bubbles[this.bubbles.length - 1].x < this.game.distance + this.gD.canvas.width + 100) && 
-        game.currentLevel >= 2) {
+    if ((this.bubbles.length === 0 ||
+      this.bubbles[this.bubbles.length - 1].x < this.game.distance + this.gD.canvas.width + 100) &&
+      this.game.currentLevel >= 2) {
       this.addBubbles();
+    }
+    if ((this.fishes.length === 0 ||
+      this.fishes[this.fishes.length - 1].x < this.game.distance + this.gD.canvas.width + 100) &&
+      this.game.currentLevel >= 1) {
+      this.addFish();
     }
     if (this.smallFishes.length === 0 || (this.smallFishes[this.smallFishes.length - 1].direction === "forward" &&
         this.smallFishes[this.smallFishes.length - 1].x > this.game.distance - 100)) {
@@ -115,6 +136,9 @@ function Stage3(game, gD) {
     if (this.bubbles.length > 0 && this.bubbles[this.bubbleStartIndex].x < this.game.distance - 100) {
       this.bubbleStartIndex++;
     }
+    if (this.fishes.length > 0 && this.fishes[this.fishStartIndex].x < this.game.distance - 100) {
+      this.fishStartIndex++;
+    }
     if (this.smallFishes.length > 0 && this.smallFishes[this.smallFishStartIndex].direction === "forward" &&
         this.smallFishes[this.smallFishStartIndex].x > this.game.distance + this.gD.canvas.width + 100) {
       this.smallFishStartIndex++;
@@ -132,6 +156,9 @@ function Stage3(game, gD) {
   };
   this.drawBackground = function() {
     this.ocean.draw(this.game, this.gD);
+    for (let i = this.fishStartIndex; i < this.fishes.length; i++) {
+      this.fishes[i].draw(this.game, this.gD);
+    }
     for (let i = this.smallFishStartIndex; i < this.smallFishes.length; i++) {
       this.smallFishes[i].draw(this.game, this.gD);
     }
@@ -166,21 +193,20 @@ function Stage3Bird(x, y, width, height, spriteKey, direction) {
   };
 }
 
-function Stage3Fish(x, y, width, height, fishNr) {
+function Stage3Fish(x, y, width, height, spriteKey) {
   this.x = x;
   this.y = y;
   this.width = width;
   this.height = height;
-  this.fishNr = fishNr;
-  this.distanceTravelled = 0;
-  this.radians = 0;
-  this.draw = function(game, gD, ghostFactor) {
-    gD.context.translate(this.x + (this.width / 2), this.y + (this.height / 2));
-    gD.context.rotate(this.radians);
-    gD.context.drawImage(gD.spritesheet, gD.spriteDict["Fish" + this.fishNr][0], gD.spriteDict["Fish" + this.fishNr][1], gD.spriteDict["Fish" + this.fishNr][2], gD.spriteDict["Fish" + this.fishNr][3],
-      -(this.width / 2) + (game.globalSpeed * ghostFactor), -(this.height / 2) + (Math.sin((this.distanceTravelled - (game.globalSpeed * ghostFactor)) / 45) / 3), gD.spriteDict["Fish" + this.fishNr][2], gD.spriteDict["Fish" + this.fishNr][3]);
-    gD.context.rotate(-this.radians);
-    gD.context.translate(-(this.x + (this.width / 2)), -(this.y + (this.height / 2)));
+  this.spriteKey = spriteKey;
+  this.speed = randomBetween(0.3, 0.5);
+  this.update = function(game) {
+    this.x -= game.globalSpeed * this.speed;
+  };
+  this.draw = function(game, gD) {
+    let canvasX = this.x - game.distance;
+
+    drawCanvasImage(canvasX, this.y, this.spriteKey, gD);
   };
   this.newPos = function(game) {
     var x = game.globalSpeed;

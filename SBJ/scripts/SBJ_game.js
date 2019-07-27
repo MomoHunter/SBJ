@@ -345,7 +345,8 @@ function Game(menu, gD) {
         } else if (keyB.get("Game_Tutorial")[3].includes(key)) {
           this.showTutorial = !this.showTutorial;
         }
-      } else if (!this.finished && !this.showConfirmation) {
+      }
+      if (!this.finished && !this.showConfirmation) {
         if (keyB.get("Game_Pause")[3].includes(key)) {
           this.paused = !this.paused;
         }
