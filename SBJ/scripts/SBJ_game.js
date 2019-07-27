@@ -325,7 +325,27 @@ function Game(menu, gD) {
     }, this);
     
     this.gD.newKeys.map((key, index) => {
-      if (!this.finished && !this.showConfirmation) {
+      if (!this.paused && !this.finished && !this.showConfirmation) {
+        if (keyB.get("Game_JumpFromPlatform")[3].includes(key)) {
+          this.player.downFromPlatform(this);
+        } else if (keyB.get("Game_ItemStopwatch")[3].includes(key)) {
+          this.inventory.activate(this, "Item_Stopwatch");
+        } else if (keyB.get("Game_ItemStar")[3].includes(key)) {
+          this.inventory.activate(this, "Item_Star");
+        } else if (keyB.get("Game_ItemFeather")[3].includes(key)) {
+          this.inventory.activate(this, "Item_Feather");
+        } else if (keyB.get("Game_ItemTreasure")[3].includes(key)) {
+          this.inventory.activate(this, "Item_Treasure");
+        } else if (keyB.get("Game_ItemMagnet")[3].includes(key)) {
+          this.inventory.activate(this, "Item_Magnet");
+        } else if (keyB.get("Game_ItemRocket")[3].includes(key)) {
+          this.inventory.activate(this, "Item_Rocket");
+        } else if (keyB.get("Game_Restart")[3].includes(key)) {
+          this.restart(true);
+        } else if (keyB.get("Game_Tutorial")[3].includes(key)) {
+          this.showTutorial = !this.showTutorial;
+        }
+      } else if (!this.finished && !this.showConfirmation) {
         if (keyB.get("Game_Pause")[3].includes(key)) {
           this.paused = !this.paused;
         }
@@ -356,27 +376,6 @@ function Game(menu, gD) {
           }
         } else if (keyB.get("Game_Restart")[3].includes(key)) {
           this.restart();
-        }
-      }
-      if (!this.paused && !this.finished && !this.showConfirmation) {
-        if (keyB.get("Game_JumpFromPlatform")[3].includes(key)) {
-          this.player.downFromPlatform(this);
-        } else if (keyB.get("Game_ItemStopwatch")[3].includes(key)) {
-          this.inventory.activate(this, "Item_Stopwatch");
-        } else if (keyB.get("Game_ItemStar")[3].includes(key)) {
-          this.inventory.activate(this, "Item_Star");
-        } else if (keyB.get("Game_ItemFeather")[3].includes(key)) {
-          this.inventory.activate(this, "Item_Feather");
-        } else if (keyB.get("Game_ItemTreasure")[3].includes(key)) {
-          this.inventory.activate(this, "Item_Treasure");
-        } else if (keyB.get("Game_ItemMagnet")[3].includes(key)) {
-          this.inventory.activate(this, "Item_Magnet");
-        } else if (keyB.get("Game_ItemRocket")[3].includes(key)) {
-          this.inventory.activate(this, "Item_Rocket");
-        } else if (keyB.get("Game_Restart")[3].includes(key)) {
-          this.restart(true);
-        } else if (keyB.get("Game_Tutorial")[3].includes(key)) {
-          this.showTutorial = !this.showTutorial;
         }
       }
     }, this);

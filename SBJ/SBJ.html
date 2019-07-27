@@ -35,14 +35,14 @@
          onmousedown="showKeyboard()">Tastatur anschalten</div>
     <table id="keyboard" cellspacing="10">
       <tr>
-        <td><div id="keyR" class="button" ontouchstart="generateEvents('keydown', 'KeyR', 'R')"
-                 ontouchend="generateEvents('keyup', 'KeyR', 'R')">R</div></td>
-        <td><div id="ArrowUp" class="button" ontouchstart="generateEvents('keydown', 'ArrowUp', 'ArrowUp')"
-                 ontouchend="generateEvents('keyup', 'ArrowUp', 'ArrowUp')">↑</div></td>
         <td><div id="keyI" class="button" ontouchstart="generateEvents('keydown', 'KeyI', 'I')"
                  ontouchend="generateEvents('keyup', 'KeyI', 'I')">I</div></td>
+        <td><div id="ArrowUp" class="button" ontouchstart="generateEvents('keydown', 'ArrowUp', 'ArrowUp')"
+                 ontouchend="generateEvents('keyup', 'ArrowUp', 'ArrowUp')">↑</div></td>
         <td><div id="clear" class="button" ontouchstart="document.getElementById('inputField').value = ''">Clear</div></td>
         <td class="long"><input type="text" id="inputField" placeholder="Eingabefeld"/></td>
+        <td><div id="keyR" class="button" ontouchstart="generateEvents('keydown', 'KeyR', 'R')"
+                 ontouchend="generateEvents('keyup', 'KeyR', 'R')">R</div></td>
         <td><div id="Esc" class="button" ontouchstart="generateEvents('keydown', 'Escape', 'Escape')"
                  ontouchend="generateEvents('keyup', 'Escape', 'Escape')">Esc</div></td>
         <td><div id="Digit1" class="button" ontouchstart="generateEvents('keydown', 'Digit1', '1')"
