@@ -148,7 +148,7 @@ function Stage3Bird(x, y, width, height, spriteKey, direction) {
   this.height = height;
   this.spriteKey = spriteKey;
   this.direction = direction;
-  this.showScentence = true;
+  this.showScentence = false;
   this.update = function(game) {
     if (this.direction === "forward") {
       this.x += game.globalSpeed * 1.5;
@@ -316,7 +316,7 @@ function Stage3SmallFish(x, y, width, height, spriteKey, direction) {
   this.height = height;
   this.spriteKey = spriteKey;
   this.direction = direction;
-  this.showScentence = true;
+  this.showScentence = false;
   this.update = function(game) {
     if (this.direction === "forward") {
       this.x += game.globalSpeed * 1.2;
