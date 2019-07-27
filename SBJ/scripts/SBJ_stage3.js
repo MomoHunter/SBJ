@@ -9,6 +9,10 @@ function Stage3(game, gD) {
   this.init = function() {
     this.birds = [];
     this.birdStartIndex = 0;
+    this.bubbles = [];
+    this.bubbleStartIndex = 0;
+    this.smallFishes = [];
+    this.smallFishStartIndex = 0;
     this.ocean = new AnimatedBackground(0, 1000, 2800, "img/Water_Ocean.png", 8, 20);
     this.waves = new AnimatedBackground(170, 1000, 1440, "img/Water_Waves.png", 8, 20);
   };
@@ -16,19 +20,53 @@ function Stage3(game, gD) {
     let random = Math.random();
     if (random < 0.15) {
       if (random < 0.075) {
-        let {spriteWidth, spriteHeight} = getSpriteData("Enemy_Bird_Left", this.gD);
+        let {spriteWidth, spriteHeight, key} = getSpriteData("Enemy_Bird_Left", this.gD);
         this.birds.push(new Stage3Bird(
           this.game.distance + 1100 + randomBetween(150, 1500), randomBetween(50, 150),
-          spriteWidth, spriteHeight, "Enemy_Bird_Left", "backward"
+          spriteWidth, spriteHeight, key, "backward"
         ));
       } else {
-        let {spriteWidth, spriteHeight} = getSpriteData("Enemy_Bird_Right", this.gD);
+        let {spriteWidth, spriteHeight, key} = getSpriteData("Enemy_Bird_Right", this.gD);
         this.birds.push(new Stage3Bird(
           this.game.distance - 100 - randomBetween(150, 1500), randomBetween(50, 150),
-          spriteWidth, spriteHeight, "Enemy_Bird_Right", "forward"
+          spriteWidth, spriteHeight, key, "forward"
         ));
       }
     }
+  };
+  this.addBubbles = function() {
+    if (Math.random() < 0.15) {
+      this.bubbles.push(new Stage3BubbleSpot(
+        this.game.distance + 100 + randomBetween(1500, 5500), this.gD.canvas.height, randomBetween(50, 100)
+      ));
+    }
+  };
+  this.addSmallFish = function() {
+    let random = Math.random();
+    if (random < 0.09) {
+      if (random < 0.045) {
+        let {spriteWidth, spriteHeight, key} = getSpriteData("Deco_Small_Fish_1_L", this.gD);
+        this.smallFishes.push(new Stage3SmallFish(
+          this.game.distance + 1100 + randomBetween(150, 900), randomBetween(180, 210),
+          spriteWidth, spriteHeight, key, "backward"
+        ));
+      } else {
+        let {spriteWidth, spriteHeight, key} = getSpriteData("Deco_Small_Fish_1_R", this.gD);
+        this.smallFishes.push(new Stage3SmallFish(
+          this.game.distance - 100 - randomBetween(150, 900), randomBetween(180, 210),
+          spriteWidth, spriteHeight, key, "forward"
+        ));
+      }
+    }
+  };
+  this.getBubblesUnderPlayer = function() {
+    for (let i = this.bubbleStartIndex; i < this.bubbles.length; i++) {
+      if (this.bubbles[i].x <= this.game.player.x + this.game.player.width &&
+          this.bubbles[i].x + this.bubbles[i].width >= this.game.player.x) {
+        return this.bubbles[i];
+      }
+    }
+    return null;
   };
   this.update = function() {
     if (this.game.player.y + this.game.player.height > this.gD.canvas.height / 2) {
@@ -36,10 +74,16 @@ function Stage3(game, gD) {
     } else {
       this.gravity = 20.25;
     }
-    this.birds.map(bird => {
-      bird.update(this.game);
-      this.game.player.collect(game, bird);
-    }, this);
+    for (let i = this.birdStartIndex; i < this.birds.length; i++) {
+      this.birds[i].update(this.game);
+      this.game.player.collect(game, this.birds[i]);
+    }
+    for (let i = this.bubbleStartIndex; i < this.bubbles.length; i++) {
+      this.bubbles[i].update(this.gD);
+    }
+    for (let i = this.smallFishStartIndex; i < this.smallFishes.length; i++) {
+      this.smallFishes[i].update(this.game);
+    }
 
     if (this.birds.length === 0 || (this.birds[this.birds.length - 1].direction === "forward" &&
         this.birds[this.birds.length - 1].x > this.game.distance - 100)) {
@@ -47,6 +91,18 @@ function Stage3(game, gD) {
     } else if (this.birds[this.birds.length - 1].direction === "backward" &&
                this.birds[this.birds.length - 1].x < this.game.distance + this.gD.canvas.width + 100) {
       this.addBird();
+    }
+    if ((this.bubbles.length === 0 || 
+        this.bubbles[this.bubbles.length - 1].x < this.game.distance + this.gD.canvas.width + 100) && 
+        game.currentLevel >= 2) {
+      this.addBubbles();
+    }
+    if (this.smallFishes.length === 0 || (this.smallFishes[this.smallFishes.length - 1].direction === "forward" &&
+        this.smallFishes[this.smallFishes.length - 1].x > this.game.distance - 100)) {
+      this.addSmallFish();
+    } else if (this.smallFishes[this.smallFishes.length - 1].direction === "backward" &&
+               this.smallFishes[this.smallFishes.length - 1].x < this.game.distance + this.gD.canvas.width + 100) {
+      this.addSmallFish();
     }
 
     if (this.birds.length > 0 && this.birds[this.birdStartIndex].direction === "forward" &&
@@ -56,15 +112,32 @@ function Stage3(game, gD) {
                this.birds[this.birdStartIndex].x < this.game.distance - 100) {
       this.birdStartIndex++;
     }
+    if (this.bubbles.length > 0 && this.bubbles[this.bubbleStartIndex].x < this.game.distance - 100) {
+      this.bubbleStartIndex++;
+    }
+    if (this.smallFishes.length > 0 && this.smallFishes[this.smallFishStartIndex].direction === "forward" &&
+        this.smallFishes[this.smallFishStartIndex].x > this.game.distance + this.gD.canvas.width + 100) {
+      this.smallFishStartIndex++;
+    } else if (this.smallFishes.length > 0 && this.smallFishes[this.smallFishStartIndex].direction === "backward" &&
+               this.smallFishes[this.smallFishStartIndex].x < this.game.distance - 100) {
+      this.smallFishStartIndex++;
+    }
+    
   };
   this.drawForeground = function() {
     this.waves.draw(this.game, this.gD);
-    this.birds.map(bird => {
-      bird.draw(this.game, this.gD);
-    }, this);
+    for (let i = this.birdStartIndex; i < this.birds.length; i++) {
+      this.birds[i].draw(this.game, this.gD);
+    }
   };
   this.drawBackground = function() {
     this.ocean.draw(this.game, this.gD);
+    for (let i = this.smallFishStartIndex; i < this.smallFishes.length; i++) {
+      this.smallFishes[i].draw(this.game, this.gD);
+    }
+    for (let i = this.bubbleStartIndex; i < this.bubbles.length; i++) {
+      this.bubbles[i].draw(this.game, this.gD);
+    }
   };
 }
 
@@ -75,6 +148,7 @@ function Stage3Bird(x, y, width, height, spriteKey, direction) {
   this.height = height;
   this.spriteKey = spriteKey;
   this.direction = direction;
+  this.showScentence = true;
   this.update = function(game) {
     if (this.direction === "forward") {
       this.x += game.globalSpeed * 1.5;
@@ -86,6 +160,9 @@ function Stage3Bird(x, y, width, height, spriteKey, direction) {
     let canvasX = this.x - game.distance;
     
     drawCanvasImage(canvasX, this.y, this.spriteKey, gD);
+    if (this.showScentence) {
+      drawCanvasText(canvasX + this.width / 2, this.y - 5, "Omae wa mou shindeiru", "verySmall", gD);
+    }
   };
 }
 
@@ -158,72 +235,102 @@ function Stage3JumpingFish(x, y, width, height, fishNr) {
   };
 }
 
-function Stage3BubbleSpot(x, y, width, height) {
+function Stage3BubbleSpot(x, y, width) {
   this.x = x;
   this.y = y;
   this.width = width;
-  this.height = height;
   this.bubbles = [];
-  this.draw = function(game, gD, ghostFactor) {
-    for (var i = 0; i < this.bubbles.length; i++) {
-      this.bubbles[i].draw(game, gD, ghostFactor);
+  this.newBubble = function(gD) {
+    if (Math.random() <= 0.35) {
+      let random = Math.floor(Math.random() * 3);
+      let bubbles = ["Deco_Bubble_L", "Deco_Bubble_M", "Deco_Bubble_S"];
+      let {spriteWidth, spriteHeight, key} = getSpriteData(bubbles[random], gD);
+      this.bubbles.push(new Stage3Bubble(
+        this.x + Math.random() * this.width, this.y, spriteWidth, spriteHeight, key
+      ));
     }
   };
-  this.newPos = function(game, gD) {
-    this.x += game.globalSpeed;
-    for (var i = 0; i < this.bubbles.length; i++) {
-      this.bubbles[i].newPos(game);
-    }
+  this.update = function(gD) {
+    this.bubbles.map((bubble, index) => {
+      bubble.update();
+      if (bubble.y < gD.canvas.height / 2 && !bubble.timerOn) {
+        bubble.setTimer();
+      }
+      if (bubble.timer <= 0 && bubble.timerOn) {
+        this.bubbles.splice(index, 1);
+      }
+    }, this);
     this.newBubble(gD);
   };
-  this.newBubble = function(gD) {
-    var random = Math.random();
-    if (random >= 0.65) {
-      random = Math.floor(Math.random() * 2.999) + 1;
-      this.bubbles.push(new Stage3Bubble(this.x + (Math.random() * this.width), this.y, gD.spriteDict["Bubble" + random][2], gD.spriteDict["Bubble" + random][3], random));
-    }
+  this.draw = function(game, gD) {
+    this.bubbles.map(bubble => {
+      bubble.draw(game, gD);
+    }, this);
   };
 }
 
-function Stage3Bubble(x, y, width, height, bubbleNr) {
+function Stage3Bubble(x, y, width, height, key) {
   this.x = x;
   this.y = y;
   this.width = width;
   this.height = height;
-  this.bubbleNr = bubbleNr;
-  this.draw = function(game, gD, ghostFactor) {
-    var movement = 0;
-    switch (this.bubbleNr) {
-      case 1:
-        movement = 0.7;
-        break;
-      case 2:
-        movement = 1.3;
-        break;
-      case 3:
-        movement = 2;
-        break;
-      default:
-        movement = 2;
-    }
-    gD.context.drawImage(gD.spritesheet, gD.spriteDict["Bubble" + bubbleNr][0], gD.spriteDict["Bubble" + bubbleNr][1], gD.spriteDict["Bubble" + bubbleNr][2], gD.spriteDict["Bubble" + bubbleNr][3],
-      this.x + (game.globalSpeed * ghostFactor), this.y - (movement * ghostFactor), this.width, this.height);
+  this.movementX = (Math.random() * 0.2) - 0.1;
+  this.key = key;
+  this.timerOn = false;
+  this.timer = 0;
+  this.setTimer = function() {
+    this.timerOn = true;
+    this.timer = 45;
   };
-  this.newPos = function(game) {
-    switch (this.bubbleNr) {
-      case 1:
-        this.y -= 0.7;
-        break;
-      case 2:
-        this.y -= 1.3;
-        break;
-      case 3:
-        this.y -= 2;
-        break;
-      default:
-        this.y -= 2;
+  this.update = function() {
+    if (this.timerOn) {
+      this.timer--;
+    } else {
+      switch (this.key) {
+        case "Deco_Bubble_L":
+          this.y -= 0.7;
+          break;
+        case "Deco_Bubble_M":
+          this.y -= 1.3;
+          break;
+        case "Deco_Bubble_S":
+          this.y -= 2;
+          break;
+        default:
+          this.y -= 2;
+      }
     }
-    this.x += game.globalSpeed;
+    this.x += this.movementX;
+  };
+  this.draw = function(game, gD) {
+    let canvasX = this.x - game.distance;
+    
+    drawCanvasImage(canvasX, this.y, this.key, gD);
+  };
+}
+
+function Stage3SmallFish(x, y, width, height, spriteKey, direction) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.spriteKey = spriteKey;
+  this.direction = direction;
+  this.showScentence = true;
+  this.update = function(game) {
+    if (this.direction === "forward") {
+      this.x += game.globalSpeed * 1.2;
+    } else {
+      this.x -= game.globalSpeed * 0.2;
+    }
+  };
+  this.draw = function(game, gD) {
+    let canvasX = this.x - game.distance;
+    
+    drawCanvasImage(canvasX, this.y, this.spriteKey, gD);
+    if (this.showScentence) {
+      drawCanvasText(canvasX + this.width / 2, this.y - 5, "NANI", "verySmallWhite", gD);
+    }
   };
 }
 

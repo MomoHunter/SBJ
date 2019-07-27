@@ -269,8 +269,10 @@ function GlobalDict(eventHandler) {
     "Deco_Bubble_L": [false, 79, 9381, 7, 7],
     "Deco_Bubble_M": [false, 79, 9389, 5, 5],
     "Deco_Bubble_S": [false, 79, 9395, 3, 3],
-    "Deco_Spikes_Left": [false, 79, 9399, 60, 25],
-    "Deco_Spikes_Right": [false, 79, 9425, 60, 25],
+    "Deco_Small_Fish_1_L": [false, 79, 9399, 12, 5],
+    "Deco_Small_Fish_1_R": [false, 79, 9405, 12, 5],
+    "Deco_Spikes_Left": [false, 79, 9411, 60, 25],
+    "Deco_Spikes_Right": [false, 79, 9437, 60, 25],
     "Enemy_Apple": [false, 244, 0, 19, 20],
     "Enemy_Fireball": [false, 244, 21, 12, 12],
     "Enemy_Rocket": [true, 244, [34, 81, 128], 20, 46],
@@ -1357,6 +1359,13 @@ function GlobalDict(eventHandler) {
       verySmall: {
         font: "9pt Consolas",
         color: "0, 0, 0, 1",
+        align: "center",
+        baseline: "middle",
+        borderKey: ""
+      },
+      verySmallWhite: {
+        font: "9pt Consolas",
+        color: "255, 255, 255, 1",
         align: "center",
         baseline: "middle",
         borderKey: ""

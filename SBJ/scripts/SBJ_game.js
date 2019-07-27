@@ -853,7 +853,13 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
         this.y = this.currentFloor.y - (this.currentFloor.thickness / 2) - this.height + this.currentFloor.velocity;
       } else if (!this.onFloor || (this.currentFloor !== null && this.currentFloor.type === "Fall")) {
         this.y += this.velocity;
-        if (this.velocity <= 0) {
+        let bubbles = false;
+        if (game.stage.name === "Water") {
+          bubbles = game.stage.getBubblesUnderPlayer();
+        }
+        if (bubbles && this.y + this.height >= gD.canvas.height / 2) {
+          this.velocity -= 0.12;
+        } else if (this.velocity <= 0) {
           this.velocity += this.gravity;
         } else {
           if (!(this.inventory.items["Item_Feather"].active && this.velocity > 2) ||
