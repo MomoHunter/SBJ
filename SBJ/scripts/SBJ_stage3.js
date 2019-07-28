@@ -87,7 +87,7 @@ function Stage3(game, gD) {
       this.gravity = 20.25;
     }
     for (let i = this.birdStartIndex; i < this.birds.length; i++) {
-      this.birds[i].update(this.game);
+      this.birds[i].update(this.game, this);
       this.game.player.collect(this.game, this.birds[i]);
     }
     for (let i = this.bubbleStartIndex; i < this.bubbles.length; i++) {
@@ -149,19 +149,19 @@ function Stage3(game, gD) {
     
   };
   this.drawForeground = function() {
-    this.waves.draw(this.game, this.gD);
     for (let i = this.birdStartIndex; i < this.birds.length; i++) {
       this.birds[i].draw(this.game, this.gD);
     }
-  };
-  this.drawBackground = function() {
-    this.ocean.draw(this.game, this.gD);
     for (let i = this.fishStartIndex; i < this.fishes.length; i++) {
       this.fishes[i].draw(this.game, this.gD);
     }
     for (let i = this.smallFishStartIndex; i < this.smallFishes.length; i++) {
       this.smallFishes[i].draw(this.game, this.gD);
     }
+    this.waves.draw(this.game, this.gD);
+  };
+  this.drawBackground = function() {
+    this.ocean.draw(this.game, this.gD);
     for (let i = this.bubbleStartIndex; i < this.bubbles.length; i++) {
       this.bubbles[i].draw(this.game, this.gD);
     }
@@ -175,18 +175,87 @@ function Stage3Bird(x, y, width, height, spriteKey, direction) {
   this.height = height;
   this.spriteKey = spriteKey;
   this.direction = direction;
+  this.inDive = false;
+  this.startPoint = x;
+  this.originalY = y;
+  this.smallFish = null;
+  this.hasFish = false;
   this.showScentence = false;
-  this.update = function(game) {
+  this.update = function(game, stage) {
     if (this.direction === "forward") {
       this.x += game.globalSpeed * 1.5;
+      if (!this.inDive && !this.hasFish && this.y >= 130 && this.y <= 150 &&
+           this.x - game.distance >= 0 && this.x - game.distance <= 800) {
+        for (let i = stage.smallFishStartIndex; i < stage.smallFishes.length; i++) {
+          if ((stage.smallFishes[i].x <= this.x + Math.PI * 20 + 5 && stage.smallFishes[i].x >= this.x + Math.PI * 20 - 5 &&
+               stage.smallFishes[i].direction === "forward" && !stage.smallFishes[i].selected) ||
+              (stage.smallFishes[i].x <= this.x + Math.PI * 114 + 5 && stage.smallFishes[i].x >= this.x + Math.PI * 114 - 5 &&
+               stage.smallFishes[i].direction === "backward" && !stage.smallFishes[i].selected)) {
+            this.inDive = true;
+            this.smallFish = stage.smallFishes[i];
+            this.smallFish.selected = true;
+            this.startPoint = this.x;
+            if (Math.random() < 0.001) {
+              this.showScentence = true;
+              this.smallFish.showScentence = true;
+            }
+            break;
+          }
+        }
+      }
+      if (this.inDive) {
+        this.y = this.originalY + Math.sin((this.startPoint - this.x) / 200) ** 2 * (this.smallFish.y - this.originalY - 7);
+        if ((this.startPoint - this.x) / 200 < -(Math.PI / 2)) {
+          this.smallFish.shows = false;
+          this.hasFish = true;
+        }
+        if ((this.startPoint - this.x) / 200 < -Math.PI) {
+          this.inDive = false;
+          this.y = this.originalY;
+        }
+      }
     } else {
       this.x -= game.globalSpeed * 0.5;
+      if (!this.inDive && !this.hasFish && this.y >= 130 && this.y <= 150 &&
+        this.x - game.distance >= 200 && this.x - game.distance <= 1000) {
+        for (let i = stage.smallFishStartIndex; i < stage.smallFishes.length; i++) {
+          if ((stage.smallFishes[i].x <= this.x - Math.PI * 105 + 5 && stage.smallFishes[i].x >= this.x - Math.PI * 105 - 5 &&
+               stage.smallFishes[i].direction === "forward" && !stage.smallFishes[i].selected) ||
+              (stage.smallFishes[i].x <= this.x - Math.PI * 18 + 5 && stage.smallFishes[i].x >= this.x - Math.PI * 18 - 5 &&
+               stage.smallFishes[i].direction === "backward" && !stage.smallFishes[i].selected)) {
+            this.inDive = true;
+            this.smallFish = stage.smallFishes[i];
+            this.smallFish.selected = true;
+            this.startPoint = this.x;
+            if (Math.random() < 0.001) {
+              this.showScentence = true;
+              this.smallFish.showScentence = true;
+            }
+            break;
+          }
+        }
+      }
+      if (this.inDive) {
+        this.y = this.originalY + Math.sin((this.startPoint - this.x) / 65) ** 2 * (this.smallFish.y - this.originalY - 7);
+        if ((this.startPoint - this.x) / 65 > Math.PI / 2) {
+          this.smallFish.shows = false;
+          this.hasFish = true;
+        }
+        if ((this.startPoint - this.x) / 65 > Math.PI) {
+          this.inDive = false;
+          this.y = this.originalY;
+        }
+      }
     }
   };
   this.draw = function(game, gD) {
     let canvasX = this.x - game.distance;
-    
-    drawCanvasImage(canvasX, this.y, this.spriteKey, gD);
+
+    if (!this.hasFish) {
+      drawCanvasImage(canvasX, this.y, this.spriteKey, gD);
+    } else {
+      drawCanvasImage(canvasX, this.y, this.spriteKey + "_Fish", gD);
+    }
     if (this.showScentence) {
       drawCanvasText(canvasX + this.width / 2, this.y - 5, "Omae wa mou shindeiru", "verySmall", gD);
     }
@@ -200,64 +269,13 @@ function Stage3Fish(x, y, width, height, spriteKey) {
   this.height = height;
   this.spriteKey = spriteKey;
   this.speed = randomBetween(0.3, 0.5);
-  this.update = function(game) {
+  this.update = function (game) {
     this.x -= game.globalSpeed * this.speed;
   };
-  this.draw = function(game, gD) {
+  this.draw = function (game, gD) {
     let canvasX = this.x - game.distance;
 
     drawCanvasImage(canvasX, this.y, this.spriteKey, gD);
-  };
-  this.newPos = function(game) {
-    var x = game.globalSpeed;
-    var y = Math.sin(this.distanceTravelled / 45) / 3;
-    this.distanceTravelled += 2;
-    this.x += x;
-    this.y += y;
-    this.radians = Math.atan2(y, x) + Math.PI;
-  };
-}
-
-function Stage3JumpingFish(x, y, width, height, fishNr) {
-  this.x = x;
-  this.y = y;
-  this.width = width;
-  this.height = height;
-  this.fishNr = fishNr;
-  this.distanceTravelled = 0;
-  this.radians = 0;
-  this.mode = 1;
-  this.draw = function(game, gD, ghostFactor) {
-    gD.context.translate(this.x + (this.width / 2), this.y + (this.height / 2));
-    gD.context.rotate(this.radians);
-    gD.context.drawImage(gD.spritesheet, gD.spriteDict["Fish" + this.fishNr][0], gD.spriteDict["Fish" + this.fishNr][1], gD.spriteDict["Fish" + this.fishNr][2], gD.spriteDict["Fish" + this.fishNr][3],
-      -(this.width / 2) + (game.globalSpeed * ghostFactor), -(this.height / 2), gD.spriteDict["Fish" + this.fishNr][2], gD.spriteDict["Fish" + this.fishNr][3]);
-    gD.context.rotate(-this.radians);
-    gD.context.translate(-(this.x + (this.width / 2)), -(this.y + (this.height / 2)));
-  };
-  this.newPos = function(game) {
-    var x = game.globalSpeed;
-    var y = 0;
-    if (this.mode == 1) {
-      if (this.distanceTravelled / 45 >= 2 * Math.PI) {
-        this.distanceTravelled = 0;
-        this.mode = 2;
-      } else {
-        y = -(Math.sin(this.distanceTravelled / 45) / 3);
-        this.distanceTravelled += 2;
-      }
-    } else {
-      if (this.distanceTravelled / 35 >= 2 * Math.PI) {
-        this.distanceTravelled = 0;
-        this.mode = 1;
-      } else {
-        y = -(Math.sin(this.distanceTravelled / 35) * 3);
-        this.distanceTravelled += 2;
-      }
-    }
-    this.x += x;
-    this.y += y;
-    this.radians = Math.atan2(y, x) + Math.PI;
   };
 }
 
@@ -343,6 +361,8 @@ function Stage3SmallFish(x, y, width, height, spriteKey, direction) {
   this.spriteKey = spriteKey;
   this.direction = direction;
   this.showScentence = false;
+  this.selected = false;
+  this.shows = true;
   this.update = function(game) {
     if (this.direction === "forward") {
       this.x += game.globalSpeed * 1.2;
@@ -351,152 +371,13 @@ function Stage3SmallFish(x, y, width, height, spriteKey, direction) {
     }
   };
   this.draw = function(game, gD) {
-    let canvasX = this.x - game.distance;
-    
-    drawCanvasImage(canvasX, this.y, this.spriteKey, gD);
-    if (this.showScentence) {
-      drawCanvasText(canvasX + this.width / 2, this.y - 5, "NANI", "verySmallWhite", gD);
-    }
-  };
-}
+    if (this.shows) {
+      let canvasX = this.x - game.distance;
 
-function addBird(stage, gD) {
-  if (Math.random() * 2 >= 1) {
-    stage.birdObjects.push(new Stage3Bird(gD.canvas.width + 10, Math.floor(Math.random() * 80) + 30, gD.spriteDict["Bird1B"][2], gD.spriteDict["Bird1B"][3], 1));
-  } else {
-    stage.birdObjects.push(new Stage3Bird(-50, Math.floor(Math.random() * 80) + 30, gD.spriteDict["Bird1F"][2], gD.spriteDict["Bird1F"][3], -1));
-  }
-  stage.birdSpawnCounter = Math.max(Math.random() * (1200 - (stage.game.distanceTravelled * 0.005)), 300);
-}
-
-function addFish(stage, gD) {
-  var fishNr = Math.floor(Math.random() * 3.999) + 1;
-  stage.fishObjects.push(new Stage3Fish(gD.canvas.width + 10, Math.floor(Math.random() * ((gD.canvas.height / 2) - 70)) + ((gD.canvas.height / 2) + 10), gD.spriteDict["Fish" + fishNr][2], gD.spriteDict["Fish" + fishNr][3], fishNr));
-  stage.fishSpawnCounter = Math.max(Math.random() * (800 - (stage.game.distanceTravelled * 0.005)), 150);
-}
-
-function addJumpingFish(stage, gD) {
-  var fishNr = Math.floor(Math.random() * 3.999) + 1;
-  stage.jumpingFishObjects.push(new Stage3JumpingFish(gD.canvas.width + 10, (gD.canvas.height / 2) + 25, gD.spriteDict["Fish" + fishNr][2], gD.spriteDict["Fish" + fishNr][3], fishNr));
-  stage.jumpingFishSpawnCounter = Math.max(Math.random() * (1200 - (stage.game.distanceTravelled * 0.005)), 400);
-}
-
-function addBubbleSpot(stage, gD) {
-  stage.bubbleSpotObjects.push(new Stage3BubbleSpot(gD.canvas.width + 500, gD.canvas.height - 1, 50, 1));
-  stage.bubbleSpotSpawnCounter = Math.max(Math.random() * (900 - (stage.game.distanceTravelled * 0.005)), 300);
-}
-
-function updateStage3(game, stage) {
-  if (game.itemsActive[5]) {
-    stage.birdSpawnCounter -= 5;
-    stage.fishSpawnCounter -= 5;
-    stage.jumpingFishSpawnCounter -= 5;
-    stage.bubbleSpotSpawnCounter -= 5;
-  } else if (game.itemsActive[0]) {
-    stage.birdSpawnCounter -= 0.1;
-    stage.fishSpawnCounter -= 0.1;
-    stage.jumpingFishSpawnCounter -= 0.1;
-    stage.bubbleSpotSpawnCounter -= 0.1;
-  } else {
-    stage.birdSpawnCounter -= Math.floor(1 + (game.distanceTravelled * 0.00005));
-    stage.fishSpawnCounter -= Math.floor(1 + (game.distanceTravelled * 0.00005));
-    stage.jumpingFishSpawnCounter -= Math.floor(1 + (game.distanceTravelled * 0.00005));
-    stage.bubbleSpotSpawnCounter -= Math.floor(1 + (game.distanceTravelled * 0.00005));
-  }
-
-  if (stage.birdSpawnCounter <= 0) {
-    addBird(stage, game.gD);
-  }
-  if (stage.birdObjects[0] != undefined) {
-    if (stage.birdObjects[0].direction == -1 && stage.birdObjects[0].x > game.gD.canvas.width) {
-      stage.birdObjects.shift();
-    } else if (stage.birdObjects[0].direction == 1 && stage.birdObjects[0].x + stage.birdObjects[0].width < 0) {
-      stage.birdObjects.shift();
-    }
-  }
-
-  if (stage.fishSpawnCounter <= 0) {
-    addFish(stage, game.gD);
-  }
-  if (stage.fishObjects[0] != undefined && stage.fishObjects[0].x + stage.fishObjects[0].width < 0) {
-    stage.fishObjects.shift();
-  }
-
-  if (stage.jumpingFishSpawnCounter <= 0) {
-    addJumpingFish(stage, game.gD);
-  }
-  if (stage.jumpingFishObjects[0] != undefined && stage.jumpingFishObjects[0].x + stage.jumpingFishObjects[0].width < 0) {
-    stage.jumpingFishObjects.shift();
-  }
-
-  if (stage.bubbleSpotSpawnCounter <= 0) {
-    addBubbleSpot(stage, game.gD);
-  }
-  if (stage.bubbleSpotObjects[0] != undefined && stage.bubbleSpotObjects[0].x + stage.bubbleSpotObjects[0].width < 0) {
-    stage.bubbleSpotObjects.shift();
-  }
-  for (var i = 0; i < stage.bubbleSpotObjects.length; i++) {
-    for (var j = 0; j < stage.bubbleSpotObjects[i].bubbles.length; j++) {
-      var bubble = stage.bubbleSpotObjects[i].bubbles[j];
-      if (bubble.y + (bubble.height / 2) < game.gD.canvas.height / 2) {
-        stage.bubbleSpotObjects[i].bubbles.splice(j, 1);
-        j--;
+      drawCanvasImage(canvasX, this.y, this.spriteKey, gD);
+      if (this.showScentence) {
+        drawCanvasText(canvasX + this.width / 2, this.y - 5, "NANI", "verySmallWhite", gD);
       }
     }
-  }
-
-  for (var i = 0; i < stage.birdObjects.length; i++) {
-    stage.birdObjects[i].newPos(game);
-    if (game.player.collect(stage.birdObjects[i]) && !game.itemsActive[1] && !game.itemsActive[5]) {
-      game.finish();
-    }
-  }
-
-  for (var i = 0; i < stage.fishObjects.length; i++) {
-    stage.fishObjects[i].newPos(game);
-    if (game.player.collect(stage.fishObjects[i]) && !game.itemsActive[1] && !game.itemsActive[5]) {
-      game.finish();
-    }
-  }
-
-  for (var i = 0; i < stage.jumpingFishObjects.length; i++) {
-    stage.jumpingFishObjects[i].newPos(game);
-    if (game.player.collect(stage.jumpingFishObjects[i]) && !game.itemsActive[1] && !game.itemsActive[5]) {
-      game.finish();
-    }
-  }
-
-  for (var i = 0; i < stage.bubbleSpotObjects.length; i++) {
-    stage.bubbleSpotObjects[i].newPos(game, game.gD);
-  }
-}
-
-function drawBackgroundStage3(game, stage, ghostFactor) {
-  game.gD.context.drawImage(stage.ocean, ((game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.ocean.width), 0, stage.ocean.width - ((game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.ocean.width), stage.ocean.height, 
-    0, 0, stage.ocean.width - ((game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.ocean.width), stage.ocean.height);
-  game.gD.context.drawImage(stage.ocean, 0, 0, (game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.ocean.width, stage.ocean.height, 
-    stage.ocean.width - ((game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.ocean.width), 0, (game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.ocean.width, stage.ocean.height);
-
-  for (var i = 0; i < stage.bubbleSpotObjects.length; i++) {
-    stage.bubbleSpotObjects[i].draw(game, game.gD, ghostFactor);
-  }
-
-  game.player.draw(game, game.gD, ghostFactor);
-
-  for (var i = 0; i < stage.birdObjects.length; i++) {
-    stage.birdObjects[i].draw(game, game.gD, ghostFactor);
-  }
-  for (var i = 0; i < stage.fishObjects.length; i++) {
-    stage.fishObjects[i].draw(game, game.gD, ghostFactor);
-  }
-  for (var i = 0; i < stage.jumpingFishObjects.length; i++) {
-    stage.jumpingFishObjects[i].draw(game, game.gD, ghostFactor);
-  }
-}
-
-function drawForegroundStage3(game, stage, ghostFactor) {
-  game.gD.context.drawImage(stage.foregroundWaves, ((game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.foregroundWaves.width), 0, stage.foregroundWaves.width - ((game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.foregroundWaves.width), stage.foregroundWaves.height, 
-    0, game.gD.canvas.height - stage.foregroundWaves.height, stage.foregroundWaves.width - ((game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.foregroundWaves.width), stage.foregroundWaves.height);
-  game.gD.context.drawImage(stage.foregroundWaves, 0, 0, (game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.foregroundWaves.width, stage.foregroundWaves.height, 
-    stage.foregroundWaves.width - ((game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.foregroundWaves.width),  game.gD.canvas.height - stage.foregroundWaves.height, (game.distanceTravelled - (game.globalSpeed * ghostFactor)) % stage.foregroundWaves.width, stage.foregroundWaves.height);
+  };
 }

@@ -285,11 +285,13 @@ function GlobalDict(eventHandler) {
     "Enemy_Asteroid_Lava": [false, 244, 296, 19, 20],
     "Enemy_Asteroid_Stone": [false, 244, 317, 19, 20],
     "Enemy_Bird_Left": [true, 244, [338, 357], 27, 18],
-    "Enemy_Bird_Right": [true, 244, [376, 395], 27, 18],
-    "Enemy_Fish_Blue": [false, 244, 414, 34, 19],
-    "Enemy_Fish_Green": [false, 244, 434, 34, 19],
-    "Enemy_Fish_Nemo": [false, 244, 454, 34, 19],
-    "Enemy_Fish_Red": [true, 244, [474, 494, 514, 534, 554, 574], 34, 19],
+    "Enemy_Bird_Left_Fish": [true, 244, [376, 395], 28, 18],
+    "Enemy_Bird_Right": [true, 244, [414, 433], 27, 18],
+    "Enemy_Bird_Right_Fish": [true, 244, [452, 471], 28, 18],
+    "Enemy_Fish_Blue": [false, 244, 490, 34, 19],
+    "Enemy_Fish_Green": [false, 244, 510, 34, 19],
+    "Enemy_Fish_Nemo": [false, 244, 530, 34, 19],
+    "Enemy_Fish_Red": [true, 244, [550, 570, 590, 610, 630, 650], 34, 19],
     "Icon_Accessories": [true, 279, [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360, 390, 420, 450], 38, 29],
     "Icon_Distance": [false, 279, 480, 29, 15],
     "Icon_Earth": [false, 279, 496, 50, 50],
@@ -849,7 +851,7 @@ function GlobalDict(eventHandler) {
           info: "selected"
         }
       },
-      confirmationWindow: {
+      confirmationWindowSave: {
         rectKey: "blur",
         textKey: {
           headline: "normalBold",

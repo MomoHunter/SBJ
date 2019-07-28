@@ -56,7 +56,7 @@ function SaveLoad(menu, gD) {
     
     this.confirmationWindow = new CanvasConfirmationWindow(
       this.gD.canvas.width / 2 - 310, this.gD.canvas.height / 2 - 45, 620, 90, 
-      ["Savestates have been changed!", "Save?"], "confirmationWindow"
+      ["Savestates have been changed!", "Save?"], "confirmationWindowSave"
     );
     this.confirmationWindow.init();
 
