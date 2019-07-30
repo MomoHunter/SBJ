@@ -51,7 +51,7 @@ this.addEventListener('fetch', (event) => {
 });
 
 this.addEventListener('activate', (event) => {
-  var cacheKeeplist = ['v3.0.0'];
+  let cacheKeeplist = ['v3.0.0'];
 
   event.waitUntil(
     caches.keys().then((keyList) => {

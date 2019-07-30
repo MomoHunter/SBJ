@@ -500,15 +500,13 @@ function Game(menu, gD) {
       drawCanvasText(this.gD.canvas.width / 2, this.gD.canvas.height / 2, this.currentLevel, "ookii", this.gD);
     }
     this.inventory.draw(this, this.gD);
-    
-    this.players.map(player => {
-      player.draw(this, this.gD);
-    }, this);
-
 
     for (let i = this.floorStartIndex; i < this.floors.length; i++) {
       this.floors[i].draw(this, this.gD);
     }
+    this.players.map(player => {
+      player.draw(this, this.gD);
+    }, this);
     for (let i = this.objectStartIndex; i < this.objects.length; i++) {
       this.objects[i].draw(this, this.gD);
     }

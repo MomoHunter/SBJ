@@ -477,18 +477,18 @@ function GlobalDict(eventHandler) {
       {type: "Standard", x: 1150, y: 140.5, width: 180},
       {type: "Standard", x: 1300, y: 120.5, width: 180}
     ]},
-    {chance: 1, earliestLevel: 1, stages: ["Training", "Fortress", "Air", "Water", "Forest", "Universe"], floors: [
+    {chance: 1, earliestLevel: 1, stages: ["Training", "Fortress", "Air", "Forest", "Universe"], floors: [
       {type: "Standard", x: 100, y: 200.5, width: 100},
       {type: "Standard", x: 200, y: 200.5, width: 100},
     ]},
-    {chance: 1, earliestLevel: 1, stages: ["Training", "Fortress", "Air", "Water", "Forest", "Universe"], floors: [
+    {chance: 1, earliestLevel: 1, stages: ["Training", "Fortress", "Air", "Forest", "Universe"], floors: [
       {type: "Standard", x: 150, y: 300.5, width: 215},
       {type: "Standard", x: 470, y: 190.5, width: 140},
       {type: "Standard", x: 710, y: 160.5, width: 80},
       {type: "Standard", x: 940, y: 285.5, width: 175},
       {type: "Standard", x: 1250, y: 140.5, width: 114}
     ]},
-    {chance: 1, earliestLevel: 1, stages: ["Training", "Fortress", "Air", "Water", "Forest", "Universe"], floors: [
+    {chance: 1, earliestLevel: 1, stages: ["Training", "Fortress", "Air", "Forest", "Universe"], floors: [
       {type: "Standard", x: 133, y: 244.5, width: 189},
       {type: "Standard", x: 450, y: 190.5, width: 166},
       {type: "Standard", x: 744, y: 250.5, width: 199},
@@ -500,7 +500,7 @@ function GlobalDict(eventHandler) {
       {type: "Standard", x: 100, y: 210.5, width: 1000},
       {type: "Standard", x: 100, y: 120.5, width: 1000}
     ]},
-    {chance: 1, earliestLevel: 1, stages: ["Training", "Fortress", "Air", "Water", "Forest", "Universe"], floors: [
+    {chance: 1, earliestLevel: 1, stages: ["Training", "Fortress", "Air", "Forest", "Universe"], floors: [
       {type: "Standard", x: 110, y: 140.5, width: 155},
       {type: "Moving", x: 400, y: 180, width: 140, height: 90},
       {type: "Standard", x: 760, y: 280.5, width: 200},
@@ -508,7 +508,15 @@ function GlobalDict(eventHandler) {
       {type: "Standard", x: 1320, y: 110.5, width: 50},
       {type: "Standard", x: 1510, y: 100.5, width: 50}
     ]},
-    {chance: 1, earliestLevel: 3, stages: ["Training", "Fortress", "Air", "Water", "Forest", "Universe"], floors: [
+    {chance: 1, earliestLevel: 1, stages: ["Water"], floors: [
+      {type: "Standard", x: 110, y: 120.5, width: 155},
+      {type: "Standard", x: 400, y: 80.5, width: 140},
+      {type: "Standard", x: 760, y: 140.5, width: 200},
+      {type: "Standard", x: 1130, y: 120.5, width: 50},
+      {type: "Standard", x: 1320, y: 110.5, width: 50},
+      {type: "Standard", x: 1510, y: 100.5, width: 50}
+    ]},
+    {chance: 1, earliestLevel: 3, stages: ["Training", "Fortress", "Air", "Forest", "Universe"], floors: [
       {type: "Standard", x: 90, y: 197.5, width: 300},
       {type: "Standard", x: 520, y: 120.5, width: 50},
       {type: "Standard", x: 700, y: 280.5, width: 50},
@@ -528,14 +536,14 @@ function GlobalDict(eventHandler) {
       {type: "Standard", x: 1450, y: 260.5, width: 180},
       {type: "Standard", x: 1600, y: 280.5, width: 180}
     ]},
-    {chance: 1, earliestLevel: 2, stages: ["Training", "Fortress", "Air", "Water", "Forest", "Universe"], floors: [
+    {chance: 1, earliestLevel: 2, stages: ["Training", "Fortress", "Air", "Forest", "Universe"], floors: [
       {type: "Jump", x: 130, y: 299.5, width: 150},
       {type: "Jump", x: 410, y: 120.5, width: 150},
       {type: "Jump", x: 690, y: 300.5, width: 150},
       {type: "Jump", x: 970, y: 120.5, width: 150},
       {type: "Jump", x: 1250, y: 300.5, width: 150}
     ]},
-    {chance: 0.5, earliestLevel: 2, stages: ["Training", "Fortress", "Air", "Water", "Forest", "Universe"], floors: [
+    {chance: 0.5, earliestLevel: 2, stages: ["Training", "Fortress", "Air", "Forest", "Universe"], floors: [
       {type: "Jump", x: 120, y: 209.5, width: 100},
       {type: "Moving", x: 440, y: 301, width: 100, height: 180},
       {type: "Standard", x: 660, y: 120.5, width: 100},
@@ -554,6 +562,20 @@ function GlobalDict(eventHandler) {
       {type: "Spikes", x: 640, y: 260.5, width: 130},
       {type: "Spikes", x: 790, y: 260.5, width: 130},
       {type: "Spikes", x: 940, y: 260.5, width: 130}
+    ]},
+    {chance: 0.3, earliestLevel: 1, stages: ["Water"], floors: [
+      {type: "Spikes", x: 200, y: 330.5, width: 100},
+      {type: "Spikes", x: 200, y: 305.5, width: 100},
+      {type: "Spikes", x: 200, y: 280.5, width: 100},
+      {type: "Spikes", x: 200, y: 255.5, width: 100},
+      {type: "Spikes", x: 200, y: 230.5, width: 100},
+      {type: "Spikes", x: 200, y: 205.5, width: 100},
+      {type: "Spikes", x: 200, y: 180.5, width: 100},
+      {type: "Spikes", x: 500, y: 160.5, width: 100},
+      {type: "Spikes", x: 500, y: 135.5, width: 100},
+      {type: "Spikes", x: 500, y: 110.5, width: 100},
+      {type: "Spikes", x: 500, y: 85.5, width: 100},
+      {type: "Spikes", x: 500, y: 60.5, width: 100}
     ]}
   ];
   this.floors = {                    //color
@@ -1298,6 +1320,11 @@ function GlobalDict(eventHandler) {
       },
       stage3Floor: {
         borderColor: "239, 217, 165, 1",
+        borderSize: 5,
+        lineDash: []
+      },
+      stage5Floor: {
+        borderColor: "255, 249, 191, 1",
         borderSize: 5,
         lineDash: []
       }

@@ -1,17 +1,28 @@
-function Stage5(game) {
+function Stage5(game, gD) {
   this.game = game;
-  this.universe = new Image();
-  this.universe.src = "img/stage5Universe.png";
-  this.backgroundAsteroids = new Image();
-  this.backgroundAsteroids.src = "img/stage5Asteroids.png";
+  this.gD = gD;
+  this.name = "Universe";
   this.deadZoneGround = 0;
-  this.floorColor = "rgba(255, 249, 191, 1)";
+  this.floorColorKey = "stage5Floor";
   this.difficulty = 55;
+  this.gravity = 2.25;
   this.init = function() {
-    this.asteroidObjects = [];
-    this.asteroidSpawnCounter = Math.max(Math.random() * 1000, 600);
-    this.backgroundAsteroidsObjects = [];
-    this.backgroundAsteroidsSpawnCounter = Math.max(Math.random() * 6000, 2000);
+    this.asteroids = [];
+    this.asteroidStartIndex = 0;
+
+    this.stars = new Background(0, 1000, 350, "img/Universe_Stars");
+  };
+  this.addAsteroids = function() {
+
+  };
+  this.update = function() {
+
+  };
+  this.drawForeground = function() {
+
+  };
+  this.drawBackground = function() {
+    this.stars.draw(this.game, this.gD);
   };
 }
 

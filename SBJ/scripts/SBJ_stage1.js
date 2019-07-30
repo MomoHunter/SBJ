@@ -57,7 +57,7 @@ function Stage1(game, gD) {
         this.deco.torch[this.torchStartIndex].width < this.game.distance - 100) {
       this.torchStartIndex++;
     }
-    if (this.deco.prison.lengt > 0 && this.deco.prison[this.prisonStartIndex].x + 
+    if (this.deco.prison.length > 0 && this.deco.prison[this.prisonStartIndex].x +
         this.deco.prison[this.prisonStartIndex].width < this.game.distance - 100) {
       this.prisonStartIndex++;
     }
