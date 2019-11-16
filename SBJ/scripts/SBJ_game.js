@@ -135,7 +135,7 @@ function Game(menu, gD) {
   };
   this.addMoney = function() {
     let total = 0;
-    let random = 0;
+    let random;
     for (let prob in this.currentMoneyProbability) {
       if (this.currentMoneyProbability.hasOwnProperty(prob)) {
         total += this.currentMoneyProbability[prob];
@@ -168,7 +168,7 @@ function Game(menu, gD) {
   };
   this.addItem = function() {
     let total = 0;
-    let random = 0;
+    let random;
     for (let prob in this.gD.items) {
       if (this.gD.items.hasOwnProperty(prob)) {
         total += this.gD.items[prob][0];
@@ -302,7 +302,7 @@ function Game(menu, gD) {
     let keyB = this.menu.controls.keyBindings;
     let activated = false;
 
-    Object.keys(this.gD.keys).map((key, index) => {
+    Object.keys(this.gD.keys).map(key => {
       if (!this.paused && !this.finished) {
         if (keyB.get("Game_Jump")[3].includes(key) && this.gD.keys[key]) {
           this.player.jump(this, this.menu);
@@ -324,7 +324,7 @@ function Game(menu, gD) {
       }
     }, this);
     
-    this.gD.newKeys.map((key, index) => {
+    this.gD.newKeys.map(key => {
       if (!this.paused && !this.finished && !this.showConfirmation) {
         if (keyB.get("Game_JumpFromPlatform")[3].includes(key)) {
           this.player.downFromPlatform(this);
@@ -482,7 +482,7 @@ function Game(menu, gD) {
       for (let i = this.objectStartIndex; i < this.objects.length; i++) {
         this.objects[i].update(this);
         this.player.collect(this, this.objects[i], i);
-      };
+      }
       if (this.objectStartIndex < this.objects.length &&
           this.objects[this.objectStartIndex].x + this.objects[this.objectStartIndex].width < this.distance - 100) {
         this.objectStartIndex++;
@@ -696,8 +696,11 @@ function GamePlayer(x, y, character, name, hat, glasses, beard) {
                 this.jumps = 1;
                 break;
               case "Fall":
+                if (!this.currentFloor.isFalling) {
+                  game.handleEvent(Event.JUMP_ON_GREEN_PLATFORM);
+                }
                 this.currentFloor.isFalling = true;
-                this.onFloor = true;
+                this.onFloor = false;
                 this.velocity = 0;
                 this.jumps = 0;
                 break;
@@ -1417,7 +1420,7 @@ function GameEndScreen(x, y, width, height, styleKey) {
         );
       }
       if (player.beard !== "Collectables_Nothing") {
-        let {spriteWidth, spriteHeight} = getSpriteData(player.beard, gD);
+        let spriteWidth = getSpriteData(player.beard, gD).spriteWidth;
         drawCanvasImage(
           x + gD.player[player.character][3].x - spriteWidth / 2, 
           Math.floor(y + gD.player[player.character][3].y), player.beard, gD
@@ -1469,7 +1472,7 @@ function GameEndScreen(x, y, width, height, styleKey) {
       x += 119;
       for (let money in player.inventory.hype.money) {
         if (player.inventory.hype.money.hasOwnProperty(money)) {
-          let {spriteWidth, spriteHeight} = getSpriteData(money, gD);
+          let spriteHeight = getSpriteData(money, gD).spriteHeight;
           
           drawCanvasLine(
             x, 60 + index * this.tableLineHeight, design.borderKey, gD, x, 

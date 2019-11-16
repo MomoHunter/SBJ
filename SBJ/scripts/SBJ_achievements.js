@@ -91,6 +91,10 @@
       1, Events.STAR_BEFORE_LAVA, false, false, "star_before_lava"
     ),
     new AchievementData(
+      "Wo ist meine Plattform?", ["Springe auf 499 grüne Plattformen", ""],
+      499, Events.JUMP_ON_GREEN_PLATFORM, false, false, "jump_on_green_platforms"
+    ),
+    new AchievementData(
       "Upgrade", ["Level ein Item", ""],
       1, Events.LVL_ITEM, false, false, "lvl_item"
     ),
@@ -229,7 +233,7 @@
   /**
    * draws the screen onto the canvas
    */
-  this.draw = function(ghostFactor) {
+  this.draw = function() {
     this.gD.context.drawImage(this.menu.backgroundImage, 0, 0);
     this.title.draw(this.gD);
     this.menuController.draw(this.gD);
