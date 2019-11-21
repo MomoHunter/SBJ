@@ -989,13 +989,15 @@ function GameInventory() {
     this.hype.init(game, gD);
   };
   this.activate = function(game, item) {
-    game.handleEvent(Events.USE_ITEM);
-    game.handleEvent(Events["USE_" + item.split("_")[1].toUpperCase()]);
-    if (item.split("_")[1] === "Star" && 
-        game.player.y + game.player.height > game.gD.canvas.height - game.stage.deadZoneGround - 20) {
-      game.handleEvent(Events.STAR_BEFORE_LAVA);
+    if (this.items[item].amount > 0) {
+      game.handleEvent(Events.USE_ITEM);
+      game.handleEvent(Events["USE_" + item.split("_")[1].toUpperCase()]);
+      if (item.split("_")[1] === "Star" && 
+          game.player.y + game.player.height > game.gD.canvas.height - game.stage.deadZoneGround - 20) {
+        game.handleEvent(Events.STAR_BEFORE_LAVA);
+      }
+      this.items[item].activate(game);
     }
-    this.items[item].activate(game);
   };
   this.fill = function(amount) {
     for (let str in this.items) {
